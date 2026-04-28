@@ -76,8 +76,8 @@
         background: var(--gradient-bg);
     }
 
-    /* 透明模式下body必须完全透明 */
-    html[data-transparent="true"] body {
+    /* 透明模式下body必须完全透明（非二次元主题时） */
+    html[data-transparent="true"]:not([data-anime-theme]) body {
         background: transparent !important;
     }
 
@@ -236,59 +236,59 @@
         box-shadow: 0 8px 16px rgba(0, 0, 0, 0.5);
     }
 
-    /* DockDetail页面专用透明毛玻璃Card */
-    .glass-card-transparent.ant-card {
+    /* DockDetail页面专用透明毛玻璃Card - 仅透明模式下生效 */
+    [data-transparent="true"] .glass-card-transparent.ant-card {
         background: transparent !important;
         backdrop-filter: blur(30px) saturate(150%);
         -webkit-backdrop-filter: blur(30px) saturate(150%);
         border: 1px solid rgba(255, 255, 255, 0.1) !important;
     }
 
-    .glass-card-transparent.ant-card .ant-card-head {
+    [data-transparent="true"] .glass-card-transparent.ant-card .ant-card-head {
         background: transparent !important;
         backdrop-filter: blur(30px) saturate(150%);
         -webkit-backdrop-filter: blur(30px) saturate(150%);
     }
 
-    .glass-card-transparent.ant-card .ant-card-body {
+    [data-transparent="true"] .glass-card-transparent.ant-card .ant-card-body {
         background: transparent !important;
         backdrop-filter: blur(30px) saturate(150%);
         -webkit-backdrop-filter: blur(30px) saturate(150%);
     }
 
-	[data-theme="dark"] .glass-card-transparent.ant-card {
+	[data-transparent="true"][data-theme="dark"] .glass-card-transparent.ant-card {
 		background: rgba(46, 52, 66, 0.15) !important;
 		backdrop-filter: blur(30px) saturate(150%);
 		-webkit-backdrop-filter: blur(30px) saturate(150%);
 		border: 1px solid rgba(255, 255, 255, 0.1) !important;
 	}
 
-	[data-theme="dark"] .glass-card-transparent.ant-card .ant-card-head {
+	[data-transparent="true"][data-theme="dark"] .glass-card-transparent.ant-card .ant-card-head {
 		background: rgba(46, 52, 66, 0.1) !important;
 		backdrop-filter: blur(30px) saturate(150%);
 		-webkit-backdrop-filter: blur(30px) saturate(150%);
 	}
 
-	[data-theme="dark"] .glass-card-transparent.ant-card .ant-card-body {
+	[data-transparent="true"][data-theme="dark"] .glass-card-transparent.ant-card .ant-card-body {
 		background: rgba(46, 52, 66, 0.08) !important;
 		backdrop-filter: blur(30px) saturate(150%);
 		-webkit-backdrop-filter: blur(30px) saturate(150%);
 	}
 
-	[data-theme="light"] .glass-card-transparent.ant-card {
+	[data-transparent="true"][data-theme="light"] .glass-card-transparent.ant-card {
 		background: rgba(255, 255, 255, 0.15) !important;
 		backdrop-filter: blur(30px) saturate(150%);
 		-webkit-backdrop-filter: blur(30px) saturate(150%);
 		border: 1px solid rgba(0, 0, 0, 0.08) !important;
 	}
 
-	[data-theme="light"] .glass-card-transparent.ant-card .ant-card-head {
+	[data-transparent="true"][data-theme="light"] .glass-card-transparent.ant-card .ant-card-head {
 		background: rgba(255, 255, 255, 0.1) !important;
 		backdrop-filter: blur(30px) saturate(150%);
 		-webkit-backdrop-filter: blur(30px) saturate(150%);
 	}
 
-	[data-theme="light"] .glass-card-transparent.ant-card .ant-card-body {
+	[data-transparent="true"][data-theme="light"] .glass-card-transparent.ant-card .ant-card-body {
 		background: rgba(255, 255, 255, 0.08) !important;
 		backdrop-filter: blur(30px) saturate(150%);
 		-webkit-backdrop-filter: blur(30px) saturate(150%);
@@ -399,16 +399,28 @@
     }
 
 	/* ==================== 透明模式支持 ==================== */
-	html[data-transparent="true"] {
+	html[data-transparent="true"]:not([data-anime-theme]) {
 		background-image: url(https://images.524228.xyz/);
 		background-size: cover;
 		background-position: center;
 		background-attachment: fixed;
 	}
 
-	/* 透明模式下body也需要透明 */
-	html[data-transparent="true"] body {
+	/* 二次元主题时背景设置在body上，html不设置背景 */
+	html[data-transparent="true"][data-anime-theme] {
+		background: transparent;
+	}
+
+	/* 透明模式下body也需要透明（非二次元主题时） */
+	html[data-transparent="true"]:not([data-anime-theme]) body {
 		background: transparent !important;
+	}
+
+	/* 二次元主题时body显示背景图片 */
+	html[data-transparent="true"][data-anime-theme] body {
+		background-size: cover !important;
+		background-position: center !important;
+		background-attachment: fixed !important;
 	}
 
 	/* 透明模式下所有Ant Design组件添加毛玻璃效果 */
@@ -422,7 +434,7 @@
 	[data-transparent="true"] .ant-select-dropdown,
 	[data-transparent="true"] .ant-dropdown,
 	[data-transparent="true"] .ant-menu,
-	[data-transparent="true"] .ant-input,
+	[data-transparent="true"] .ant-input:not(.header-search .ant-input),
 	[data-transparent="true"] .ant-input-number,
 	[data-transparent="true"] .ant-picker,
 	[data-transparent="true"] .ant-form-item,
@@ -438,7 +450,7 @@
 
 	/* 透明模式下去除按钮和控件的底边白色 */
 	[data-transparent="true"] .ant-btn,
-	[data-transparent="true"] .ant-input,
+	[data-transparent="true"] .ant-input:not(.header-search .ant-input),
 	[data-transparent="true"] .ant-input-number,
 	[data-transparent="true"] .ant-input-number-input,
 	[data-transparent="true"] .ant-picker,
@@ -1113,7 +1125,7 @@ html:not([data-rounded="true"]) .ant-row,
 html:not([data-rounded="true"]) .ant-col,
 html:not([data-rounded="true"]) body,
 html:not([data-rounded="true"]) html {
-    border-radius: 0 !important;
+    border-radius: 2px !important;
 }
 
 /* ==================== 主题菜单悬停效果 ==================== */
@@ -1155,8 +1167,8 @@ html:not([data-transparent="true"])[data-theme="dark"] .ant-table-tbody > tr:hov
 }
 
 /* 暗黑模式 Input/Select/Picker */
-html:not([data-transparent="true"])[data-theme="dark"] .ant-input,
-html:not([data-transparent="true"])[data-theme="dark"] .ant-input-affix-wrapper,
+html:not([data-transparent="true"])[data-theme="dark"] .ant-input:not(.header-search .ant-input),
+html:not([data-transparent="true"])[data-theme="dark"] .ant-input-affix-wrapper:not(.header-search),
 html:not([data-transparent="true"])[data-theme="dark"] .ant-select-selector,
 html:not([data-transparent="true"])[data-theme="dark"] .ant-picker {
     background: rgba(20, 25, 38, 0.9) !important;
@@ -1179,8 +1191,8 @@ html:not([data-transparent="true"])[data-theme="dark"] .ant-statistic-content {
 }
 
 /* ==================== 透明模式输入框/选择器可见性修复 ==================== */
-[data-transparent="true"][data-theme="light"] .ant-input,
-[data-transparent="true"][data-theme="light"] .ant-input-affix-wrapper,
+[data-transparent="true"][data-theme="light"] .ant-input:not(.header-search .ant-input),
+[data-transparent="true"][data-theme="light"] .ant-input-affix-wrapper:not(.header-search),
 [data-transparent="true"][data-theme="light"] .ant-select-selector,
 [data-transparent="true"][data-theme="light"] .ant-picker {
     background: rgba(255, 255, 255, 0.55) !important;
@@ -1189,8 +1201,8 @@ html:not([data-transparent="true"])[data-theme="dark"] .ant-statistic-content {
     backdrop-filter: blur(20px) !important;
 }
 
-[data-transparent="true"][data-theme="dark"] .ant-input,
-[data-transparent="true"][data-theme="dark"] .ant-input-affix-wrapper,
+[data-transparent="true"][data-theme="dark"] .ant-input:not(.header-search .ant-input),
+[data-transparent="true"][data-theme="dark"] .ant-input-affix-wrapper:not(.header-search),
 [data-transparent="true"][data-theme="dark"] .ant-select-selector,
 [data-transparent="true"][data-theme="dark"] .ant-picker {
     background: rgba(20, 25, 38, 0.65) !important;
@@ -1719,21 +1731,26 @@ html:not([data-transparent="true"])[data-theme="dark"] .ant-progress-bg {
 /* 默认（非透明模式）：Header 是深色渐变，搜索框用浅色文字 */
 .header-search.ant-input-affix-wrapper,
 .ant-layout-header .header-search.ant-input-affix-wrapper {
-    background: rgba(255, 255, 255, 0.06) !important;
-    border: 1px solid rgba(255, 255, 255, 0.15) !important;
+    background: rgba(255, 255, 255, 0.08) !important;
+    border: 1px solid rgba(255, 255, 255, 0.08) !important;
+    border-radius: 8px !important;
     color: rgba(255, 255, 255, 0.88) !important;
     backdrop-filter: blur(10px) saturate(140%);
     -webkit-backdrop-filter: blur(10px) saturate(140%);
-    transition: background 0.2s ease, border-color 0.2s ease;
+    transition: background 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
 }
 .header-search.ant-input-affix-wrapper:hover,
 .header-search.ant-input-affix-wrapper-focused {
-    background: rgba(255, 255, 255, 0.10) !important;
-    border-color: rgba(255, 255, 255, 0.28) !important;
+    background: rgba(255, 255, 255, 0.12) !important;
+    border-color: rgba(255, 255, 255, 0.18) !important;
+    box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.06) !important;
 }
 .header-search.ant-input-affix-wrapper .ant-input {
     background: transparent !important;
     color: rgba(255, 255, 255, 0.92) !important;
+    border: none !important;
+    outline: none !important;
+    box-shadow: none !important;
 }
 .header-search.ant-input-affix-wrapper .ant-input::placeholder {
     color: rgba(255, 255, 255, 0.45) !important;
@@ -1742,26 +1759,29 @@ html:not([data-transparent="true"])[data-theme="dark"] .ant-progress-bg {
     color: rgba(255, 255, 255, 0.55) !important;
 }
 
-/* 透明模式 + 浅色主题：Header 变浅，搜索框改用深色文字，避免「太白看不见」 */
+/* 透明模式 + 浅色主题：Header 背景浅，搜索框用白色半透明风格保持可见 */
 [data-transparent="true"][data-theme="light"] .header-search.ant-input-affix-wrapper,
 html[data-transparent="true"][data-theme="light"] .ant-layout-header .header-search.ant-input-affix-wrapper {
-    background: rgba(0, 0, 0, 0.06) !important;
-    border: 1px solid rgba(0, 0, 0, 0.18) !important;
-    color: rgba(0, 0, 0, 0.88) !important;
+    background: transparent !important;
+    border: none !important;
+    color: rgba(255, 255, 255, 0.9) !important;
+    box-shadow: none !important;
 }
 [data-transparent="true"][data-theme="light"] .header-search.ant-input-affix-wrapper:hover,
 [data-transparent="true"][data-theme="light"] .header-search.ant-input-affix-wrapper-focused {
-    background: rgba(0, 0, 0, 0.10) !important;
-    border-color: rgba(105, 104, 253, 0.45) !important;
+    background: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
 }
 [data-transparent="true"][data-theme="light"] .header-search.ant-input-affix-wrapper .ant-input {
-    color: rgba(0, 0, 0, 0.88) !important;
+    background: transparent !important;
+    color: rgba(255, 255, 255, 0.92) !important;
 }
 [data-transparent="true"][data-theme="light"] .header-search.ant-input-affix-wrapper .ant-input::placeholder {
-    color: rgba(0, 0, 0, 0.40) !important;
+    color: rgba(255, 255, 255, 0.5) !important;
 }
 [data-transparent="true"][data-theme="light"] .header-search.ant-input-affix-wrapper .anticon {
-    color: rgba(0, 0, 0, 0.55) !important;
+    color: rgba(255, 255, 255, 0.6) !important;
 }
 
 /* ==================== 液态玻璃：扩展组件覆盖 ==================== */
@@ -1873,8 +1893,8 @@ html[data-transparent="true"][data-theme="light"] .ant-layout-header .header-sea
 }
 
 /* -- Input / Textarea / Select / Picker / InputNumber -- */
-[data-liquid="true"] .ant-input,
-[data-liquid="true"] .ant-input-affix-wrapper,
+[data-liquid="true"] .ant-input:not(.header-search .ant-input),
+[data-liquid="true"] .ant-input-affix-wrapper:not(.header-search),
 [data-liquid="true"] .ant-input-number,
 [data-liquid="true"] .ant-input-number-affix-wrapper,
 [data-liquid="true"] .ant-select-selector,
@@ -1883,8 +1903,8 @@ html[data-transparent="true"][data-theme="light"] .ant-layout-header .header-sea
     backdrop-filter: var(--lg-blur-thin) !important;
     -webkit-backdrop-filter: var(--lg-blur-thin) !important;
 }
-[data-liquid="true"][data-theme="light"] .ant-input,
-[data-liquid="true"][data-theme="light"] .ant-input-affix-wrapper,
+[data-liquid="true"][data-theme="light"] .ant-input:not(.header-search .ant-input),
+[data-liquid="true"][data-theme="light"] .ant-input-affix-wrapper:not(.header-search),
 [data-liquid="true"][data-theme="light"] .ant-input-number,
 [data-liquid="true"][data-theme="light"] .ant-input-number-affix-wrapper,
 [data-liquid="true"][data-theme="light"] .ant-select:not(.ant-select-customize-input) .ant-select-selector,
@@ -1893,8 +1913,8 @@ html[data-transparent="true"][data-theme="light"] .ant-layout-header .header-sea
     border: 1px solid rgba(255, 255, 255, 0.65) !important;
     box-shadow: 0 1px 0 rgba(255, 255, 255, 0.85) inset, 0 2px 6px rgba(15, 15, 40, 0.06) !important;
 }
-[data-liquid="true"][data-theme="dark"] .ant-input,
-[data-liquid="true"][data-theme="dark"] .ant-input-affix-wrapper,
+[data-liquid="true"][data-theme="dark"] .ant-input:not(.header-search .ant-input),
+[data-liquid="true"][data-theme="dark"] .ant-input-affix-wrapper:not(.header-search),
 [data-liquid="true"][data-theme="dark"] .ant-input-number,
 [data-liquid="true"][data-theme="dark"] .ant-input-number-affix-wrapper,
 [data-liquid="true"][data-theme="dark"] .ant-select:not(.ant-select-customize-input) .ant-select-selector,
@@ -2063,5 +2083,223 @@ html[data-transparent="true"][data-theme="light"] .ant-layout-header .header-sea
     [data-liquid="true"][data-theme="dark"] .ant-modal-content,
     [data-liquid="true"][data-theme="dark"] .ant-drawer-content {
         background: rgba(30, 30, 45, 0.90) !important;
+    }
+}
+
+/* ==================== 二次元主题支持 ==================== */
+
+/* 二次元主题激活时的全局样式增强 */
+[data-anime-theme] body {
+    transition: background-image 0.5s ease-in-out;
+}
+
+/* 有壁纸时，所有 ant-layout 容器必须透明，让 body 壁纸透出 */
+[data-wallpaper] .ant-layout,
+[data-wallpaper] .ant-layout.ant-layout-has-sider,
+[data-wallpaper] .ant-layout-content,
+[data-wallpaper] .main-layout-content {
+    background: transparent !important;
+}
+
+/* 有壁纸时：底层不做模糊，直接透出壁纸 */
+[data-wallpaper] .main-sider {
+    background: rgba(15, 17, 21, 0.55) !important;
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+}
+
+[data-wallpaper] .main-content {
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+}
+
+[data-wallpaper][data-theme="light"] .main-content {
+    background: rgba(255, 255, 255, 0.05) !important;
+}
+
+[data-wallpaper][data-theme="dark"] .main-content {
+    background: rgba(15, 17, 21, 0.1) !important;
+}
+
+/* 有壁纸 + 底层模糊开关开启时，恢复毛玻璃效果 */
+[data-wallpaper][data-anime-blur] .main-sider {
+    backdrop-filter: blur(10px) !important;
+    -webkit-backdrop-filter: blur(10px) !important;
+}
+
+[data-wallpaper][data-anime-blur][data-theme="light"] .main-sider {
+    background: rgba(255, 255, 255, 0.55) !important;
+}
+
+[data-wallpaper][data-anime-blur][data-theme="dark"] .main-sider {
+    background: rgba(15, 17, 21, 0.65) !important;
+}
+
+[data-wallpaper][data-anime-blur] .main-content {
+    backdrop-filter: blur(8px) !important;
+    -webkit-backdrop-filter: blur(8px) !important;
+}
+
+[data-wallpaper][data-anime-blur][data-theme="light"] .main-content {
+    background: rgba(255, 255, 255, 0.55) !important;
+}
+
+[data-wallpaper][data-anime-blur][data-theme="dark"] .main-content {
+    background: rgba(15, 17, 21, 0.35) !important;
+}
+
+/* 二次元主题 + 透明模式下卡片样式 */
+[data-anime-theme][data-transparent] .ant-card {
+    background: rgba(255, 255, 255, 0.35) !important;
+    backdrop-filter: blur(8px) !important;
+    -webkit-backdrop-filter: blur(8px) !important;
+    border: 1px solid rgba(255, 255, 255, 0.2) !important;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08) !important;
+    transition: all 0.3s ease !important;
+}
+
+[data-anime-theme][data-transparent] .ant-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15) !important;
+}
+
+[data-anime-theme][data-transparent][data-theme="dark"] .ant-card {
+    background: rgba(30, 30, 50, 0.35) !important;
+    border: 1px solid rgba(255, 255, 255, 0.08) !important;
+}
+
+/* 二次元主题 + 透明模式下表格样式 */
+[data-anime-theme][data-transparent] .ant-table {
+    background: rgba(255, 255, 255, 0.3) !important;
+    backdrop-filter: blur(6px) !important;
+    -webkit-backdrop-filter: blur(6px) !important;
+}
+
+[data-anime-theme][data-transparent][data-theme="dark"] .ant-table {
+    background: rgba(30, 30, 50, 0.3) !important;
+}
+
+/* 二次元主题 + 透明模式下弹窗样式 */
+[data-anime-theme][data-transparent] .ant-modal-content {
+    background: rgba(255, 255, 255, 0.6) !important;
+    backdrop-filter: blur(12px) !important;
+    -webkit-backdrop-filter: blur(12px) !important;
+    border: 1px solid rgba(255, 255, 255, 0.25) !important;
+}
+
+[data-anime-theme][data-transparent][data-theme="dark"] .ant-modal-content {
+    background: rgba(30, 30, 50, 0.6) !important;
+    border: 1px solid rgba(255, 255, 255, 0.08) !important;
+}
+
+/* 二次元主题下使用主题色作为强调色 */
+[data-anime-theme] .ant-btn-primary {
+    background: var(--anime-primary, #6968fd) !important;
+    border-color: var(--anime-primary, #6968fd) !important;
+    box-shadow: 0 4px 12px color-mix(in srgb, var(--anime-primary, #6968fd) 40%, transparent) !important;
+}
+
+[data-anime-theme] .ant-btn-primary:hover {
+    background: var(--anime-accent, #8b8aff) !important;
+    border-color: var(--anime-accent, #8b8aff) !important;
+}
+
+/* 二次元主题下选中菜单项使用主题色 */
+[data-anime-theme] .main-menu .ant-menu-item-selected {
+    background: color-mix(in srgb, var(--anime-primary, #6968fd) 15%, transparent) !important;
+}
+
+[data-anime-theme] .main-menu .ant-menu-item-selected::after {
+    border-color: var(--anime-primary, #6968fd) !important;
+}
+
+/* 二次元主题下滚动条美化 */
+[data-anime-theme] ::-webkit-scrollbar-thumb {
+    background: color-mix(in srgb, var(--anime-primary, #6968fd) 50%, transparent) !important;
+    border-radius: 4px;
+}
+
+[data-anime-theme] ::-webkit-scrollbar-thumb:hover {
+    background: var(--anime-primary, #6968fd) !important;
+}
+
+/* 二次元主题 + 透明模式下的输入框样式 */
+[data-anime-theme][data-transparent] .ant-input,
+[data-anime-theme][data-transparent] .ant-select-selector,
+[data-anime-theme][data-transparent] .ant-input-number {
+    backdrop-filter: blur(4px) !important;
+    -webkit-backdrop-filter: blur(4px) !important;
+}
+
+/* 二次元主题下的标签页样式 */
+[data-anime-theme] .ant-tabs-tab-active .ant-tabs-tab-btn {
+    color: var(--anime-primary, #6968fd) !important;
+}
+
+[data-anime-theme] .ant-tabs-ink-bar {
+    background: var(--anime-primary, #6968fd) !important;
+}
+
+/* 二次元主题下的进度条样式 */
+[data-anime-theme] .ant-progress-bg {
+    background: linear-gradient(90deg, var(--anime-primary, #6968fd), var(--anime-accent, #8b8aff)) !important;
+}
+
+/* 二次元主题下的徽标样式 */
+[data-anime-theme] .ant-badge-count {
+    background: var(--anime-primary, #6968fd) !important;
+    box-shadow: 0 2px 8px color-mix(in srgb, var(--anime-primary, #6968fd) 40%, transparent) !important;
+}
+
+/* 移动端适配 */
+@media (max-width: 768px) {
+    [data-wallpaper] .main-content {
+        backdrop-filter: none;
+        -webkit-backdrop-filter: none;
+    }
+
+    [data-wallpaper][data-anime-blur] .main-content {
+        backdrop-filter: blur(6px);
+        -webkit-backdrop-filter: blur(6px);
+    }
+
+    [data-wallpaper][data-anime-blur][data-theme="light"] .main-content {
+        background: rgba(255, 255, 255, 0.45) !important;
+    }
+
+    [data-wallpaper][data-anime-blur][data-theme="dark"] .main-content {
+        background: rgba(15, 17, 21, 0.3) !important;
+    }
+
+    [data-anime-theme][data-transparent] .ant-card {
+        backdrop-filter: blur(6px) !important;
+        -webkit-backdrop-filter: blur(6px) !important;
+    }
+}
+
+/* 二次元主题下的动画效果 */
+@keyframes anime-theme-glow {
+    0%, 100% {
+        box-shadow: 0 0 20px color-mix(in srgb, var(--anime-primary, #6968fd) 20%, transparent);
+    }
+    50% {
+        box-shadow: 0 0 40px color-mix(in srgb, var(--anime-primary, #6968fd) 40%, transparent);
+    }
+}
+
+[data-anime-theme][data-transparent] .ant-card:focus-within {
+    animation: anime-theme-glow 2s ease-in-out infinite;
+}
+
+/* 性能友好退回 - 二次元主题 + 透明模式 */
+@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+    [data-anime-theme][data-transparent] .ant-card {
+        background: rgba(255, 255, 255, 0.7) !important;
+    }
+    [data-anime-theme][data-transparent][data-theme="dark"] .ant-card {
+        background: rgba(30, 30, 50, 0.7) !important;
+    }
+    [data-wallpaper] .main-sider {
+        background: rgba(15, 17, 21, 0.8) !important;
     }
 }

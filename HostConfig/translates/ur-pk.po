@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: OpenIDCS 1.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-02-10 01:27\n"
-"PO-Revision-Date: 2026-02-10 01:27\n"
+"POT-Creation-Date: 2026-04-28 16:38\n"
+"PO-Revision-Date: 2026-04-28 16:38\n"
 "Last-Translator: Auto Generated\n"
 "Language-Team: Urdu\n"
 "Language: ur\n"
@@ -15,11 +15,1262 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-msgid "访问Token"
-msgstr "رسائی ٹوکن"
+msgid "保存"
+msgstr "بچت کریں"
 
-msgid "VNC控制台"
-msgstr "VNC کنسول"
+msgid "保持"
+msgstr "رکھیں"
+
+msgid "保留"
+msgstr "ریزرو"
+
+msgid "修改"
+msgstr "نظر ثانی کریں"
+
+msgid "修正"
+msgstr "اصلاح"
+
+msgid "停止"
+msgstr "بند کرو"
+
+msgid "允许"
+msgstr "اجازت دیں"
+
+msgid "共享"
+msgstr "مشترکہ"
+
+msgid "关机"
+msgstr "بند کرو"
+
+msgid "关闭"
+msgstr "بندش"
+
+msgid "写入"
+msgstr "لکھنا"
+
+msgid "分享"
+msgstr "بانٹیں"
+
+msgid "分割"
+msgstr "طبقہ"
+
+msgid "分离"
+msgstr "علیحدگی"
+
+msgid "分配"
+msgstr "تقسیم کریں"
+
+msgid "切换"
+msgstr "سوئچ"
+
+msgid "创建"
+msgstr "تخلیق کریں"
+
+msgid "删除"
+msgstr "حذف کریں"
+
+msgid "刷新"
+msgstr "ریفریش"
+
+msgid "勾选"
+msgstr "چیک کریں"
+
+msgid "卸载"
+msgstr "انسٹال"
+
+msgid "发送"
+msgstr "بھیجیں"
+
+msgid "取消"
+msgstr "منسوخ کریں"
+
+msgid "变换"
+msgstr "تبدیل"
+
+msgid "变更"
+msgstr "تبدیل کریں"
+
+msgid "合并"
+msgstr "ضم"
+
+msgid "同意"
+msgstr "متفق ہوں"
+
+msgid "启动"
+msgstr "شروع کریں"
+
+msgid "启用"
+msgstr "قابل بنائیں"
+
+msgid "复制"
+msgstr "کاپی"
+
+msgid "导入"
+msgstr "درآمد"
+
+msgid "导出"
+msgstr "برآمد"
+
+msgid "展开"
+msgstr "پھیلائیں۔"
+
+msgid "强制"
+msgstr "زبردستی"
+
+msgid "恢复"
+msgstr "بازیافت"
+
+msgid "成为"
+msgstr "بنیں"
+
+msgid "打印"
+msgstr "پرنٹ"
+
+msgid "打开"
+msgstr "کھلا"
+
+msgid "执行"
+msgstr "نافذ کریں"
+
+msgid "扫描"
+msgstr "اسکیننگ"
+
+msgid "折叠"
+msgstr "فولڈ"
+
+msgid "拒绝"
+msgstr "مسترد"
+
+msgid "拖拽"
+msgstr "گھسیٹیں"
+
+msgid "挂载"
+msgstr "پہاڑ"
+
+msgid "指定"
+msgstr "وضاحت کریں"
+
+msgid "授权"
+msgstr "اجازت دیں"
+
+msgid "排序"
+msgstr "ترتیب دیں"
+
+msgid "接受"
+msgstr "قبول کریں"
+
+msgid "提交"
+msgstr "پیش کریں"
+
+msgid "提取"
+msgstr "نکالنے"
+
+msgid "搜索"
+msgstr "تلاش"
+
+msgid "撤销"
+msgstr "منسوخ کریں"
+
+msgid "支持"
+msgstr "تائید"
+
+msgid "收集"
+msgstr "جمع کریں"
+
+msgid "断开"
+msgstr "منقطع"
+
+msgid "暂停"
+msgstr "توقف"
+
+msgid "更新"
+msgstr "تجدید"
+
+msgid "构建"
+msgstr "تعمیر"
+
+msgid "构造"
+msgstr "ساخت"
+
+msgid "查找"
+msgstr "تلاش کریں"
+
+msgid "查收"
+msgstr "چیک کریں"
+
+msgid "查看"
+msgstr "چیک کریں"
+
+msgid "格式化"
+msgstr "شکل"
+
+msgid "检查"
+msgstr "معائنہ کریں"
+
+msgid "检测"
+msgstr "پتہ لگانا"
+
+msgid "注册"
+msgstr "رجسٹر کریں"
+
+msgid "添加"
+msgstr "شامل کریں"
+
+msgid "清空"
+msgstr "صاف"
+
+msgid "清除"
+msgstr "صاف"
+
+msgid "渲染"
+msgstr "رینڈرنگ"
+
+msgid "点击"
+msgstr "کلک کریں"
+
+msgid "生成"
+msgstr "پیدا کریں"
+
+msgid "生效"
+msgstr "اثر ڈالیں"
+
+msgid "用尽"
+msgstr "تھکا ہوا"
+
+msgid "登出"
+msgstr "سائن آؤٹ"
+
+msgid "登录"
+msgstr "لاگ ان"
+
+msgid "监听"
+msgstr "مانیٹر"
+
+msgid "监控"
+msgstr "مانیٹر"
+
+msgid "看到"
+msgstr "دیکھو"
+
+msgid "确保"
+msgstr "یقینی بنائیں"
+
+msgid "确认"
+msgstr "تصدیق کریں"
+
+msgid "禁止"
+msgstr "منع کرنا"
+
+msgid "禁用"
+msgstr "غیر فعال"
+
+msgid "移交"
+msgstr "منتقلی"
+
+msgid "移除"
+msgstr "ہٹا دیں"
+
+msgid "筛选"
+msgstr "فلٹر"
+
+msgid "简化"
+msgstr "آسان بنائیں"
+
+msgid "编辑"
+msgstr "ترمیم کریں"
+
+msgid "联系"
+msgstr "جڑیں"
+
+msgid "获取"
+msgstr "حاصل کریں"
+
+msgid "表示"
+msgstr "ایکسپریس"
+
+msgid "解析"
+msgstr "پارس"
+
+msgid "触发"
+msgstr "ٹرگر"
+
+msgid "警告"
+msgstr "انتباہ"
+
+msgid "读取"
+msgstr "پڑھیں"
+
+msgid "调用"
+msgstr "کال کریں"
+
+msgid "调试"
+msgstr "ڈیبگ"
+
+msgid "跟踪"
+msgstr "ٹریک"
+
+msgid "跳转"
+msgstr "چھلانگ"
+
+msgid "跳过"
+msgstr "چھلانگ لگائیں"
+
+msgid "转换"
+msgstr "تبدیل"
+
+msgid "转移"
+msgstr "منتقلی"
+
+msgid "转让"
+msgstr "منتقلی"
+
+msgid "过滤"
+msgstr "فلٹر"
+
+msgid "返回"
+msgstr "واپس"
+
+msgid "还原"
+msgstr "کمی"
+
+msgid "进行"
+msgstr "طرز عمل"
+
+msgid "连接"
+msgstr "جڑیں"
+
+msgid "选中"
+msgstr "منتخب"
+
+msgid "选择"
+msgstr "منتخب کریں"
+
+msgid "递归"
+msgstr "تکرار"
+
+msgid "通知"
+msgstr "مطلع کریں"
+
+msgid "遍历"
+msgstr "traverse"
+
+msgid "避免"
+msgstr "گریز کریں"
+
+msgid "重做"
+msgstr "دوبارہ کریں۔"
+
+msgid "重启"
+msgstr "دوبارہ شروع کریں"
+
+msgid "重置"
+msgstr "ری سیٹ کریں"
+
+msgid "重装"
+msgstr "دوبارہ انسٹال کریں"
+
+msgid "验证"
+msgstr "تصدیق کریں"
+
+msgid "一致性"
+msgstr "مستقل مزاجی"
+
+msgid "主机"
+msgstr "میزبان"
+
+msgid "主题"
+msgstr "تھیم"
+
+msgid "事件"
+msgstr "واقعہ"
+
+msgid "交互"
+msgstr "بات چیت"
+
+msgid "代理"
+msgstr "اداکاری"
+
+msgid "代码"
+msgstr "کوڈ"
+
+msgid "令牌"
+msgstr "ٹوکن"
+
+msgid "仪表盘"
+msgstr "ڈیش بورڈ"
+
+msgid "任务"
+msgstr "کام"
+
+msgid "使用率"
+msgstr "استعمال کی شرح"
+
+msgid "侧边"
+msgstr "طرف"
+
+msgid "信息"
+msgstr "معلومات"
+
+msgid "假设"
+msgstr "مفروضہ"
+
+msgid "元素"
+msgstr "عنصر"
+
+msgid "关系"
+msgstr "رشتہ"
+
+msgid "内存"
+msgstr "میموری"
+
+msgid "内容"
+msgstr "مواد"
+
+msgid "函数"
+msgstr "تقریب"
+
+msgid "利用率"
+msgstr "استعمال"
+
+msgid "别名"
+msgstr "عرف"
+
+msgid "剪贴板"
+msgstr "کلپ بورڈ"
+
+msgid "功耗"
+msgstr "بجلی کی کھپت"
+
+msgid "功能"
+msgstr "تقریب"
+
+msgid "动作"
+msgstr "ایکشن"
+
+msgid "匹配"
+msgstr "میچ"
+
+msgid "区域"
+msgstr "رقبہ"
+
+msgid "协议"
+msgstr "پروٹوکول"
+
+msgid "单位"
+msgstr "یونٹ"
+
+msgid "参数"
+msgstr "پیرامیٹر"
+
+msgid "变量"
+msgstr "متغیر"
+
+msgid "可用性"
+msgstr "دستیابی"
+
+msgid "可靠性"
+msgstr "وشوسنییتا"
+
+msgid "名称"
+msgstr "نام"
+
+msgid "命令"
+msgstr "آرڈر"
+
+msgid "图标"
+msgstr "آئیکن"
+
+msgid "地址"
+msgstr "پتہ"
+
+msgid "域名"
+msgstr "ڈومین کا نام"
+
+msgid "堆栈"
+msgstr "اسٹیک"
+
+msgid "备份"
+msgstr "بیک اپ"
+
+msgid "备注"
+msgstr "تبصرہ"
+
+msgid "复杂度"
+msgstr "پیچیدگی"
+
+msgid "存储"
+msgstr "اسٹوریج"
+
+msgid "安全性"
+msgstr "سیکورٹی"
+
+msgid "定义"
+msgstr "تعریف"
+
+msgid "实例"
+msgstr "مثال"
+
+msgid "容器"
+msgstr "کنٹینر"
+
+msgid "密码"
+msgstr "پاس ورڈ"
+
+msgid "对话框"
+msgstr "ڈائیلاگ باکس"
+
+msgid "对象"
+msgstr "اعتراض"
+
+msgid "导航"
+msgstr "نیویگیشن"
+
+msgid "属性"
+msgstr "جائیداد"
+
+msgid "布局"
+msgstr "لے آؤٹ"
+
+msgid "带宽"
+msgstr "بینڈوتھ"
+
+msgid "平台"
+msgstr "پلیٹ فارم"
+
+msgid "应用"
+msgstr "درخواست"
+
+msgid "引擎"
+msgstr "انجن"
+
+msgid "弹窗"
+msgstr "پاپ اپ ونڈو"
+
+msgid "强度"
+msgstr "طاقت"
+
+msgid "快照"
+msgstr "سنیپ شاٹ"
+
+msgid "性能"
+msgstr "کارکردگی"
+
+msgid "截图"
+msgstr "اسکرین شاٹ"
+
+msgid "所有权"
+msgstr "ملکیت"
+
+msgid "所有者"
+msgstr "مالک"
+
+msgid "报告"
+msgstr "رپورٹ"
+
+msgid "拦截器"
+msgstr "انٹرسیپٹر"
+
+msgid "指令"
+msgstr "ہدایت"
+
+msgid "按钮"
+msgstr "بٹن"
+
+msgid "接口"
+msgstr "انٹرفیس"
+
+msgid "控制台"
+msgstr "کنسول"
+
+msgid "描述"
+msgstr "بیان کریں"
+
+msgid "插件"
+msgstr "پلگ ان"
+
+msgid "效率"
+msgstr "کارکردگی"
+
+msgid "数据"
+msgstr "ڈیٹا"
+
+msgid "数组"
+msgstr "سرنی"
+
+msgid "文件"
+msgstr "دستاویز"
+
+msgid "文字"
+msgstr "لفظ"
+
+msgid "文本"
+msgstr "متن"
+
+msgid "方式"
+msgstr "طریقہ"
+
+msgid "方法"
+msgstr "طریقہ"
+
+msgid "日志"
+msgstr "لاگ"
+
+msgid "映射"
+msgstr "نقشہ سازی"
+
+msgid "显卡"
+msgstr "گرافکس کارڈ"
+
+msgid "显存"
+msgstr "ویڈیو میموری"
+
+msgid "有效性"
+msgstr "تاثیر"
+
+msgid "服务"
+msgstr "خدمت"
+
+msgid "服务器"
+msgstr "سرور"
+
+msgid "机器"
+msgstr "مشین"
+
+msgid "权限"
+msgstr "اجازت"
+
+msgid "条件"
+msgstr "حالت"
+
+msgid "标签"
+msgstr "لیبل"
+
+msgid "标题"
+msgstr "عنوان"
+
+msgid "样式"
+msgstr "انداز"
+
+msgid "核心"
+msgstr "بنیادی"
+
+msgid "格式"
+msgstr "شکل"
+
+msgid "桌面"
+msgstr "ڈیسک ٹاپ"
+
+msgid "概览"
+msgstr "جائزہ"
+
+msgid "模块"
+msgstr "ماڈیول"
+
+msgid "模式"
+msgstr "ماڈل"
+
+msgid "模板"
+msgstr "ٹیمپلیٹ"
+
+msgid "正文"
+msgstr "متن"
+
+msgid "注释"
+msgstr "تبصرہ"
+
+msgid "流量"
+msgstr "بہاؤ"
+
+msgid "消息"
+msgstr "معلومات"
+
+msgid "温度"
+msgstr "درجہ حرارت"
+
+msgid "版本"
+msgstr "ورژن"
+
+msgid "状态"
+msgstr "ریاست"
+
+msgid "用户"
+msgstr "صارف"
+
+msgid "用途"
+msgstr "استعمال کریں"
+
+msgid "用量"
+msgstr "خوراک"
+
+msgid "电源"
+msgstr "بجلی کی فراہمی"
+
+msgid "目录"
+msgstr "مندرجات کا جدول"
+
+msgid "硬盘"
+msgstr "ہارڈ ڈسک"
+
+msgid "磁盘"
+msgstr "ڈسک"
+
+msgid "程序"
+msgstr "پروگرام"
+
+msgid "稳定性"
+msgstr "استحکام"
+
+msgid "端口"
+msgstr "بندرگاہ"
+
+msgid "策略"
+msgstr "حکمت عملی"
+
+msgid "管理员"
+msgstr "ایڈمنسٹریٹر"
+
+msgid "类型"
+msgstr "قسم"
+
+msgid "精度"
+msgstr "درستگی"
+
+msgid "系统"
+msgstr "سسٹم"
+
+msgid "约束"
+msgstr "رکاوٹ"
+
+msgid "级别"
+msgstr "سطح"
+
+msgid "线程"
+msgstr "دھاگہ"
+
+msgid "组件"
+msgstr "اجزاء"
+
+msgid "结果"
+msgstr "نتیجہ"
+
+msgid "统计"
+msgstr "اعداد و شمار"
+
+msgid "网关"
+msgstr "گیٹ وے"
+
+msgid "网卡"
+msgstr "نیٹ ورک کارڈ"
+
+msgid "网桥"
+msgstr "پل"
+
+msgid "网络"
+msgstr "نیٹ ورک"
+
+msgid "网网"
+msgstr "نیٹ نیٹ"
+
+msgid "脚本"
+msgstr "سکرپٹ"
+
+msgid "节点"
+msgstr "نوڈ"
+
+msgid "范围"
+msgstr "دائرہ کار"
+
+msgid "菜单"
+msgstr "مینو"
+
+msgid "虚拟机"
+msgstr "ورچوئل مشین"
+
+msgid "表单"
+msgstr "فارم"
+
+msgid "要求"
+msgstr "ضرورت ہے"
+
+msgid "规则"
+msgstr "حکمرانی"
+
+msgid "视图"
+msgstr "دیکھیں"
+
+msgid "角色"
+msgstr "کردار"
+
+msgid "记录"
+msgstr "ریکارڈ"
+
+msgid "设备"
+msgstr "سامان"
+
+msgid "设置"
+msgstr "سیٹ اپ"
+
+msgid "详情"
+msgstr "تفصیلات"
+
+msgid "说明"
+msgstr "واضح کریں"
+
+msgid "账号"
+msgstr "اکاؤنٹ"
+
+msgid "账户"
+msgstr "اکاؤنٹ"
+
+msgid "资源"
+msgstr "وسائل"
+
+msgid "路径"
+msgstr "راستہ"
+
+msgid "路由"
+msgstr "روٹنگ"
+
+msgid "过滤器"
+msgstr "فلٹر"
+
+msgid "进度条"
+msgstr "پروگریس بار"
+
+msgid "进程"
+msgstr "عمل"
+
+msgid "选择器"
+msgstr "سلیکٹر"
+
+msgid "选项"
+msgstr "اختیارات"
+
+msgid "通道"
+msgstr "گلیارے"
+
+msgid "速度"
+msgstr "رفتار"
+
+msgid "邮件"
+msgstr "میل"
+
+msgid "邮箱"
+msgstr "میل"
+
+msgid "配置"
+msgstr "ترتیب"
+
+msgid "配额"
+msgstr "کوٹہ"
+
+msgid "镜像"
+msgstr "آئینہ"
+
+msgid "闭包"
+msgstr "بندش"
+
+msgid "问题"
+msgstr "سوال"
+
+msgid "限制"
+msgstr "حد"
+
+msgid "页面"
+msgstr "صفحہ"
+
+msgid "顶部"
+msgstr "اوپر"
+
+msgid "一致"
+msgstr "مستقل"
+
+msgid "上行"
+msgstr "اوپر کی طرف"
+
+msgid "下行"
+msgstr "نیچے کی طرف"
+
+msgid "不会"
+msgstr "نہیں کریں گے"
+
+msgid "不再"
+msgstr "اب نہیں"
+
+msgid "不可"
+msgstr "نہیں"
+
+msgid "不稳定"
+msgstr "غیر مستحکم"
+
+msgid "不能"
+msgstr "نہیں کر سکتے"
+
+msgid "不足"
+msgstr "ناکافی"
+
+msgid "专用"
+msgstr "وقف"
+
+msgid "丢失"
+msgstr "کھو گیا"
+
+msgid "中"
+msgstr "درمیانی"
+
+msgid "中等"
+msgstr "میڈیم"
+
+msgid "临时"
+msgstr "عارضی"
+
+msgid "为空"
+msgstr "خالی ہے"
+
+msgid "主要"
+msgstr "اہم"
+
+msgid "二次"
+msgstr "ثانوی"
+
+msgid "优先"
+msgstr "ترجیح"
+
+msgid "低"
+msgstr "کم"
+
+msgid "全局"
+msgstr "مجموعی طور پر صورتحال"
+
+msgid "全部"
+msgstr "سب"
+
+msgid "公共"
+msgstr "عوامی"
+
+msgid "公网"
+msgstr "عوامی نیٹ ورک"
+
+msgid "兼容"
+msgstr "مطابقت پذیر"
+
+msgid "内网"
+msgstr "انٹرانیٹ"
+
+msgid "内部"
+msgstr "اندرونی"
+
+msgid "再次"
+msgstr "ایک بار پھر"
+
+msgid "出错"
+msgstr "غلطی"
+
+msgid "初始"
+msgstr "ابتدائی"
+
+msgid "动态"
+msgstr "متحرک"
+
+msgid "单个"
+msgstr "سنگل"
+
+msgid "危险"
+msgstr "خطرہ"
+
+msgid "原始"
+msgstr "اصل"
+
+msgid "反向"
+msgstr "معکوس"
+
+msgid "受控"
+msgstr "کنٹرول"
+
+msgid "只能"
+msgstr "صرف کر سکتے ہیں"
+
+msgid "可以"
+msgstr "کر سکتے ہیں"
+
+msgid "可用"
+msgstr "دستیاب ہے"
+
+msgid "可能"
+msgstr "ممکن ہے"
+
+msgid "可逆"
+msgstr "الٹ"
+
+msgid "可选"
+msgstr "اختیاری"
+
+msgid "各种"
+msgstr "مختلف"
+
+msgid "唯一"
+msgstr "صرف"
+
+msgid "在线"
+msgstr "آن لائن"
+
+msgid "基本"
+msgstr "بنیادی"
+
+msgid "复杂"
+msgstr "پیچیدہ"
+
+msgid "外网"
+msgstr "Extranet"
+
+msgid "外部"
+msgstr "بیرونی"
+
+msgid "多"
+msgstr "بہت سے"
+
+msgid "多个"
+msgstr "ایک سے زیادہ"
+
+msgid "大"
+msgstr "بڑا"
+
+msgid "失效"
+msgstr "غلط"
+
+msgid "失败"
+msgstr "ناکام"
+
+msgid "安全"
+msgstr "حفاظت"
+
+msgid "完整"
+msgstr "پورا"
+
+msgid "实际"
+msgstr "اصل"
+
+msgid "小"
+msgstr "چھوٹا"
+
+msgid "少"
+msgstr "چند"
+
+msgid "局部"
+msgstr "مقامی"
+
+msgid "已用"
+msgstr "استعمال کیا جاتا ہے"
+
+msgid "异常"
+msgstr "غیر معمولی"
+
+msgid "强关"
+msgstr "مضبوط پاس"
+
+msgid "当前"
+msgstr "موجودہ"
+
+msgid "必选"
+msgstr "درکار ہے۔"
+
+msgid "快速"
+msgstr "تیز"
+
+msgid "成功"
+msgstr "کامیابی"
+
+msgid "手动"
+msgstr "دستی"
+
+msgid "整个"
+msgstr "پورا"
+
+msgid "新"
+msgstr "نیا"
+
+msgid "新增"
+msgstr "نیا"
+
+msgid "无描述"
+msgstr "کوئی تفصیل نہیں"
+
+msgid "无效"
+msgstr "غلط"
+
+msgid "无限制"
+msgstr "لامحدود"
+
+msgid "旧"
+msgstr "بوڑھا"
+
+msgid "最新"
+msgstr "تازہ ترین"
+
+msgid "最终"
+msgstr "فائنل"
+
+msgid "有效"
+msgstr "موثر"
+
+msgid "未知"
+msgstr "نامعلوم"
+
+msgid "本地"
+msgstr "مقامی"
+
+msgid "次要"
+msgstr "ثانوی"
+
+msgid "正常"
+msgstr "عام"
+
+msgid "正确"
+msgstr "درست"
+
+msgid "永久"
+msgstr "مستقل"
+
+msgid "活跃"
+msgstr "فعال"
+
+msgid "浅"
+msgstr "اتلی"
+
+msgid "深"
+msgstr "گہرا"
+
+msgid "物理"
+msgstr "طبیعیات"
+
+msgid "独立"
+msgstr "آزاد"
+
+msgid "现有"
+msgstr "موجودہ"
+
+msgid "直接"
+msgstr "ہدایت"
+
+msgid "相关"
+msgstr "متعلقہ"
+
+msgid "短"
+msgstr "مختصر"
+
+msgid "离线"
+msgstr "آف لائن"
+
+msgid "私有"
+msgstr "نجی"
+
+msgid "稳定"
+msgstr "مستحکم کرنا"
+
+msgid "空闲"
+msgstr "بیکار"
+
+msgid "简单"
+msgstr "سادہ"
+
+msgid "精确"
+msgstr "درست"
+
+msgid "紧急"
+msgstr "فوری"
+
+msgid "繁忙"
+msgstr "مصروف"
+
+msgid "缓慢"
+msgstr "سست"
+
+msgid "自动"
+msgstr "خودکار"
+
+msgid "自定义"
+msgstr "حسب ضرورت بنائیں"
+
+msgid "虚拟"
+msgstr "مجازی"
+
+msgid "超时"
+msgstr "وقت ختم"
+
+msgid "足够"
+msgstr "کافی"
+
+msgid "过期"
+msgstr "میعاد ختم"
+
+msgid "近似"
+msgstr "لگ بھگ"
+
+msgid "远程"
+msgstr "دور دراز"
+
+msgid "通用"
+msgstr "عالمگیر"
+
+msgid "逻辑"
+msgstr "منطق"
+
+msgid "部分"
+msgstr "حصہ"
+
+msgid "重要"
+msgstr "اہم"
+
+msgid "错误"
+msgstr "غلطی"
+
+msgid "长"
+msgstr "طویل"
+
+msgid "静态"
+msgstr "جامد"
+
+msgid "高"
+msgstr "اعلی"
+
+msgid "高级"
+msgstr "اعلی درجے کی"
+
+msgid "默认"
+msgstr "پہلے سے طے شدہ"
+
+msgid "API"
+msgstr "API"
+
+msgid "CPU"
+msgstr "سی پی یو"
+
+msgid "GPU"
+msgstr "جی پی یو"
+
+msgid "HTTP"
+msgstr "HTTP"
+
+msgid "IP"
+msgstr "آئی پی"
+
+msgid "ISO"
+msgstr "آئی ایس او"
+
+msgid "JSON"
+msgstr "JSON"
+
+msgid "NAT"
+msgstr "NAT"
+
+msgid "Token"
+msgstr "ٹوکن"
+
+msgid "VNC"
+msgstr "VNC"
+
+msgid "Web"
+msgstr "ویب"
 
 msgid "CPU核心"
 msgstr "سی پی یو کور"
@@ -27,56 +1278,44 @@ msgstr "سی پی یو کور"
 msgid "GPU显存"
 msgstr "GPU میموری"
 
-msgid "ISO镜像"
-msgstr "آئی ایس او امیج"
-
-msgid "NAT端口"
-msgstr "نیٹ پورٹ"
-
-msgid "Web代理"
-msgstr "ویب پراکسی"
-
-msgid "创建虚拟机"
-msgstr "ایک ورچوئل مشین بنائیں"
-
-msgid "删除虚拟机"
-msgstr "ورچوئل مشین کو حذف کریں"
-
-msgid "卸载ISO"
-msgstr "ISO کو ان انسٹال کریں"
-
-msgid "卸载数据盘"
-msgstr "ڈیٹا ڈسک کو غیر ماؤنٹ کریں"
-
-msgid "扫描虚拟机"
-msgstr "ورچوئل مشینوں کو اسکین کریں"
-
-msgid "挂载ISO"
-msgstr "ماؤنٹ آئی ایس او"
-
-msgid "挂载数据盘"
-msgstr "ماؤنٹ ڈیٹا ڈسک"
-
-msgid "编辑虚拟机"
-msgstr "ورچوئل مشین میں ترمیم کریں"
-
-msgid "虚拟机详情"
-msgstr "ورچوئل مشین کی تفصیلات"
-
 msgid "IP地址"
 msgstr "IP ایڈریس"
 
 msgid "IP配额"
 msgstr "آئی پی کوٹہ"
 
+msgid "ISO镜像"
+msgstr "آئی ایس او امیج"
+
+msgid "NAT端口"
+msgstr "نیٹ پورٹ"
+
+msgid "VNC控制台"
+msgstr "VNC کنسول"
+
+msgid "Web代理"
+msgstr "ویب پراکسی"
+
+msgid "一键远程"
+msgstr "ایک کلک ریموٹ"
+
+msgid "上传带宽"
+msgstr "بینڈوڈتھ اپ لوڈ کریں"
+
 msgid "上行带宽"
 msgstr "اپ اسٹریم بینڈوتھ"
 
-msgid "下拉菜单"
-msgstr "مینو ڈراپ کریں"
+msgid "下划线"
+msgstr "خفیہ لائن"
 
 msgid "下行带宽"
 msgstr "ڈاؤن لنک بینڈوتھ"
+
+msgid "下载带宽"
+msgstr "بینڈوتھ ڈاؤن لوڈ کریں"
+
+msgid "个主机"
+msgstr "میزبان"
 
 msgid "个人信息"
 msgstr "ذاتی معلومات"
@@ -87,17 +1326,23 @@ msgstr "ذاتی ترتیبات"
 msgid "个人资料"
 msgstr "ذاتی معلومات"
 
+msgid "个字符"
+msgstr "کردار"
+
 msgid "为虚拟机"
 msgstr "ورچوئل مشین کے لئے"
 
-msgid "主所有者"
-msgstr "پرائمری مالک"
+msgid "主机名"
+msgstr "میزبان نام"
 
 msgid "主机名称"
 msgstr "میزبان نام"
 
 msgid "主机总数"
 msgstr "میزبانوں کی کل تعداد"
+
+msgid "主机数"
+msgstr "میزبانوں کی تعداد"
 
 msgid "主机数量"
 msgstr "میزبانوں کی تعداد"
@@ -108,9 +1353,6 @@ msgstr "میزبان جائزہ"
 msgid "主机筛选"
 msgstr "میزبان فلٹرنگ"
 
-msgid "主机管理"
-msgstr "میزبان انتظامیہ"
-
 msgid "主机类型"
 msgstr "میزبان کی قسم"
 
@@ -119,6 +1361,9 @@ msgstr "میزبان تفصیلات"
 
 msgid "主要接口"
 msgstr "مین انٹرفیس"
+
+msgid "从文件"
+msgstr "فائل سے"
 
 msgid "任务列表"
 msgstr "ٹاسک لسٹ"
@@ -135,20 +1380,20 @@ msgstr "ٹاسک کی قسم"
 msgid "任务详情"
 msgstr "مشن کی تفصیلات"
 
+msgid "使用者"
+msgstr "صارف"
+
+msgid "供选择"
+msgstr "انتخاب کے لئے"
+
+msgid "保存中"
+msgstr "بچت"
+
 msgid "保存失败"
 msgstr "بچائیں ناکام"
 
 msgid "保存确认"
 msgstr "تصدیق کو بچائیں"
-
-msgid "保存设置"
-msgstr "ترتیبات کو بچائیں"
-
-msgid "保存配置"
-msgstr "ترتیب کو بچائیں"
-
-msgid "保持一致"
-msgstr "مستقل رہیں"
 
 msgid "修改密码"
 msgstr "پاس ورڈ تبدیل کریں"
@@ -156,20 +1401,14 @@ msgstr "پاس ورڈ تبدیل کریں"
 msgid "修改邮箱"
 msgstr "ای میل میں ترمیم کریں"
 
-msgid "停止刷新"
-msgstr "تازگی بند کرو"
+msgid "停止中"
+msgstr "رکنا"
 
 msgid "光盘镜像"
 msgstr "ڈسک امیج"
 
 msgid "全部主机"
 msgstr "تمام میزبان"
-
-msgid "全部状态"
-msgstr "تمام حیثیت"
-
-msgid "全部级别"
-msgstr "تمام سطحوں"
 
 msgid "公网IP"
 msgstr "عوامی IP"
@@ -179,6 +1418,9 @@ msgstr "پبلک نیٹ ورک پورٹ"
 
 msgid "公网网桥"
 msgstr "پبلک نیٹ ورک برج"
+
+msgid "关机中"
+msgstr "بند کرنا"
 
 msgid "内网IP"
 msgstr "انٹرانیٹ آئی پی"
@@ -195,9 +1437,6 @@ msgstr "انٹرانیٹ برج"
 msgid "分配主机"
 msgstr "میزبان تفویض کریں"
 
-msgid "创建备份"
-msgstr "بیک اپ بنائیں"
-
 msgid "创建失败"
 msgstr "تخلیق ناکام ہوگئی"
 
@@ -210,11 +1449,14 @@ msgstr "تخلیق کا وقت"
 msgid "创建用户"
 msgstr "صارف بنائیں"
 
+msgid "创建虚拟机"
+msgstr "ایک ورچوئل مشین بنائیں"
+
+msgid "初始化"
+msgstr "ابتدا"
+
 msgid "删除主机"
 msgstr "میزبان کو حذف کریں"
-
-msgid "删除代理"
-msgstr "پراکسی کو حذف کریں"
 
 msgid "删除失败"
 msgstr "حذف کرنے میں ناکام رہا"
@@ -231,11 +1473,23 @@ msgstr "صارف کو حذف کریں"
 msgid "删除硬盘"
 msgstr "ہارڈ ڈرائیو کو حذف کریں"
 
+msgid "删除虚拟机"
+msgstr "ورچوئل مشین کو حذف کریں"
+
+msgid "加载中"
+msgstr "لوڈنگ"
+
 msgid "加载失败"
 msgstr "لوڈنگ ناکام ہوگئی"
 
+msgid "卸载ISO"
+msgstr "ISO کو ان انسٹال کریں"
+
 msgid "卸载失败"
 msgstr "ان انسٹال ناکام ہوگیا"
+
+msgid "卸载数据盘"
+msgstr "ڈیٹا ڈسک کو غیر ماؤنٹ کریں"
 
 msgid "反向代理"
 msgstr "ریورس پراکسی"
@@ -243,8 +1497,11 @@ msgstr "ریورس پراکسی"
 msgid "发件邮箱"
 msgstr "ای میل بھیجنا"
 
-msgid "发送域名"
-msgstr "ڈومین کا نام بھیجیں"
+msgid "取决于"
+msgstr "پر منحصر ہے"
+
+msgid "受控端"
+msgstr "کنٹرول اختتام"
 
 msgid "台虚拟机"
 msgstr "ورچوئل مشین"
@@ -258,6 +1515,9 @@ msgstr "بیک اینڈ ایڈریس"
 msgid "后端端口"
 msgstr "بیک اینڈ پورٹ"
 
+msgid "启动中"
+msgstr "شروع کرنا"
+
 msgid "启用失败"
 msgstr "قابل بنانے میں ناکام"
 
@@ -267,8 +1527,8 @@ msgstr "صارف کو فعال کریں"
 msgid "响应错误"
 msgstr "جوابی غلطی"
 
-msgid "基本信息"
-msgstr "بنیادی معلومات"
+msgid "国际化"
+msgstr "عالمگیریت"
 
 msgid "基本配置"
 msgstr "بنیادی ترتیب"
@@ -282,20 +1542,11 @@ msgstr "ہینڈلنگ فنکشن"
 msgid "处理响应"
 msgstr "جواب ہینڈل کریں"
 
-msgid "备份名称"
-msgstr "بیک اپ کا نام"
+msgid "备份中"
+msgstr "بیک اپ"
 
-msgid "备份文件"
-msgstr "بیک اپ فائلیں"
-
-msgid "备份注释"
-msgstr "بیک اپ کے تبصرے"
-
-msgid "备份管理"
-msgstr "بیک اپ مینجمنٹ"
-
-msgid "备份说明"
-msgstr "بیک اپ ہدایات"
+msgid "复制到"
+msgstr "کاپی کریں"
 
 msgid "复制失败"
 msgstr "کاپی ناکام ہوگئی"
@@ -303,11 +1554,23 @@ msgstr "کاپی ناکام ہوگئی"
 msgid "外网端口"
 msgstr "بیرونی نیٹ ورک پورٹ"
 
+msgid "大写字母"
+msgstr "بڑے حروف"
+
 msgid "子网掩码"
 msgstr "سب نیٹ ماسک"
 
 msgid "存储容量"
 msgstr "ذخیرہ کرنے کی گنجائش"
+
+msgid "存储路径"
+msgstr "اسٹوریج کا راستہ"
+
+msgid "安全提示"
+msgstr "حفاظتی نکات"
+
+msgid "安装盘"
+msgstr "تنصیب ڈسک"
 
 msgid "完整数据"
 msgstr "مکمل ڈیٹا"
@@ -321,8 +1584,11 @@ msgstr "مثال کے نام"
 msgid "实例概览"
 msgstr "مثال کے طور پر جائزہ"
 
-msgid "容器管理"
-msgstr "کنٹینر مینجمنٹ"
+msgid "实例管理"
+msgstr "مثال کے طور پر انتظامیہ"
+
+msgid "实例配置"
+msgstr "مثال کے طور پر ترتیب"
 
 msgid "密码强度"
 msgstr "پاس ورڈ کی طاقت"
@@ -330,8 +1596,41 @@ msgstr "پاس ورڈ کی طاقت"
 msgid "小写字母"
 msgstr "چھوٹے حروف"
 
-msgid "开放注册"
-msgstr "کھولیں رجسٹریشن"
+msgid "已保存"
+msgstr "بچایا گیا"
+
+msgid "已停止"
+msgstr "رک گیا"
+
+msgid "已关闭"
+msgstr "بند"
+
+msgid "已删除"
+msgstr "حذف"
+
+msgid "已启用"
+msgstr "فعال"
+
+msgid "已完成"
+msgstr "مکمل"
+
+msgid "已崩溃"
+msgstr "کریش"
+
+msgid "已开启"
+msgstr "پہلے ہی آن کیا گیا ہے"
+
+msgid "已挂载"
+msgstr "سوار"
+
+msgid "已暂停"
+msgstr "معطل"
+
+msgid "已禁用"
+msgstr "غیر فعال"
+
+msgid "已验证"
+msgstr "تصدیق شدہ"
 
 msgid "强制关机"
 msgstr "فورس شٹ ڈاؤن"
@@ -348,8 +1647,17 @@ msgstr "پاس ورڈ کو بھول جاؤ"
 msgid "快速操作"
 msgstr "فوری آپریشن"
 
+msgid "总代理"
+msgstr "جنرل ایجنٹ"
+
 msgid "总代理数"
 msgstr "ایجنٹوں کی کل تعداد"
+
+msgid "总配额"
+msgstr "کل کوٹہ"
+
+msgid "恢复中"
+msgstr "بازیافت"
 
 msgid "恢复失败"
 msgstr "بازیابی ناکام ہوگئی"
@@ -360,20 +1668,32 @@ msgstr "تمام میزبان"
 msgid "所有协议"
 msgstr "تمام معاہدے"
 
-msgid "扫描备份"
-msgstr "اسکین بیک اپ"
+msgid "扩展数据"
+msgstr "توسیعی اعداد و شمار"
+
+msgid "扩展选项"
+msgstr "توسیعی اختیارات"
 
 msgid "扫描失败"
 msgstr "اسکین ناکام ہوگیا"
 
+msgid "扫描虚拟机"
+msgstr "ورچوئل مشینوں کو اسکین کریں"
+
 msgid "找回密码"
 msgstr "پاس ورڈ بازیافت کریں"
+
+msgid "挂载ISO"
+msgstr "ماؤنٹ آئی ایس او"
 
 msgid "挂载名称"
 msgstr "ماؤنٹ نام"
 
 msgid "挂载失败"
 msgstr "ماؤنٹ ناکام ہوگیا"
+
+msgid "挂载数据盘"
+msgstr "ماؤنٹ ڈیٹا ڈسک"
 
 msgid "接口类型"
 msgstr "انٹرفیس کی قسم"
@@ -399,6 +1719,9 @@ msgstr "ای میل وصول کرنا"
 msgid "数十分钟"
 msgstr "دسیوں منٹ"
 
+msgid "数据盘"
+msgstr "ڈیٹا ڈسک"
+
 msgid "数据磁盘"
 msgstr "ڈیٹا ڈسک"
 
@@ -407,6 +1730,15 @@ msgstr "ڈیٹا مینجمنٹ"
 
 msgid "数据结构"
 msgstr "ڈیٹا کا ڈھانچہ"
+
+msgid "文件名"
+msgstr "فائل کا نام"
+
+msgid "新密码"
+msgstr "نیا پاس ورڈ"
+
+msgid "新账号"
+msgstr "نیا اکاؤنٹ"
 
 msgid "日志查看"
 msgstr "لاگ ویو"
@@ -432,11 +1764,11 @@ msgstr "ڈسپلے نمبر"
 msgid "普通用户"
 msgstr "عام صارف"
 
+msgid "暂停中"
+msgstr "رک گیا"
+
 msgid "暂无主机"
 msgstr "ابھی تک کوئی میزبان نہیں ہے"
-
-msgid "暂无备份"
-msgstr "ابھی تک کوئی بیک اپ نہیں ہے"
 
 msgid "更新主机"
 msgstr "میزبان کو اپ ڈیٹ کریں"
@@ -446,6 +1778,9 @@ msgstr "ایجنٹ کو اپ ڈیٹ کریں"
 
 msgid "更新失败"
 msgstr "اپ ڈیٹ ناکام ہوگیا"
+
+msgid "更新成功"
+msgstr "اپ ڈیٹ کامیاب"
 
 msgid "更新用户"
 msgstr "صارف کو اپ ڈیٹ کریں"
@@ -459,6 +1794,15 @@ msgstr "آخری تازہ کاری"
 msgid "最小要求"
 msgstr "کم سے کم تقاضے"
 
+msgid "月流量"
+msgstr "ماہانہ ٹریفک"
+
+msgid "未分配"
+msgstr "مختص نہیں"
+
+msgid "未挂载"
+msgstr "سوار نہیں"
+
 msgid "未知主机"
 msgstr "نامعلوم میزبان"
 
@@ -471,11 +1815,20 @@ msgstr "نامعلوم وقت"
 msgid "未知系统"
 msgstr "نامعلوم نظام"
 
+msgid "未配置"
+msgstr "تشکیل نہیں ہوا"
+
+msgid "未验证"
+msgstr "تصدیق نہیں کی گئی"
+
 msgid "权限不足"
 msgstr "ناکافی اجازتیں"
 
 msgid "权限信息"
 msgstr "اجازت سے متعلق معلومات"
+
+msgid "条记录"
+msgstr "ریکارڈ"
 
 msgid "查看全部"
 msgstr "سب دیکھیں"
@@ -485,6 +1838,12 @@ msgstr "تفصیلات چیک کریں"
 
 msgid "桌面端口"
 msgstr "ڈیسک ٹاپ پورٹ"
+
+msgid "模板数"
+msgstr "ٹیمپلیٹس کی تعداد"
+
+msgid "正在"
+msgstr "ہیں"
 
 msgid "正常运行"
 msgstr "عام آپریشن"
@@ -537,11 +1896,17 @@ msgstr "واضح ڈسپلے"
 msgid "爱快地址"
 msgstr "Aikuai ایڈریس"
 
+msgid "爱快配置"
+msgstr "Aikuai ترتیب"
+
 msgid "特殊字符"
 msgstr "خصوصی حروف"
 
 msgid "用户列表"
 msgstr "صارف کی فہرست"
+
+msgid "用户名"
+msgstr "صارف نام"
 
 msgid "用户权限"
 msgstr "صارف کی اجازت"
@@ -558,6 +1923,9 @@ msgstr "صارف لاگ آؤٹ"
 msgid "用户登录"
 msgstr "صارف لاگ ان"
 
+msgid "用户空间"
+msgstr "صارف کی جگہ"
+
 msgid "用户管理"
 msgstr "صارف کا انتظام"
 
@@ -566,6 +1934,9 @@ msgstr "پاور آپریشن"
 
 msgid "电源管理"
 msgstr "پاور مینجمنٹ"
+
+msgid "登录失败"
+msgstr "لاگ ان ناکام ہو گیا۔"
 
 msgid "硬盘大小"
 msgstr "ہارڈ ڈرائیو کا سائز"
@@ -609,6 +1980,9 @@ msgstr "غیر فعال ناکام"
 msgid "移交失败"
 msgstr "ہینڈ اوور ناکام ہوگیا"
 
+msgid "程序启动路径"
+msgstr "پروگرام اسٹارٹ اپ راہ"
+
 msgid "端口数量"
 msgstr "بندرگاہوں کی تعداد"
 
@@ -623,6 +1997,9 @@ msgstr "پورٹ فارورڈنگ"
 
 msgid "端口配置"
 msgstr "پورٹ کنفیگریشن"
+
+msgid "等待中"
+msgstr "انتظار کرنا"
 
 msgid "管理主机"
 msgstr "مینجمنٹ میزبان"
@@ -642,6 +2019,9 @@ msgstr "سسٹم کا پاس ورڈ"
 msgid "系统日志"
 msgstr "سسٹم لاگ"
 
+msgid "系统映射"
+msgstr "سسٹم میپنگ"
+
 msgid "系统概览"
 msgstr "سسٹم کا جائزہ"
 
@@ -650,6 +2030,12 @@ msgstr "نظام کی حیثیت"
 
 msgid "系统界面"
 msgstr "سسٹم انٹرفیس"
+
+msgid "系统盘"
+msgstr "سسٹم ڈسک"
+
+msgid "系统空间"
+msgstr "سسٹم کی جگہ"
 
 msgid "系统管理"
 msgstr "سسٹم مینجمنٹ"
@@ -669,6 +2055,9 @@ msgstr "اعداد و شمار"
 msgid "编辑主机"
 msgstr "میزبان میں ترمیم کریں"
 
+msgid "编辑虚拟机"
+msgstr "ورچوئل مشین میں ترمیم کریں"
+
 msgid "网关地址"
 msgstr "گیٹ وے ایڈریس"
 
@@ -677,6 +2066,9 @@ msgstr "گیٹ وے کی خرابی"
 
 msgid "网卡信息"
 msgstr "نیٹ ورک کارڈ کی معلومات"
+
+msgid "网卡列表"
+msgstr "نیٹ ورک کارڈ کی فہرست"
 
 msgid "网卡名称"
 msgstr "نیٹ ورک کارڈ کا نام"
@@ -690,11 +2082,17 @@ msgstr "نیٹ ورک کارڈ کی قسم"
 msgid "网卡配置"
 msgstr "نیٹ ورک کارڈ کی تشکیل"
 
+msgid "网络与配额"
+msgstr "نیٹ ورکنگ اور کوٹہ"
+
 msgid "网络带宽"
 msgstr "نیٹ ورک بینڈوتھ"
 
 msgid "网络服务"
 msgstr "نیٹ ورک کی خدمات"
+
+msgid "网络端口"
+msgstr "نیٹ ورک پورٹ"
 
 msgid "网络管理"
 msgstr "نیٹ ورک مینجمنٹ"
@@ -714,6 +2112,9 @@ msgstr "خودکار مختص"
 msgid "自动刷新"
 msgstr "آٹو ریفریش"
 
+msgid "自动化"
+msgstr "آٹومیشن"
+
 msgid "自动更新"
 msgstr "خودکار تازہ کارییں"
 
@@ -726,17 +2127,41 @@ msgstr "انگریزی خطوط"
 msgid "获取数据"
 msgstr "ڈیٹا حاصل کریں"
 
+msgid "菜单项"
+msgstr "مینو آئٹم"
+
+msgid "虚拟化"
+msgstr "ورچوئلائزیشن"
+
+msgid "虚拟机详情"
+msgstr "ورچوئل مشین کی تفصیلات"
+
 msgid "计算资源"
 msgstr "کمپیوٹنگ وسائل"
 
 msgid "认证方式"
 msgstr "توثیق کا طریقہ"
 
+msgid "设备名"
+msgstr "ڈیوائس کا نام"
+
+msgid "设备直通"
+msgstr "ڈیوائس پاس تھرو"
+
 msgid "设置失败"
 msgstr "سیٹ اپ ناکام ہوگیا"
 
+msgid "设置密码"
+msgstr "پاس ورڈ مرتب کریں"
+
+msgid "访问Token"
+msgstr "رسائی ٹوکن"
+
 msgid "访问端口"
 msgstr "بندرگاہ تک رسائی حاصل کریں"
+
+msgid "访问配置"
+msgstr "کنفیگریشن تک رسائی حاصل کریں"
 
 msgid "请求失败"
 msgstr "درخواست ناکام ہوگئی"
@@ -753,11 +2178,20 @@ msgstr "وسائل مختص"
 msgid "资源配额"
 msgstr "وسائل کوٹہ"
 
+msgid "转发规则"
+msgstr "فارورڈنگ قواعد"
+
+msgid "运行中"
+msgstr "چل رہا ہے"
+
 msgid "运行日志"
 msgstr "لاگ چلائیں"
 
 msgid "返回登录"
 msgstr "لاگ ان پر واپس جائیں"
+
+msgid "还原中"
+msgstr "بحالی"
 
 msgid "还原备份"
 msgstr "بیک اپ کو بحال کریں"
@@ -789,8 +2223,14 @@ msgstr "ای میل ایڈریس"
 msgid "邮箱验证"
 msgstr "ای میل کی توثیق"
 
+msgid "配置中"
+msgstr "تشکیل"
+
 msgid "配置名称"
 msgstr "ترتیب کا نام"
+
+msgid "配置池"
+msgstr "تالاب تشکیل دیں"
 
 msgid "配额不足"
 msgstr "ناکافی کوٹہ"
@@ -798,11 +2238,17 @@ msgstr "ناکافی کوٹہ"
 msgid "配额充足"
 msgstr "کافی کوٹہ"
 
+msgid "重启中"
+msgstr "دوبارہ شروع کرنا"
+
 msgid "重置失败"
 msgstr "ری سیٹ ناکام ہوگیا"
 
 msgid "重置密码"
 msgstr "پاس ورڈ کو دوبارہ ترتیب دیں"
+
+msgid "重装中"
+msgstr "دوبارہ انسٹال کرنا"
 
 msgid "重装失败"
 msgstr "بحالی ناکام ہوگئی"
@@ -822,257 +2268,14 @@ msgstr "ہینڈلنگ میں خرابی"
 msgid "镜像文件"
 msgstr "تصویری فائل"
 
+msgid "限制配置"
+msgstr "ترتیب کو محدود کریں"
+
 msgid "随机生成"
 msgstr "تصادفی طور پر پیدا ہوا"
 
-msgid "下划线"
-msgstr "خفیہ لائن"
-
-msgid "个主机"
-msgstr "میزبان"
-
-msgid "个字符"
-msgstr "کردار"
-
-msgid "主机名"
-msgstr "میزبان نام"
-
-msgid "主机数"
-msgstr "میزبانوں کی تعداد"
-
-msgid "从文件"
-msgstr "فائل سے"
-
-msgid "仪表盘"
-msgstr "ڈیش بورڈ"
-
-msgid "使用率"
-msgstr "استعمال کی شرح"
-
-msgid "使用者"
-msgstr "صارف"
-
-msgid "供选择"
-msgstr "انتخاب کے لئے"
-
-msgid "保存中"
-msgstr "بچت"
-
-msgid "停止中"
-msgstr "رکنا"
-
-msgid "关机中"
-msgstr "بند کرنا"
-
-msgid "初始化"
-msgstr "ابتدا"
-
-msgid "利用率"
-msgstr "استعمال"
-
-msgid "剪贴板"
-msgstr "کلپ بورڈ"
-
-msgid "加载中"
-msgstr "لوڈنگ"
-
-msgid "取决于"
-msgstr "پر منحصر ہے"
-
-msgid "启动中"
-msgstr "شروع کرنا"
-
-msgid "国际化"
-msgstr "عالمگیریت"
-
-msgid "备份中"
-msgstr "بیک اپ"
-
-msgid "复制到"
-msgstr "کاپی کریں"
-
-msgid "复杂度"
-msgstr "پیچیدگی"
-
-msgid "安装盘"
-msgstr "تنصیب ڈسک"
-
-msgid "对话框"
-msgstr "ڈائیلاگ باکس"
-
-msgid "已保存"
-msgstr "بچایا گیا"
-
-msgid "已停止"
-msgstr "رک گیا"
-
-msgid "已关闭"
-msgstr "بند"
-
-msgid "已删除"
-msgstr "حذف"
-
-msgid "已启用"
-msgstr "فعال"
-
-msgid "已完成"
-msgstr "مکمل"
-
-msgid "已崩溃"
-msgstr "کریش"
-
-msgid "已开启"
-msgstr "پہلے ہی آن کیا گیا ہے"
-
-msgid "已挂载"
-msgstr "سوار"
-
-msgid "已暂停"
-msgstr "معطل"
-
-msgid "已禁用"
-msgstr "غیر فعال"
-
-msgid "已验证"
-msgstr "تصدیق شدہ"
-
-msgid "总代理"
-msgstr "جنرل ایجنٹ"
-
-msgid "总配额"
-msgstr "کل کوٹہ"
-
-msgid "恢复中"
-msgstr "بازیافت"
-
-msgid "所有权"
-msgstr "ملکیت"
-
-msgid "所有者"
-msgstr "مالک"
-
-msgid "拦截器"
-msgstr "انٹرسیپٹر"
-
-msgid "控制台"
-msgstr "کنسول"
-
-msgid "数据盘"
-msgstr "ڈیٹا ڈسک"
-
-msgid "文件名"
-msgstr "فائل کا نام"
-
-msgid "新密码"
-msgstr "نیا پاس ورڈ"
-
-msgid "无描述"
-msgstr "کوئی تفصیل نہیں"
-
-msgid "无限制"
-msgstr "لامحدود"
-
-msgid "暂停中"
-msgstr "رک گیا"
-
-msgid "月流量"
-msgstr "ماہانہ ٹریفک"
-
-msgid "有效性"
-msgstr "تاثیر"
-
-msgid "服务器"
-msgstr "سرور"
-
-msgid "未分配"
-msgstr "مختص نہیں"
-
-msgid "未挂载"
-msgstr "سوار نہیں"
-
-msgid "未配置"
-msgstr "تشکیل نہیں ہوا"
-
-msgid "未验证"
-msgstr "تصدیق نہیں کی گئی"
-
-msgid "条记录"
-msgstr "ریکارڈ"
-
-msgid "格式化"
-msgstr "شکل"
-
-msgid "模板数"
-msgstr "ٹیمپلیٹس کی تعداد"
-
-msgid "注册表"
-msgstr "رجسٹری"
-
-msgid "浏览器"
-msgstr "براؤزر"
-
-msgid "用户名"
-msgstr "صارف نام"
-
-msgid "第一个"
-msgstr "پہلا ایک"
-
-msgid "第一台"
-msgstr "پہلا ایک"
-
-msgid "等待中"
-msgstr "انتظار کرنا"
-
-msgid "管理员"
-msgstr "ایڈمنسٹریٹر"
-
-msgid "系统盘"
-msgstr "سسٹم ڈسک"
-
-msgid "自动化"
-msgstr "آٹومیشن"
-
-msgid "菜单项"
-msgstr "مینو آئٹم"
-
-msgid "虚拟化"
-msgstr "ورچوئلائزیشن"
-
-msgid "虚拟机"
-msgstr "ورچوئل مشین"
-
-msgid "请输入"
-msgstr "براہ کرم داخل کریں"
-
-msgid "请选择"
-msgstr "براہ کرم منتخب کریں"
-
-msgid "过滤器"
-msgstr "فلٹر"
-
-msgid "运行中"
-msgstr "چل رہا ہے"
-
-msgid "还原中"
-msgstr "بحالی"
-
-msgid "进度条"
-msgstr "پروگریس بار"
-
-msgid "选择器"
-msgstr "سلیکٹر"
-
-msgid "配置中"
-msgstr "تشکیل"
-
-msgid "重启中"
-msgstr "دوبارہ شروع کرنا"
-
-msgid "重装中"
-msgstr "دوبارہ انسٹال کرنا"
-
-msgid "默认值"
-msgstr "پہلے سے طے شدہ قیمت"
+msgid "高级配置"
+msgstr "اعلی درجے کی ترتیب"
 
 msgid "一个"
 msgstr "ایک"
@@ -1080,692 +2283,50 @@ msgstr "ایک"
 msgid "一封"
 msgstr "ایک خط"
 
-msgid "一致"
-msgstr "مستقل"
-
-msgid "一键"
-msgstr "ایک کلک"
-
-msgid "上行"
-msgstr "اوپر کی طرف"
-
-msgid "下行"
-msgstr "نیچے کی طرف"
-
-msgid "不会"
-msgstr "نہیں کریں گے"
-
-msgid "不再"
-msgstr "اب نہیں"
-
-msgid "不可"
-msgstr "نہیں"
-
-msgid "不能"
-msgstr "نہیں کر سکتے"
-
-msgid "不足"
-msgstr "ناکافی"
-
-msgid "丢失"
-msgstr "کھو گیا"
-
-msgid "两次"
-msgstr "دو بار"
-
-msgid "中文"
-msgstr "چینی"
-
-msgid "中等"
-msgstr "میڈیم"
-
-msgid "临时"
-msgstr "عارضی"
-
-msgid "为空"
-msgstr "خالی ہے"
-
-msgid "主机"
-msgstr "میزبان"
-
-msgid "主要"
-msgstr "اہم"
-
-msgid "主题"
-msgstr "تھیم"
-
-msgid "事件"
-msgstr "واقعہ"
-
-msgid "二次"
-msgstr "ثانوی"
-
-msgid "交互"
-msgstr "بات چیت"
-
-msgid "代理"
-msgstr "اداکاری"
-
-msgid "代码"
-msgstr "کوڈ"
-
-msgid "任务"
-msgstr "کام"
-
-msgid "优先"
-msgstr "ترجیح"
-
-msgid "作为"
-msgstr "جیسا کہ"
-
-msgid "使用"
-msgstr "استعمال کریں"
-
-msgid "例如"
-msgstr "مثال کے طور پر"
-
-msgid "侧边"
-msgstr "طرف"
-
-msgid "保存"
-msgstr "بچت کریں"
-
-msgid "保持"
-msgstr "رکھیں"
-
-msgid "保留"
-msgstr "ریزرو"
-
-msgid "信息"
-msgstr "معلومات"
-
-msgid "修改"
-msgstr "نظر ثانی کریں"
-
-msgid "修正"
-msgstr "اصلاح"
-
-msgid "假设"
-msgstr "مفروضہ"
-
-msgid "停止"
-msgstr "بند کرو"
-
-msgid "允许"
-msgstr "اجازت دیں"
-
-msgid "元素"
-msgstr "عنصر"
-
-msgid "光盘"
-msgstr "سی ڈی"
-
-msgid "全部"
-msgstr "سب"
-
-msgid "公共"
-msgstr "عوامی"
-
-msgid "公网"
-msgstr "عوامی نیٹ ورک"
-
-msgid "共享"
-msgstr "مشترکہ"
-
-msgid "关机"
-msgstr "بند کرو"
-
-msgid "关系"
-msgstr "رشتہ"
-
-msgid "关闭"
-msgstr "بندش"
-
-msgid "其他"
-msgstr "دیگر"
-
-msgid "兼容"
-msgstr "مطابقت پذیر"
-
-msgid "内存"
-msgstr "میموری"
-
-msgid "内容"
-msgstr "مواد"
-
-msgid "内网"
-msgstr "انٹرانیٹ"
-
-msgid "内部"
-msgstr "اندرونی"
-
-msgid "再次"
-msgstr "ایک بار پھر"
-
-msgid "出错"
-msgstr "غلطی"
-
-msgid "函数"
-msgstr "تقریب"
-
-msgid "分享"
-msgstr "بانٹیں"
-
-msgid "分割"
-msgstr "طبقہ"
-
-msgid "分离"
-msgstr "علیحدگی"
-
-msgid "分配"
-msgstr "تقسیم کریں"
-
-msgid "分钟"
-msgstr "منٹ"
-
-msgid "分隔"
-msgstr "علیحدہ"
-
-msgid "切换"
-msgstr "سوئچ"
-
-msgid "列表"
-msgstr "فہرست"
-
-msgid "创建"
-msgstr "تخلیق کریں"
-
-msgid "删除"
-msgstr "حذف کریں"
-
-msgid "判断"
-msgstr "جج"
-
-msgid "别名"
-msgstr "عرف"
-
-msgid "刷新"
-msgstr "ریفریش"
-
-msgid "前缀"
-msgstr "سابقہ"
-
-msgid "功耗"
-msgstr "بجلی کی کھپت"
-
-msgid "功能"
-msgstr "تقریب"
-
-msgid "加载"
-msgstr "بوجھ"
-
-msgid "动作"
-msgstr "ایکشن"
-
-msgid "动态"
-msgstr "متحرک"
-
-msgid "勾选"
-msgstr "چیک کریں"
-
-msgid "包含"
-msgstr "شامل کریں"
-
-msgid "匹配"
-msgstr "میچ"
-
-msgid "区域"
-msgstr "رقبہ"
-
-msgid "协议"
-msgstr "پروٹوکول"
-
-msgid "单个"
-msgstr "سنگل"
-
-msgid "单位"
-msgstr "یونٹ"
-
-msgid "占用"
-msgstr "قبضہ"
-
-msgid "卡片"
-msgstr "کارڈ"
-
-msgid "卸载"
-msgstr "انسٹال"
-
-msgid "历史"
-msgstr "تاریخ"
-
-msgid "原始"
-msgstr "اصل"
-
-msgid "参数"
-msgstr "پیرامیٹر"
-
-msgid "及其"
-msgstr "اور"
-
-msgid "反向"
-msgstr "معکوس"
-
-msgid "发件"
-msgstr "بھیجیں"
-
-msgid "发送"
-msgstr "بھیجیں"
-
-msgid "取消"
-msgstr "منسوخ کریں"
-
-msgid "受控"
-msgstr "کنٹرول"
-
-msgid "变为"
-msgstr "بنیں"
-
-msgid "变化"
-msgstr "تبدیل کریں"
-
-msgid "变更"
-msgstr "تبدیل کریں"
-
-msgid "变量"
-msgstr "متغیر"
-
-msgid "只能"
-msgstr "صرف کر سکتے ہیں"
-
-msgid "可以"
-msgstr "کر سکتے ہیں"
-
-msgid "可用"
-msgstr "دستیاب ہے"
-
-msgid "可能"
-msgstr "ممکن ہے"
-
-msgid "可逆"
-msgstr "الٹ"
-
-msgid "可选"
-msgstr "اختیاری"
-
-msgid "各种"
-msgstr "مختلف"
-
-msgid "合并"
-msgstr "ضم"
-
-msgid "同意"
-msgstr "متفق ہوں"
-
-msgid "同时"
-msgstr "ایک ہی وقت میں"
-
-msgid "名称"
-msgstr "نام"
-
-msgid "后续"
-msgstr "فالو اپ"
-
-msgid "后缀"
-msgstr "لاحقہ"
-
-msgid "后该"
-msgstr "یہ وقت بعد ہے"
-
-msgid "否则"
-msgstr "ورنہ"
-
-msgid "启动"
-msgstr "شروع کریں"
-
-msgid "启用"
-msgstr "قابل بنائیں"
-
-msgid "响应"
-msgstr "جواب"
-
-msgid "唯一"
-msgstr "صرف"
-
-msgid "因为"
-msgstr "کیونکہ"
-
-msgid "图标"
-msgstr "آئیکن"
-
-msgid "地址"
-msgstr "پتہ"
-
-msgid "域名"
-msgstr "ڈومین کا نام"
-
-msgid "基本"
-msgstr "بنیادی"
-
-msgid "堆栈"
-msgstr "اسٹیک"
-
-msgid "处理"
-msgstr "سے نمٹنے کے"
-
-msgid "备份"
-msgstr "بیک اپ"
-
-msgid "备注"
-msgstr "تبصرہ"
-
-msgid "复制"
-msgstr "کاپی"
-
-msgid "复合"
-msgstr "پیچیدہ"
-
-msgid "外部"
-msgstr "بیرونی"
-
-msgid "多个"
-msgstr "ایک سے زیادہ"
+msgid "个数"
+msgstr "نمبر"
 
 msgid "大小"
 msgstr "سائز"
 
-msgid "失效"
-msgstr "غلط"
-
-msgid "失败"
-msgstr "ناکام"
-
-msgid "如果"
-msgstr "اگر"
-
-msgid "字母"
-msgstr "خط"
-
-msgid "字符"
-msgstr "کردار"
-
-msgid "字节"
-msgstr "بائٹ"
-
-msgid "存储"
-msgstr "اسٹوریج"
-
-msgid "存在"
-msgstr "موجود ہے"
-
-msgid "安全"
-msgstr "حفاظت"
-
-msgid "完全"
-msgstr "مکمل طور پر"
-
-msgid "完成"
-msgstr "ختم"
-
-msgid "完整"
-msgstr "پورا"
-
-msgid "定义"
-msgstr "تعریف"
-
-msgid "实例"
-msgstr "مثال"
-
-msgid "实际"
-msgstr "اصل"
-
-msgid "容器"
-msgstr "کنٹینر"
-
 msgid "容量"
 msgstr "صلاحیت"
-
-msgid "密码"
-msgstr "پاس ورڈ"
-
-msgid "对应"
-msgstr "اسی کے مطابق"
-
-msgid "对象"
-msgstr "اعتراض"
-
-msgid "导入"
-msgstr "درآمد"
-
-msgid "导出"
-msgstr "برآمد"
-
-msgid "导致"
-msgstr "کی راہنمائی کریں"
-
-msgid "导航"
-msgstr "نیویگیشن"
-
-msgid "少于"
-msgstr "سے کم"
-
-msgid "属性"
-msgstr "جائیداد"
-
-msgid "已用"
-msgstr "استعمال کیا جاتا ہے"
-
-msgid "布局"
-msgstr "لے آؤٹ"
-
-msgid "带宽"
-msgstr "بینڈوتھ"
-
-msgid "平台"
-msgstr "پلیٹ فارم"
-
-msgid "应用"
-msgstr "درخواست"
-
-msgid "应该"
-msgstr "چاہئے"
-
-msgid "引擎"
-msgstr "انجن"
-
-msgid "弹窗"
-msgstr "پاپ اپ ونڈو"
-
-msgid "强关"
-msgstr "مضبوط پاس"
-
-msgid "强制"
-msgstr "زبردستی"
-
-msgid "强度"
-msgstr "طاقت"
-
-msgid "当前"
-msgstr "موجودہ"
-
-msgid "必须"
-msgstr "ضروری ہے"
-
-msgid "忘记"
-msgstr "بھول جاؤ"
-
-msgid "快速"
-msgstr "تیز"
-
-msgid "性能"
-msgstr "کارکردگی"
 
 msgid "总数"
 msgstr "کل"
 
-msgid "恢复"
-msgstr "بازیافت"
-
-msgid "您好"
-msgstr "ہیلو"
-
-msgid "情况"
-msgstr "حالت"
-
-msgid "成为"
-msgstr "بنیں"
-
-msgid "成功"
-msgstr "کامیابی"
-
-msgid "我们"
-msgstr "ہم"
-
-msgid "截图"
-msgstr "اسکرین شاٹ"
-
-msgid "所有"
-msgstr "سب"
-
-msgid "才能"
-msgstr "ہنر"
-
-msgid "打开"
-msgstr "کھلا"
-
-msgid "执行"
-msgstr "نافذ کریں"
-
-msgid "扩展"
-msgstr "توسیع"
-
-msgid "扫描"
-msgstr "اسکیننگ"
-
-msgid "折叠"
-msgstr "فولڈ"
-
-msgid "拥有"
-msgstr "ہے"
-
-msgid "挂载"
-msgstr "پہاڑ"
-
-msgid "指令"
-msgstr "ہدایت"
-
-msgid "指定"
-msgstr "وضاحت کریں"
-
-msgid "按钮"
-msgstr "بٹن"
-
-msgid "授权"
-msgstr "اجازت دیں"
-
-msgid "接口"
-msgstr "انٹرفیس"
-
-msgid "控制"
-msgstr "کنٹرول"
-
-msgid "描述"
-msgstr "بیان کریں"
-
-msgid "提交"
-msgstr "پیش کریں"
-
-msgid "提取"
-msgstr "نکالنے"
-
-msgid "提示"
-msgstr "اشارہ"
-
-msgid "搜索"
-msgstr "تلاش"
-
-msgid "撤销"
-msgstr "منسوخ کریں"
-
-msgid "操作"
-msgstr "کام کریں"
-
-msgid "支持"
-msgstr "تائید"
-
-msgid "收件"
-msgstr "وصول کریں"
-
-msgid "收到"
-msgstr "وصول کریں"
-
-msgid "收集"
-msgstr "جمع کریں"
-
-msgid "改密"
-msgstr "پاس ورڈ تبدیل کریں"
-
-msgid "数字"
-msgstr "نمبر"
-
-msgid "数据"
-msgstr "ڈیٹا"
-
-msgid "数组"
-msgstr "سرنی"
-
 msgid "数量"
 msgstr "مقدار"
 
-msgid "整个"
-msgstr "پورا"
+msgid "条数"
+msgstr "اشیاء کی تعداد"
 
-msgid "文件"
-msgstr "دستاویز"
+msgid "长度"
+msgstr "لمبائی"
 
-msgid "文字"
-msgstr "لفظ"
+msgid "分钟"
+msgstr "منٹ"
 
-msgid "文本"
-msgstr "متن"
+msgid "周期"
+msgstr "سائیکل"
 
-msgid "新增"
-msgstr "نیا"
-
-msgid "方式"
-msgstr "طریقہ"
-
-msgid "无效"
-msgstr "غلط"
-
-msgid "无法"
-msgstr "قاصر"
-
-msgid "日志"
-msgstr "لاگ"
-
-msgid "时会"
-msgstr "وقت کی میٹنگ"
+msgid "日期"
+msgstr "تاریخ"
 
 msgid "时间"
 msgstr "وقت"
 
-msgid "映射"
-msgstr "نقشہ سازی"
+msgid "每小时"
+msgstr "فی گھنٹہ"
 
-msgid "是否"
-msgstr "چاہے"
+msgid "每日"
+msgstr "روزانہ"
 
-msgid "显卡"
-msgstr "گرافکس کارڈ"
+msgid "每月"
+msgstr "ہر مہینہ"
 
-msgid "显存"
-msgstr "ویڈیو میموری"
-
-msgid "显示"
-msgstr "دکھائیں"
-
-msgid "暂停"
-msgstr "توقف"
+msgid "秒"
+msgstr "دوسرا"
 
 msgid "暂无"
 msgstr "ابھی تک کوئی نہیں"
@@ -1776,8 +2337,461 @@ msgstr "عارضی"
 msgid "暂未"
 msgstr "ابھی نہیں"
 
-msgid "更新"
-msgstr "تجدید"
+msgid "与"
+msgstr "اور"
+
+msgid "且"
+msgstr "اور"
+
+msgid "但是"
+msgstr "لیکن"
+
+msgid "及其"
+msgstr "اور"
+
+msgid "同时"
+msgstr "ایک ہی وقت میں"
+
+msgid "否则"
+msgstr "ورنہ"
+
+msgid "和"
+msgstr "اور"
+
+msgid "因为"
+msgstr "کیونکہ"
+
+msgid "如果"
+msgstr "اگر"
+
+msgid "或"
+msgstr "یا"
+
+msgid "所以"
+msgstr "تو"
+
+msgid "然而"
+msgstr "تاہم"
+
+msgid "虽然"
+msgstr "اگرچہ"
+
+msgid "非"
+msgstr "نہیں"
+
+msgid "不"
+msgstr "نہیں"
+
+msgid "也"
+msgstr "بھی"
+
+msgid "从"
+msgstr "سے"
+
+msgid "会"
+msgstr "ملاقات"
+
+msgid "只"
+msgstr "صرف"
+
+msgid "太"
+msgstr "بھی"
+
+msgid "将"
+msgstr "مرضی"
+
+msgid "就"
+msgstr "ایک دم"
+
+msgid "已"
+msgstr "پہلے ہی"
+
+msgid "应该"
+msgstr "چاہئے"
+
+msgid "很"
+msgstr "بہت"
+
+msgid "必须"
+msgstr "ضروری ہے"
+
+msgid "您"
+msgstr "آپ"
+
+msgid "才"
+msgstr "ہنر"
+
+msgid "时"
+msgstr "گھنٹہ"
+
+msgid "更加"
+msgstr "مزید"
+
+msgid "最"
+msgstr "زیادہ تر"
+
+msgid "未"
+msgstr "ابھی تک نہیں"
+
+msgid "比较"
+msgstr "موازنہ کریں۔"
+
+msgid "的"
+msgstr "کی"
+
+msgid "相当"
+msgstr "کافی"
+
+msgid "真的"
+msgstr "حقیقی"
+
+msgid "确实"
+msgstr "واقعی"
+
+msgid "能"
+msgstr "قابل"
+
+msgid "至少"
+msgstr "کم از کم"
+
+msgid "请"
+msgstr "براہ مہربانی"
+
+msgid "还"
+msgstr "واپسی"
+
+msgid "都"
+msgstr "تمام"
+
+msgid "都将"
+msgstr "جنرل"
+
+msgid "需要"
+msgstr "ضرورت ہے"
+
+msgid "非常"
+msgstr "بہت"
+
+msgid "为"
+msgstr "کے لیے"
+
+msgid "作为"
+msgstr "جیسا کہ"
+
+msgid "使用"
+msgstr "استعمال کریں"
+
+msgid "关于"
+msgstr "کے بارے میں"
+
+msgid "到"
+msgstr "پہنچنا"
+
+msgid "在"
+msgstr "موجود"
+
+msgid "对"
+msgstr "دائیں"
+
+msgid "对于"
+msgstr "کے لیے"
+
+msgid "按"
+msgstr "کے مطابق"
+
+msgid "按照"
+msgstr "کے مطابق"
+
+msgid "根据"
+msgstr "کے مطابق"
+
+msgid "用于"
+msgstr "کے لئے استعمال کیا"
+
+msgid "由于"
+msgstr "کیونکہ"
+
+msgid "通过"
+msgstr "پاس"
+
+msgid "其他"
+msgstr "دیگر"
+
+msgid "另"
+msgstr "دیگر"
+
+msgid "所有"
+msgstr "سب"
+
+msgid "每个"
+msgstr "ہر ایک"
+
+msgid "自己"
+msgstr "اپنے"
+
+msgid "这"
+msgstr "یہ"
+
+msgid "这个"
+msgstr "یہ"
+
+msgid "这些"
+msgstr "یہ"
+
+msgid "这封"
+msgstr "یہ خط"
+
+msgid "这是"
+msgstr "یہ ہے"
+
+msgid "那"
+msgstr "وہ"
+
+msgid "那个"
+msgstr "کہ"
+
+msgid "那些"
+msgstr "وہ لوگ"
+
+msgid "例如"
+msgstr "مثال کے طور پر"
+
+msgid "包含"
+msgstr "شامل کریں"
+
+msgid "包括"
+msgstr "شامل"
+
+msgid "提示"
+msgstr "اشارہ"
+
+msgid "提醒"
+msgstr "یاد دلانا"
+
+msgid "比如"
+msgstr "مثال کے طور پر"
+
+msgid "注意"
+msgstr "نوٹس"
+
+msgid "补充"
+msgstr "بھرنا"
+
+msgid "除外"
+msgstr "سوائے"
+
+msgid "使得"
+msgstr "بنانا"
+
+msgid "导致"
+msgstr "کی راہنمائی کریں"
+
+msgid "引起"
+msgstr "وجہ"
+
+msgid "造成"
+msgstr "وجہ"
+
+msgid "中文"
+msgstr "چینی"
+
+msgid "句号"
+msgstr "مدت"
+
+msgid "字母"
+msgstr "خط"
+
+msgid "字符"
+msgstr "کردار"
+
+msgid "字节"
+msgstr "بائٹ"
+
+msgid "数字"
+msgstr "نمبر"
+
+msgid "英文"
+msgstr "انگریزی"
+
+msgid "逗号"
+msgstr "کوما"
+
+msgid "浅色"
+msgstr "ہلکا رنگ"
+
+msgid "深色"
+msgstr "تاریک"
+
+msgid "灰色"
+msgstr "گرے"
+
+msgid "白色"
+msgstr "سفید"
+
+msgid "红色"
+msgstr "سرخ"
+
+msgid "绿色"
+msgstr "سبز"
+
+msgid "蓝色"
+msgstr "نیلا"
+
+msgid "颜色"
+msgstr "رنگ"
+
+msgid "黄色"
+msgstr "پیلا"
+
+msgid "黑色"
+msgstr "سیاہ"
+
+msgid "(JSON格式)"
+msgstr "(JSON فارمیٹ)"
+
+msgid "一条"
+msgstr "ایک ٹکڑا"
+
+msgid "两次"
+msgstr "دو بار"
+
+msgid "主所有者"
+msgstr "پرائمری مالک"
+
+msgid "使用情况"
+msgstr "استعمال"
+
+msgid "停止刷新"
+msgstr "تازگی بند کرو"
+
+msgid "光盘"
+msgstr "سی ڈی"
+
+msgid "分隔"
+msgstr "علیحدہ"
+
+msgid "列表"
+msgstr "فہرست"
+
+msgid "判断"
+msgstr "جج"
+
+msgid "前缀"
+msgstr "سابقہ"
+
+msgid "加载"
+msgstr "بوجھ"
+
+msgid "占用"
+msgstr "قبضہ"
+
+msgid "卡片"
+msgstr "کارڈ"
+
+msgid "历史"
+msgstr "تاریخ"
+
+msgid "发件"
+msgstr "بھیجیں"
+
+msgid "变为"
+msgstr "بنیں"
+
+msgid "变化"
+msgstr "تبدیل کریں"
+
+msgid "后续"
+msgstr "فالو اپ"
+
+msgid "后缀"
+msgstr "لاحقہ"
+
+msgid "后该"
+msgstr "یہ وقت بعد ہے"
+
+msgid "基本信息"
+msgstr "بنیادی معلومات"
+
+msgid "处理"
+msgstr "سے نمٹنے کے"
+
+msgid "复合"
+msgstr "پیچیدہ"
+
+msgid "存在"
+msgstr "موجود ہے"
+
+msgid "完全"
+msgstr "مکمل طور پر"
+
+msgid "容器管理"
+msgstr "کنٹینر مینجمنٹ"
+
+msgid "对应"
+msgstr "اسی کے مطابق"
+
+msgid "少于"
+msgstr "سے کم"
+
+msgid "左侧"
+msgstr "بائیں طرف"
+
+msgid "开放注册"
+msgstr "کھولیں رجسٹریشن"
+
+msgid "忘记"
+msgstr "بھول جاؤ"
+
+msgid "您好"
+msgstr "ہیلو"
+
+msgid "您的"
+msgstr "آپ کا"
+
+msgid "情况"
+msgstr "حالت"
+
+msgid "我们"
+msgstr "ہم"
+
+msgid "才能"
+msgstr "ہنر"
+
+msgid "扩展"
+msgstr "توسیع"
+
+msgid "拥有"
+msgstr "ہے"
+
+msgid "控制"
+msgstr "کنٹرول"
+
+msgid "提供"
+msgstr "فراہمی"
+
+msgid "操作"
+msgstr "کام کریں"
+
+msgid "收件"
+msgstr "وصول کریں"
+
+msgid "收到"
+msgstr "وصول کریں"
+
+msgid "改密"
+msgstr "پاس ورڈ تبدیل کریں"
+
+msgid "无法"
+msgstr "قاصر"
+
+msgid "时会"
+msgstr "وقت کی میٹنگ"
+
+msgid "是否"
+msgstr "چاہے"
+
+msgid "显示"
+msgstr "دکھائیں"
 
 msgid "最低"
 msgstr "سب سے کم"
@@ -1788,263 +2802,41 @@ msgstr "آخر میں"
 msgid "最小"
 msgstr "سب سے چھوٹا"
 
-msgid "最新"
-msgstr "تازہ ترین"
-
-msgid "最终"
-msgstr "فائنل"
-
-msgid "有效"
-msgstr "موثر"
-
-msgid "服务"
-msgstr "خدمت"
-
-msgid "未知"
-msgstr "نامعلوم"
-
-msgid "机器"
-msgstr "مشین"
-
-msgid "权限"
-msgstr "اجازت"
-
-msgid "条件"
-msgstr "حالت"
-
-msgid "条数"
-msgstr "اشیاء کی تعداد"
-
 msgid "来自"
 msgstr "سے"
-
-msgid "构建"
-msgstr "تعمیر"
-
-msgid "构造"
-msgstr "ساخت"
-
-msgid "查找"
-msgstr "تلاش کریں"
-
-msgid "查收"
-msgstr "چیک کریں"
-
-msgid "查看"
-msgstr "چیک کریں"
-
-msgid "标签"
-msgstr "لیبل"
-
-msgid "样式"
-msgstr "انداز"
-
-msgid "核心"
-msgstr "بنیادی"
-
-msgid "根据"
-msgstr "کے مطابق"
-
-msgid "格式"
-msgstr "شکل"
-
-msgid "桌面"
-msgstr "ڈیسک ٹاپ"
-
-msgid "检查"
-msgstr "معائنہ کریں"
-
-msgid "检测"
-msgstr "پتہ لگانا"
-
-msgid "概览"
-msgstr "جائزہ"
-
-msgid "模块"
-msgstr "ماڈیول"
-
-msgid "模式"
-msgstr "ماڈل"
 
 msgid "模态"
 msgstr "موڈل"
 
-msgid "模板"
-msgstr "ٹیمپلیٹ"
-
-msgid "正在"
-msgstr "ہیں"
-
-msgid "正常"
-msgstr "عام"
-
-msgid "正文"
-msgstr "متن"
-
-msgid "正确"
-msgstr "درست"
-
-msgid "每月"
-msgstr "ہر مہینہ"
-
-msgid "比如"
-msgstr "مثال کے طور پر"
-
 msgid "没有"
 msgstr "نہیں"
 
-msgid "注册"
-msgstr "رجسٹر کریں"
+msgid "注册表"
+msgstr "رجسٹری"
 
-msgid "注意"
-msgstr "نوٹس"
-
-msgid "注释"
-msgstr "تبصرہ"
-
-msgid "流量"
-msgstr "بہاؤ"
-
-msgid "浅色"
-msgstr "ہلکا رنگ"
-
-msgid "消息"
-msgstr "معلومات"
-
-msgid "深色"
-msgstr "تاریک"
-
-msgid "添加"
-msgstr "شامل کریں"
-
-msgid "清空"
-msgstr "صاف"
-
-msgid "清除"
-msgstr "صاف"
-
-msgid "温度"
-msgstr "درجہ حرارت"
-
-msgid "渲染"
-msgstr "رینڈرنگ"
-
-msgid "灰色"
-msgstr "گرے"
-
-msgid "点击"
-msgstr "کلک کریں"
+msgid "浏览器"
+msgstr "براؤزر"
 
 msgid "爱快"
 msgstr "روزہ سے محبت کرتا ہوں"
 
-msgid "版本"
-msgstr "ورژن"
-
-msgid "状态"
-msgstr "ریاست"
-
-msgid "独立"
-msgstr "آزاد"
-
-msgid "生成"
-msgstr "پیدا کریں"
-
-msgid "生效"
-msgstr "اثر ڈالیں"
-
-msgid "用于"
-msgstr "کے لئے استعمال کیا"
-
-msgid "用尽"
-msgstr "تھکا ہوا"
-
-msgid "用户"
-msgstr "صارف"
-
-msgid "用途"
-msgstr "استعمال کریں"
-
-msgid "用量"
-msgstr "خوراک"
-
 msgid "由后"
 msgstr "پیچھے سے"
-
-msgid "电源"
-msgstr "بجلی کی فراہمی"
 
 msgid "留空"
 msgstr "خالی چھوڑ دو"
 
-msgid "登出"
-msgstr "سائن آؤٹ"
-
-msgid "登录"
-msgstr "لاگ ان"
-
-msgid "监听"
-msgstr "مانیٹر"
-
-msgid "监控"
-msgstr "مانیٹر"
-
 msgid "目标"
 msgstr "ہدف"
 
-msgid "直接"
-msgstr "ہدایت"
+msgid "第一个"
+msgstr "پہلا ایک"
 
-msgid "相关"
-msgstr "متعلقہ"
-
-msgid "看到"
-msgstr "دیکھو"
-
-msgid "硬盘"
-msgstr "ہارڈ ڈسک"
-
-msgid "确保"
-msgstr "یقینی بنائیں"
-
-msgid "确定"
-msgstr "یقینا"
-
-msgid "确认"
-msgstr "تصدیق کریں"
-
-msgid "磁盘"
-msgstr "ڈسک"
-
-msgid "禁用"
-msgstr "غیر فعال"
-
-msgid "移交"
-msgstr "منتقلی"
-
-msgid "移除"
-msgstr "ہٹا دیں"
-
-msgid "程序"
-msgstr "پروگرام"
-
-msgid "稍候"
-msgstr "ایک لمحہ انتظار کرو"
-
-msgid "立即"
-msgstr "فورا"
-
-msgid "端口"
-msgstr "بندرگاہ"
+msgid "第一台"
+msgstr "پہلا ایک"
 
 msgid "等待"
 msgstr "انتظار کرو"
-
-msgid "筛选"
-msgstr "فلٹر"
-
-msgid "简化"
-msgstr "آسان بنائیں"
 
 msgid "管理"
 msgstr "انتظام کریں"
@@ -2052,107 +2844,11 @@ msgstr "انتظام کریں"
 msgid "类名"
 msgstr "کلاس کا نام"
 
-msgid "类型"
-msgstr "قسم"
-
-msgid "系统"
-msgstr "سسٹم"
-
-msgid "红色"
-msgstr "سرخ"
-
-msgid "级别"
-msgstr "سطح"
-
-msgid "组件"
-msgstr "اجزاء"
-
-msgid "结束"
-msgstr "ختم"
-
-msgid "统计"
-msgstr "اعداد و شمار"
-
-msgid "继续"
-msgstr "جاری رکھیں"
-
-msgid "绿色"
-msgstr "سبز"
-
-msgid "编辑"
-msgstr "ترمیم کریں"
-
-msgid "网关"
-msgstr "گیٹ وے"
-
-msgid "网卡"
-msgstr "نیٹ ورک کارڈ"
-
-msgid "网桥"
-msgstr "پل"
-
-msgid "网络"
-msgstr "نیٹ ورک"
-
-msgid "网网"
-msgstr "نیٹ نیٹ"
-
 msgid "翻译"
 msgstr "ترجمہ کریں"
 
 msgid "耐心"
 msgstr "صبر"
-
-msgid "联系"
-msgstr "جڑیں"
-
-msgid "自动"
-msgstr "خودکار"
-
-msgid "至少"
-msgstr "کم از کم"
-
-msgid "节点"
-msgstr "نوڈ"
-
-msgid "范围"
-msgstr "دائرہ کار"
-
-msgid "获取"
-msgstr "حاصل کریں"
-
-msgid "菜单"
-msgstr "مینو"
-
-msgid "补充"
-msgstr "بھرنا"
-
-msgid "表单"
-msgstr "فارم"
-
-msgid "表示"
-msgstr "ایکسپریس"
-
-msgid "要求"
-msgstr "ضرورت ہے"
-
-msgid "规则"
-msgstr "حکمرانی"
-
-msgid "视图"
-msgstr "دیکھیں"
-
-msgid "角色"
-msgstr "کردار"
-
-msgid "解析"
-msgstr "پارس"
-
-msgid "触发"
-msgstr "ٹرگر"
-
-msgid "警告"
-msgstr "انتباہ"
 
 msgid "计算"
 msgstr "حساب کتاب"
@@ -2160,173 +2856,32 @@ msgstr "حساب کتاب"
 msgid "认证"
 msgstr "سرٹیفیکیشن"
 
-msgid "记录"
-msgstr "ریکارڈ"
-
-msgid "设备"
-msgstr "سامان"
-
-msgid "设置"
-msgstr "سیٹ اپ"
-
 msgid "访问"
 msgstr "رسائی"
-
-msgid "详情"
-msgstr "تفصیلات"
 
 msgid "语言"
 msgstr "زبان"
 
-msgid "说明"
-msgstr "واضح کریں"
-
 msgid "请求"
 msgstr "پوچھیں"
 
-msgid "读取"
-msgstr "پڑھیں"
-
-msgid "调用"
-msgstr "کال کریں"
-
-msgid "调试"
-msgstr "ڈیبگ"
+msgid "请求头"
+msgstr "ہیڈر کی درخواست کریں۔"
 
 msgid "谨慎"
 msgstr "محتاط"
 
-msgid "账号"
-msgstr "اکاؤنٹ"
-
-msgid "账户"
-msgstr "اکاؤنٹ"
-
-msgid "资源"
-msgstr "وسائل"
-
 msgid "起始"
 msgstr "شروع کریں"
-
-msgid "超时"
-msgstr "وقت ختم"
-
-msgid "足够"
-msgstr "کافی"
-
-msgid "跟踪"
-msgstr "ٹریک"
-
-msgid "路径"
-msgstr "راستہ"
-
-msgid "路由"
-msgstr "روٹنگ"
-
-msgid "跳转"
-msgstr "چھلانگ"
-
-msgid "跳过"
-msgstr "چھلانگ لگائیں"
-
-msgid "转换"
-msgstr "تبدیل"
-
-msgid "转移"
-msgstr "منتقلی"
-
-msgid "转让"
-msgstr "منتقلی"
 
 msgid "轮询"
 msgstr "پولنگ"
 
-msgid "输入"
-msgstr "داخل کریں"
-
-msgid "过滤"
-msgstr "فلٹر"
-
 msgid "运行"
 msgstr "چلائیں"
 
-msgid "返回"
-msgstr "واپس"
-
-msgid "还原"
-msgstr "کمی"
-
-msgid "这个"
-msgstr "یہ"
-
-msgid "这封"
-msgstr "یہ خط"
-
-msgid "这是"
-msgstr "یہ ہے"
-
 msgid "这里"
 msgstr "یہاں"
-
-msgid "进行"
-msgstr "طرز عمل"
-
-msgid "远程"
-msgstr "دور دراز"
-
-msgid "连接"
-msgstr "جڑیں"
-
-msgid "选中"
-msgstr "منتخب"
-
-msgid "选择"
-msgstr "منتخب کریں"
-
-msgid "选项"
-msgstr "اختیارات"
-
-msgid "递归"
-msgstr "تکرار"
-
-msgid "逗号"
-msgstr "کوما"
-
-msgid "通用"
-msgstr "عالمگیر"
-
-msgid "通知"
-msgstr "مطلع کریں"
-
-msgid "通过"
-msgstr "پاس"
-
-msgid "逻辑"
-msgstr "منطق"
-
-msgid "遍历"
-msgstr "traverse"
-
-msgid "避免"
-msgstr "گریز کریں"
-
-msgid "邮件"
-msgstr "میل"
-
-msgid "邮箱"
-msgstr "میل"
-
-msgid "部分"
-msgstr "حصہ"
-
-msgid "配置"
-msgstr "ترتیب"
-
-msgid "配额"
-msgstr "کوٹہ"
-
-msgid "重启"
-msgstr "دوبارہ شروع کریں"
 
 msgid "重复"
 msgstr "دہرائیں"
@@ -2334,68 +2889,86 @@ msgstr "دہرائیں"
 msgid "重新"
 msgstr "ایک بار پھر"
 
-msgid "重置"
-msgstr "ری سیٹ کریں"
-
-msgid "重装"
-msgstr "دوبارہ انسٹال کریں"
-
-msgid "重要"
-msgstr "اہم"
-
-msgid "重试"
-msgstr "دوبارہ کوشش کریں"
-
-msgid "错误"
-msgstr "غلطی"
-
 msgid "键中"
 msgstr "کلید"
-
-msgid "镜像"
-msgstr "آئینہ"
-
-msgid "长度"
-msgstr "لمبائی"
-
-msgid "闭包"
-msgstr "بندش"
-
-msgid "问题"
-msgstr "سوال"
-
-msgid "限制"
-msgstr "حد"
 
 msgid "随机"
 msgstr "بے ترتیب"
 
-msgid "需要"
-msgstr "ضرورت ہے"
+msgid "默认值"
+msgstr "پہلے سے طے شدہ قیمت"
 
-msgid "静态"
-msgstr "جامد"
+msgid "一键"
+msgstr "ایک کلک"
 
-msgid "非常"
-msgstr "بہت"
+msgid "上一步"
+msgstr "پچھلا مرحلہ"
 
-msgid "页面"
-msgstr "صفحہ"
+msgid "下一步"
+msgstr "اگلا مرحلہ"
 
-msgid "顶部"
-msgstr "اوپر"
+msgid "完成"
+msgstr "ختم"
 
-msgid "颜色"
-msgstr "رنگ"
+msgid "确定"
+msgstr "یقینا"
 
-msgid "验证"
-msgstr "تصدیق کریں"
+msgid "稍候"
+msgstr "ایک لمحہ انتظار کرو"
 
-msgid "高级"
-msgstr "اعلی درجے کی"
+msgid "立即"
+msgstr "فورا"
 
-msgid "默认"
-msgstr "پہلے سے طے شدہ"
+msgid "结束"
+msgstr "ختم"
+
+msgid "继续"
+msgstr "جاری رکھیں"
+
+msgid "重试"
+msgstr "دوبارہ کوشش کریں"
+
+msgid "请输入"
+msgstr "براہ کرم داخل کریں"
+
+msgid "请选择"
+msgstr "براہ کرم منتخب کریں"
+
+msgid "输入"
+msgstr "داخل کریں"
+
+msgid "输出"
+msgstr "آؤٹ پٹ"
+
+msgid "响应"
+msgstr "جواب"
+
+msgid "主机管理"
+msgstr "میزبان انتظامیہ"
+
+msgid "创建备份"
+msgstr "بیک اپ بنائیں"
+
+msgid "备份名称"
+msgstr "بیک اپ کا نام"
+
+msgid "备份文件"
+msgstr "بیک اپ فائلیں"
+
+msgid "备份注释"
+msgstr "بیک اپ کے تبصرے"
+
+msgid "备份管理"
+msgstr "بیک اپ مینجمنٹ"
+
+msgid "备份说明"
+msgstr "بیک اپ ہدایات"
+
+msgid "扫描备份"
+msgstr "اسکین بیک اپ"
+
+msgid "暂无备份"
+msgstr "ابھی تک کوئی بیک اپ نہیں ہے"
 
 msgid "下"
 msgstr "نیچے"
@@ -2409,156 +2982,9 @@ msgstr "واپس"
 msgid "否"
 msgstr "نہیں"
 
-msgid "多"
-msgstr "بہت سے"
-
-msgid "大"
-msgstr "بڑا"
-
-msgid "对"
-msgstr "دائیں"
-
-msgid "新"
-msgstr "نیا"
-
-msgid "旧"
-msgstr "بوڑھا"
-
 msgid "是"
 msgstr "ہاں"
 
 msgid "空"
 msgstr "null"
-
-msgid "全局"
-msgstr "مجموعی طور پر صورتحال"
-
-msgid "查看您的资源使用情况和配额信息"
-msgstr "اپنے وسائل کے استعمال اور کوٹہ کی معلومات دیکھیں"
-
-msgid "用户空间"
-msgstr "صارف کی جگہ"
-
-msgid "系统空间"
-msgstr "سسٹم کی جگہ"
-
-msgid "实例管理"
-msgstr "مثال کے طور پر انتظامیہ"
-
-msgid "监控"
-msgstr "مانیٹر"
-
-msgid "网络端口"
-msgstr "نیٹ ورک پورٹ"
-
-msgid "网络与配额"
-msgstr "نیٹ ورکنگ اور کوٹہ"
-
-msgid "上传带宽"
-msgstr "بینڈوڈتھ اپ لوڈ کریں"
-
-msgid "下载带宽"
-msgstr "بینڈوتھ ڈاؤن لوڈ کریں"
-
-msgid "实例配置"
-msgstr "مثال کے طور پر ترتیب"
-
-msgid "设置密码"
-msgstr "پاس ورڈ مرتب کریں"
-
-msgid "一键远程"
-msgstr "ایک کلک ریموٹ"
-
-msgid "网卡列表"
-msgstr "نیٹ ورک کارڈ کی فہرست"
-
-msgid "转发规则"
-msgstr "فارورڈنگ قواعد"
-
-msgid "设备直通"
-msgstr "ڈیوائس پاس تھرو"
-
-msgid "物理"
-msgstr "طبیعیات"
-
-msgid "设备名"
-msgstr "ڈیوائس کا نام"
-
-msgid "存储路径"
-msgstr "اسٹوریج کا راستہ"
-
-msgid "程序启动路径"
-msgstr "پروگرام اسٹارٹ اپ راہ"
-
-msgid "爱快配置"
-msgstr "Aikuai ترتیب"
-
-msgid "限制配置"
-msgstr "ترتیب کو محدود کریں"
-
-msgid "（多个用逗号分隔）"
-msgstr "(متعدد کوما کے ساتھ الگ کریں)"
-
-msgid "高级配置"
-msgstr "اعلی درجے کی ترتیب"
-
-msgid "系统映射"
-msgstr "سسٹم میپنگ"
-
-msgid "配置池"
-msgstr "تالاب تشکیل دیں"
-
-msgid "扩展选项"
-msgstr "توسیعی اختیارات"
-
-msgid "扩展数据"
-msgstr "توسیعی اعداد و شمار"
-
-msgid "(JSON格式)"
-msgstr "(JSON فارمیٹ)"
-
-msgid "和事件记录"
-msgstr "اور ایونٹ لاگنگ"
-
-msgid "请从左侧选择一条"
-msgstr "براہ کرم بائیں سے ایک کا انتخاب کریں"
-
-msgid "安全提示"
-msgstr "حفاظتی نکات"
-
-msgid "重置Token后，所有使用旧Token的API调用都将失效。请确保更新所有相关配置。"
-msgstr "ٹوکن کو دوبارہ ترتیب دینے کے بعد ، پرانے ٹوکن کا استعمال کرتے ہوئے تمام API کالز غلط ہوجائیں گی۔ براہ کرم تمام متعلقہ ترتیب کو اپ ڈیٹ کرنا یقینی بنائیں۔"
-
-msgid "在请求头中添加："
-msgstr "درخواست ہیڈر میں شامل کریں:"
-
-msgid "受控端"
-msgstr "کنٹرول اختتام"
-
-msgid "访问配置"
-msgstr "کنفیگریشن تک رسائی حاصل کریں"
-
-msgid "新账号"
-msgstr "نیا اکاؤنٹ"
-
-msgid "注册时需要验证邮箱"
-msgstr "اندراج کرتے وقت ای میل کی توثیق کی ضرورت ہوتی ہے"
-
-msgid "新用户默认"
-msgstr "نیا صارف ڈیفالٹ"
-
-msgid "这是一封来自"
-msgstr "یہ ایک خط ہے"
-
-msgid "系统的测试邮件"
-msgstr "سسٹم ٹیسٹ ای میل"
-
-msgid "如果您收到这封邮件"
-msgstr "اگر آپ کو یہ ای میل موصول ہوتا ہے"
-
-msgid "说明邮件服务配置正常"
-msgstr "اس بات کی نشاندہی کرتا ہے کہ میل سروس کی ترتیب معمول کی بات ہے"
-
-msgid "您的"
-msgstr "آپ کا"
 

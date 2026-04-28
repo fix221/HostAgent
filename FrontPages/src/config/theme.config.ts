@@ -19,8 +19,8 @@ export const lightTheme: ThemeConfig = {
     colorTextQuaternary: '#cbd5e1',
     
     // 背景颜色
-    colorBgContainer: 'rgba(255, 255, 255, 0.8)',
-    colorBgElevated: 'rgba(255, 255, 255, 0.9)',
+    colorBgContainer: '#ffffff',
+    colorBgElevated: '#ffffff',
     colorBgLayout: '#f8fafc',
     
     // 边框
@@ -48,7 +48,7 @@ export const lightTheme: ThemeConfig = {
   components: {
     // Card组件
     Card: {
-      colorBgContainer: 'rgba(255, 255, 255, 0.5)',
+      colorBgContainer: '#ffffff',
       boxShadow: '0 8px 32px rgba(0, 0, 0, 0.1)',
     },
     // Button组件
@@ -78,25 +78,25 @@ export const lightTheme: ThemeConfig = {
     },
     // Table组件
     Table: {
-      headerBg: 'rgba(248, 250, 252, 0.8)',
+      headerBg: '#f8fafc',
       rowHoverBg: '#f0f2ff',
     },
     // Modal组件
     Modal: {
-      contentBg: 'rgba(255, 255, 255, 0.95)',
-      headerBg: 'rgba(255, 255, 255, 0.95)',
+      contentBg: '#ffffff',
+      headerBg: '#ffffff',
     },
     // Drawer组件
     Drawer: {
-      colorBgElevated: 'rgba(255, 255, 255, 0.95)',
+      colorBgElevated: '#ffffff',
     },
     // Message组件
     Message: {
-      contentBg: 'rgba(255, 255, 255, 0.95)',
+      contentBg: '#ffffff',
     },
     // Notification组件
     Notification: {
-      colorBgElevated: 'rgba(255, 255, 255, 0.95)',
+      colorBgElevated: '#ffffff',
     },
   },
 };
@@ -119,8 +119,8 @@ export const darkTheme: ThemeConfig = {
     colorTextQuaternary: '#475569',
     
     // 背景颜色
-    colorBgContainer: 'rgba(46, 52, 66, 0.8)',
-    colorBgElevated: 'rgba(46, 52, 66, 0.9)',
+    colorBgContainer: '#2e3442',
+    colorBgElevated: '#2e3442',
     colorBgLayout: '#0f172a',
     
     // 边框
@@ -148,7 +148,7 @@ export const darkTheme: ThemeConfig = {
   components: {
     // Card组件
     Card: {
-      colorBgContainer: 'rgba(46, 52, 66, 0.5)',
+      colorBgContainer: '#2e3442',
       boxShadow: '0 8px 32px rgba(0, 0, 0, 0.3)',
     },
     // Button组件
@@ -178,25 +178,25 @@ export const darkTheme: ThemeConfig = {
     },
     // Table组件
     Table: {
-      headerBg: 'rgba(30, 41, 59, 0.8)',
+      headerBg: '#1e293b',
       rowHoverBg: 'rgba(105, 104, 253, 0.1)',
     },
     // Modal组件
     Modal: {
-      contentBg: 'rgba(46, 52, 66, 0.95)',
-      headerBg: 'rgba(46, 52, 66, 0.95)',
+      contentBg: '#2e3442',
+      headerBg: '#2e3442',
     },
     // Drawer组件
     Drawer: {
-      colorBgElevated: 'rgba(46, 52, 66, 0.95)',
+      colorBgElevated: '#2e3442',
     },
     // Message组件
     Message: {
-      contentBg: 'rgba(46, 52, 66, 0.95)',
+      contentBg: '#2e3442',
     },
     // Notification组件
     Notification: {
-      colorBgElevated: 'rgba(46, 52, 66, 0.95)',
+      colorBgElevated: '#2e3442',
     },
   },
 };

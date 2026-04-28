@@ -7,6 +7,11 @@ import path from 'path'
 export default defineConfig({
   // 使用React插件
   plugins: [react()],
+
+  // 全局常量定义
+  define: {
+    __APP_VERSION__: JSON.stringify('1.0.0'),
+  },
   
   // 路径别名配置
   resolve: {

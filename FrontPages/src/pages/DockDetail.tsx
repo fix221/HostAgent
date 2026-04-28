@@ -2407,6 +2407,32 @@ await api.vmPower(hostName!, uuid!, 'H_CLOSE')
                                 </div>
                             </Col>
                         </Row>
+
+                        {/* 网络配置 */}
+                        <Divider style={{margin: '12px 0 8px'}}/>
+                        <Descriptions title="网络配置" size="small" column={4} bordered style={{tableLayout: 'fixed'}} labelStyle={{width: '150px'}} contentStyle={{width: '100px'}}>
+                            <Descriptions.Item label="上行带宽">{config.speed_u || 0} Mbps</Descriptions.Item>
+                            <Descriptions.Item label="下行带宽">{config.speed_d || 0} Mbps</Descriptions.Item>
+                            <Descriptions.Item label="端口配额">{config.nat_num || 0} 个</Descriptions.Item>
+                            <Descriptions.Item label="代理配额">{config.web_num || 0} 个</Descriptions.Item>
+                            <Descriptions.Item label="流量配额">{config.flu_num > 0 ? formatDisk(config.flu_num) : '无限制'}</Descriptions.Item>
+                            <Descriptions.Item label="重置周期">{config.flu_rst?.[0] || 31} 天</Descriptions.Item>
+                            <Descriptions.Item label="超限速率">{config.flu_rst?.[1] || 0} Mbps</Descriptions.Item>
+                            <Descriptions.Item label="上次重置">{config.flu_rst?.[2] ? (config.flu_rst[2] > 100 ? new Date(config.flu_rst[2] * 1000).toLocaleDateString() : '-') : '-'}</Descriptions.Item>
+                        </Descriptions>
+                        <br></br>
+                        {/* 配额配置 */}
+                        <Divider style={{margin: '12px 0 8px'}}/>
+                        <Descriptions title="配额配置" size="small" column={4} bordered style={{tableLayout: 'fixed'}} labelStyle={{width: '150px'}} contentStyle={{width: '100px'}}>
+                            <Descriptions.Item label="备份配额">{config.bak_num ?? 1}</Descriptions.Item>
+                            <Descriptions.Item label="光盘配额">{config.iso_num ?? 1}</Descriptions.Item>
+                            <Descriptions.Item label="PCI 配额">{config.pci_num ?? 0}</Descriptions.Item>
+                            <Descriptions.Item label="USB 配额">{config.usb_num ?? 0}</Descriptions.Item>
+                            <Descriptions.Item label="数据盘配额">{config.dat_num ?? 1}</Descriptions.Item>
+                            <Descriptions.Item label="数据盘容量">{config.dat_all ? formatDisk(config.dat_all) : 'N/A'}</Descriptions.Item>
+                            <Descriptions.Item label="处理器配额">{config.cpu_per ? `${config.cpu_per}%` : 'N/A'}</Descriptions.Item>
+                            <Descriptions.Item label="系统盘IOPS">{config.hdd_iop || 0}</Descriptions.Item>
+                        </Descriptions>
                     </Card>
                 </div>
             </Col>
@@ -2439,21 +2465,21 @@ await api.vmPower(hostName!, uuid!, 'H_CLOSE')
                     <div className="space-y-4 flex flex-col" style={{padding: '0'}}>
                         {chartView === 'performance' && (
                             <>
-                                <div className="backdrop-blur-md bg-white/10 dark:bg-black/10 rounded p-2 overflow-hidden flex-shrink-0" style={{height: '268px', borderRadius: '20px'}}>
+                                <div className="backdrop-blur-md bg-white/10 dark:bg-black/10 rounded p-2 overflow-hidden flex-shrink-0" style={{height: '344px', borderRadius: '20px'}}>
                                     <ReactECharts
                                         option={getChartOption('CPU使用率', monitorData.cpu, '#3b82f6', monitorData.labels)}
                                         style={{height: '100%', width: '100%'}}
                                         notMerge={true}
                                     />
                                 </div>
-                                <div className="backdrop-blur-md bg-white/10 dark:bg-black/10 rounded p-2 overflow-hidden flex-shrink-0" style={{height: '268px', borderRadius: '20px'}}>
+                                <div className="backdrop-blur-md bg-white/10 dark:bg-black/10 rounded p-2 overflow-hidden flex-shrink-0" style={{height: '343px', borderRadius: '20px'}}>
                                     <ReactECharts
                                         option={getChartOption('RAM使用率', monitorData.memory, '#f59e0b', monitorData.labels)}
                                         style={{height: '100%', width: '100%'}}
                                         notMerge={true}
                                     />
                                 </div>
-                                <div className="backdrop-blur-md bg-white/10 dark:bg-black/10 rounded p-2 overflow-hidden flex-shrink-0" style={{height: '268px', borderRadius: '20px'}}>
+                                <div className="backdrop-blur-md bg-white/10 dark:bg-black/10 rounded p-2 overflow-hidden flex-shrink-0" style={{height: '343px', borderRadius: '20px'}}>
                                     <ReactECharts
                                         option={getChartOption('GPU使用率', monitorData.gpu, '#8b5cf6', monitorData.labels, 'MB')}
                                         style={{height: '100%', width: '100%'}}
@@ -2464,21 +2490,21 @@ await api.vmPower(hostName!, uuid!, 'H_CLOSE')
                         )}
                         {chartView === 'resource' && (
                             <>
-                                <div className="backdrop-blur-md bg-white/10 dark:bg-black/10 rounded p-2 overflow-hidden flex-shrink-0" style={{height: '268px', borderRadius: '20px'}}>
+                                <div className="backdrop-blur-md bg-white/10 dark:bg-black/10 rounded p-2 overflow-hidden flex-shrink-0" style={{height: '344px', borderRadius: '20px'}}>
                                     <ReactECharts
                                         option={getChartOption('硬盘使用率', monitorData.disk, '#10b981', monitorData.labels)}
                                         style={{height: '100%', width: '100%'}}
                                         notMerge={true}
                                     />
                                 </div>
-                                <div className="backdrop-blur-md bg-white/10 dark:bg-black/10 rounded p-2 overflow-hidden flex-shrink-0" style={{height: '268px', borderRadius: '20px'}}>
+                                <div className="backdrop-blur-md bg-white/10 dark:bg-black/10 rounded p-2 overflow-hidden flex-shrink-0" style={{height: '343px', borderRadius: '20px'}}>
                                     <ReactECharts
                                         option={getChartOption('流量使用率', monitorData.traffic, '#ef4444', monitorData.labels, 'GB')}
                                         style={{height: '100%', width: '100%'}}
                                         notMerge={true}
                                     />
                                 </div>
-                                <div className="backdrop-blur-md bg-white/10 dark:bg-black/10 rounded p-2 overflow-hidden flex-shrink-0" style={{height: '268px', borderRadius: '20px'}}>
+                                <div className="backdrop-blur-md bg-white/10 dark:bg-black/10 rounded p-2 overflow-hidden flex-shrink-0" style={{height: '343px', borderRadius: '20px'}}>
                                     <ReactECharts
                                         option={getChartOption('端口使用数', monitorData.nat, '#6366f1', monitorData.labels, '个')}
                                         style={{height: '100%', width: '100%'}}
@@ -2489,21 +2515,21 @@ await api.vmPower(hostName!, uuid!, 'H_CLOSE')
                         )}
                         {chartView === 'network' && (
                             <>
-                                <div className="backdrop-blur-md bg-white/10 dark:bg-black/10 rounded p-2 overflow-hidden flex-shrink-0" style={{height: '268px', borderRadius: '20px'}}>
+                                <div className="backdrop-blur-md bg-white/10 dark:bg-black/10 rounded p-2 overflow-hidden flex-shrink-0" style={{height: '344px', borderRadius: '20px'}}>
                                     <ReactECharts
                                         option={getChartOption('上行带宽率', monitorData.netUp, '#06b6d4', monitorData.labels, 'Mbps')}
                                         style={{height: '100%', width: '100%'}}
                                         notMerge={true}
                                     />
                                 </div>
-                                <div className="backdrop-blur-md bg-white/10 dark:bg-black/10 rounded p-2 overflow-hidden flex-shrink-0" style={{height: '268px', borderRadius: '20px'}}>
+                                <div className="backdrop-blur-md bg-white/10 dark:bg-black/10 rounded p-2 overflow-hidden flex-shrink-0" style={{height: '343px', borderRadius: '20px'}}>
                                     <ReactECharts
                                         option={getChartOption('下行带宽率', monitorData.netDown, '#0891b2', monitorData.labels, 'Mbps')}
                                         style={{height: '100%', width: '100%'}}
                                         notMerge={true}
                                     />
                                 </div>
-                                <div className="backdrop-blur-md bg-white/10 dark:bg-black/10 rounded p-2 overflow-hidden flex-shrink-0" style={{height: '268px', borderRadius: '20px'}}>
+                                <div className="backdrop-blur-md bg-white/10 dark:bg-black/10 rounded p-2 overflow-hidden flex-shrink-0" style={{height: '343px', borderRadius: '20px'}}>
                                     <ReactECharts
                                         option={getChartOption('反向代理数', monitorData.proxy, '#ec4899', monitorData.labels, '个')}
                                         style={{height: '100%', width: '100%'}}

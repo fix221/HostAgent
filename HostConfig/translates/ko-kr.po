@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: OpenIDCS 1.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-02-10 00:30\n"
-"PO-Revision-Date: 2026-02-10 00:30\n"
+"POT-Creation-Date: 2026-04-28 16:27\n"
+"PO-Revision-Date: 2026-04-28 16:27\n"
 "Last-Translator: Auto Generated\n"
 "Language-Team: Korean\n"
 "Language: ko\n"
@@ -15,11 +15,1262 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-msgid "访问Token"
-msgstr "액세스토큰"
+msgid "保存"
+msgstr "구하다"
 
-msgid "VNC控制台"
-msgstr "VNC 콘솔"
+msgid "保持"
+msgstr "유지하다"
+
+msgid "保留"
+msgstr "예약하다"
+
+msgid "修改"
+msgstr "개정하다"
+
+msgid "修正"
+msgstr "보정"
+
+msgid "停止"
+msgstr "멈추다"
+
+msgid "允许"
+msgstr "허용하다"
+
+msgid "共享"
+msgstr "공유됨"
+
+msgid "关机"
+msgstr "종료"
+
+msgid "关闭"
+msgstr "폐쇄"
+
+msgid "写入"
+msgstr "쓰다"
+
+msgid "分享"
+msgstr "공유하다"
+
+msgid "分割"
+msgstr "분할"
+
+msgid "分离"
+msgstr "분리"
+
+msgid "分配"
+msgstr "분배하다"
+
+msgid "切换"
+msgstr "스위치"
+
+msgid "创建"
+msgstr "만들다"
+
+msgid "删除"
+msgstr "삭제"
+
+msgid "刷新"
+msgstr "새로 고치다"
+
+msgid "勾选"
+msgstr "확인하다"
+
+msgid "卸载"
+msgstr "제거"
+
+msgid "发送"
+msgstr "보내다"
+
+msgid "取消"
+msgstr "취소"
+
+msgid "变换"
+msgstr "변환"
+
+msgid "变更"
+msgstr "변화"
+
+msgid "合并"
+msgstr "병합"
+
+msgid "同意"
+msgstr "동의하다"
+
+msgid "启动"
+msgstr "시작하다"
+
+msgid "启用"
+msgstr "~할 수 있게 하다"
+
+msgid "复制"
+msgstr "복사"
+
+msgid "导入"
+msgstr "수입"
+
+msgid "导出"
+msgstr "내보내다"
+
+msgid "展开"
+msgstr "확장하다"
+
+msgid "强制"
+msgstr "힘"
+
+msgid "恢复"
+msgstr "다시 덮다"
+
+msgid "成为"
+msgstr "~이 되다"
+
+msgid "打印"
+msgstr "인쇄"
+
+msgid "打开"
+msgstr "열려 있는"
+
+msgid "执行"
+msgstr "구현하다"
+
+msgid "扫描"
+msgstr "스캐닝"
+
+msgid "折叠"
+msgstr "겹"
+
+msgid "拒绝"
+msgstr "거부하다"
+
+msgid "拖拽"
+msgstr "견인"
+
+msgid "挂载"
+msgstr "산"
+
+msgid "指定"
+msgstr "지정하다"
+
+msgid "授权"
+msgstr "승인하다"
+
+msgid "排序"
+msgstr "종류"
+
+msgid "接受"
+msgstr "수용하다"
+
+msgid "提交"
+msgstr "제출하다"
+
+msgid "提取"
+msgstr "발췌"
+
+msgid "搜索"
+msgstr "찾다"
+
+msgid "撤销"
+msgstr "취소"
+
+msgid "支持"
+msgstr "지원하다"
+
+msgid "收集"
+msgstr "모으다"
+
+msgid "断开"
+msgstr "연결을 끊다"
+
+msgid "暂停"
+msgstr "정지시키다"
+
+msgid "更新"
+msgstr "고쳐 쓰다"
+
+msgid "构建"
+msgstr "짓다"
+
+msgid "构造"
+msgstr "구조"
+
+msgid "查找"
+msgstr "찾다"
+
+msgid "查收"
+msgstr "확인하다"
+
+msgid "查看"
+msgstr "확인하다"
+
+msgid "格式化"
+msgstr "체재"
+
+msgid "检查"
+msgstr "조사하다"
+
+msgid "检测"
+msgstr "발각"
+
+msgid "注册"
+msgstr "등록하다"
+
+msgid "添加"
+msgstr "다음에 추가"
+
+msgid "清空"
+msgstr "분명한"
+
+msgid "清除"
+msgstr "분명한"
+
+msgid "渲染"
+msgstr "표현"
+
+msgid "点击"
+msgstr "딸깍 하는 소리"
+
+msgid "生成"
+msgstr "생성하다"
+
+msgid "生效"
+msgstr "효력을 발휘하다"
+
+msgid "用尽"
+msgstr "탈진한"
+
+msgid "登出"
+msgstr "로그아웃"
+
+msgid "登录"
+msgstr "로그인"
+
+msgid "监听"
+msgstr "감시 장치"
+
+msgid "监控"
+msgstr "감시 장치"
+
+msgid "看到"
+msgstr "보다"
+
+msgid "确保"
+msgstr "확실하게 하다"
+
+msgid "确认"
+msgstr "확인하다"
+
+msgid "禁止"
+msgstr "금지하다"
+
+msgid "禁用"
+msgstr "장애를 입히다"
+
+msgid "移交"
+msgstr "옮기다"
+
+msgid "移除"
+msgstr "제거하다"
+
+msgid "筛选"
+msgstr "필터"
+
+msgid "简化"
+msgstr "단순화하다"
+
+msgid "编辑"
+msgstr "편집하다"
+
+msgid "联系"
+msgstr "연결하다"
+
+msgid "获取"
+msgstr "얻다"
+
+msgid "表示"
+msgstr "표현하다"
+
+msgid "解析"
+msgstr "분석하다"
+
+msgid "触发"
+msgstr "방아쇠"
+
+msgid "警告"
+msgstr "경고하다"
+
+msgid "读取"
+msgstr "읽다"
+
+msgid "调用"
+msgstr "부르다"
+
+msgid "调试"
+msgstr "디버그"
+
+msgid "跟踪"
+msgstr "길"
+
+msgid "跳转"
+msgstr "도약"
+
+msgid "跳过"
+msgstr "뛰어넘다"
+
+msgid "转换"
+msgstr "전환하다"
+
+msgid "转移"
+msgstr "옮기다"
+
+msgid "转让"
+msgstr "옮기다"
+
+msgid "过滤"
+msgstr "필터"
+
+msgid "返回"
+msgstr "반품"
+
+msgid "还原"
+msgstr "절감"
+
+msgid "进行"
+msgstr "지휘하다"
+
+msgid "连接"
+msgstr "연결하다"
+
+msgid "选中"
+msgstr "선택된"
+
+msgid "选择"
+msgstr "선택하다"
+
+msgid "递归"
+msgstr "재귀"
+
+msgid "通知"
+msgstr "통지하다"
+
+msgid "遍历"
+msgstr "횡단"
+
+msgid "避免"
+msgstr "피하다"
+
+msgid "重做"
+msgstr "다시 하다"
+
+msgid "重启"
+msgstr "다시 시작"
+
+msgid "重置"
+msgstr "다시 놓기"
+
+msgid "重装"
+msgstr "재설치"
+
+msgid "验证"
+msgstr "확인하다"
+
+msgid "一致性"
+msgstr "일관성"
+
+msgid "主机"
+msgstr "주인"
+
+msgid "主题"
+msgstr "주제"
+
+msgid "事件"
+msgstr "이벤트"
+
+msgid "交互"
+msgstr "상호 작용"
+
+msgid "代理"
+msgstr "연기"
+
+msgid "代码"
+msgstr "암호"
+
+msgid "令牌"
+msgstr "토큰"
+
+msgid "仪表盘"
+msgstr "계기반"
+
+msgid "任务"
+msgstr "일"
+
+msgid "使用率"
+msgstr "이용률"
+
+msgid "侧边"
+msgstr "옆"
+
+msgid "信息"
+msgstr "정보"
+
+msgid "假设"
+msgstr "가설"
+
+msgid "元素"
+msgstr "요소"
+
+msgid "关系"
+msgstr "관계"
+
+msgid "内存"
+msgstr "메모리"
+
+msgid "内容"
+msgstr "콘텐츠"
+
+msgid "函数"
+msgstr "기능"
+
+msgid "利用率"
+msgstr "이용"
+
+msgid "别名"
+msgstr "별명"
+
+msgid "剪贴板"
+msgstr "클립보드"
+
+msgid "功耗"
+msgstr "소비전력"
+
+msgid "功能"
+msgstr "기능"
+
+msgid "动作"
+msgstr "행동"
+
+msgid "匹配"
+msgstr "성냥"
+
+msgid "区域"
+msgstr "영역"
+
+msgid "协议"
+msgstr "규약"
+
+msgid "单位"
+msgstr "단위"
+
+msgid "参数"
+msgstr "매개변수"
+
+msgid "变量"
+msgstr "변하기 쉬운"
+
+msgid "可用性"
+msgstr "유효성"
+
+msgid "可靠性"
+msgstr "신뢰할 수 있음"
+
+msgid "名称"
+msgstr "이름"
+
+msgid "命令"
+msgstr "주문하다"
+
+msgid "图标"
+msgstr "상"
+
+msgid "地址"
+msgstr "주소"
+
+msgid "域名"
+msgstr "도메인 이름"
+
+msgid "堆栈"
+msgstr "스택"
+
+msgid "备份"
+msgstr "지원"
+
+msgid "备注"
+msgstr "주목"
+
+msgid "复杂度"
+msgstr "복잡성"
+
+msgid "存储"
+msgstr "저장"
+
+msgid "安全性"
+msgstr "보안"
+
+msgid "定义"
+msgstr "정의"
+
+msgid "实例"
+msgstr "예"
+
+msgid "容器"
+msgstr "컨테이너"
+
+msgid "密码"
+msgstr "비밀번호"
+
+msgid "对话框"
+msgstr "대화 상자"
+
+msgid "对象"
+msgstr "물체"
+
+msgid "导航"
+msgstr "항해"
+
+msgid "属性"
+msgstr "재산"
+
+msgid "布局"
+msgstr "공들여 나열한 것"
+
+msgid "带宽"
+msgstr "대역폭"
+
+msgid "平台"
+msgstr "플랫폼"
+
+msgid "应用"
+msgstr "애플리케이션"
+
+msgid "引擎"
+msgstr "엔진"
+
+msgid "弹窗"
+msgstr "팝업창"
+
+msgid "强度"
+msgstr "힘"
+
+msgid "快照"
+msgstr "스냅 사진"
+
+msgid "性能"
+msgstr "성능"
+
+msgid "截图"
+msgstr "스크린샷"
+
+msgid "所有权"
+msgstr "소유권"
+
+msgid "所有者"
+msgstr "소유자"
+
+msgid "报告"
+msgstr "보고서"
+
+msgid "拦截器"
+msgstr "인터셉터"
+
+msgid "指令"
+msgstr "지침"
+
+msgid "按钮"
+msgstr "단추"
+
+msgid "接口"
+msgstr "인터페이스"
+
+msgid "控制台"
+msgstr "콘솔"
+
+msgid "描述"
+msgstr "설명하다"
+
+msgid "插件"
+msgstr "플러그인"
+
+msgid "效率"
+msgstr "능률"
+
+msgid "数据"
+msgstr "데이터"
+
+msgid "数组"
+msgstr "정렬"
+
+msgid "文件"
+msgstr "문서"
+
+msgid "文字"
+msgstr "단어"
+
+msgid "文本"
+msgstr "텍스트"
+
+msgid "方式"
+msgstr "방법"
+
+msgid "方法"
+msgstr "방법"
+
+msgid "日志"
+msgstr "통나무"
+
+msgid "映射"
+msgstr "매핑"
+
+msgid "显卡"
+msgstr "그래픽 카드"
+
+msgid "显存"
+msgstr "비디오 메모리"
+
+msgid "有效性"
+msgstr "유효성"
+
+msgid "服务"
+msgstr "제공하다"
+
+msgid "服务器"
+msgstr "섬기는 사람"
+
+msgid "机器"
+msgstr "기계"
+
+msgid "权限"
+msgstr "권한"
+
+msgid "条件"
+msgstr "상태"
+
+msgid "标签"
+msgstr "상표"
+
+msgid "标题"
+msgstr "제목"
+
+msgid "样式"
+msgstr "스타일"
+
+msgid "核心"
+msgstr "핵심"
+
+msgid "格式"
+msgstr "체재"
+
+msgid "桌面"
+msgstr "데스크탑"
+
+msgid "概览"
+msgstr "개요"
+
+msgid "模块"
+msgstr "기준 치수"
+
+msgid "模式"
+msgstr "모델"
+
+msgid "模板"
+msgstr "주형"
+
+msgid "正文"
+msgstr "텍스트"
+
+msgid "注释"
+msgstr "논평"
+
+msgid "流量"
+msgstr "흐름"
+
+msgid "消息"
+msgstr "정보"
+
+msgid "温度"
+msgstr "온도"
+
+msgid "版本"
+msgstr "버전"
+
+msgid "状态"
+msgstr "상태"
+
+msgid "用户"
+msgstr "사용자"
+
+msgid "用途"
+msgstr "사용"
+
+msgid "用量"
+msgstr "복용량"
+
+msgid "电源"
+msgstr "전원 공급 장치"
+
+msgid "目录"
+msgstr "목차"
+
+msgid "硬盘"
+msgstr "하드디스크"
+
+msgid "磁盘"
+msgstr "디스크"
+
+msgid "程序"
+msgstr "프로그램"
+
+msgid "稳定性"
+msgstr "안정"
+
+msgid "端口"
+msgstr "포트"
+
+msgid "策略"
+msgstr "전략"
+
+msgid "管理员"
+msgstr "관리자"
+
+msgid "类型"
+msgstr "유형"
+
+msgid "精度"
+msgstr "정확성"
+
+msgid "系统"
+msgstr "체계"
+
+msgid "约束"
+msgstr "강제"
+
+msgid "级别"
+msgstr "수준"
+
+msgid "线程"
+msgstr "실"
+
+msgid "组件"
+msgstr "구성요소"
+
+msgid "结果"
+msgstr "결과"
+
+msgid "统计"
+msgstr "통계"
+
+msgid "网关"
+msgstr "게이트웨이"
+
+msgid "网卡"
+msgstr "네트워크 카드"
+
+msgid "网桥"
+msgstr "다리"
+
+msgid "网络"
+msgstr "회로망"
+
+msgid "网网"
+msgstr "넷넷"
+
+msgid "脚本"
+msgstr "스크립트"
+
+msgid "节点"
+msgstr "마디"
+
+msgid "范围"
+msgstr "범위"
+
+msgid "菜单"
+msgstr "메뉴"
+
+msgid "虚拟机"
+msgstr "가상 머신"
+
+msgid "表单"
+msgstr "형태"
+
+msgid "要求"
+msgstr "필요하다"
+
+msgid "规则"
+msgstr "규칙"
+
+msgid "视图"
+msgstr "보다"
+
+msgid "角色"
+msgstr "역할"
+
+msgid "记录"
+msgstr "기록"
+
+msgid "设备"
+msgstr "장비"
+
+msgid "设置"
+msgstr "설정"
+
+msgid "详情"
+msgstr "세부"
+
+msgid "说明"
+msgstr "설명하다"
+
+msgid "账号"
+msgstr "계정"
+
+msgid "账户"
+msgstr "계정"
+
+msgid "资源"
+msgstr "의지"
+
+msgid "路径"
+msgstr "길"
+
+msgid "路由"
+msgstr "라우팅"
+
+msgid "过滤器"
+msgstr "필터"
+
+msgid "进度条"
+msgstr "진행률 표시줄"
+
+msgid "进程"
+msgstr "프로세스"
+
+msgid "选择器"
+msgstr "선택자"
+
+msgid "选项"
+msgstr "옵션"
+
+msgid "通道"
+msgstr "통로"
+
+msgid "速度"
+msgstr "속도"
+
+msgid "邮件"
+msgstr "우편"
+
+msgid "邮箱"
+msgstr "우편"
+
+msgid "配置"
+msgstr "구성"
+
+msgid "配额"
+msgstr "몫"
+
+msgid "镜像"
+msgstr "거울"
+
+msgid "闭包"
+msgstr "폐쇄"
+
+msgid "问题"
+msgstr "질문"
+
+msgid "限制"
+msgstr "한계"
+
+msgid "页面"
+msgstr "페이지"
+
+msgid "顶部"
+msgstr "맨 위"
+
+msgid "一致"
+msgstr "일관된"
+
+msgid "上行"
+msgstr "상승"
+
+msgid "下行"
+msgstr "하향의"
+
+msgid "不会"
+msgstr "습관"
+
+msgid "不再"
+msgstr "더 이상"
+
+msgid "不可"
+msgstr "아니요"
+
+msgid "不稳定"
+msgstr "불안정한"
+
+msgid "不能"
+msgstr "할 수 없다"
+
+msgid "不足"
+msgstr "불충분하다"
+
+msgid "专用"
+msgstr "헌신적인"
+
+msgid "丢失"
+msgstr "잃어버린"
+
+msgid "中"
+msgstr "가운데"
+
+msgid "中等"
+msgstr "중간"
+
+msgid "临时"
+msgstr "일시적인"
+
+msgid "为空"
+msgstr "비어있다"
+
+msgid "主要"
+msgstr "기본"
+
+msgid "二次"
+msgstr "반성"
+
+msgid "优先"
+msgstr "우선 사항"
+
+msgid "低"
+msgstr "낮은"
+
+msgid "全局"
+msgstr "전반적인 상황"
+
+msgid "全部"
+msgstr "모두"
+
+msgid "公共"
+msgstr "공공의"
+
+msgid "公网"
+msgstr "공용 네트워크"
+
+msgid "兼容"
+msgstr "호환 가능"
+
+msgid "内网"
+msgstr "인트라넷"
+
+msgid "内部"
+msgstr "내부"
+
+msgid "再次"
+msgstr "다시"
+
+msgid "出错"
+msgstr "오류"
+
+msgid "初始"
+msgstr "초기의"
+
+msgid "动态"
+msgstr "동적"
+
+msgid "单个"
+msgstr "하나의"
+
+msgid "危险"
+msgstr "위험"
+
+msgid "原始"
+msgstr "원래의"
+
+msgid "反向"
+msgstr "뒤집다"
+
+msgid "受控"
+msgstr "통제된"
+
+msgid "只能"
+msgstr "오직"
+
+msgid "可以"
+msgstr "할 수 있다"
+
+msgid "可用"
+msgstr "사용 가능"
+
+msgid "可能"
+msgstr "가능한"
+
+msgid "可逆"
+msgstr "거꾸로 할 수 있는"
+
+msgid "可选"
+msgstr "선택 과목"
+
+msgid "各种"
+msgstr "다양한"
+
+msgid "唯一"
+msgstr "오직"
+
+msgid "在线"
+msgstr "온라인"
+
+msgid "基本"
+msgstr "기초적인"
+
+msgid "复杂"
+msgstr "복잡한"
+
+msgid "外网"
+msgstr "엑스트라넷"
+
+msgid "外部"
+msgstr "외부"
+
+msgid "多"
+msgstr "많은"
+
+msgid "多个"
+msgstr "다수의"
+
+msgid "大"
+msgstr "큰"
+
+msgid "失效"
+msgstr "유효하지 않은"
+
+msgid "失败"
+msgstr "실패하다"
+
+msgid "安全"
+msgstr "안전"
+
+msgid "完整"
+msgstr "전체"
+
+msgid "实际"
+msgstr "실제"
+
+msgid "小"
+msgstr "작은"
+
+msgid "少"
+msgstr "약간의"
+
+msgid "局部"
+msgstr "현지의"
+
+msgid "已用"
+msgstr "사용된"
+
+msgid "异常"
+msgstr "이상"
+
+msgid "强关"
+msgstr "강력한 패스"
+
+msgid "当前"
+msgstr "현재의"
+
+msgid "必选"
+msgstr "필수의"
+
+msgid "快速"
+msgstr "빠른"
+
+msgid "成功"
+msgstr "성공"
+
+msgid "手动"
+msgstr "수동"
+
+msgid "整个"
+msgstr "전체"
+
+msgid "新"
+msgstr "새로운"
+
+msgid "新增"
+msgstr "새로운"
+
+msgid "无描述"
+msgstr "설명 없음"
+
+msgid "无效"
+msgstr "유효하지 않은"
+
+msgid "无限制"
+msgstr "제한 없는"
+
+msgid "旧"
+msgstr "오래된"
+
+msgid "最新"
+msgstr "최신"
+
+msgid "最终"
+msgstr "결정적인"
+
+msgid "有效"
+msgstr "효율적인"
+
+msgid "未知"
+msgstr "알려지지 않은"
+
+msgid "本地"
+msgstr "현지의"
+
+msgid "次要"
+msgstr "반성"
+
+msgid "正常"
+msgstr "정상"
+
+msgid "正确"
+msgstr "옳은"
+
+msgid "永久"
+msgstr "영구적인"
+
+msgid "活跃"
+msgstr "활동적인"
+
+msgid "浅"
+msgstr "얕은"
+
+msgid "深"
+msgstr "깊은"
+
+msgid "物理"
+msgstr "물리학"
+
+msgid "独立"
+msgstr "독립적인"
+
+msgid "现有"
+msgstr "기존의"
+
+msgid "直接"
+msgstr "직접"
+
+msgid "相关"
+msgstr "관련된"
+
+msgid "短"
+msgstr "짧은"
+
+msgid "离线"
+msgstr "오프라인"
+
+msgid "私有"
+msgstr "사적인"
+
+msgid "稳定"
+msgstr "안정화"
+
+msgid "空闲"
+msgstr "게으른"
+
+msgid "简单"
+msgstr "단순한"
+
+msgid "精确"
+msgstr "정확한"
+
+msgid "紧急"
+msgstr "긴급한"
+
+msgid "繁忙"
+msgstr "바쁘다"
+
+msgid "缓慢"
+msgstr "느린"
+
+msgid "自动"
+msgstr "오토매틱"
+
+msgid "自定义"
+msgstr "사용자 정의"
+
+msgid "虚拟"
+msgstr "가상"
+
+msgid "超时"
+msgstr "타임아웃"
+
+msgid "足够"
+msgstr "충분한"
+
+msgid "过期"
+msgstr "만료됨"
+
+msgid "近似"
+msgstr "근사치를 내다"
+
+msgid "远程"
+msgstr "원격"
+
+msgid "通用"
+msgstr "만능인"
+
+msgid "逻辑"
+msgstr "논리"
+
+msgid "部分"
+msgstr "부분"
+
+msgid "重要"
+msgstr "중요한"
+
+msgid "错误"
+msgstr "실수"
+
+msgid "长"
+msgstr "긴"
+
+msgid "静态"
+msgstr "공전"
+
+msgid "高"
+msgstr "높은"
+
+msgid "高级"
+msgstr "고급의"
+
+msgid "默认"
+msgstr "기본"
+
+msgid "API"
+msgstr "API"
+
+msgid "CPU"
+msgstr "CPU"
+
+msgid "GPU"
+msgstr "GPU"
+
+msgid "HTTP"
+msgstr "HTTP"
+
+msgid "IP"
+msgstr "IP"
+
+msgid "ISO"
+msgstr "ISO"
+
+msgid "JSON"
+msgstr "JSON"
+
+msgid "NAT"
+msgstr "NAT"
+
+msgid "Token"
+msgstr "토큰"
+
+msgid "VNC"
+msgstr "VNC"
+
+msgid "Web"
+msgstr "편물"
 
 msgid "CPU核心"
 msgstr "CPU 코어"
@@ -27,56 +1278,44 @@ msgstr "CPU 코어"
 msgid "GPU显存"
 msgstr "GPU 메모리"
 
-msgid "ISO镜像"
-msgstr "ISO 이미지"
-
-msgid "NAT端口"
-msgstr "NAT 포트"
-
-msgid "Web代理"
-msgstr "웹 프록시"
-
-msgid "创建虚拟机"
-msgstr "가상 머신 만들기"
-
-msgid "删除虚拟机"
-msgstr "가상 머신 삭제"
-
-msgid "卸载ISO"
-msgstr "ISO 제거"
-
-msgid "卸载数据盘"
-msgstr "데이터 디스크 마운트 해제"
-
-msgid "扫描虚拟机"
-msgstr "가상 머신 스캔"
-
-msgid "挂载ISO"
-msgstr "ISO 마운트"
-
-msgid "挂载数据盘"
-msgstr "데이터 디스크 마운트"
-
-msgid "编辑虚拟机"
-msgstr "가상 머신 편집"
-
-msgid "虚拟机详情"
-msgstr "가상 머신 세부정보"
-
 msgid "IP地址"
 msgstr "IP 주소"
 
 msgid "IP配额"
 msgstr "IP 할당량"
 
+msgid "ISO镜像"
+msgstr "ISO 이미지"
+
+msgid "NAT端口"
+msgstr "NAT 포트"
+
+msgid "VNC控制台"
+msgstr "VNC 콘솔"
+
+msgid "Web代理"
+msgstr "웹 프록시"
+
+msgid "一键远程"
+msgstr "원클릭 원격"
+
+msgid "上传带宽"
+msgstr "업로드 대역폭"
+
 msgid "上行带宽"
 msgstr "업스트림 대역폭"
 
-msgid "下拉菜单"
-msgstr "드롭다운 메뉴"
+msgid "下划线"
+msgstr "밑줄"
 
 msgid "下行带宽"
 msgstr "다운링크 대역폭"
+
+msgid "下载带宽"
+msgstr "대역폭 다운로드"
+
+msgid "个主机"
+msgstr "호스트"
 
 msgid "个人信息"
 msgstr "개인정보"
@@ -87,17 +1326,23 @@ msgstr "개인 설정"
 msgid "个人资料"
 msgstr "개인정보"
 
+msgid "个字符"
+msgstr "캐릭터"
+
 msgid "为虚拟机"
 msgstr "가상머신용"
 
-msgid "主所有者"
-msgstr "주 소유자"
+msgid "主机名"
+msgstr "호스트 이름"
 
 msgid "主机名称"
 msgstr "호스트 이름"
 
 msgid "主机总数"
 msgstr "총 호스트 수"
+
+msgid "主机数"
+msgstr "호스트 수"
 
 msgid "主机数量"
 msgstr "호스트 수"
@@ -108,9 +1353,6 @@ msgstr "호스트 개요"
 msgid "主机筛选"
 msgstr "호스트 필터링"
 
-msgid "主机管理"
-msgstr "호스트 관리"
-
 msgid "主机类型"
 msgstr "호스트 유형"
 
@@ -119,6 +1361,9 @@ msgstr "호스트 세부정보"
 
 msgid "主要接口"
 msgstr "메인 인터페이스"
+
+msgid "从文件"
+msgstr "파일에서"
 
 msgid "任务列表"
 msgstr "작업 목록"
@@ -135,20 +1380,20 @@ msgstr "작업 유형"
 msgid "任务详情"
 msgstr "임무 세부정보"
 
+msgid "使用者"
+msgstr "사용자"
+
+msgid "供选择"
+msgstr "선택을 위해"
+
+msgid "保存中"
+msgstr "절약"
+
 msgid "保存失败"
 msgstr "저장 실패"
 
 msgid "保存确认"
 msgstr "확인 저장"
-
-msgid "保存设置"
-msgstr "설정 저장"
-
-msgid "保存配置"
-msgstr "구성 저장"
-
-msgid "保持一致"
-msgstr "일관성을 유지하세요"
 
 msgid "修改密码"
 msgstr "비밀번호 변경"
@@ -156,20 +1401,14 @@ msgstr "비밀번호 변경"
 msgid "修改邮箱"
 msgstr "이메일 수정"
 
-msgid "停止刷新"
-msgstr "새로고침 중지"
+msgid "停止中"
+msgstr "멎는"
 
 msgid "光盘镜像"
 msgstr "디스크 이미지"
 
 msgid "全部主机"
 msgstr "모든 호스트"
-
-msgid "全部状态"
-msgstr "모든 상태"
-
-msgid "全部级别"
-msgstr "모든 레벨"
 
 msgid "公网IP"
 msgstr "공개 IP"
@@ -179,6 +1418,9 @@ msgstr "공용 네트워크 포트"
 
 msgid "公网网桥"
 msgstr "공용 네트워크 브리지"
+
+msgid "关机中"
+msgstr "종료 중"
 
 msgid "内网IP"
 msgstr "인트라넷 IP"
@@ -195,9 +1437,6 @@ msgstr "인트라넷 브리지"
 msgid "分配主机"
 msgstr "호스트 할당"
 
-msgid "创建备份"
-msgstr "백업 만들기"
-
 msgid "创建失败"
 msgstr "생성 실패"
 
@@ -210,11 +1449,14 @@ msgstr "생성 시간"
 msgid "创建用户"
 msgstr "사용자 생성"
 
+msgid "创建虚拟机"
+msgstr "가상 머신 만들기"
+
+msgid "初始化"
+msgstr "초기화"
+
 msgid "删除主机"
 msgstr "호스트 삭제"
-
-msgid "删除代理"
-msgstr "프록시 삭제"
 
 msgid "删除失败"
 msgstr "삭제 실패"
@@ -231,11 +1473,23 @@ msgstr "사용자 삭제"
 msgid "删除硬盘"
 msgstr "하드 드라이브 삭제"
 
+msgid "删除虚拟机"
+msgstr "가상 머신 삭제"
+
+msgid "加载中"
+msgstr "로드 중"
+
 msgid "加载失败"
 msgstr "로드 실패"
 
+msgid "卸载ISO"
+msgstr "ISO 제거"
+
 msgid "卸载失败"
 msgstr "제거 실패"
+
+msgid "卸载数据盘"
+msgstr "데이터 디스크 마운트 해제"
 
 msgid "反向代理"
 msgstr "역방향 프록시"
@@ -243,8 +1497,11 @@ msgstr "역방향 프록시"
 msgid "发件邮箱"
 msgstr "이메일 보내기"
 
-msgid "发送域名"
-msgstr "도메인 이름 보내기"
+msgid "取决于"
+msgstr "에 따라"
+
+msgid "受控端"
+msgstr "통제된 끝"
 
 msgid "台虚拟机"
 msgstr "가상 머신"
@@ -258,6 +1515,9 @@ msgstr "백엔드 주소"
 msgid "后端端口"
 msgstr "백엔드 포트"
 
+msgid "启动中"
+msgstr "시작"
+
 msgid "启用失败"
 msgstr "활성화하지 못했습니다."
 
@@ -267,8 +1527,8 @@ msgstr "사용자 활성화"
 msgid "响应错误"
 msgstr "응답 오류"
 
-msgid "基本信息"
-msgstr "기본정보"
+msgid "国际化"
+msgstr "국제화"
 
 msgid "基本配置"
 msgstr "기본 구성"
@@ -282,20 +1542,11 @@ msgstr "핸들링 기능"
 msgid "处理响应"
 msgstr "응답 처리"
 
-msgid "备份名称"
-msgstr "백업 이름"
+msgid "备份中"
+msgstr "백업 중"
 
-msgid "备份文件"
-msgstr "백업 파일"
-
-msgid "备份注释"
-msgstr "백업 코멘트"
-
-msgid "备份管理"
-msgstr "백업 관리"
-
-msgid "备份说明"
-msgstr "백업 지침"
+msgid "复制到"
+msgstr "복사 대상"
 
 msgid "复制失败"
 msgstr "복사 실패"
@@ -303,11 +1554,23 @@ msgstr "복사 실패"
 msgid "外网端口"
 msgstr "외부 네트워크 포트"
 
+msgid "大写字母"
+msgstr "대문자"
+
 msgid "子网掩码"
 msgstr "서브넷 마스크"
 
 msgid "存储容量"
 msgstr "저장 용량"
+
+msgid "存储路径"
+msgstr "저장 경로"
+
+msgid "安全提示"
+msgstr "안전 수칙"
+
+msgid "安装盘"
+msgstr "설치 디스크"
 
 msgid "完整数据"
 msgstr "완전한 데이터"
@@ -321,8 +1584,11 @@ msgstr "인스턴스 이름"
 msgid "实例概览"
 msgstr "인스턴스 개요"
 
-msgid "容器管理"
-msgstr "컨테이너 관리"
+msgid "实例管理"
+msgstr "인스턴스 관리"
+
+msgid "实例配置"
+msgstr "인스턴스 구성"
 
 msgid "密码强度"
 msgstr "비밀번호 강도"
@@ -330,8 +1596,41 @@ msgstr "비밀번호 강도"
 msgid "小写字母"
 msgstr "소문자"
 
-msgid "开放注册"
-msgstr "공개등록"
+msgid "已保存"
+msgstr "저장됨"
+
+msgid "已停止"
+msgstr "중지됨"
+
+msgid "已关闭"
+msgstr "닫은"
+
+msgid "已删除"
+msgstr "삭제됨"
+
+msgid "已启用"
+msgstr "활성화됨"
+
+msgid "已完成"
+msgstr "완전한"
+
+msgid "已崩溃"
+msgstr "추락"
+
+msgid "已开启"
+msgstr "이미 켜져 있음"
+
+msgid "已挂载"
+msgstr "탑재됨"
+
+msgid "已暂停"
+msgstr "정지된"
+
+msgid "已禁用"
+msgstr "장애가 있는"
+
+msgid "已验证"
+msgstr "확인됨"
 
 msgid "强制关机"
 msgstr "강제 종료"
@@ -348,8 +1647,17 @@ msgstr "비밀번호를 잊어버려"
 msgid "快速操作"
 msgstr "빠른 작동"
 
+msgid "总代理"
+msgstr "일반 대리인"
+
 msgid "总代理数"
 msgstr "총 상담원 수"
+
+msgid "总配额"
+msgstr "총 할당량"
+
+msgid "恢复中"
+msgstr "회복 중"
 
 msgid "恢复失败"
 msgstr "복구 실패"
@@ -360,20 +1668,32 @@ msgstr "모든 호스트"
 msgid "所有协议"
 msgstr "모든 계약"
 
-msgid "扫描备份"
-msgstr "스캔 백업"
+msgid "扩展数据"
+msgstr "확장 데이터"
+
+msgid "扩展选项"
+msgstr "확장 옵션"
 
 msgid "扫描失败"
 msgstr "스캔 실패"
 
+msgid "扫描虚拟机"
+msgstr "가상 머신 스캔"
+
 msgid "找回密码"
 msgstr "비밀번호 검색"
+
+msgid "挂载ISO"
+msgstr "ISO 마운트"
 
 msgid "挂载名称"
 msgstr "마운트 이름"
 
 msgid "挂载失败"
 msgstr "마운트 실패"
+
+msgid "挂载数据盘"
+msgstr "데이터 디스크 마운트"
 
 msgid "接口类型"
 msgstr "인터페이스 유형"
@@ -399,6 +1719,9 @@ msgstr "이메일 수신"
 msgid "数十分钟"
 msgstr "수십 분"
 
+msgid "数据盘"
+msgstr "데이터 디스크"
+
 msgid "数据磁盘"
 msgstr "데이터 디스크"
 
@@ -407,6 +1730,15 @@ msgstr "데이터 관리"
 
 msgid "数据结构"
 msgstr "데이터 구조"
+
+msgid "文件名"
+msgstr "파일 이름"
+
+msgid "新密码"
+msgstr "새 비밀번호"
+
+msgid "新账号"
+msgstr "새 계정"
 
 msgid "日志查看"
 msgstr "로그 보기"
@@ -432,11 +1764,11 @@ msgstr "표시번호"
 msgid "普通用户"
 msgstr "일반 사용자"
 
+msgid "暂停中"
+msgstr "일시중지됨"
+
 msgid "暂无主机"
 msgstr "아직 호스트가 없습니다."
-
-msgid "暂无备份"
-msgstr "아직 백업이 없습니다"
 
 msgid "更新主机"
 msgstr "호스트 업데이트"
@@ -446,6 +1778,9 @@ msgstr "업데이트 에이전트"
 
 msgid "更新失败"
 msgstr "업데이트 실패"
+
+msgid "更新成功"
+msgstr "업데이트 성공"
 
 msgid "更新用户"
 msgstr "사용자 업데이트"
@@ -459,6 +1794,15 @@ msgstr "마지막 업데이트"
 msgid "最小要求"
 msgstr "최소 요구사항"
 
+msgid "月流量"
+msgstr "월간 트래픽"
+
+msgid "未分配"
+msgstr "할당되지 않음"
+
+msgid "未挂载"
+msgstr "마운트되지 않음"
+
 msgid "未知主机"
 msgstr "알 수 없는 호스트"
 
@@ -471,11 +1815,20 @@ msgstr "알 수 없는 시간"
 msgid "未知系统"
 msgstr "알 수 없는 시스템"
 
+msgid "未配置"
+msgstr "구성되지 않음"
+
+msgid "未验证"
+msgstr "확인되지 않음"
+
 msgid "权限不足"
 msgstr "권한이 부족합니다."
 
 msgid "权限信息"
 msgstr "권한 정보"
+
+msgid "条记录"
+msgstr "기록"
 
 msgid "查看全部"
 msgstr "모두 보기"
@@ -485,6 +1838,12 @@ msgstr "세부 사항을 확인하세요"
 
 msgid "桌面端口"
 msgstr "데스크탑 포트"
+
+msgid "模板数"
+msgstr "템플릿 수"
+
+msgid "正在"
+msgstr "~이다"
 
 msgid "正常运行"
 msgstr "정상 작동"
@@ -537,11 +1896,17 @@ msgstr "명확한 디스플레이"
 msgid "爱快地址"
 msgstr "아이쿠아이 주소"
 
+msgid "爱快配置"
+msgstr "아이쿠아이 구성"
+
 msgid "特殊字符"
 msgstr "특수 문자"
 
 msgid "用户列表"
 msgstr "사용자 목록"
+
+msgid "用户名"
+msgstr "사용자 이름"
 
 msgid "用户权限"
 msgstr "사용자 권한"
@@ -558,6 +1923,9 @@ msgstr "사용자 로그아웃"
 msgid "用户登录"
 msgstr "사용자 로그인"
 
+msgid "用户空间"
+msgstr "사용자 공간"
+
 msgid "用户管理"
 msgstr "사용자 관리"
 
@@ -566,6 +1934,9 @@ msgstr "전원 작동"
 
 msgid "电源管理"
 msgstr "전원 관리"
+
+msgid "登录失败"
+msgstr "로그인 실패"
 
 msgid "硬盘大小"
 msgstr "하드 드라이브 크기"
@@ -609,6 +1980,9 @@ msgstr "비활성화 실패"
 msgid "移交失败"
 msgstr "핸드오버 실패"
 
+msgid "程序启动路径"
+msgstr "프로그램 시작 경로"
+
 msgid "端口数量"
 msgstr "포트 수"
 
@@ -623,6 +1997,9 @@ msgstr "포트 포워딩"
 
 msgid "端口配置"
 msgstr "포트 구성"
+
+msgid "等待中"
+msgstr "대기 중"
 
 msgid "管理主机"
 msgstr "관리 호스트"
@@ -642,6 +2019,9 @@ msgstr "시스템 비밀번호"
 msgid "系统日志"
 msgstr "시스템 로그"
 
+msgid "系统映射"
+msgstr "시스템 매핑"
+
 msgid "系统概览"
 msgstr "시스템 개요"
 
@@ -650,6 +2030,12 @@ msgstr "시스템 상태"
 
 msgid "系统界面"
 msgstr "시스템 인터페이스"
+
+msgid "系统盘"
+msgstr "시스템 디스크"
+
+msgid "系统空间"
+msgstr "시스템 공간"
 
 msgid "系统管理"
 msgstr "시스템 관리"
@@ -669,6 +2055,9 @@ msgstr "통계"
 msgid "编辑主机"
 msgstr "호스트 수정"
 
+msgid "编辑虚拟机"
+msgstr "가상 머신 편집"
+
 msgid "网关地址"
 msgstr "게이트웨이 주소"
 
@@ -677,6 +2066,9 @@ msgstr "게이트웨이 오류"
 
 msgid "网卡信息"
 msgstr "네트워크 카드 정보"
+
+msgid "网卡列表"
+msgstr "네트워크 카드 목록"
 
 msgid "网卡名称"
 msgstr "네트워크 카드 이름"
@@ -690,11 +2082,17 @@ msgstr "네트워크 카드 유형"
 msgid "网卡配置"
 msgstr "네트워크 카드 구성"
 
+msgid "网络与配额"
+msgstr "네트워킹 및 할당량"
+
 msgid "网络带宽"
 msgstr "네트워크 대역폭"
 
 msgid "网络服务"
 msgstr "네트워크 서비스"
+
+msgid "网络端口"
+msgstr "네트워크 포트"
 
 msgid "网络管理"
 msgstr "네트워크 관리"
@@ -714,6 +2112,9 @@ msgstr "자동 할당"
 msgid "自动刷新"
 msgstr "자동 새로고침"
 
+msgid "自动化"
+msgstr "오토메이션"
+
 msgid "自动更新"
 msgstr "자동 업데이트"
 
@@ -726,17 +2127,41 @@ msgstr "영문자"
 msgid "获取数据"
 msgstr "데이터 가져오기"
 
+msgid "菜单项"
+msgstr "메뉴 항목"
+
+msgid "虚拟化"
+msgstr "가상화"
+
+msgid "虚拟机详情"
+msgstr "가상 머신 세부정보"
+
 msgid "计算资源"
 msgstr "컴퓨팅 리소스"
 
 msgid "认证方式"
 msgstr "인증방법"
 
+msgid "设备名"
+msgstr "장치 이름"
+
+msgid "设备直通"
+msgstr "장치 통과"
+
 msgid "设置失败"
 msgstr "설정 실패"
 
+msgid "设置密码"
+msgstr "비밀번호 설정"
+
+msgid "访问Token"
+msgstr "액세스토큰"
+
 msgid "访问端口"
 msgstr "액세스 포트"
+
+msgid "访问配置"
+msgstr "액세스 구성"
 
 msgid "请求失败"
 msgstr "요청 실패"
@@ -753,11 +2178,20 @@ msgstr "자원 할당"
 msgid "资源配额"
 msgstr "리소스 할당량"
 
+msgid "转发规则"
+msgstr "전달 규칙"
+
+msgid "运行中"
+msgstr "달리기"
+
 msgid "运行日志"
 msgstr "로그 실행"
 
 msgid "返回登录"
 msgstr "로그인으로 돌아가기"
+
+msgid "还原中"
+msgstr "복원 중"
 
 msgid "还原备份"
 msgstr "백업 복원"
@@ -789,8 +2223,14 @@ msgstr "이메일 주소"
 msgid "邮箱验证"
 msgstr "이메일 인증"
 
+msgid "配置中"
+msgstr "구성"
+
 msgid "配置名称"
 msgstr "구성 이름"
+
+msgid "配置池"
+msgstr "풀 구성"
 
 msgid "配额不足"
 msgstr "할당량이 부족합니다."
@@ -798,11 +2238,17 @@ msgstr "할당량이 부족합니다."
 msgid "配额充足"
 msgstr "충분한 할당량"
 
+msgid "重启中"
+msgstr "다시 시작하는 중"
+
 msgid "重置失败"
 msgstr "재설정 실패"
 
 msgid "重置密码"
 msgstr "비밀번호 재설정"
+
+msgid "重装中"
+msgstr "재설치 중"
 
 msgid "重装失败"
 msgstr "재설치 실패"
@@ -822,257 +2268,14 @@ msgstr "오류 처리"
 msgid "镜像文件"
 msgstr "이미지 파일"
 
+msgid "限制配置"
+msgstr "구성 제한"
+
 msgid "随机生成"
 msgstr "무작위로 생성됨"
 
-msgid "下划线"
-msgstr "밑줄"
-
-msgid "个主机"
-msgstr "호스트"
-
-msgid "个字符"
-msgstr "캐릭터"
-
-msgid "主机名"
-msgstr "호스트 이름"
-
-msgid "主机数"
-msgstr "호스트 수"
-
-msgid "从文件"
-msgstr "파일에서"
-
-msgid "仪表盘"
-msgstr "계기반"
-
-msgid "使用率"
-msgstr "이용률"
-
-msgid "使用者"
-msgstr "사용자"
-
-msgid "供选择"
-msgstr "선택을 위해"
-
-msgid "保存中"
-msgstr "절약"
-
-msgid "停止中"
-msgstr "멎는"
-
-msgid "关机中"
-msgstr "종료 중"
-
-msgid "初始化"
-msgstr "초기화"
-
-msgid "利用率"
-msgstr "이용"
-
-msgid "剪贴板"
-msgstr "클립보드"
-
-msgid "加载中"
-msgstr "로드 중"
-
-msgid "取决于"
-msgstr "에 따라"
-
-msgid "启动中"
-msgstr "시작"
-
-msgid "国际化"
-msgstr "국제화"
-
-msgid "备份中"
-msgstr "백업 중"
-
-msgid "复制到"
-msgstr "복사 대상"
-
-msgid "复杂度"
-msgstr "복잡성"
-
-msgid "安装盘"
-msgstr "설치 디스크"
-
-msgid "对话框"
-msgstr "대화 상자"
-
-msgid "已保存"
-msgstr "저장됨"
-
-msgid "已停止"
-msgstr "중지됨"
-
-msgid "已关闭"
-msgstr "닫은"
-
-msgid "已删除"
-msgstr "삭제됨"
-
-msgid "已启用"
-msgstr "활성화됨"
-
-msgid "已完成"
-msgstr "완전한"
-
-msgid "已崩溃"
-msgstr "추락"
-
-msgid "已开启"
-msgstr "이미 켜져 있음"
-
-msgid "已挂载"
-msgstr "탑재됨"
-
-msgid "已暂停"
-msgstr "정지된"
-
-msgid "已禁用"
-msgstr "장애가 있는"
-
-msgid "已验证"
-msgstr "확인됨"
-
-msgid "总代理"
-msgstr "일반 대리인"
-
-msgid "总配额"
-msgstr "총 할당량"
-
-msgid "恢复中"
-msgstr "회복 중"
-
-msgid "所有权"
-msgstr "소유권"
-
-msgid "所有者"
-msgstr "소유자"
-
-msgid "拦截器"
-msgstr "인터셉터"
-
-msgid "控制台"
-msgstr "콘솔"
-
-msgid "数据盘"
-msgstr "데이터 디스크"
-
-msgid "文件名"
-msgstr "파일 이름"
-
-msgid "新密码"
-msgstr "새 비밀번호"
-
-msgid "无描述"
-msgstr "설명 없음"
-
-msgid "无限制"
-msgstr "제한 없는"
-
-msgid "暂停中"
-msgstr "일시중지됨"
-
-msgid "月流量"
-msgstr "월간 트래픽"
-
-msgid "有效性"
-msgstr "유효성"
-
-msgid "服务器"
-msgstr "섬기는 사람"
-
-msgid "未分配"
-msgstr "할당되지 않음"
-
-msgid "未挂载"
-msgstr "마운트되지 않음"
-
-msgid "未配置"
-msgstr "구성되지 않음"
-
-msgid "未验证"
-msgstr "확인되지 않음"
-
-msgid "条记录"
-msgstr "기록"
-
-msgid "格式化"
-msgstr "체재"
-
-msgid "模板数"
-msgstr "템플릿 수"
-
-msgid "注册表"
-msgstr "기재"
-
-msgid "浏览器"
-msgstr "브라우저"
-
-msgid "用户名"
-msgstr "사용자 이름"
-
-msgid "第一个"
-msgstr "첫 번째"
-
-msgid "第一台"
-msgstr "첫 번째"
-
-msgid "等待中"
-msgstr "대기 중"
-
-msgid "管理员"
-msgstr "관리자"
-
-msgid "系统盘"
-msgstr "시스템 디스크"
-
-msgid "自动化"
-msgstr "오토메이션"
-
-msgid "菜单项"
-msgstr "메뉴 항목"
-
-msgid "虚拟化"
-msgstr "가상화"
-
-msgid "虚拟机"
-msgstr "가상 머신"
-
-msgid "请输入"
-msgstr "입력해주세요"
-
-msgid "请选择"
-msgstr "선택하세요"
-
-msgid "过滤器"
-msgstr "필터"
-
-msgid "运行中"
-msgstr "달리기"
-
-msgid "还原中"
-msgstr "복원 중"
-
-msgid "进度条"
-msgstr "진행률 표시줄"
-
-msgid "选择器"
-msgstr "선택자"
-
-msgid "配置中"
-msgstr "구성"
-
-msgid "重启中"
-msgstr "다시 시작하는 중"
-
-msgid "重装中"
-msgstr "재설치 중"
-
-msgid "默认值"
-msgstr "기본값"
+msgid "高级配置"
+msgstr "고급 구성"
 
 msgid "一个"
 msgstr "하나"
@@ -1080,692 +2283,50 @@ msgstr "하나"
 msgid "一封"
 msgstr "한 글자"
 
-msgid "一致"
-msgstr "일관된"
-
-msgid "一键"
-msgstr "원클릭"
-
-msgid "上行"
-msgstr "상승"
-
-msgid "下行"
-msgstr "하향의"
-
-msgid "不会"
-msgstr "습관"
-
-msgid "不再"
-msgstr "더 이상"
-
-msgid "不可"
-msgstr "아니요"
-
-msgid "不能"
-msgstr "할 수 없다"
-
-msgid "不足"
-msgstr "불충분하다"
-
-msgid "丢失"
-msgstr "잃어버린"
-
-msgid "两次"
-msgstr "두 배"
-
-msgid "中文"
-msgstr "중국인"
-
-msgid "中等"
-msgstr "중간"
-
-msgid "临时"
-msgstr "일시적인"
-
-msgid "为空"
-msgstr "비어있다"
-
-msgid "主机"
-msgstr "주인"
-
-msgid "主要"
-msgstr "기본"
-
-msgid "主题"
-msgstr "주제"
-
-msgid "事件"
-msgstr "이벤트"
-
-msgid "二次"
-msgstr "반성"
-
-msgid "交互"
-msgstr "상호 작용"
-
-msgid "代理"
-msgstr "연기"
-
-msgid "代码"
-msgstr "암호"
-
-msgid "任务"
-msgstr "일"
-
-msgid "优先"
-msgstr "우선 사항"
-
-msgid "作为"
-msgstr "~처럼"
-
-msgid "使用"
-msgstr "사용"
-
-msgid "例如"
-msgstr "예를 들어"
-
-msgid "侧边"
-msgstr "옆"
-
-msgid "保存"
-msgstr "구하다"
-
-msgid "保持"
-msgstr "유지하다"
-
-msgid "保留"
-msgstr "예약하다"
-
-msgid "信息"
-msgstr "정보"
-
-msgid "修改"
-msgstr "개정하다"
-
-msgid "修正"
-msgstr "보정"
-
-msgid "假设"
-msgstr "가설"
-
-msgid "停止"
-msgstr "멈추다"
-
-msgid "允许"
-msgstr "허용하다"
-
-msgid "元素"
-msgstr "요소"
-
-msgid "光盘"
-msgstr "CD"
-
-msgid "全部"
-msgstr "모두"
-
-msgid "公共"
-msgstr "공공의"
-
-msgid "公网"
-msgstr "공용 네트워크"
-
-msgid "共享"
-msgstr "공유됨"
-
-msgid "关机"
-msgstr "종료"
-
-msgid "关系"
-msgstr "관계"
-
-msgid "关闭"
-msgstr "폐쇄"
-
-msgid "其他"
-msgstr "다른"
-
-msgid "兼容"
-msgstr "호환 가능"
-
-msgid "内存"
-msgstr "메모리"
-
-msgid "内容"
-msgstr "콘텐츠"
-
-msgid "内网"
-msgstr "인트라넷"
-
-msgid "内部"
-msgstr "내부"
-
-msgid "再次"
-msgstr "다시"
-
-msgid "出错"
-msgstr "오류"
-
-msgid "函数"
-msgstr "기능"
-
-msgid "分享"
-msgstr "공유하다"
-
-msgid "分割"
-msgstr "분할"
-
-msgid "分离"
-msgstr "분리"
-
-msgid "分配"
-msgstr "분배하다"
-
-msgid "分钟"
-msgstr "분"
-
-msgid "分隔"
-msgstr "분리된"
-
-msgid "切换"
-msgstr "스위치"
-
-msgid "列表"
-msgstr "목록"
-
-msgid "创建"
-msgstr "만들다"
-
-msgid "删除"
-msgstr "삭제"
-
-msgid "判断"
-msgstr "판사"
-
-msgid "别名"
-msgstr "별명"
-
-msgid "刷新"
-msgstr "새로 고치다"
-
-msgid "前缀"
-msgstr "접두사"
-
-msgid "功耗"
-msgstr "소비전력"
-
-msgid "功能"
-msgstr "기능"
-
-msgid "加载"
-msgstr "짐"
-
-msgid "动作"
-msgstr "행동"
-
-msgid "动态"
-msgstr "동적"
-
-msgid "勾选"
-msgstr "확인하다"
-
-msgid "包含"
-msgstr "포함하다"
-
-msgid "匹配"
-msgstr "성냥"
-
-msgid "区域"
-msgstr "영역"
-
-msgid "协议"
-msgstr "규약"
-
-msgid "单个"
-msgstr "하나의"
-
-msgid "单位"
-msgstr "단위"
-
-msgid "占用"
-msgstr "점유하다"
-
-msgid "卡片"
-msgstr "카드"
-
-msgid "卸载"
-msgstr "제거"
-
-msgid "历史"
-msgstr "역사"
-
-msgid "原始"
-msgstr "원래의"
-
-msgid "参数"
-msgstr "매개변수"
-
-msgid "及其"
-msgstr "그리고"
-
-msgid "反向"
-msgstr "뒤집다"
-
-msgid "发件"
-msgstr "보내다"
-
-msgid "发送"
-msgstr "보내다"
-
-msgid "取消"
-msgstr "취소"
-
-msgid "受控"
-msgstr "통제된"
-
-msgid "变为"
-msgstr "~이 되다"
-
-msgid "变化"
-msgstr "변화"
-
-msgid "变更"
-msgstr "변화"
-
-msgid "变量"
-msgstr "변하기 쉬운"
-
-msgid "只能"
-msgstr "오직"
-
-msgid "可以"
-msgstr "할 수 있다"
-
-msgid "可用"
-msgstr "사용 가능"
-
-msgid "可能"
-msgstr "가능한"
-
-msgid "可逆"
-msgstr "거꾸로 할 수 있는"
-
-msgid "可选"
-msgstr "선택 과목"
-
-msgid "各种"
-msgstr "다양한"
-
-msgid "合并"
-msgstr "병합"
-
-msgid "同意"
-msgstr "동의하다"
-
-msgid "同时"
-msgstr "동시에"
-
-msgid "名称"
-msgstr "이름"
-
-msgid "后续"
-msgstr "후속 조치"
-
-msgid "后缀"
-msgstr "접미사"
-
-msgid "后该"
-msgstr "나중에 시간이야"
-
-msgid "否则"
-msgstr "그렇지 않으면"
-
-msgid "启动"
-msgstr "시작하다"
-
-msgid "启用"
-msgstr "~할 수 있게 하다"
-
-msgid "响应"
-msgstr "응답"
-
-msgid "唯一"
-msgstr "오직"
-
-msgid "因为"
-msgstr "왜냐하면"
-
-msgid "图标"
-msgstr "상"
-
-msgid "地址"
-msgstr "주소"
-
-msgid "域名"
-msgstr "도메인 이름"
-
-msgid "基本"
-msgstr "기초적인"
-
-msgid "堆栈"
-msgstr "스택"
-
-msgid "处理"
-msgstr "다루다"
-
-msgid "备份"
-msgstr "지원"
-
-msgid "备注"
-msgstr "주목"
-
-msgid "复制"
-msgstr "복사"
-
-msgid "复合"
-msgstr "복잡한"
-
-msgid "外部"
-msgstr "외부"
-
-msgid "多个"
-msgstr "다수의"
+msgid "个数"
+msgstr "숫자"
 
 msgid "大小"
 msgstr "크기"
 
-msgid "失效"
-msgstr "유효하지 않은"
-
-msgid "失败"
-msgstr "실패하다"
-
-msgid "如果"
-msgstr "만약에"
-
-msgid "字母"
-msgstr "편지"
-
-msgid "字符"
-msgstr "성격"
-
-msgid "字节"
-msgstr "바이트"
-
-msgid "存储"
-msgstr "저장"
-
-msgid "存在"
-msgstr "존재하다"
-
-msgid "安全"
-msgstr "안전"
-
-msgid "完全"
-msgstr "완전히"
-
-msgid "完成"
-msgstr "마치다"
-
-msgid "完整"
-msgstr "전체"
-
-msgid "定义"
-msgstr "정의"
-
-msgid "实例"
-msgstr "예"
-
-msgid "实际"
-msgstr "실제"
-
-msgid "容器"
-msgstr "컨테이너"
-
 msgid "容量"
 msgstr "용량"
-
-msgid "密码"
-msgstr "비밀번호"
-
-msgid "对应"
-msgstr "대응하다"
-
-msgid "对象"
-msgstr "물체"
-
-msgid "导入"
-msgstr "수입"
-
-msgid "导出"
-msgstr "내보내다"
-
-msgid "导致"
-msgstr "~로 이어지다"
-
-msgid "导航"
-msgstr "항해"
-
-msgid "少于"
-msgstr "미만"
-
-msgid "属性"
-msgstr "재산"
-
-msgid "已用"
-msgstr "사용된"
-
-msgid "布局"
-msgstr "공들여 나열한 것"
-
-msgid "带宽"
-msgstr "대역폭"
-
-msgid "平台"
-msgstr "플랫폼"
-
-msgid "应用"
-msgstr "애플리케이션"
-
-msgid "应该"
-msgstr "~해야 한다"
-
-msgid "引擎"
-msgstr "엔진"
-
-msgid "弹窗"
-msgstr "팝업창"
-
-msgid "强关"
-msgstr "강력한 패스"
-
-msgid "强制"
-msgstr "힘"
-
-msgid "强度"
-msgstr "힘"
-
-msgid "当前"
-msgstr "현재의"
-
-msgid "必须"
-msgstr "~ 해야 하다"
-
-msgid "忘记"
-msgstr "잊다"
-
-msgid "快速"
-msgstr "빠른"
-
-msgid "性能"
-msgstr "성능"
 
 msgid "总数"
 msgstr "총"
 
-msgid "恢复"
-msgstr "다시 덮다"
-
-msgid "您好"
-msgstr "안녕하세요"
-
-msgid "情况"
-msgstr "상태"
-
-msgid "成为"
-msgstr "~이 되다"
-
-msgid "成功"
-msgstr "성공"
-
-msgid "我们"
-msgstr "우리를"
-
-msgid "截图"
-msgstr "스크린샷"
-
-msgid "所有"
-msgstr "모두"
-
-msgid "才能"
-msgstr "재능"
-
-msgid "打开"
-msgstr "열려 있는"
-
-msgid "执行"
-msgstr "구현하다"
-
-msgid "扩展"
-msgstr "확장하다"
-
-msgid "扫描"
-msgstr "스캐닝"
-
-msgid "折叠"
-msgstr "겹"
-
-msgid "拥有"
-msgstr "가지다"
-
-msgid "挂载"
-msgstr "산"
-
-msgid "指令"
-msgstr "지침"
-
-msgid "指定"
-msgstr "지정하다"
-
-msgid "按钮"
-msgstr "단추"
-
-msgid "授权"
-msgstr "승인하다"
-
-msgid "接口"
-msgstr "인터페이스"
-
-msgid "控制"
-msgstr "제어"
-
-msgid "描述"
-msgstr "설명하다"
-
-msgid "提交"
-msgstr "제출하다"
-
-msgid "提取"
-msgstr "발췌"
-
-msgid "提示"
-msgstr "힌트"
-
-msgid "搜索"
-msgstr "찾다"
-
-msgid "撤销"
-msgstr "취소"
-
-msgid "操作"
-msgstr "작동하다"
-
-msgid "支持"
-msgstr "지원하다"
-
-msgid "收件"
-msgstr "받다"
-
-msgid "收到"
-msgstr "받다"
-
-msgid "收集"
-msgstr "모으다"
-
-msgid "改密"
-msgstr "비밀번호 변경"
-
-msgid "数字"
-msgstr "숫자"
-
-msgid "数据"
-msgstr "데이터"
-
-msgid "数组"
-msgstr "정렬"
-
 msgid "数量"
 msgstr "수량"
 
-msgid "整个"
-msgstr "전체"
+msgid "条数"
+msgstr "항목 수"
 
-msgid "文件"
-msgstr "문서"
+msgid "长度"
+msgstr "길이"
 
-msgid "文字"
-msgstr "단어"
+msgid "分钟"
+msgstr "분"
 
-msgid "文本"
-msgstr "텍스트"
+msgid "周期"
+msgstr "주기"
 
-msgid "新增"
-msgstr "새로운"
-
-msgid "方式"
-msgstr "방법"
-
-msgid "无效"
-msgstr "유효하지 않은"
-
-msgid "无法"
-msgstr "할 수 없는"
-
-msgid "日志"
-msgstr "통나무"
-
-msgid "时会"
-msgstr "시간 회의"
+msgid "日期"
+msgstr "날짜"
 
 msgid "时间"
 msgstr "시간"
 
-msgid "映射"
-msgstr "매핑"
+msgid "每小时"
+msgstr "시간당"
 
-msgid "是否"
-msgstr "~이든"
+msgid "每日"
+msgstr "일일"
 
-msgid "显卡"
-msgstr "그래픽 카드"
+msgid "每月"
+msgstr "매월"
 
-msgid "显存"
-msgstr "비디오 메모리"
-
-msgid "显示"
-msgstr "보여주다"
-
-msgid "暂停"
-msgstr "정지시키다"
+msgid "秒"
+msgstr "두번째"
 
 msgid "暂无"
 msgstr "아직 없음"
@@ -1776,8 +2337,461 @@ msgstr "일시적인"
 msgid "暂未"
 msgstr "아직 아님"
 
-msgid "更新"
-msgstr "고쳐 쓰다"
+msgid "与"
+msgstr "그리고"
+
+msgid "且"
+msgstr "그리고"
+
+msgid "但是"
+msgstr "하지만"
+
+msgid "及其"
+msgstr "그리고"
+
+msgid "同时"
+msgstr "동시에"
+
+msgid "否则"
+msgstr "그렇지 않으면"
+
+msgid "和"
+msgstr "그리고"
+
+msgid "因为"
+msgstr "왜냐하면"
+
+msgid "如果"
+msgstr "만약에"
+
+msgid "或"
+msgstr "또는"
+
+msgid "所以"
+msgstr "그래서"
+
+msgid "然而"
+msgstr "하지만"
+
+msgid "虽然"
+msgstr "하지만"
+
+msgid "非"
+msgstr "아니요"
+
+msgid "不"
+msgstr "아니요"
+
+msgid "也"
+msgstr "또한"
+
+msgid "从"
+msgstr "~에서"
+
+msgid "会"
+msgstr "회의"
+
+msgid "只"
+msgstr "오직"
+
+msgid "太"
+msgstr "~도"
+
+msgid "将"
+msgstr "할 것이다"
+
+msgid "就"
+msgstr "즉시"
+
+msgid "已"
+msgstr "이미"
+
+msgid "应该"
+msgstr "~해야 한다"
+
+msgid "很"
+msgstr "매우"
+
+msgid "必须"
+msgstr "~ 해야 하다"
+
+msgid "您"
+msgstr "너"
+
+msgid "才"
+msgstr "재능"
+
+msgid "时"
+msgstr "시간"
+
+msgid "更加"
+msgstr "더"
+
+msgid "最"
+msgstr "최대"
+
+msgid "未"
+msgstr "아직 아님"
+
+msgid "比较"
+msgstr "비교하다"
+
+msgid "的"
+msgstr "~의"
+
+msgid "相当"
+msgstr "상당히"
+
+msgid "真的"
+msgstr "진짜"
+
+msgid "确实"
+msgstr "정말"
+
+msgid "能"
+msgstr "할 수 있는"
+
+msgid "至少"
+msgstr "적어도"
+
+msgid "请"
+msgstr "제발"
+
+msgid "还"
+msgstr "반품"
+
+msgid "都"
+msgstr "모두"
+
+msgid "都将"
+msgstr "일반적인"
+
+msgid "需要"
+msgstr "필요"
+
+msgid "非常"
+msgstr "매우"
+
+msgid "为"
+msgstr "~을 위한"
+
+msgid "作为"
+msgstr "~처럼"
+
+msgid "使用"
+msgstr "사용"
+
+msgid "关于"
+msgstr "~에 대한"
+
+msgid "到"
+msgstr "도착하다"
+
+msgid "在"
+msgstr "존재하다"
+
+msgid "对"
+msgstr "오른쪽"
+
+msgid "对于"
+msgstr "~을 위한"
+
+msgid "按"
+msgstr "~에 따르면"
+
+msgid "按照"
+msgstr "~에 따르면"
+
+msgid "根据"
+msgstr "~에 따르면"
+
+msgid "用于"
+msgstr "에 사용"
+
+msgid "由于"
+msgstr "왜냐하면"
+
+msgid "通过"
+msgstr "통과하다"
+
+msgid "其他"
+msgstr "다른"
+
+msgid "另"
+msgstr "다른"
+
+msgid "所有"
+msgstr "모두"
+
+msgid "每个"
+msgstr "각"
+
+msgid "自己"
+msgstr "소유하다"
+
+msgid "这"
+msgstr "이것"
+
+msgid "这个"
+msgstr "이것"
+
+msgid "这些"
+msgstr "이것들"
+
+msgid "这封"
+msgstr "이 편지"
+
+msgid "这是"
+msgstr "이것은"
+
+msgid "那"
+msgstr "저것"
+
+msgid "那个"
+msgstr "저것"
+
+msgid "那些"
+msgstr "그 것들"
+
+msgid "例如"
+msgstr "예를 들어"
+
+msgid "包含"
+msgstr "포함하다"
+
+msgid "包括"
+msgstr "포함하다"
+
+msgid "提示"
+msgstr "힌트"
+
+msgid "提醒"
+msgstr "상기시키다"
+
+msgid "比如"
+msgstr "예를 들어"
+
+msgid "注意"
+msgstr "알아채다"
+
+msgid "补充"
+msgstr "다시 채우다"
+
+msgid "除外"
+msgstr "제외하고"
+
+msgid "使得"
+msgstr "만들다"
+
+msgid "导致"
+msgstr "~로 이어지다"
+
+msgid "引起"
+msgstr "원인"
+
+msgid "造成"
+msgstr "원인"
+
+msgid "中文"
+msgstr "중국인"
+
+msgid "句号"
+msgstr "기간"
+
+msgid "字母"
+msgstr "편지"
+
+msgid "字符"
+msgstr "성격"
+
+msgid "字节"
+msgstr "바이트"
+
+msgid "数字"
+msgstr "숫자"
+
+msgid "英文"
+msgstr "영어"
+
+msgid "逗号"
+msgstr "콤마"
+
+msgid "浅色"
+msgstr "밝은 색"
+
+msgid "深色"
+msgstr "어두운"
+
+msgid "灰色"
+msgstr "회색"
+
+msgid "白色"
+msgstr "하얀색"
+
+msgid "红色"
+msgstr "빨간색"
+
+msgid "绿色"
+msgstr "녹색"
+
+msgid "蓝色"
+msgstr "파란색"
+
+msgid "颜色"
+msgstr "색상"
+
+msgid "黄色"
+msgstr "노란색"
+
+msgid "黑色"
+msgstr "검은색"
+
+msgid "(JSON格式)"
+msgstr "(JSON 형식)"
+
+msgid "一条"
+msgstr "원피스"
+
+msgid "两次"
+msgstr "두 배"
+
+msgid "主所有者"
+msgstr "주 소유자"
+
+msgid "使用情况"
+msgstr "용법"
+
+msgid "停止刷新"
+msgstr "새로고침 중지"
+
+msgid "光盘"
+msgstr "CD"
+
+msgid "分隔"
+msgstr "분리된"
+
+msgid "列表"
+msgstr "목록"
+
+msgid "判断"
+msgstr "판사"
+
+msgid "前缀"
+msgstr "접두사"
+
+msgid "加载"
+msgstr "짐"
+
+msgid "占用"
+msgstr "점유하다"
+
+msgid "卡片"
+msgstr "카드"
+
+msgid "历史"
+msgstr "역사"
+
+msgid "发件"
+msgstr "보내다"
+
+msgid "变为"
+msgstr "~이 되다"
+
+msgid "变化"
+msgstr "변화"
+
+msgid "后续"
+msgstr "후속 조치"
+
+msgid "后缀"
+msgstr "접미사"
+
+msgid "后该"
+msgstr "나중에 시간이야"
+
+msgid "基本信息"
+msgstr "기본정보"
+
+msgid "处理"
+msgstr "다루다"
+
+msgid "复合"
+msgstr "복잡한"
+
+msgid "存在"
+msgstr "존재하다"
+
+msgid "完全"
+msgstr "완전히"
+
+msgid "容器管理"
+msgstr "컨테이너 관리"
+
+msgid "对应"
+msgstr "대응하다"
+
+msgid "少于"
+msgstr "미만"
+
+msgid "左侧"
+msgstr "왼쪽"
+
+msgid "开放注册"
+msgstr "공개등록"
+
+msgid "忘记"
+msgstr "잊다"
+
+msgid "您好"
+msgstr "안녕하세요"
+
+msgid "您的"
+msgstr "당신의"
+
+msgid "情况"
+msgstr "상태"
+
+msgid "我们"
+msgstr "우리를"
+
+msgid "才能"
+msgstr "재능"
+
+msgid "扩展"
+msgstr "확장하다"
+
+msgid "拥有"
+msgstr "가지다"
+
+msgid "控制"
+msgstr "제어"
+
+msgid "提供"
+msgstr "공급"
+
+msgid "操作"
+msgstr "작동하다"
+
+msgid "收件"
+msgstr "받다"
+
+msgid "收到"
+msgstr "받다"
+
+msgid "改密"
+msgstr "비밀번호 변경"
+
+msgid "无法"
+msgstr "할 수 없는"
+
+msgid "时会"
+msgstr "시간 회의"
+
+msgid "是否"
+msgstr "~이든"
+
+msgid "显示"
+msgstr "보여주다"
 
 msgid "最低"
 msgstr "가장 낮은"
@@ -1788,263 +2802,41 @@ msgstr "마침내"
 msgid "最小"
 msgstr "가장 작은"
 
-msgid "最新"
-msgstr "최신"
-
-msgid "最终"
-msgstr "결정적인"
-
-msgid "有效"
-msgstr "효율적인"
-
-msgid "服务"
-msgstr "제공하다"
-
-msgid "未知"
-msgstr "알려지지 않은"
-
-msgid "机器"
-msgstr "기계"
-
-msgid "权限"
-msgstr "권한"
-
-msgid "条件"
-msgstr "상태"
-
-msgid "条数"
-msgstr "항목 수"
-
 msgid "来自"
 msgstr "~에서"
-
-msgid "构建"
-msgstr "짓다"
-
-msgid "构造"
-msgstr "구조"
-
-msgid "查找"
-msgstr "찾다"
-
-msgid "查收"
-msgstr "확인하다"
-
-msgid "查看"
-msgstr "확인하다"
-
-msgid "标签"
-msgstr "상표"
-
-msgid "样式"
-msgstr "스타일"
-
-msgid "核心"
-msgstr "핵심"
-
-msgid "根据"
-msgstr "~에 따르면"
-
-msgid "格式"
-msgstr "체재"
-
-msgid "桌面"
-msgstr "데스크탑"
-
-msgid "检查"
-msgstr "조사하다"
-
-msgid "检测"
-msgstr "발각"
-
-msgid "概览"
-msgstr "개요"
-
-msgid "模块"
-msgstr "기준 치수"
-
-msgid "模式"
-msgstr "모델"
 
 msgid "模态"
 msgstr "모달"
 
-msgid "模板"
-msgstr "주형"
-
-msgid "正在"
-msgstr "~이다"
-
-msgid "正常"
-msgstr "정상"
-
-msgid "正文"
-msgstr "텍스트"
-
-msgid "正确"
-msgstr "옳은"
-
-msgid "每月"
-msgstr "매월"
-
-msgid "比如"
-msgstr "예를 들어"
-
 msgid "没有"
 msgstr "아니요"
 
-msgid "注册"
-msgstr "등록하다"
+msgid "注册表"
+msgstr "기재"
 
-msgid "注意"
-msgstr "알아채다"
-
-msgid "注释"
-msgstr "논평"
-
-msgid "流量"
-msgstr "흐름"
-
-msgid "浅色"
-msgstr "밝은 색"
-
-msgid "消息"
-msgstr "정보"
-
-msgid "深色"
-msgstr "어두운"
-
-msgid "添加"
-msgstr "다음에 추가"
-
-msgid "清空"
-msgstr "분명한"
-
-msgid "清除"
-msgstr "분명한"
-
-msgid "温度"
-msgstr "온도"
-
-msgid "渲染"
-msgstr "표현"
-
-msgid "灰色"
-msgstr "회색"
-
-msgid "点击"
-msgstr "딸깍 하는 소리"
+msgid "浏览器"
+msgstr "브라우저"
 
 msgid "爱快"
 msgstr "빨리 사랑해"
 
-msgid "版本"
-msgstr "버전"
-
-msgid "状态"
-msgstr "상태"
-
-msgid "独立"
-msgstr "독립적인"
-
-msgid "生成"
-msgstr "생성하다"
-
-msgid "生效"
-msgstr "효력을 발휘하다"
-
-msgid "用于"
-msgstr "에 사용"
-
-msgid "用尽"
-msgstr "탈진한"
-
-msgid "用户"
-msgstr "사용자"
-
-msgid "用途"
-msgstr "사용"
-
-msgid "用量"
-msgstr "복용량"
-
 msgid "由后"
 msgstr "뒤에서"
-
-msgid "电源"
-msgstr "전원 공급 장치"
 
 msgid "留空"
 msgstr "비워두세요"
 
-msgid "登出"
-msgstr "로그아웃"
-
-msgid "登录"
-msgstr "로그인"
-
-msgid "监听"
-msgstr "감시 장치"
-
-msgid "监控"
-msgstr "감시 장치"
-
 msgid "目标"
 msgstr "목표"
 
-msgid "直接"
-msgstr "직접"
+msgid "第一个"
+msgstr "첫 번째"
 
-msgid "相关"
-msgstr "관련된"
-
-msgid "看到"
-msgstr "보다"
-
-msgid "硬盘"
-msgstr "하드디스크"
-
-msgid "确保"
-msgstr "확실하게 하다"
-
-msgid "确定"
-msgstr "확신하는"
-
-msgid "确认"
-msgstr "확인하다"
-
-msgid "磁盘"
-msgstr "디스크"
-
-msgid "禁用"
-msgstr "장애를 입히다"
-
-msgid "移交"
-msgstr "옮기다"
-
-msgid "移除"
-msgstr "제거하다"
-
-msgid "程序"
-msgstr "프로그램"
-
-msgid "稍候"
-msgstr "잠깐만요"
-
-msgid "立即"
-msgstr "즉시"
-
-msgid "端口"
-msgstr "포트"
+msgid "第一台"
+msgstr "첫 번째"
 
 msgid "等待"
 msgstr "기다리다"
-
-msgid "筛选"
-msgstr "필터"
-
-msgid "简化"
-msgstr "단순화하다"
 
 msgid "管理"
 msgstr "관리하다"
@@ -2052,107 +2844,11 @@ msgstr "관리하다"
 msgid "类名"
 msgstr "수업명"
 
-msgid "类型"
-msgstr "유형"
-
-msgid "系统"
-msgstr "체계"
-
-msgid "红色"
-msgstr "빨간색"
-
-msgid "级别"
-msgstr "수준"
-
-msgid "组件"
-msgstr "구성요소"
-
-msgid "结束"
-msgstr "마치다"
-
-msgid "统计"
-msgstr "통계"
-
-msgid "继续"
-msgstr "계속하다"
-
-msgid "绿色"
-msgstr "녹색"
-
-msgid "编辑"
-msgstr "편집하다"
-
-msgid "网关"
-msgstr "게이트웨이"
-
-msgid "网卡"
-msgstr "네트워크 카드"
-
-msgid "网桥"
-msgstr "다리"
-
-msgid "网络"
-msgstr "회로망"
-
-msgid "网网"
-msgstr "넷넷"
-
 msgid "翻译"
 msgstr "번역하다"
 
 msgid "耐心"
 msgstr "인내심"
-
-msgid "联系"
-msgstr "연결하다"
-
-msgid "自动"
-msgstr "오토매틱"
-
-msgid "至少"
-msgstr "적어도"
-
-msgid "节点"
-msgstr "마디"
-
-msgid "范围"
-msgstr "범위"
-
-msgid "获取"
-msgstr "얻다"
-
-msgid "菜单"
-msgstr "메뉴"
-
-msgid "补充"
-msgstr "다시 채우다"
-
-msgid "表单"
-msgstr "형태"
-
-msgid "表示"
-msgstr "표현하다"
-
-msgid "要求"
-msgstr "필요하다"
-
-msgid "规则"
-msgstr "규칙"
-
-msgid "视图"
-msgstr "보다"
-
-msgid "角色"
-msgstr "역할"
-
-msgid "解析"
-msgstr "분석하다"
-
-msgid "触发"
-msgstr "방아쇠"
-
-msgid "警告"
-msgstr "경고하다"
 
 msgid "计算"
 msgstr "믿다"
@@ -2160,173 +2856,32 @@ msgstr "믿다"
 msgid "认证"
 msgstr "인증"
 
-msgid "记录"
-msgstr "기록"
-
-msgid "设备"
-msgstr "장비"
-
-msgid "设置"
-msgstr "설정"
-
 msgid "访问"
 msgstr "입장"
-
-msgid "详情"
-msgstr "세부"
 
 msgid "语言"
 msgstr "언어"
 
-msgid "说明"
-msgstr "설명하다"
-
 msgid "请求"
 msgstr "묻다"
 
-msgid "读取"
-msgstr "읽다"
-
-msgid "调用"
-msgstr "부르다"
-
-msgid "调试"
-msgstr "디버그"
+msgid "请求头"
+msgstr "요청 헤더"
 
 msgid "谨慎"
 msgstr "조심성 있는"
 
-msgid "账号"
-msgstr "계정"
-
-msgid "账户"
-msgstr "계정"
-
-msgid "资源"
-msgstr "의지"
-
 msgid "起始"
 msgstr "시작"
-
-msgid "超时"
-msgstr "타임아웃"
-
-msgid "足够"
-msgstr "충분한"
-
-msgid "跟踪"
-msgstr "길"
-
-msgid "路径"
-msgstr "길"
-
-msgid "路由"
-msgstr "라우팅"
-
-msgid "跳转"
-msgstr "도약"
-
-msgid "跳过"
-msgstr "뛰어넘다"
-
-msgid "转换"
-msgstr "전환하다"
-
-msgid "转移"
-msgstr "옮기다"
-
-msgid "转让"
-msgstr "옮기다"
 
 msgid "轮询"
 msgstr "투표"
 
-msgid "输入"
-msgstr "입력하다"
-
-msgid "过滤"
-msgstr "필터"
-
 msgid "运行"
 msgstr "달리다"
 
-msgid "返回"
-msgstr "반품"
-
-msgid "还原"
-msgstr "절감"
-
-msgid "这个"
-msgstr "이것"
-
-msgid "这封"
-msgstr "이 편지"
-
-msgid "这是"
-msgstr "이것은"
-
 msgid "这里"
 msgstr "여기"
-
-msgid "进行"
-msgstr "지휘하다"
-
-msgid "远程"
-msgstr "원격"
-
-msgid "连接"
-msgstr "연결하다"
-
-msgid "选中"
-msgstr "선택된"
-
-msgid "选择"
-msgstr "선택하다"
-
-msgid "选项"
-msgstr "옵션"
-
-msgid "递归"
-msgstr "재귀"
-
-msgid "逗号"
-msgstr "콤마"
-
-msgid "通用"
-msgstr "만능인"
-
-msgid "通知"
-msgstr "통지하다"
-
-msgid "通过"
-msgstr "통과하다"
-
-msgid "逻辑"
-msgstr "논리"
-
-msgid "遍历"
-msgstr "횡단"
-
-msgid "避免"
-msgstr "피하다"
-
-msgid "邮件"
-msgstr "우편"
-
-msgid "邮箱"
-msgstr "우편"
-
-msgid "部分"
-msgstr "부분"
-
-msgid "配置"
-msgstr "구성"
-
-msgid "配额"
-msgstr "몫"
-
-msgid "重启"
-msgstr "다시 시작"
 
 msgid "重复"
 msgstr "반복하다"
@@ -2334,68 +2889,86 @@ msgstr "반복하다"
 msgid "重新"
 msgstr "다시"
 
-msgid "重置"
-msgstr "다시 놓기"
-
-msgid "重装"
-msgstr "재설치"
-
-msgid "重要"
-msgstr "중요한"
-
-msgid "重试"
-msgstr "다시 시도하세요"
-
-msgid "错误"
-msgstr "실수"
-
 msgid "键中"
 msgstr "열쇠"
-
-msgid "镜像"
-msgstr "거울"
-
-msgid "长度"
-msgstr "길이"
-
-msgid "闭包"
-msgstr "폐쇄"
-
-msgid "问题"
-msgstr "질문"
-
-msgid "限制"
-msgstr "한계"
 
 msgid "随机"
 msgstr "무작위의"
 
-msgid "需要"
-msgstr "필요"
+msgid "默认值"
+msgstr "기본값"
 
-msgid "静态"
-msgstr "공전"
+msgid "一键"
+msgstr "원클릭"
 
-msgid "非常"
-msgstr "매우"
+msgid "上一步"
+msgstr "이전 단계"
 
-msgid "页面"
-msgstr "페이지"
+msgid "下一步"
+msgstr "다음 단계"
 
-msgid "顶部"
-msgstr "맨 위"
+msgid "完成"
+msgstr "마치다"
 
-msgid "颜色"
-msgstr "색상"
+msgid "确定"
+msgstr "확신하는"
 
-msgid "验证"
-msgstr "확인하다"
+msgid "稍候"
+msgstr "잠깐만요"
 
-msgid "高级"
-msgstr "고급의"
+msgid "立即"
+msgstr "즉시"
 
-msgid "默认"
-msgstr "기본"
+msgid "结束"
+msgstr "마치다"
+
+msgid "继续"
+msgstr "계속하다"
+
+msgid "重试"
+msgstr "다시 시도하세요"
+
+msgid "请输入"
+msgstr "입력해주세요"
+
+msgid "请选择"
+msgstr "선택하세요"
+
+msgid "输入"
+msgstr "입력하다"
+
+msgid "输出"
+msgstr "산출"
+
+msgid "响应"
+msgstr "응답"
+
+msgid "主机管理"
+msgstr "호스트 관리"
+
+msgid "创建备份"
+msgstr "백업 만들기"
+
+msgid "备份名称"
+msgstr "백업 이름"
+
+msgid "备份文件"
+msgstr "백업 파일"
+
+msgid "备份注释"
+msgstr "백업 코멘트"
+
+msgid "备份管理"
+msgstr "백업 관리"
+
+msgid "备份说明"
+msgstr "백업 지침"
+
+msgid "扫描备份"
+msgstr "스캔 백업"
+
+msgid "暂无备份"
+msgstr "아직 백업이 없습니다"
 
 msgid "下"
 msgstr "아래에"
@@ -2409,156 +2982,9 @@ msgstr "뒤쪽에"
 msgid "否"
 msgstr "아니요"
 
-msgid "多"
-msgstr "많은"
-
-msgid "大"
-msgstr "큰"
-
-msgid "对"
-msgstr "오른쪽"
-
-msgid "新"
-msgstr "새로운"
-
-msgid "旧"
-msgstr "오래된"
-
 msgid "是"
 msgstr "예"
 
 msgid "空"
 msgstr "null"
-
-msgid "全局"
-msgstr "전반적인 상황"
-
-msgid "查看您的资源使用情况和配额信息"
-msgstr "리소스 사용량 및 할당량 정보 보기"
-
-msgid "用户空间"
-msgstr "사용자 공간"
-
-msgid "系统空间"
-msgstr "시스템 공간"
-
-msgid "实例管理"
-msgstr "인스턴스 관리"
-
-msgid "监控"
-msgstr "감시 장치"
-
-msgid "网络端口"
-msgstr "네트워크 포트"
-
-msgid "网络与配额"
-msgstr "네트워킹 및 할당량"
-
-msgid "上传带宽"
-msgstr "업로드 대역폭"
-
-msgid "下载带宽"
-msgstr "대역폭 다운로드"
-
-msgid "实例配置"
-msgstr "인스턴스 구성"
-
-msgid "设置密码"
-msgstr "비밀번호 설정"
-
-msgid "一键远程"
-msgstr "원클릭 원격"
-
-msgid "网卡列表"
-msgstr "네트워크 카드 목록"
-
-msgid "转发规则"
-msgstr "전달 규칙"
-
-msgid "设备直通"
-msgstr "장치 통과"
-
-msgid "物理"
-msgstr "물리학"
-
-msgid "设备名"
-msgstr "장치 이름"
-
-msgid "存储路径"
-msgstr "저장 경로"
-
-msgid "程序启动路径"
-msgstr "프로그램 시작 경로"
-
-msgid "爱快配置"
-msgstr "아이쿠아이 구성"
-
-msgid "限制配置"
-msgstr "구성 제한"
-
-msgid "（多个用逗号分隔）"
-msgstr "(여러 수는 쉼표로 구분)"
-
-msgid "高级配置"
-msgstr "고급 구성"
-
-msgid "系统映射"
-msgstr "시스템 매핑"
-
-msgid "配置池"
-msgstr "풀 구성"
-
-msgid "扩展选项"
-msgstr "확장 옵션"
-
-msgid "扩展数据"
-msgstr "확장 데이터"
-
-msgid "(JSON格式)"
-msgstr "(JSON 형식)"
-
-msgid "和事件记录"
-msgstr "및 이벤트 로깅"
-
-msgid "请从左侧选择一条"
-msgstr "왼쪽에서 하나를 선택해주세요"
-
-msgid "安全提示"
-msgstr "안전 수칙"
-
-msgid "重置Token后，所有使用旧Token的API调用都将失效。请确保更新所有相关配置。"
-msgstr "토큰을 재설정하면 이전 토큰을 사용하는 모든 API 호출이 무효화됩니다. 모든 관련 구성을 업데이트했는지 확인하세요."
-
-msgid "在请求头中添加："
-msgstr "요청 헤더에 다음을 추가합니다."
-
-msgid "受控端"
-msgstr "통제된 끝"
-
-msgid "访问配置"
-msgstr "액세스 구성"
-
-msgid "新账号"
-msgstr "새 계정"
-
-msgid "注册时需要验证邮箱"
-msgstr "등록시 이메일 인증이 필요합니다"
-
-msgid "新用户默认"
-msgstr "새 사용자 기본값"
-
-msgid "这是一封来自"
-msgstr "이건 에서 온 편지야"
-
-msgid "系统的测试邮件"
-msgstr "시스템 테스트 이메일"
-
-msgid "如果您收到这封邮件"
-msgstr "이 이메일을 받으면"
-
-msgid "说明邮件服务配置正常"
-msgstr "메일 서비스 구성이 정상임을 나타냅니다."
-
-msgid "您的"
-msgstr "당신의"
 

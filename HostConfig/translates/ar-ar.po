@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: OpenIDCS 1.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-02-09 21:49\n"
-"PO-Revision-Date: 2026-02-09 21:49\n"
+"POT-Creation-Date: 2026-04-28 15:41\n"
+"PO-Revision-Date: 2026-04-28 15:41\n"
 "Last-Translator: Auto Generated\n"
 "Language-Team: Arabic\n"
 "Language: ar\n"
@@ -15,11 +15,1262 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-msgid "访问Token"
-msgstr "AccessToken"
+msgid "保存"
+msgstr "يحفظ"
 
-msgid "VNC控制台"
-msgstr "وحدة تحكم VNC"
+msgid "保持"
+msgstr "يحفظ"
+
+msgid "保留"
+msgstr "احتياطي"
+
+msgid "修改"
+msgstr "يراجع"
+
+msgid "修正"
+msgstr "تصحيح"
+
+msgid "停止"
+msgstr "قف"
+
+msgid "允许"
+msgstr "يسمح"
+
+msgid "共享"
+msgstr "مشترك"
+
+msgid "关机"
+msgstr "اغلق"
+
+msgid "关闭"
+msgstr "إنهاء"
+
+msgid "写入"
+msgstr "يكتب"
+
+msgid "分享"
+msgstr "يشارك"
+
+msgid "分割"
+msgstr "التجزئة"
+
+msgid "分离"
+msgstr "الانفصال"
+
+msgid "分配"
+msgstr "توزيع"
+
+msgid "切换"
+msgstr "يُحوّل"
+
+msgid "创建"
+msgstr "يخلق"
+
+msgid "删除"
+msgstr "يمسح"
+
+msgid "刷新"
+msgstr "ينعش"
+
+msgid "勾选"
+msgstr "يفحص"
+
+msgid "卸载"
+msgstr "إلغاء التثبيت"
+
+msgid "发送"
+msgstr "يرسل"
+
+msgid "取消"
+msgstr "يلغي"
+
+msgid "变换"
+msgstr "تحويل"
+
+msgid "变更"
+msgstr "يتغير"
+
+msgid "合并"
+msgstr "دمج"
+
+msgid "同意"
+msgstr "يوافق"
+
+msgid "启动"
+msgstr ".بدء"
+
+msgid "启用"
+msgstr "يُمكَِن"
+
+msgid "复制"
+msgstr "ينسخ"
+
+msgid "导入"
+msgstr "يستورد"
+
+msgid "导出"
+msgstr "يصدّر"
+
+msgid "展开"
+msgstr "يوسع"
+
+msgid "强制"
+msgstr "قوة"
+
+msgid "恢复"
+msgstr "يتعافى"
+
+msgid "成为"
+msgstr "يصبح"
+
+msgid "打印"
+msgstr "مطبعة"
+
+msgid "打开"
+msgstr "يفتح"
+
+msgid "执行"
+msgstr "ينفذ"
+
+msgid "扫描"
+msgstr "مسح"
+
+msgid "折叠"
+msgstr "طية"
+
+msgid "拒绝"
+msgstr "يرفض"
+
+msgid "拖拽"
+msgstr "يجر"
+
+msgid "挂载"
+msgstr "جبل"
+
+msgid "指定"
+msgstr "تحديد"
+
+msgid "授权"
+msgstr "يأذن"
+
+msgid "排序"
+msgstr "نوع"
+
+msgid "接受"
+msgstr "يقبل"
+
+msgid "提交"
+msgstr "يُقدِّم"
+
+msgid "提取"
+msgstr "يستخرج"
+
+msgid "搜索"
+msgstr "يبحث"
+
+msgid "撤销"
+msgstr "يلغي"
+
+msgid "支持"
+msgstr "يدعم"
+
+msgid "收集"
+msgstr "يجمع"
+
+msgid "断开"
+msgstr "قطع الاتصال"
+
+msgid "暂停"
+msgstr "يوقف"
+
+msgid "更新"
+msgstr "تجديد"
+
+msgid "构建"
+msgstr "يبني"
+
+msgid "构造"
+msgstr "بناء"
+
+msgid "查找"
+msgstr "يجد"
+
+msgid "查收"
+msgstr "يفحص"
+
+msgid "查看"
+msgstr "يفحص"
+
+msgid "格式化"
+msgstr "شكل"
+
+msgid "检查"
+msgstr "يفحص"
+
+msgid "检测"
+msgstr "كشف"
+
+msgid "注册"
+msgstr "يسجل"
+
+msgid "添加"
+msgstr "اضف إليه"
+
+msgid "清空"
+msgstr "واضح"
+
+msgid "清除"
+msgstr "واضح"
+
+msgid "渲染"
+msgstr "تقديم"
+
+msgid "点击"
+msgstr "انقر"
+
+msgid "生成"
+msgstr "يولد"
+
+msgid "生效"
+msgstr "تأخذ حيز التنفيذ"
+
+msgid "用尽"
+msgstr "مرهق"
+
+msgid "登出"
+msgstr "تسجيل الخروج"
+
+msgid "登录"
+msgstr "تسجيل الدخول"
+
+msgid "监听"
+msgstr "شاشة"
+
+msgid "监控"
+msgstr "شاشة"
+
+msgid "看到"
+msgstr "يرى"
+
+msgid "确保"
+msgstr "تأكد"
+
+msgid "确认"
+msgstr "يتأكد"
+
+msgid "禁止"
+msgstr "منع"
+
+msgid "禁用"
+msgstr "إبطال"
+
+msgid "移交"
+msgstr "تحويل"
+
+msgid "移除"
+msgstr "يزيل"
+
+msgid "筛选"
+msgstr "فلتر"
+
+msgid "简化"
+msgstr "تبسيط"
+
+msgid "编辑"
+msgstr "يحرر"
+
+msgid "联系"
+msgstr "يتصل"
+
+msgid "获取"
+msgstr "يحصل"
+
+msgid "表示"
+msgstr "يعبر"
+
+msgid "解析"
+msgstr "تحليل"
+
+msgid "触发"
+msgstr "مشغل"
+
+msgid "警告"
+msgstr "تحذير"
+
+msgid "读取"
+msgstr "يقرأ"
+
+msgid "调用"
+msgstr "يتصل"
+
+msgid "调试"
+msgstr "تصحيح"
+
+msgid "跟踪"
+msgstr "مسار"
+
+msgid "跳转"
+msgstr "القفز"
+
+msgid "跳过"
+msgstr "القفز فوق"
+
+msgid "转换"
+msgstr "يتحول"
+
+msgid "转移"
+msgstr "تحويل"
+
+msgid "转让"
+msgstr "تحويل"
+
+msgid "过滤"
+msgstr "فلتر"
+
+msgid "返回"
+msgstr "يعود"
+
+msgid "还原"
+msgstr "تخفيض"
+
+msgid "进行"
+msgstr "سلوك"
+
+msgid "连接"
+msgstr "يتصل"
+
+msgid "选中"
+msgstr "مختارة"
+
+msgid "选择"
+msgstr "يختار"
+
+msgid "递归"
+msgstr "العودية"
+
+msgid "通知"
+msgstr "يخطر"
+
+msgid "遍历"
+msgstr "اجتياز"
+
+msgid "避免"
+msgstr "يتجنب"
+
+msgid "重做"
+msgstr "إعادة"
+
+msgid "重启"
+msgstr "إعادة تشغيل"
+
+msgid "重置"
+msgstr "إعادة ضبط"
+
+msgid "重装"
+msgstr "أعد التثبيت"
+
+msgid "验证"
+msgstr "يؤكد"
+
+msgid "一致性"
+msgstr "تناسق"
+
+msgid "主机"
+msgstr "يستضيف"
+
+msgid "主题"
+msgstr "سمة"
+
+msgid "事件"
+msgstr "حدث"
+
+msgid "交互"
+msgstr "تفاعل"
+
+msgid "代理"
+msgstr "التمثيل"
+
+msgid "代码"
+msgstr "شفرة"
+
+msgid "令牌"
+msgstr "رمز مميز"
+
+msgid "仪表盘"
+msgstr "لوحة القيادة"
+
+msgid "任务"
+msgstr "مهمة"
+
+msgid "使用率"
+msgstr "معدل الاستخدام"
+
+msgid "侧边"
+msgstr "جانب"
+
+msgid "信息"
+msgstr "معلومة"
+
+msgid "假设"
+msgstr "فرضية"
+
+msgid "元素"
+msgstr "عنصر"
+
+msgid "关系"
+msgstr "علاقة"
+
+msgid "内存"
+msgstr "ذاكرة"
+
+msgid "内容"
+msgstr "محتوى"
+
+msgid "函数"
+msgstr "وظيفة"
+
+msgid "利用率"
+msgstr "استخدام"
+
+msgid "别名"
+msgstr "الاسم المستعار"
+
+msgid "剪贴板"
+msgstr "الحافظة"
+
+msgid "功耗"
+msgstr "استهلاك الطاقة"
+
+msgid "功能"
+msgstr "وظيفة"
+
+msgid "动作"
+msgstr "فعل"
+
+msgid "匹配"
+msgstr "مباراة"
+
+msgid "区域"
+msgstr "منطقة"
+
+msgid "协议"
+msgstr "بروتوكول"
+
+msgid "单位"
+msgstr "وحدة"
+
+msgid "参数"
+msgstr "المعلمة"
+
+msgid "变量"
+msgstr "عامل"
+
+msgid "可用性"
+msgstr "التوفر"
+
+msgid "可靠性"
+msgstr "مصداقية"
+
+msgid "名称"
+msgstr "اسم"
+
+msgid "命令"
+msgstr "طلب"
+
+msgid "图标"
+msgstr "رمز"
+
+msgid "地址"
+msgstr "عنوان"
+
+msgid "域名"
+msgstr "اسم المجال"
+
+msgid "堆栈"
+msgstr "كومة"
+
+msgid "备份"
+msgstr "نسخة احتياطية"
+
+msgid "备注"
+msgstr "ملاحظة"
+
+msgid "复杂度"
+msgstr "تعقيد"
+
+msgid "存储"
+msgstr "تخزين"
+
+msgid "安全性"
+msgstr "حماية"
+
+msgid "定义"
+msgstr "تعريف"
+
+msgid "实例"
+msgstr "مثال"
+
+msgid "容器"
+msgstr "حاوية"
+
+msgid "密码"
+msgstr "كلمة المرور"
+
+msgid "对话框"
+msgstr "مربع الحوار"
+
+msgid "对象"
+msgstr "هدف"
+
+msgid "导航"
+msgstr "ملاحة"
+
+msgid "属性"
+msgstr "ملكية"
+
+msgid "布局"
+msgstr "تَخطِيط"
+
+msgid "带宽"
+msgstr "عرض النطاق الترددي"
+
+msgid "平台"
+msgstr "منصة"
+
+msgid "应用"
+msgstr "طلب"
+
+msgid "引擎"
+msgstr "محرك"
+
+msgid "弹窗"
+msgstr "نافذة منبثقة"
+
+msgid "强度"
+msgstr "قوة"
+
+msgid "快照"
+msgstr "لقطة"
+
+msgid "性能"
+msgstr "أداء"
+
+msgid "截图"
+msgstr "لقطة شاشة"
+
+msgid "所有权"
+msgstr "ملكية"
+
+msgid "所有者"
+msgstr "مالك"
+
+msgid "报告"
+msgstr "تقرير"
+
+msgid "拦截器"
+msgstr "المعترض"
+
+msgid "指令"
+msgstr "تعليمات"
+
+msgid "按钮"
+msgstr "زر"
+
+msgid "接口"
+msgstr "واجهة"
+
+msgid "控制台"
+msgstr "وحدة التحكم"
+
+msgid "描述"
+msgstr "يصف"
+
+msgid "插件"
+msgstr "البرنامج المساعد"
+
+msgid "效率"
+msgstr "كفاءة"
+
+msgid "数据"
+msgstr "بيانات"
+
+msgid "数组"
+msgstr "صفيف"
+
+msgid "文件"
+msgstr "وثيقة"
+
+msgid "文字"
+msgstr "كلمة"
+
+msgid "文本"
+msgstr "نص"
+
+msgid "方式"
+msgstr "طريق"
+
+msgid "方法"
+msgstr "طريقة"
+
+msgid "日志"
+msgstr "سجل"
+
+msgid "映射"
+msgstr "رسم الخرائط"
+
+msgid "显卡"
+msgstr "بطاقة الرسومات"
+
+msgid "显存"
+msgstr "ذاكرة الفيديو"
+
+msgid "有效性"
+msgstr "فعالية"
+
+msgid "服务"
+msgstr "يخدم"
+
+msgid "服务器"
+msgstr "الخادم"
+
+msgid "机器"
+msgstr "آلة"
+
+msgid "权限"
+msgstr "الأذونات"
+
+msgid "条件"
+msgstr "حالة"
+
+msgid "标签"
+msgstr "ملصق"
+
+msgid "标题"
+msgstr "عنوان"
+
+msgid "样式"
+msgstr "أسلوب"
+
+msgid "核心"
+msgstr "جوهر"
+
+msgid "格式"
+msgstr "شكل"
+
+msgid "桌面"
+msgstr "سطح المكتب"
+
+msgid "概览"
+msgstr "ملخص"
+
+msgid "模块"
+msgstr "وحدة"
+
+msgid "模式"
+msgstr "نموذج"
+
+msgid "模板"
+msgstr "نموذج"
+
+msgid "正文"
+msgstr "نص"
+
+msgid "注释"
+msgstr "تعليق"
+
+msgid "流量"
+msgstr "تدفق"
+
+msgid "消息"
+msgstr "معلومة"
+
+msgid "温度"
+msgstr "درجة حرارة"
+
+msgid "版本"
+msgstr "إصدار"
+
+msgid "状态"
+msgstr "ولاية"
+
+msgid "用户"
+msgstr "مستخدم"
+
+msgid "用途"
+msgstr "يستخدم"
+
+msgid "用量"
+msgstr "الجرعة"
+
+msgid "电源"
+msgstr "مزود الطاقة"
+
+msgid "目录"
+msgstr "جدول المحتويات"
+
+msgid "硬盘"
+msgstr "القرص الصلب"
+
+msgid "磁盘"
+msgstr "القرص"
+
+msgid "程序"
+msgstr "برنامج"
+
+msgid "稳定性"
+msgstr "استقرار"
+
+msgid "端口"
+msgstr "ميناء"
+
+msgid "策略"
+msgstr "استراتيجية"
+
+msgid "管理员"
+msgstr "مسؤول"
+
+msgid "类型"
+msgstr "يكتب"
+
+msgid "精度"
+msgstr "دقة"
+
+msgid "系统"
+msgstr "نظام"
+
+msgid "约束"
+msgstr "القيد"
+
+msgid "级别"
+msgstr "مستوى"
+
+msgid "线程"
+msgstr "خيط"
+
+msgid "组件"
+msgstr "عناصر"
+
+msgid "结果"
+msgstr "نتيجة"
+
+msgid "统计"
+msgstr "إحصائيات"
+
+msgid "网关"
+msgstr "بوابة"
+
+msgid "网卡"
+msgstr "بطاقة الشبكة"
+
+msgid "网桥"
+msgstr "كوبري"
+
+msgid "网络"
+msgstr "شبكة"
+
+msgid "网网"
+msgstr "netnet"
+
+msgid "脚本"
+msgstr "script"
+
+msgid "节点"
+msgstr "العقدة"
+
+msgid "范围"
+msgstr "نِطَاق"
+
+msgid "菜单"
+msgstr "قائمة طعام"
+
+msgid "虚拟机"
+msgstr "الآلة الافتراضية"
+
+msgid "表单"
+msgstr "استمارة"
+
+msgid "要求"
+msgstr "يتطلب"
+
+msgid "规则"
+msgstr "قاعدة"
+
+msgid "视图"
+msgstr "منظر"
+
+msgid "角色"
+msgstr "دور"
+
+msgid "记录"
+msgstr "سِجِلّ"
+
+msgid "设备"
+msgstr "معدات"
+
+msgid "设置"
+msgstr "يثبت"
+
+msgid "详情"
+msgstr "تفاصيل"
+
+msgid "说明"
+msgstr "يوضح"
+
+msgid "账号"
+msgstr "حساب"
+
+msgid "账户"
+msgstr "حساب"
+
+msgid "资源"
+msgstr "الموارد"
+
+msgid "路径"
+msgstr "طريق"
+
+msgid "路由"
+msgstr "التوجيه"
+
+msgid "过滤器"
+msgstr "فلتر"
+
+msgid "进度条"
+msgstr "شريط التقدم"
+
+msgid "进程"
+msgstr "عملية"
+
+msgid "选择器"
+msgstr "محدد"
+
+msgid "选项"
+msgstr "خيارات"
+
+msgid "通道"
+msgstr "ممر"
+
+msgid "速度"
+msgstr "سرعة"
+
+msgid "邮件"
+msgstr "بريد"
+
+msgid "邮箱"
+msgstr "بريد"
+
+msgid "配置"
+msgstr "إعدادات"
+
+msgid "配额"
+msgstr "حصة"
+
+msgid "镜像"
+msgstr "مرآة"
+
+msgid "闭包"
+msgstr "إنهاء"
+
+msgid "问题"
+msgstr "سؤال"
+
+msgid "限制"
+msgstr "حد"
+
+msgid "页面"
+msgstr "صفحة"
+
+msgid "顶部"
+msgstr "قمة"
+
+msgid "一致"
+msgstr "ثابت"
+
+msgid "上行"
+msgstr "إلى أعلى"
+
+msgid "下行"
+msgstr "إلى الأسفل"
+
+msgid "不会"
+msgstr "متعود"
+
+msgid "不再"
+msgstr "لم يعد"
+
+msgid "不可"
+msgstr "لا"
+
+msgid "不稳定"
+msgstr "غير مستقر"
+
+msgid "不能"
+msgstr "لا أستطيع"
+
+msgid "不足"
+msgstr "غير كافٍ"
+
+msgid "专用"
+msgstr "مخلص"
+
+msgid "丢失"
+msgstr "ضائع"
+
+msgid "中"
+msgstr "وسط"
+
+msgid "中等"
+msgstr "واسطة"
+
+msgid "临时"
+msgstr "مؤقت"
+
+msgid "为空"
+msgstr "فارغ"
+
+msgid "主要"
+msgstr "رئيسي"
+
+msgid "二次"
+msgstr "ثانوي"
+
+msgid "优先"
+msgstr "أولوية"
+
+msgid "低"
+msgstr "قليل"
+
+msgid "全局"
+msgstr "الوضع العام"
+
+msgid "全部"
+msgstr "الجميع"
+
+msgid "公共"
+msgstr "عام"
+
+msgid "公网"
+msgstr "شبكة عامة"
+
+msgid "兼容"
+msgstr "متناسق"
+
+msgid "内网"
+msgstr "الإنترانت"
+
+msgid "内部"
+msgstr "داخلي"
+
+msgid "再次"
+msgstr "مرة أخرى"
+
+msgid "出错"
+msgstr "خطأ"
+
+msgid "初始"
+msgstr "أولي"
+
+msgid "动态"
+msgstr "متحرك"
+
+msgid "单个"
+msgstr "أعزب"
+
+msgid "危险"
+msgstr "خطر"
+
+msgid "原始"
+msgstr "إبداعي"
+
+msgid "反向"
+msgstr "يعكس"
+
+msgid "受控"
+msgstr "تسيطر عليها"
+
+msgid "只能"
+msgstr "يمكن فقط"
+
+msgid "可以"
+msgstr "يستطيع"
+
+msgid "可用"
+msgstr "متاح"
+
+msgid "可能"
+msgstr "ممكن"
+
+msgid "可逆"
+msgstr "عكسها"
+
+msgid "可选"
+msgstr "خياري"
+
+msgid "各种"
+msgstr "متنوع"
+
+msgid "唯一"
+msgstr "فقط"
+
+msgid "在线"
+msgstr "متصل"
+
+msgid "基本"
+msgstr "أساسي"
+
+msgid "复杂"
+msgstr "معقد"
+
+msgid "外网"
+msgstr "الشبكة الخارجية"
+
+msgid "外部"
+msgstr "خارجي"
+
+msgid "多"
+msgstr "كثير"
+
+msgid "多个"
+msgstr "عديد"
+
+msgid "大"
+msgstr "كبير"
+
+msgid "失效"
+msgstr "غير صالح"
+
+msgid "失败"
+msgstr "يفشل"
+
+msgid "安全"
+msgstr "أمان"
+
+msgid "完整"
+msgstr "جميع"
+
+msgid "实际"
+msgstr "فِعلي"
+
+msgid "小"
+msgstr "صغير"
+
+msgid "少"
+msgstr "عدد قليل"
+
+msgid "局部"
+msgstr "محلي"
+
+msgid "已用"
+msgstr "مستخدم"
+
+msgid "异常"
+msgstr "غير طبيعي"
+
+msgid "强关"
+msgstr "تمريرة قوية"
+
+msgid "当前"
+msgstr "حاضِر"
+
+msgid "必选"
+msgstr "مطلوب"
+
+msgid "快速"
+msgstr "سريع"
+
+msgid "成功"
+msgstr "نجاح"
+
+msgid "手动"
+msgstr "يدوي"
+
+msgid "整个"
+msgstr "كامل"
+
+msgid "新"
+msgstr "جديد"
+
+msgid "新增"
+msgstr "جديد"
+
+msgid "无描述"
+msgstr "لا يوجد وصف"
+
+msgid "无效"
+msgstr "غير صالح"
+
+msgid "无限制"
+msgstr "غير محدود"
+
+msgid "旧"
+msgstr "قديم"
+
+msgid "最新"
+msgstr "حتى الآن"
+
+msgid "最终"
+msgstr "أخير"
+
+msgid "有效"
+msgstr "فعال"
+
+msgid "未知"
+msgstr "مجهول"
+
+msgid "本地"
+msgstr "محلي"
+
+msgid "次要"
+msgstr "ثانوي"
+
+msgid "正常"
+msgstr "طبيعي"
+
+msgid "正确"
+msgstr "صحيح"
+
+msgid "永久"
+msgstr "دائم"
+
+msgid "活跃"
+msgstr "نشيط"
+
+msgid "浅"
+msgstr "أجوف"
+
+msgid "深"
+msgstr "عميق"
+
+msgid "物理"
+msgstr "الفيزياء"
+
+msgid "独立"
+msgstr "مستقل"
+
+msgid "现有"
+msgstr "موجود"
+
+msgid "直接"
+msgstr "مباشر"
+
+msgid "相关"
+msgstr "متعلق ب"
+
+msgid "短"
+msgstr "قصير"
+
+msgid "离线"
+msgstr "غير متصل"
+
+msgid "私有"
+msgstr "خاص"
+
+msgid "稳定"
+msgstr "استقرار"
+
+msgid "空闲"
+msgstr "عاطل"
+
+msgid "简单"
+msgstr "بسيط"
+
+msgid "精确"
+msgstr "دقيق"
+
+msgid "紧急"
+msgstr "عاجل"
+
+msgid "繁忙"
+msgstr "مشغول"
+
+msgid "缓慢"
+msgstr "بطيء"
+
+msgid "自动"
+msgstr "تلقائي"
+
+msgid "自定义"
+msgstr "تخصيص"
+
+msgid "虚拟"
+msgstr "افتراضي"
+
+msgid "超时"
+msgstr "نفذ الوقت"
+
+msgid "足够"
+msgstr "كافٍ"
+
+msgid "过期"
+msgstr "منتهي الصلاحية"
+
+msgid "近似"
+msgstr "تقريبي"
+
+msgid "远程"
+msgstr "بعيد"
+
+msgid "通用"
+msgstr "عالمي"
+
+msgid "逻辑"
+msgstr "منطق"
+
+msgid "部分"
+msgstr "جزء"
+
+msgid "重要"
+msgstr "مهم"
+
+msgid "错误"
+msgstr "خطأ"
+
+msgid "长"
+msgstr "طويل"
+
+msgid "静态"
+msgstr "ثابت"
+
+msgid "高"
+msgstr "عالي"
+
+msgid "高级"
+msgstr "متقدم"
+
+msgid "默认"
+msgstr "تقصير"
+
+msgid "API"
+msgstr "واجهة برمجة التطبيقات"
+
+msgid "CPU"
+msgstr "وحدة المعالجة المركزية"
+
+msgid "GPU"
+msgstr "GPU"
+
+msgid "HTTP"
+msgstr "HTTP"
+
+msgid "IP"
+msgstr "الملكية الفكرية"
+
+msgid "ISO"
+msgstr "ايزو"
+
+msgid "JSON"
+msgstr "JSON"
+
+msgid "NAT"
+msgstr "نات"
+
+msgid "Token"
+msgstr "رمز مميز"
+
+msgid "VNC"
+msgstr "فنك"
+
+msgid "Web"
+msgstr "ويب"
 
 msgid "CPU核心"
 msgstr "وحدة المعالجة المركزية الأساسية"
@@ -27,56 +1278,44 @@ msgstr "وحدة المعالجة المركزية الأساسية"
 msgid "GPU显存"
 msgstr "ذاكرة GPU"
 
-msgid "ISO镜像"
-msgstr "صورة ايزو"
-
-msgid "NAT端口"
-msgstr "منفذ نات"
-
-msgid "Web代理"
-msgstr "وكيل الويب"
-
-msgid "创建虚拟机"
-msgstr "إنشاء جهاز افتراضي"
-
-msgid "删除虚拟机"
-msgstr "حذف الجهاز الظاهري"
-
-msgid "卸载ISO"
-msgstr "إلغاء تثبيت ISO"
-
-msgid "卸载数据盘"
-msgstr "قم بإلغاء تحميل قرص البيانات"
-
-msgid "扫描虚拟机"
-msgstr "مسح الأجهزة الافتراضية"
-
-msgid "挂载ISO"
-msgstr "جبل ايزو"
-
-msgid "挂载数据盘"
-msgstr "جبل قرص البيانات"
-
-msgid "编辑虚拟机"
-msgstr "تحرير الجهاز الظاهري"
-
-msgid "虚拟机详情"
-msgstr "تفاصيل الآلة الافتراضية"
-
 msgid "IP地址"
 msgstr "عنوان IP"
 
 msgid "IP配额"
 msgstr "حصة الملكية الفكرية"
 
+msgid "ISO镜像"
+msgstr "صورة ايزو"
+
+msgid "NAT端口"
+msgstr "منفذ نات"
+
+msgid "VNC控制台"
+msgstr "وحدة تحكم VNC"
+
+msgid "Web代理"
+msgstr "وكيل الويب"
+
+msgid "一键远程"
+msgstr "بنقرة واحدة عن بعد"
+
+msgid "上传带宽"
+msgstr "تحميل عرض النطاق الترددي"
+
 msgid "上行带宽"
 msgstr "عرض النطاق الترددي المنبع"
 
-msgid "下拉菜单"
-msgstr "القائمة المنسدلة"
+msgid "下划线"
+msgstr "تسطير"
 
 msgid "下行带宽"
 msgstr "عرض النطاق الترددي للوصلة الهابطة"
+
+msgid "下载带宽"
+msgstr "تحميل عرض النطاق الترددي"
+
+msgid "个主机"
+msgstr "المضيفين"
 
 msgid "个人信息"
 msgstr "معلومات شخصية"
@@ -87,17 +1326,23 @@ msgstr "الإعدادات الشخصية"
 msgid "个人资料"
 msgstr "معلومات شخصية"
 
+msgid "个字符"
+msgstr "الشخصيات"
+
 msgid "为虚拟机"
 msgstr "للجهاز الظاهري"
 
-msgid "主所有者"
-msgstr "المالك الأساسي"
+msgid "主机名"
+msgstr "اسم المضيف"
 
 msgid "主机名称"
 msgstr "اسم المضيف"
 
 msgid "主机总数"
 msgstr "العدد الإجمالي للمضيفين"
+
+msgid "主机数"
+msgstr "عدد المضيفين"
 
 msgid "主机数量"
 msgstr "عدد المضيفين"
@@ -108,9 +1353,6 @@ msgstr "نظرة عامة على المضيف"
 msgid "主机筛选"
 msgstr "تصفية المضيف"
 
-msgid "主机管理"
-msgstr "إدارة المضيف"
-
 msgid "主机类型"
 msgstr "نوع المضيف"
 
@@ -119,6 +1361,9 @@ msgstr "تفاصيل المضيف"
 
 msgid "主要接口"
 msgstr "الواجهة الرئيسية"
+
+msgid "从文件"
+msgstr "من الملف"
 
 msgid "任务列表"
 msgstr "قائمة المهام"
@@ -135,20 +1380,20 @@ msgstr "نوع المهمة"
 msgid "任务详情"
 msgstr "تفاصيل المهمة"
 
+msgid "使用者"
+msgstr "مستخدم"
+
+msgid "供选择"
+msgstr "للاختيار"
+
+msgid "保存中"
+msgstr "توفير"
+
 msgid "保存失败"
 msgstr "فشل الحفظ"
 
 msgid "保存确认"
 msgstr "حفظ التأكيد"
-
-msgid "保存设置"
-msgstr "حفظ الإعدادات"
-
-msgid "保存配置"
-msgstr "حفظ التكوين"
-
-msgid "保持一致"
-msgstr "كن متسقًا"
 
 msgid "修改密码"
 msgstr "تغيير كلمة المرور"
@@ -156,20 +1401,14 @@ msgstr "تغيير كلمة المرور"
 msgid "修改邮箱"
 msgstr "تعديل البريد الإلكتروني"
 
-msgid "停止刷新"
-msgstr "توقف عن التحديث"
+msgid "停止中"
+msgstr "وقف"
 
 msgid "光盘镜像"
 msgstr "صورة القرص"
 
 msgid "全部主机"
 msgstr "جميع المضيفين"
-
-msgid "全部状态"
-msgstr "كل الوضع"
-
-msgid "全部级别"
-msgstr "جميع المستويات"
 
 msgid "公网IP"
 msgstr "الملكية الفكرية العامة"
@@ -179,6 +1418,9 @@ msgstr "منفذ الشبكة العامة"
 
 msgid "公网网桥"
 msgstr "جسر الشبكة العامة"
+
+msgid "关机中"
+msgstr "اغلاق"
 
 msgid "内网IP"
 msgstr "إنترانت IP"
@@ -195,9 +1437,6 @@ msgstr "جسر الإنترانت"
 msgid "分配主机"
 msgstr "تعيين المضيف"
 
-msgid "创建备份"
-msgstr "إنشاء نسخة احتياطية"
-
 msgid "创建失败"
 msgstr "فشل الخلق"
 
@@ -210,11 +1449,14 @@ msgstr "وقت الخلق"
 msgid "创建用户"
 msgstr "إنشاء مستخدم"
 
+msgid "创建虚拟机"
+msgstr "إنشاء جهاز افتراضي"
+
+msgid "初始化"
+msgstr "التهيئة"
+
 msgid "删除主机"
 msgstr "حذف المضيف"
-
-msgid "删除代理"
-msgstr "حذف الوكيل"
 
 msgid "删除失败"
 msgstr "فشل الحذف"
@@ -231,11 +1473,23 @@ msgstr "حذف المستخدم"
 msgid "删除硬盘"
 msgstr "حذف القرص الصلب"
 
+msgid "删除虚拟机"
+msgstr "حذف الجهاز الظاهري"
+
+msgid "加载中"
+msgstr "تحميل"
+
 msgid "加载失败"
 msgstr "فشل التحميل"
 
+msgid "卸载ISO"
+msgstr "إلغاء تثبيت ISO"
+
 msgid "卸载失败"
 msgstr "فشل إلغاء التثبيت"
+
+msgid "卸载数据盘"
+msgstr "قم بإلغاء تحميل قرص البيانات"
 
 msgid "反向代理"
 msgstr "الوكيل العكسي"
@@ -243,8 +1497,11 @@ msgstr "الوكيل العكسي"
 msgid "发件邮箱"
 msgstr "إرسال البريد الإلكتروني"
 
-msgid "发送域名"
-msgstr "إرسال اسم المجال"
+msgid "取决于"
+msgstr ".اعتمادا علي"
+
+msgid "受控端"
+msgstr "نهاية تسيطر عليها"
 
 msgid "台虚拟机"
 msgstr "الآلة الافتراضية"
@@ -258,6 +1515,9 @@ msgstr "عنوان الخلفية"
 msgid "后端端口"
 msgstr "منفذ الواجهة الخلفية"
 
+msgid "启动中"
+msgstr "البدء"
+
 msgid "启用失败"
 msgstr "فشل التمكين"
 
@@ -267,8 +1527,8 @@ msgstr "تمكين المستخدم"
 msgid "响应错误"
 msgstr "خطأ في الاستجابة"
 
-msgid "基本信息"
-msgstr "المعلومات الأساسية"
+msgid "国际化"
+msgstr "تدويل"
 
 msgid "基本配置"
 msgstr "التكوين الأساسي"
@@ -282,20 +1542,11 @@ msgstr "وظيفة المناولة"
 msgid "处理响应"
 msgstr "التعامل مع الاستجابة"
 
-msgid "备份名称"
-msgstr "اسم النسخة الاحتياطية"
+msgid "备份中"
+msgstr "النسخ الاحتياطي"
 
-msgid "备份文件"
-msgstr "ملفات النسخ الاحتياطي"
-
-msgid "备份注释"
-msgstr "تعليقات احتياطية"
-
-msgid "备份管理"
-msgstr "إدارة النسخ الاحتياطي"
-
-msgid "备份说明"
-msgstr "تعليمات النسخ الاحتياطي"
+msgid "复制到"
+msgstr "نسخ إلى"
 
 msgid "复制失败"
 msgstr "فشل النسخ"
@@ -303,11 +1554,23 @@ msgstr "فشل النسخ"
 msgid "外网端口"
 msgstr "منفذ الشبكة الخارجية"
 
+msgid "大写字母"
+msgstr ".حرف كبير"
+
 msgid "子网掩码"
 msgstr "قناع الشبكة الفرعية"
 
 msgid "存储容量"
 msgstr "سعة التخزين"
+
+msgid "存储路径"
+msgstr "مسار التخزين"
+
+msgid "安全提示"
+msgstr "نصائح السلامة"
+
+msgid "安装盘"
+msgstr "قرص التثبيت"
 
 msgid "完整数据"
 msgstr "بيانات كاملة"
@@ -321,8 +1584,11 @@ msgstr "اسم المثيل"
 msgid "实例概览"
 msgstr "نظرة عامة على المثيل"
 
-msgid "容器管理"
-msgstr "إدارة الحاويات"
+msgid "实例管理"
+msgstr "إدارة المثيلات"
+
+msgid "实例配置"
+msgstr "تكوين المثيل"
 
 msgid "密码强度"
 msgstr "قوة كلمة المرور"
@@ -330,8 +1596,41 @@ msgstr "قوة كلمة المرور"
 msgid "小写字母"
 msgstr "الحروف الصغيرة"
 
-msgid "开放注册"
-msgstr "فتح التسجيل"
+msgid "已保存"
+msgstr "أنقذ"
+
+msgid "已停止"
+msgstr "توقف"
+
+msgid "已关闭"
+msgstr "مغلق"
+
+msgid "已删除"
+msgstr "تم الحذف"
+
+msgid "已启用"
+msgstr "ممكّن"
+
+msgid "已完成"
+msgstr "مكتمل"
+
+msgid "已崩溃"
+msgstr "تحطمت"
+
+msgid "已开启"
+msgstr "تم تشغيله بالفعل"
+
+msgid "已挂载"
+msgstr "شنت"
+
+msgid "已暂停"
+msgstr "معلق"
+
+msgid "已禁用"
+msgstr "عاجز"
+
+msgid "已验证"
+msgstr "تم التحقق منه"
 
 msgid "强制关机"
 msgstr "قوة الاغلاق"
@@ -348,8 +1647,17 @@ msgstr "ننسى كلمة المرور"
 msgid "快速操作"
 msgstr "عملية سريعة"
 
+msgid "总代理"
+msgstr "وكيل عام"
+
 msgid "总代理数"
 msgstr "العدد الإجمالي للوكلاء"
+
+msgid "总配额"
+msgstr "الحصة الإجمالية"
+
+msgid "恢复中"
+msgstr "يتعافى"
 
 msgid "恢复失败"
 msgstr "فشل الاسترداد"
@@ -360,20 +1668,32 @@ msgstr "جميع المضيفين"
 msgid "所有协议"
 msgstr "جميع الاتفاقيات"
 
-msgid "扫描备份"
-msgstr "مسح النسخ الاحتياطي"
+msgid "扩展数据"
+msgstr "البيانات الموسعة"
+
+msgid "扩展选项"
+msgstr "خيارات موسعة"
 
 msgid "扫描失败"
 msgstr "فشل المسح"
 
+msgid "扫描虚拟机"
+msgstr "مسح الأجهزة الافتراضية"
+
 msgid "找回密码"
 msgstr "استرداد كلمة المرور"
+
+msgid "挂载ISO"
+msgstr "جبل ايزو"
 
 msgid "挂载名称"
 msgstr "اسم جبل"
 
 msgid "挂载失败"
 msgstr "فشل جبل"
+
+msgid "挂载数据盘"
+msgstr "جبل قرص البيانات"
 
 msgid "接口类型"
 msgstr "نوع الواجهة"
@@ -399,6 +1719,9 @@ msgstr "استلام البريد الإلكتروني"
 msgid "数十分钟"
 msgstr "عشرات الدقائق"
 
+msgid "数据盘"
+msgstr "قرص البيانات"
+
 msgid "数据磁盘"
 msgstr "قرص البيانات"
 
@@ -407,6 +1730,15 @@ msgstr "إدارة البيانات"
 
 msgid "数据结构"
 msgstr "بنية البيانات"
+
+msgid "文件名"
+msgstr "اسم الملف"
+
+msgid "新密码"
+msgstr "كلمة المرور الجديدة"
+
+msgid "新账号"
+msgstr "حساب جديد"
 
 msgid "日志查看"
 msgstr "عرض السجل"
@@ -432,11 +1764,11 @@ msgstr "رقم العرض"
 msgid "普通用户"
 msgstr "مستخدم عادي"
 
+msgid "暂停中"
+msgstr "متوقف مؤقتًا"
+
 msgid "暂无主机"
 msgstr "لا يوجد مضيف بعد"
-
-msgid "暂无备份"
-msgstr "لا يوجد نسخة احتياطية حتى الآن"
 
 msgid "更新主机"
 msgstr "تحديث المضيف"
@@ -446,6 +1778,9 @@ msgstr "وكيل التحديث"
 
 msgid "更新失败"
 msgstr "فشل التحديث"
+
+msgid "更新成功"
+msgstr "تم التحديث بنجاح"
 
 msgid "更新用户"
 msgstr "تحديث المستخدم"
@@ -459,6 +1794,15 @@ msgstr "آخر تحديث"
 msgid "最小要求"
 msgstr "الحد الأدنى من المتطلبات"
 
+msgid "月流量"
+msgstr "حركة المرور الشهرية"
+
+msgid "未分配"
+msgstr "لم يتم تخصيصها"
+
+msgid "未挂载"
+msgstr "غير مثبتة"
+
 msgid "未知主机"
 msgstr "مضيف غير معروف"
 
@@ -471,11 +1815,20 @@ msgstr "وقت غير معروف"
 msgid "未知系统"
 msgstr "نظام غير معروف"
 
+msgid "未配置"
+msgstr "لم يتم تكوينه"
+
+msgid "未验证"
+msgstr "لم يتم التحقق منها"
+
 msgid "权限不足"
 msgstr "أذونات غير كافية"
 
 msgid "权限信息"
 msgstr "معلومات الإذن"
+
+msgid "条记录"
+msgstr "السجلات"
 
 msgid "查看全部"
 msgstr "عرض الكل"
@@ -485,6 +1838,12 @@ msgstr "تحقق من التفاصيل"
 
 msgid "桌面端口"
 msgstr "منفذ سطح المكتب"
+
+msgid "模板数"
+msgstr "عدد القوالب"
+
+msgid "正在"
+msgstr "نكون"
 
 msgid "正常运行"
 msgstr "التشغيل العادي"
@@ -537,11 +1896,17 @@ msgstr "عرض واضح"
 msgid "爱快地址"
 msgstr "عنوان ايكواي"
 
+msgid "爱快配置"
+msgstr "تكوين ايكواي"
+
 msgid "特殊字符"
 msgstr "شخصيات خاصة"
 
 msgid "用户列表"
 msgstr "قائمة المستخدمين"
+
+msgid "用户名"
+msgstr "اسم المستخدم"
 
 msgid "用户权限"
 msgstr "أذونات المستخدم"
@@ -558,6 +1923,9 @@ msgstr "تسجيل خروج المستخدم"
 msgid "用户登录"
 msgstr "تسجيل دخول المستخدم"
 
+msgid "用户空间"
+msgstr "مساحة المستخدم"
+
 msgid "用户管理"
 msgstr "إدارة المستخدم"
 
@@ -566,6 +1934,9 @@ msgstr "تشغيل الطاقة"
 
 msgid "电源管理"
 msgstr "إدارة الطاقة"
+
+msgid "登录失败"
+msgstr "فشل تسجيل الدخول"
 
 msgid "硬盘大小"
 msgstr "حجم القرص الصلب"
@@ -609,6 +1980,9 @@ msgstr "فشل التعطيل"
 msgid "移交失败"
 msgstr "فشل التسليم"
 
+msgid "程序启动路径"
+msgstr "مسار بدء تشغيل البرنامج"
+
 msgid "端口数量"
 msgstr "عدد المنافذ"
 
@@ -623,6 +1997,9 @@ msgstr "إعادة توجيه المنفذ"
 
 msgid "端口配置"
 msgstr "تكوين المنفذ"
+
+msgid "等待中"
+msgstr "منتظر"
 
 msgid "管理主机"
 msgstr "مضيف الإدارة"
@@ -642,6 +2019,9 @@ msgstr "كلمة مرور النظام"
 msgid "系统日志"
 msgstr "سجل النظام"
 
+msgid "系统映射"
+msgstr "رسم خرائط النظام"
+
 msgid "系统概览"
 msgstr "نظرة عامة على النظام"
 
@@ -650,6 +2030,12 @@ msgstr "حالة النظام"
 
 msgid "系统界面"
 msgstr "واجهة النظام"
+
+msgid "系统盘"
+msgstr "قرص النظام"
+
+msgid "系统空间"
+msgstr "مساحة النظام"
 
 msgid "系统管理"
 msgstr "إدارة النظام"
@@ -669,6 +2055,9 @@ msgstr "إحصائيات"
 msgid "编辑主机"
 msgstr "تحرير المضيف"
 
+msgid "编辑虚拟机"
+msgstr "تحرير الجهاز الظاهري"
+
 msgid "网关地址"
 msgstr "عنوان البوابة"
 
@@ -677,6 +2066,9 @@ msgstr "خطأ في البوابة"
 
 msgid "网卡信息"
 msgstr "معلومات بطاقة الشبكة"
+
+msgid "网卡列表"
+msgstr "قائمة بطاقات الشبكة"
 
 msgid "网卡名称"
 msgstr "اسم بطاقة الشبكة"
@@ -690,11 +2082,17 @@ msgstr "نوع بطاقة الشبكة"
 msgid "网卡配置"
 msgstr "تكوين بطاقة الشبكة"
 
+msgid "网络与配额"
+msgstr "الشبكات والحصص"
+
 msgid "网络带宽"
 msgstr "عرض النطاق الترددي للشبكة"
 
 msgid "网络服务"
 msgstr "خدمات الشبكة"
+
+msgid "网络端口"
+msgstr "منفذ الشبكة"
 
 msgid "网络管理"
 msgstr "إدارة الشبكة"
@@ -714,6 +2112,9 @@ msgstr "التخصيص التلقائي"
 msgid "自动刷新"
 msgstr "التحديث التلقائي"
 
+msgid "自动化"
+msgstr "الأتمتة"
+
 msgid "自动更新"
 msgstr "التحديثات التلقائية"
 
@@ -726,17 +2127,41 @@ msgstr "الحروف الانجليزية"
 msgid "获取数据"
 msgstr "احصل على البيانات"
 
+msgid "菜单项"
+msgstr "عنصر القائمة"
+
+msgid "虚拟化"
+msgstr "الافتراضية"
+
+msgid "虚拟机详情"
+msgstr "تفاصيل الآلة الافتراضية"
+
 msgid "计算资源"
 msgstr "موارد الحوسبة"
 
 msgid "认证方式"
 msgstr "طريقة المصادقة"
 
+msgid "设备名"
+msgstr "اسم الجهاز"
+
+msgid "设备直通"
+msgstr "مرور الجهاز"
+
 msgid "设置失败"
 msgstr "فشل الإعداد"
 
+msgid "设置密码"
+msgstr "تعيين كلمة المرور"
+
+msgid "访问Token"
+msgstr "AccessToken"
+
 msgid "访问端口"
 msgstr "منفذ الوصول"
+
+msgid "访问配置"
+msgstr "تكوين الوصول"
 
 msgid "请求失败"
 msgstr "فشل الطلب"
@@ -753,11 +2178,20 @@ msgstr "تخصيص الموارد"
 msgid "资源配额"
 msgstr "حصة الموارد"
 
+msgid "转发规则"
+msgstr "قواعد إعادة التوجيه"
+
+msgid "运行中"
+msgstr "جري"
+
 msgid "运行日志"
 msgstr "تشغيل السجل"
 
 msgid "返回登录"
 msgstr "العودة إلى تسجيل الدخول"
+
+msgid "还原中"
+msgstr "استعادة"
 
 msgid "还原备份"
 msgstr "استعادة النسخة الاحتياطية"
@@ -789,8 +2223,14 @@ msgstr "عنوان البريد الإلكتروني"
 msgid "邮箱验证"
 msgstr "التحقق من البريد الإلكتروني"
 
+msgid "配置中"
+msgstr "تكوين"
+
 msgid "配置名称"
 msgstr "اسم التكوين"
+
+msgid "配置池"
+msgstr "تكوين تجمع"
 
 msgid "配额不足"
 msgstr "حصة غير كافية"
@@ -798,11 +2238,17 @@ msgstr "حصة غير كافية"
 msgid "配额充足"
 msgstr "حصة كافية"
 
+msgid "重启中"
+msgstr "إعادة التشغيل"
+
 msgid "重置失败"
 msgstr "فشلت إعادة التعيين"
 
 msgid "重置密码"
 msgstr "إعادة تعيين كلمة المرور"
+
+msgid "重装中"
+msgstr "إعادة التثبيت"
 
 msgid "重装失败"
 msgstr "فشلت عملية إعادة التثبيت"
@@ -822,257 +2268,14 @@ msgstr "معالجة الأخطاء"
 msgid "镜像文件"
 msgstr "ملف الصورة"
 
+msgid "限制配置"
+msgstr "تكوين الحد"
+
 msgid "随机生成"
 msgstr "تم إنشاؤها بشكل عشوائي"
 
-msgid "下划线"
-msgstr "تسطير"
-
-msgid "个主机"
-msgstr "المضيفين"
-
-msgid "个字符"
-msgstr "الشخصيات"
-
-msgid "主机名"
-msgstr "اسم المضيف"
-
-msgid "主机数"
-msgstr "عدد المضيفين"
-
-msgid "从文件"
-msgstr "من الملف"
-
-msgid "仪表盘"
-msgstr "لوحة القيادة"
-
-msgid "使用率"
-msgstr "معدل الاستخدام"
-
-msgid "使用者"
-msgstr "مستخدم"
-
-msgid "供选择"
-msgstr "للاختيار"
-
-msgid "保存中"
-msgstr "توفير"
-
-msgid "停止中"
-msgstr "وقف"
-
-msgid "关机中"
-msgstr "اغلاق"
-
-msgid "初始化"
-msgstr "التهيئة"
-
-msgid "利用率"
-msgstr "استخدام"
-
-msgid "剪贴板"
-msgstr "الحافظة"
-
-msgid "加载中"
-msgstr "تحميل"
-
-msgid "取决于"
-msgstr ".اعتمادا علي"
-
-msgid "启动中"
-msgstr "البدء"
-
-msgid "国际化"
-msgstr "تدويل"
-
-msgid "备份中"
-msgstr "النسخ الاحتياطي"
-
-msgid "复制到"
-msgstr "نسخ إلى"
-
-msgid "复杂度"
-msgstr "تعقيد"
-
-msgid "安装盘"
-msgstr "قرص التثبيت"
-
-msgid "对话框"
-msgstr "مربع الحوار"
-
-msgid "已保存"
-msgstr "أنقذ"
-
-msgid "已停止"
-msgstr "توقف"
-
-msgid "已关闭"
-msgstr "مغلق"
-
-msgid "已删除"
-msgstr "تم الحذف"
-
-msgid "已启用"
-msgstr "ممكّن"
-
-msgid "已完成"
-msgstr "مكتمل"
-
-msgid "已崩溃"
-msgstr "تحطمت"
-
-msgid "已开启"
-msgstr "تم تشغيله بالفعل"
-
-msgid "已挂载"
-msgstr "شنت"
-
-msgid "已暂停"
-msgstr "معلق"
-
-msgid "已禁用"
-msgstr "عاجز"
-
-msgid "已验证"
-msgstr "تم التحقق منه"
-
-msgid "总代理"
-msgstr "وكيل عام"
-
-msgid "总配额"
-msgstr "الحصة الإجمالية"
-
-msgid "恢复中"
-msgstr "يتعافى"
-
-msgid "所有权"
-msgstr "ملكية"
-
-msgid "所有者"
-msgstr "مالك"
-
-msgid "拦截器"
-msgstr "المعترض"
-
-msgid "控制台"
-msgstr "وحدة التحكم"
-
-msgid "数据盘"
-msgstr "قرص البيانات"
-
-msgid "文件名"
-msgstr "اسم الملف"
-
-msgid "新密码"
-msgstr "كلمة المرور الجديدة"
-
-msgid "无描述"
-msgstr "لا يوجد وصف"
-
-msgid "无限制"
-msgstr "غير محدود"
-
-msgid "暂停中"
-msgstr "متوقف مؤقتًا"
-
-msgid "月流量"
-msgstr "حركة المرور الشهرية"
-
-msgid "有效性"
-msgstr "فعالية"
-
-msgid "服务器"
-msgstr "الخادم"
-
-msgid "未分配"
-msgstr "لم يتم تخصيصها"
-
-msgid "未挂载"
-msgstr "غير مثبتة"
-
-msgid "未配置"
-msgstr "لم يتم تكوينه"
-
-msgid "未验证"
-msgstr "لم يتم التحقق منها"
-
-msgid "条记录"
-msgstr "السجلات"
-
-msgid "格式化"
-msgstr "شكل"
-
-msgid "模板数"
-msgstr "عدد القوالب"
-
-msgid "注册表"
-msgstr "التسجيل"
-
-msgid "浏览器"
-msgstr "المتصفح"
-
-msgid "用户名"
-msgstr "اسم المستخدم"
-
-msgid "第一个"
-msgstr "أول واحد"
-
-msgid "第一台"
-msgstr "الأول"
-
-msgid "等待中"
-msgstr "منتظر"
-
-msgid "管理员"
-msgstr "مسؤول"
-
-msgid "系统盘"
-msgstr "قرص النظام"
-
-msgid "自动化"
-msgstr "الأتمتة"
-
-msgid "菜单项"
-msgstr "عنصر القائمة"
-
-msgid "虚拟化"
-msgstr "الافتراضية"
-
-msgid "虚拟机"
-msgstr "الآلة الافتراضية"
-
-msgid "请输入"
-msgstr "الرجاء الدخول"
-
-msgid "请选择"
-msgstr "الرجاء التحديد"
-
-msgid "过滤器"
-msgstr "فلتر"
-
-msgid "运行中"
-msgstr "جري"
-
-msgid "还原中"
-msgstr "استعادة"
-
-msgid "进度条"
-msgstr "شريط التقدم"
-
-msgid "选择器"
-msgstr "محدد"
-
-msgid "配置中"
-msgstr "تكوين"
-
-msgid "重启中"
-msgstr "إعادة التشغيل"
-
-msgid "重装中"
-msgstr "إعادة التثبيت"
-
-msgid "默认值"
-msgstr "القيمة الافتراضية"
+msgid "高级配置"
+msgstr "التكوين المتقدم"
 
 msgid "一个"
 msgstr "واحد"
@@ -1080,692 +2283,50 @@ msgstr "واحد"
 msgid "一封"
 msgstr "حرف واحد"
 
-msgid "一致"
-msgstr "ثابت"
-
-msgid "一键"
-msgstr "نقرة واحدة"
-
-msgid "上行"
-msgstr "إلى أعلى"
-
-msgid "下行"
-msgstr "إلى الأسفل"
-
-msgid "不会"
-msgstr "متعود"
-
-msgid "不再"
-msgstr "لم يعد"
-
-msgid "不可"
-msgstr "لا"
-
-msgid "不能"
-msgstr "لا أستطيع"
-
-msgid "不足"
-msgstr "غير كافٍ"
-
-msgid "丢失"
-msgstr "ضائع"
-
-msgid "两次"
-msgstr "مرتين"
-
-msgid "中文"
-msgstr "الصينية"
-
-msgid "中等"
-msgstr "واسطة"
-
-msgid "临时"
-msgstr "مؤقت"
-
-msgid "为空"
-msgstr "فارغ"
-
-msgid "主机"
-msgstr "يستضيف"
-
-msgid "主要"
-msgstr "رئيسي"
-
-msgid "主题"
-msgstr "سمة"
-
-msgid "事件"
-msgstr "حدث"
-
-msgid "二次"
-msgstr "ثانوي"
-
-msgid "交互"
-msgstr "تفاعل"
-
-msgid "代理"
-msgstr "التمثيل"
-
-msgid "代码"
-msgstr "شفرة"
-
-msgid "任务"
-msgstr "مهمة"
-
-msgid "优先"
-msgstr "أولوية"
-
-msgid "作为"
-msgstr "مثل"
-
-msgid "使用"
-msgstr "يستخدم"
-
-msgid "例如"
-msgstr "على سبيل المثال"
-
-msgid "侧边"
-msgstr "جانب"
-
-msgid "保存"
-msgstr "يحفظ"
-
-msgid "保持"
-msgstr "يحفظ"
-
-msgid "保留"
-msgstr "احتياطي"
-
-msgid "信息"
-msgstr "معلومة"
-
-msgid "修改"
-msgstr "يراجع"
-
-msgid "修正"
-msgstr "تصحيح"
-
-msgid "假设"
-msgstr "فرضية"
-
-msgid "停止"
-msgstr "قف"
-
-msgid "允许"
-msgstr "يسمح"
-
-msgid "元素"
-msgstr "عنصر"
-
-msgid "光盘"
-msgstr "قرص مضغوط"
-
-msgid "全部"
-msgstr "الجميع"
-
-msgid "公共"
-msgstr "عام"
-
-msgid "公网"
-msgstr "شبكة عامة"
-
-msgid "共享"
-msgstr "مشترك"
-
-msgid "关机"
-msgstr "اغلق"
-
-msgid "关系"
-msgstr "علاقة"
-
-msgid "关闭"
-msgstr "إنهاء"
-
-msgid "其他"
-msgstr "آخر"
-
-msgid "兼容"
-msgstr "متناسق"
-
-msgid "内存"
-msgstr "ذاكرة"
-
-msgid "内容"
-msgstr "محتوى"
-
-msgid "内网"
-msgstr "الإنترانت"
-
-msgid "内部"
-msgstr "داخلي"
-
-msgid "再次"
-msgstr "مرة أخرى"
-
-msgid "出错"
-msgstr "خطأ"
-
-msgid "函数"
-msgstr "وظيفة"
-
-msgid "分享"
-msgstr "يشارك"
-
-msgid "分割"
-msgstr "التجزئة"
-
-msgid "分离"
-msgstr "الانفصال"
-
-msgid "分配"
-msgstr "توزيع"
-
-msgid "分钟"
-msgstr "دقيقة"
-
-msgid "分隔"
-msgstr "متفرق"
-
-msgid "切换"
-msgstr "يُحوّل"
-
-msgid "列表"
-msgstr "قائمة"
-
-msgid "创建"
-msgstr "يخلق"
-
-msgid "删除"
-msgstr "يمسح"
-
-msgid "判断"
-msgstr "يحكم على"
-
-msgid "别名"
-msgstr "الاسم المستعار"
-
-msgid "刷新"
-msgstr "ينعش"
-
-msgid "前缀"
-msgstr "بادئة"
-
-msgid "功耗"
-msgstr "استهلاك الطاقة"
-
-msgid "功能"
-msgstr "وظيفة"
-
-msgid "加载"
-msgstr "حمولة"
-
-msgid "动作"
-msgstr "فعل"
-
-msgid "动态"
-msgstr "متحرك"
-
-msgid "勾选"
-msgstr "يفحص"
-
-msgid "包含"
-msgstr "يشمل"
-
-msgid "匹配"
-msgstr "مباراة"
-
-msgid "区域"
-msgstr "منطقة"
-
-msgid "协议"
-msgstr "بروتوكول"
-
-msgid "单个"
-msgstr "أعزب"
-
-msgid "单位"
-msgstr "وحدة"
-
-msgid "占用"
-msgstr "احتلال"
-
-msgid "卡片"
-msgstr "بطاقة"
-
-msgid "卸载"
-msgstr "إلغاء التثبيت"
-
-msgid "历史"
-msgstr "تاريخ"
-
-msgid "原始"
-msgstr "إبداعي"
-
-msgid "参数"
-msgstr "المعلمة"
-
-msgid "及其"
-msgstr "و"
-
-msgid "反向"
-msgstr "يعكس"
-
-msgid "发件"
-msgstr "يرسل"
-
-msgid "发送"
-msgstr "يرسل"
-
-msgid "取消"
-msgstr "يلغي"
-
-msgid "受控"
-msgstr "تسيطر عليها"
-
-msgid "变为"
-msgstr "يصبح"
-
-msgid "变化"
-msgstr "يتغير"
-
-msgid "变更"
-msgstr "يتغير"
-
-msgid "变量"
-msgstr "عامل"
-
-msgid "只能"
-msgstr "يمكن فقط"
-
-msgid "可以"
-msgstr "يستطيع"
-
-msgid "可用"
-msgstr "متاح"
-
-msgid "可能"
-msgstr "ممكن"
-
-msgid "可逆"
-msgstr "عكسها"
-
-msgid "可选"
-msgstr "خياري"
-
-msgid "各种"
-msgstr "متنوع"
-
-msgid "合并"
-msgstr "دمج"
-
-msgid "同意"
-msgstr "يوافق"
-
-msgid "同时"
-msgstr "في نفس الوقت"
-
-msgid "名称"
-msgstr "اسم"
-
-msgid "后续"
-msgstr "المتابعة"
-
-msgid "后缀"
-msgstr "لاحقة"
-
-msgid "后该"
-msgstr "حان الوقت لاحقًا"
-
-msgid "否则"
-msgstr "خلاف ذلك"
-
-msgid "启动"
-msgstr ".بدء"
-
-msgid "启用"
-msgstr "يُمكَِن"
-
-msgid "响应"
-msgstr "إجابة"
-
-msgid "唯一"
-msgstr "فقط"
-
-msgid "因为"
-msgstr "لأن"
-
-msgid "图标"
-msgstr "رمز"
-
-msgid "地址"
-msgstr "عنوان"
-
-msgid "域名"
-msgstr "اسم المجال"
-
-msgid "基本"
-msgstr "أساسي"
-
-msgid "堆栈"
-msgstr "كومة"
-
-msgid "处理"
-msgstr "التعامل مع"
-
-msgid "备份"
-msgstr "نسخة احتياطية"
-
-msgid "备注"
-msgstr "ملاحظة"
-
-msgid "复制"
-msgstr "ينسخ"
-
-msgid "复合"
-msgstr "معقد"
-
-msgid "外部"
-msgstr "خارجي"
-
-msgid "多个"
-msgstr "عديد"
+msgid "个数"
+msgstr "رقم"
 
 msgid "大小"
 msgstr "مقاس"
 
-msgid "失效"
-msgstr "غير صالح"
-
-msgid "失败"
-msgstr "يفشل"
-
-msgid "如果"
-msgstr "لو"
-
-msgid "字母"
-msgstr "خطاب"
-
-msgid "字符"
-msgstr "شخصية"
-
-msgid "字节"
-msgstr "بايت"
-
-msgid "存储"
-msgstr "تخزين"
-
-msgid "存在"
-msgstr "يخرج"
-
-msgid "安全"
-msgstr "أمان"
-
-msgid "完全"
-msgstr "بالكامل"
-
-msgid "完成"
-msgstr "ينهي"
-
-msgid "完整"
-msgstr "جميع"
-
-msgid "定义"
-msgstr "تعريف"
-
-msgid "实例"
-msgstr "مثال"
-
-msgid "实际"
-msgstr "فِعلي"
-
-msgid "容器"
-msgstr "حاوية"
-
 msgid "容量"
 msgstr "سعة"
-
-msgid "密码"
-msgstr "كلمة المرور"
-
-msgid "对应"
-msgstr "تتوافق"
-
-msgid "对象"
-msgstr "هدف"
-
-msgid "导入"
-msgstr "يستورد"
-
-msgid "导出"
-msgstr "يصدّر"
-
-msgid "导致"
-msgstr "يؤدي إلى"
-
-msgid "导航"
-msgstr "ملاحة"
-
-msgid "少于"
-msgstr "أقل من"
-
-msgid "属性"
-msgstr "ملكية"
-
-msgid "已用"
-msgstr "مستخدم"
-
-msgid "布局"
-msgstr "تَخطِيط"
-
-msgid "带宽"
-msgstr "عرض النطاق الترددي"
-
-msgid "平台"
-msgstr "منصة"
-
-msgid "应用"
-msgstr "طلب"
-
-msgid "应该"
-msgstr "يجب"
-
-msgid "引擎"
-msgstr "محرك"
-
-msgid "弹窗"
-msgstr "نافذة منبثقة"
-
-msgid "强关"
-msgstr "تمريرة قوية"
-
-msgid "强制"
-msgstr "قوة"
-
-msgid "强度"
-msgstr "قوة"
-
-msgid "当前"
-msgstr "حاضِر"
-
-msgid "必须"
-msgstr "يجب"
-
-msgid "忘记"
-msgstr "ينسى"
-
-msgid "快速"
-msgstr "سريع"
-
-msgid "性能"
-msgstr "أداء"
 
 msgid "总数"
 msgstr "المجموع"
 
-msgid "恢复"
-msgstr "يتعافى"
-
-msgid "您好"
-msgstr "مرحبًا"
-
-msgid "情况"
-msgstr "حالة"
-
-msgid "成为"
-msgstr "يصبح"
-
-msgid "成功"
-msgstr "نجاح"
-
-msgid "我们"
-msgstr "نحن"
-
-msgid "截图"
-msgstr "لقطة شاشة"
-
-msgid "所有"
-msgstr "الجميع"
-
-msgid "才能"
-msgstr "الموهبة"
-
-msgid "打开"
-msgstr "يفتح"
-
-msgid "执行"
-msgstr "ينفذ"
-
-msgid "扩展"
-msgstr "يوسع"
-
-msgid "扫描"
-msgstr "مسح"
-
-msgid "折叠"
-msgstr "طية"
-
-msgid "拥有"
-msgstr "يملك"
-
-msgid "挂载"
-msgstr "جبل"
-
-msgid "指令"
-msgstr "تعليمات"
-
-msgid "指定"
-msgstr "تحديد"
-
-msgid "按钮"
-msgstr "زر"
-
-msgid "授权"
-msgstr "يأذن"
-
-msgid "接口"
-msgstr "واجهة"
-
-msgid "控制"
-msgstr "يتحكم"
-
-msgid "描述"
-msgstr "يصف"
-
-msgid "提交"
-msgstr "يُقدِّم"
-
-msgid "提取"
-msgstr "يستخرج"
-
-msgid "提示"
-msgstr "تَلمِيح"
-
-msgid "搜索"
-msgstr "يبحث"
-
-msgid "撤销"
-msgstr "يلغي"
-
-msgid "操作"
-msgstr "تعمل"
-
-msgid "支持"
-msgstr "يدعم"
-
-msgid "收件"
-msgstr "يستلم"
-
-msgid "收到"
-msgstr "يستلم"
-
-msgid "收集"
-msgstr "يجمع"
-
-msgid "改密"
-msgstr "تغيير كلمة المرور"
-
-msgid "数字"
-msgstr "رقم"
-
-msgid "数据"
-msgstr "بيانات"
-
-msgid "数组"
-msgstr "صفيف"
-
 msgid "数量"
 msgstr "كمية"
 
-msgid "整个"
-msgstr "كامل"
+msgid "条数"
+msgstr "عدد العناصر"
 
-msgid "文件"
-msgstr "وثيقة"
+msgid "长度"
+msgstr "طول"
 
-msgid "文字"
-msgstr "كلمة"
+msgid "分钟"
+msgstr "دقيقة"
 
-msgid "文本"
-msgstr "نص"
+msgid "周期"
+msgstr "دورة"
 
-msgid "新增"
-msgstr "جديد"
-
-msgid "方式"
-msgstr "طريق"
-
-msgid "无效"
-msgstr "غير صالح"
-
-msgid "无法"
-msgstr "غير قادر"
-
-msgid "日志"
-msgstr "سجل"
-
-msgid "时会"
-msgstr "اجتماع الوقت"
+msgid "日期"
+msgstr "تاريخ"
 
 msgid "时间"
 msgstr "وقت"
 
-msgid "映射"
-msgstr "رسم الخرائط"
+msgid "每小时"
+msgstr "كل ساعة"
 
-msgid "是否"
-msgstr "سواء"
+msgid "每日"
+msgstr "يوميًا"
 
-msgid "显卡"
-msgstr "بطاقة الرسومات"
+msgid "每月"
+msgstr "كل شهر"
 
-msgid "显存"
-msgstr "ذاكرة الفيديو"
-
-msgid "显示"
-msgstr "يعرض"
-
-msgid "暂停"
-msgstr "يوقف"
+msgid "秒"
+msgstr "ثانية"
 
 msgid "暂无"
 msgstr "لا شيء حتى الآن"
@@ -1776,8 +2337,461 @@ msgstr "مؤقت"
 msgid "暂未"
 msgstr "ليس بعد"
 
-msgid "更新"
+msgid "与"
+msgstr "و"
+
+msgid "且"
+msgstr "و"
+
+msgid "但是"
+msgstr "لكن"
+
+msgid "及其"
+msgstr "و"
+
+msgid "同时"
+msgstr "في نفس الوقت"
+
+msgid "否则"
+msgstr "خلاف ذلك"
+
+msgid "和"
+msgstr "و"
+
+msgid "因为"
+msgstr "لأن"
+
+msgid "如果"
+msgstr "لو"
+
+msgid "或"
+msgstr "أو"
+
+msgid "所以"
+msgstr "لذا"
+
+msgid "然而"
+msgstr "لكن"
+
+msgid "虽然"
+msgstr "بالرغم من"
+
+msgid "非"
+msgstr "لا"
+
+msgid "不"
+msgstr "لا"
+
+msgid "也"
+msgstr "أيضًا"
+
+msgid "从"
+msgstr "من"
+
+msgid "会"
+msgstr "مقابلة"
+
+msgid "只"
+msgstr "فقط"
+
+msgid "太"
+msgstr "أيضاً"
+
+msgid "将"
+msgstr "سوف"
+
+msgid "就"
+msgstr "مرة واحدة"
+
+msgid "已"
+msgstr "بالفعل"
+
+msgid "应该"
+msgstr "يجب"
+
+msgid "很"
+msgstr "جداً"
+
+msgid "必须"
+msgstr "يجب"
+
+msgid "您"
+msgstr "أنت"
+
+msgid "才"
+msgstr "المواهب"
+
+msgid "时"
+msgstr "ساعة"
+
+msgid "更加"
+msgstr "أكثر"
+
+msgid "最"
+msgstr "معظم"
+
+msgid "未"
+msgstr "ليس بعد"
+
+msgid "比较"
+msgstr "يقارن"
+
+msgid "的"
+msgstr "ل"
+
+msgid "相当"
+msgstr "تمامًا"
+
+msgid "真的"
+msgstr "حقيقي"
+
+msgid "确实"
+msgstr "حقًا"
+
+msgid "能"
+msgstr "قادر"
+
+msgid "至少"
+msgstr "على الأقل"
+
+msgid "请"
+msgstr "لو سمحت"
+
+msgid "还"
+msgstr "يعود"
+
+msgid "都"
+msgstr "الجميع"
+
+msgid "都将"
+msgstr "عام"
+
+msgid "需要"
+msgstr "يحتاج"
+
+msgid "非常"
+msgstr "جداً"
+
+msgid "为"
+msgstr "ل"
+
+msgid "作为"
+msgstr "مثل"
+
+msgid "使用"
+msgstr "يستخدم"
+
+msgid "关于"
+msgstr "عن"
+
+msgid "到"
+msgstr "يصل"
+
+msgid "在"
+msgstr "يخرج"
+
+msgid "对"
+msgstr "يمين"
+
+msgid "对于"
+msgstr "ل"
+
+msgid "按"
+msgstr "وفق"
+
+msgid "按照"
+msgstr "وفق"
+
+msgid "根据"
+msgstr "وفق"
+
+msgid "用于"
+msgstr "تستخدم ل"
+
+msgid "由于"
+msgstr "لأن"
+
+msgid "通过"
+msgstr "يمر"
+
+msgid "其他"
+msgstr "آخر"
+
+msgid "另"
+msgstr "آخر"
+
+msgid "所有"
+msgstr "الجميع"
+
+msgid "每个"
+msgstr "كل"
+
+msgid "自己"
+msgstr "ملك"
+
+msgid "这"
+msgstr "هذا"
+
+msgid "这个"
+msgstr "هذا"
+
+msgid "这些"
+msgstr "هؤلاء"
+
+msgid "这封"
+msgstr "هذه الرسالة"
+
+msgid "这是"
+msgstr "هذا هو"
+
+msgid "那"
+msgstr "الذي - التي"
+
+msgid "那个"
+msgstr "الذي - التي"
+
+msgid "那些"
+msgstr "أولئك"
+
+msgid "例如"
+msgstr "على سبيل المثال"
+
+msgid "包含"
+msgstr "يشمل"
+
+msgid "包括"
+msgstr "يشمل"
+
+msgid "提示"
+msgstr "تَلمِيح"
+
+msgid "提醒"
+msgstr "يتذكر"
+
+msgid "比如"
+msgstr "على سبيل المثال"
+
+msgid "注意"
+msgstr "يلاحظ"
+
+msgid "补充"
 msgstr "تجديد"
+
+msgid "除外"
+msgstr "يستثني"
+
+msgid "使得"
+msgstr "يصنع"
+
+msgid "导致"
+msgstr "يؤدي إلى"
+
+msgid "引起"
+msgstr "سبب"
+
+msgid "造成"
+msgstr "سبب"
+
+msgid "中文"
+msgstr "الصينية"
+
+msgid "句号"
+msgstr "فترة"
+
+msgid "字母"
+msgstr "خطاب"
+
+msgid "字符"
+msgstr "شخصية"
+
+msgid "字节"
+msgstr "بايت"
+
+msgid "数字"
+msgstr "رقم"
+
+msgid "英文"
+msgstr "إنجليزي"
+
+msgid "逗号"
+msgstr "فاصلة"
+
+msgid "浅色"
+msgstr "لون فاتح"
+
+msgid "深色"
+msgstr "مظلم"
+
+msgid "灰色"
+msgstr "رمادي"
+
+msgid "白色"
+msgstr "أبيض"
+
+msgid "红色"
+msgstr "أحمر"
+
+msgid "绿色"
+msgstr "أخضر"
+
+msgid "蓝色"
+msgstr "أزرق"
+
+msgid "颜色"
+msgstr "لون"
+
+msgid "黄色"
+msgstr "أصفر"
+
+msgid "黑色"
+msgstr "أسود"
+
+msgid "(JSON格式)"
+msgstr "(تنسيق جيسون)"
+
+msgid "一条"
+msgstr "قطعة واحدة"
+
+msgid "两次"
+msgstr "مرتين"
+
+msgid "主所有者"
+msgstr "المالك الأساسي"
+
+msgid "使用情况"
+msgstr "الاستخدام"
+
+msgid "停止刷新"
+msgstr "توقف عن التحديث"
+
+msgid "光盘"
+msgstr "قرص مضغوط"
+
+msgid "分隔"
+msgstr "متفرق"
+
+msgid "列表"
+msgstr "قائمة"
+
+msgid "判断"
+msgstr "يحكم على"
+
+msgid "前缀"
+msgstr "بادئة"
+
+msgid "加载"
+msgstr "حمولة"
+
+msgid "占用"
+msgstr "احتلال"
+
+msgid "卡片"
+msgstr "بطاقة"
+
+msgid "历史"
+msgstr "تاريخ"
+
+msgid "发件"
+msgstr "يرسل"
+
+msgid "变为"
+msgstr "يصبح"
+
+msgid "变化"
+msgstr "يتغير"
+
+msgid "后续"
+msgstr "المتابعة"
+
+msgid "后缀"
+msgstr "لاحقة"
+
+msgid "后该"
+msgstr "حان الوقت لاحقًا"
+
+msgid "基本信息"
+msgstr "المعلومات الأساسية"
+
+msgid "处理"
+msgstr "التعامل مع"
+
+msgid "复合"
+msgstr "معقد"
+
+msgid "存在"
+msgstr "يخرج"
+
+msgid "完全"
+msgstr "بالكامل"
+
+msgid "容器管理"
+msgstr "إدارة الحاويات"
+
+msgid "对应"
+msgstr "تتوافق"
+
+msgid "少于"
+msgstr "أقل من"
+
+msgid "左侧"
+msgstr "الجانب الأيسر"
+
+msgid "开放注册"
+msgstr "فتح التسجيل"
+
+msgid "忘记"
+msgstr "ينسى"
+
+msgid "您好"
+msgstr "مرحبًا"
+
+msgid "您的"
+msgstr "لك"
+
+msgid "情况"
+msgstr "حالة"
+
+msgid "我们"
+msgstr "نحن"
+
+msgid "才能"
+msgstr "الموهبة"
+
+msgid "扩展"
+msgstr "يوسع"
+
+msgid "拥有"
+msgstr "يملك"
+
+msgid "控制"
+msgstr "يتحكم"
+
+msgid "提供"
+msgstr "إمداد"
+
+msgid "操作"
+msgstr "تعمل"
+
+msgid "收件"
+msgstr "يستلم"
+
+msgid "收到"
+msgstr "يستلم"
+
+msgid "改密"
+msgstr "تغيير كلمة المرور"
+
+msgid "无法"
+msgstr "غير قادر"
+
+msgid "时会"
+msgstr "اجتماع الوقت"
+
+msgid "是否"
+msgstr "سواء"
+
+msgid "显示"
+msgstr "يعرض"
 
 msgid "最低"
 msgstr "أدنى"
@@ -1788,263 +2802,41 @@ msgstr "أخيرا"
 msgid "最小"
 msgstr "الأصغر"
 
-msgid "最新"
-msgstr "حتى الآن"
-
-msgid "最终"
-msgstr "أخير"
-
-msgid "有效"
-msgstr "فعال"
-
-msgid "服务"
-msgstr "يخدم"
-
-msgid "未知"
-msgstr "مجهول"
-
-msgid "机器"
-msgstr "آلة"
-
-msgid "权限"
-msgstr "الأذونات"
-
-msgid "条件"
-msgstr "حالة"
-
-msgid "条数"
-msgstr "عدد العناصر"
-
 msgid "来自"
 msgstr "من"
-
-msgid "构建"
-msgstr "يبني"
-
-msgid "构造"
-msgstr "بناء"
-
-msgid "查找"
-msgstr "يجد"
-
-msgid "查收"
-msgstr "يفحص"
-
-msgid "查看"
-msgstr "يفحص"
-
-msgid "标签"
-msgstr "ملصق"
-
-msgid "样式"
-msgstr "أسلوب"
-
-msgid "核心"
-msgstr "جوهر"
-
-msgid "根据"
-msgstr "وفق"
-
-msgid "格式"
-msgstr "شكل"
-
-msgid "桌面"
-msgstr "سطح المكتب"
-
-msgid "检查"
-msgstr "يفحص"
-
-msgid "检测"
-msgstr "كشف"
-
-msgid "概览"
-msgstr "ملخص"
-
-msgid "模块"
-msgstr "وحدة"
-
-msgid "模式"
-msgstr "نموذج"
 
 msgid "模态"
 msgstr "مشروط"
 
-msgid "模板"
-msgstr "نموذج"
-
-msgid "正在"
-msgstr "نكون"
-
-msgid "正常"
-msgstr "طبيعي"
-
-msgid "正文"
-msgstr "نص"
-
-msgid "正确"
-msgstr "صحيح"
-
-msgid "每月"
-msgstr "كل شهر"
-
-msgid "比如"
-msgstr "على سبيل المثال"
-
 msgid "没有"
 msgstr "لا"
 
-msgid "注册"
-msgstr "يسجل"
+msgid "注册表"
+msgstr "التسجيل"
 
-msgid "注意"
-msgstr "يلاحظ"
-
-msgid "注释"
-msgstr "تعليق"
-
-msgid "流量"
-msgstr "تدفق"
-
-msgid "浅色"
-msgstr "لون فاتح"
-
-msgid "消息"
-msgstr "معلومة"
-
-msgid "深色"
-msgstr "مظلم"
-
-msgid "添加"
-msgstr "اضف إليه"
-
-msgid "清空"
-msgstr "واضح"
-
-msgid "清除"
-msgstr "واضح"
-
-msgid "温度"
-msgstr "درجة حرارة"
-
-msgid "渲染"
-msgstr "تقديم"
-
-msgid "灰色"
-msgstr "رمادي"
-
-msgid "点击"
-msgstr "انقر"
+msgid "浏览器"
+msgstr "المتصفح"
 
 msgid "爱快"
 msgstr "الحب بسرعة"
 
-msgid "版本"
-msgstr "إصدار"
-
-msgid "状态"
-msgstr "ولاية"
-
-msgid "独立"
-msgstr "مستقل"
-
-msgid "生成"
-msgstr "يولد"
-
-msgid "生效"
-msgstr "تأخذ حيز التنفيذ"
-
-msgid "用于"
-msgstr "تستخدم ل"
-
-msgid "用尽"
-msgstr "مرهق"
-
-msgid "用户"
-msgstr "مستخدم"
-
-msgid "用途"
-msgstr "يستخدم"
-
-msgid "用量"
-msgstr "الجرعة"
-
 msgid "由后"
 msgstr "من الخلف"
-
-msgid "电源"
-msgstr "مزود الطاقة"
 
 msgid "留空"
 msgstr "اتركه فارغًا"
 
-msgid "登出"
-msgstr "تسجيل الخروج"
-
-msgid "登录"
-msgstr "تسجيل الدخول"
-
-msgid "监听"
-msgstr "شاشة"
-
-msgid "监控"
-msgstr "شاشة"
-
 msgid "目标"
 msgstr "هدف"
 
-msgid "直接"
-msgstr "مباشر"
+msgid "第一个"
+msgstr "أول واحد"
 
-msgid "相关"
-msgstr "متعلق ب"
-
-msgid "看到"
-msgstr "يرى"
-
-msgid "硬盘"
-msgstr "القرص الصلب"
-
-msgid "确保"
-msgstr "تأكد"
-
-msgid "确定"
-msgstr "بالتأكيد"
-
-msgid "确认"
-msgstr "يتأكد"
-
-msgid "磁盘"
-msgstr "القرص"
-
-msgid "禁用"
-msgstr "إبطال"
-
-msgid "移交"
-msgstr "تحويل"
-
-msgid "移除"
-msgstr "يزيل"
-
-msgid "程序"
-msgstr "برنامج"
-
-msgid "稍候"
-msgstr "انتظر لحظة"
-
-msgid "立即"
-msgstr "في الحال"
-
-msgid "端口"
-msgstr "ميناء"
+msgid "第一台"
+msgstr "الأول"
 
 msgid "等待"
 msgstr "انتظر"
-
-msgid "筛选"
-msgstr "فلتر"
-
-msgid "简化"
-msgstr "تبسيط"
 
 msgid "管理"
 msgstr "يدير"
@@ -2052,107 +2844,11 @@ msgstr "يدير"
 msgid "类名"
 msgstr "اسم الفئة"
 
-msgid "类型"
-msgstr "يكتب"
-
-msgid "系统"
-msgstr "نظام"
-
-msgid "红色"
-msgstr "أحمر"
-
-msgid "级别"
-msgstr "مستوى"
-
-msgid "组件"
-msgstr "عناصر"
-
-msgid "结束"
-msgstr "ينهي"
-
-msgid "统计"
-msgstr "إحصائيات"
-
-msgid "继续"
-msgstr "يكمل"
-
-msgid "绿色"
-msgstr "أخضر"
-
-msgid "编辑"
-msgstr "يحرر"
-
-msgid "网关"
-msgstr "بوابة"
-
-msgid "网卡"
-msgstr "بطاقة الشبكة"
-
-msgid "网桥"
-msgstr "كوبري"
-
-msgid "网络"
-msgstr "شبكة"
-
-msgid "网网"
-msgstr "netnet"
-
 msgid "翻译"
 msgstr "يترجم"
 
 msgid "耐心"
 msgstr "الصبر"
-
-msgid "联系"
-msgstr "يتصل"
-
-msgid "自动"
-msgstr "تلقائي"
-
-msgid "至少"
-msgstr "على الأقل"
-
-msgid "节点"
-msgstr "العقدة"
-
-msgid "范围"
-msgstr "نِطَاق"
-
-msgid "获取"
-msgstr "يحصل"
-
-msgid "菜单"
-msgstr "قائمة طعام"
-
-msgid "补充"
-msgstr "تجديد"
-
-msgid "表单"
-msgstr "استمارة"
-
-msgid "表示"
-msgstr "يعبر"
-
-msgid "要求"
-msgstr "يتطلب"
-
-msgid "规则"
-msgstr "قاعدة"
-
-msgid "视图"
-msgstr "منظر"
-
-msgid "角色"
-msgstr "دور"
-
-msgid "解析"
-msgstr "تحليل"
-
-msgid "触发"
-msgstr "مشغل"
-
-msgid "警告"
-msgstr "تحذير"
 
 msgid "计算"
 msgstr "احسب"
@@ -2160,173 +2856,32 @@ msgstr "احسب"
 msgid "认证"
 msgstr "شهادة"
 
-msgid "记录"
-msgstr "سِجِلّ"
-
-msgid "设备"
-msgstr "معدات"
-
-msgid "设置"
-msgstr "يثبت"
-
 msgid "访问"
 msgstr "وصول"
-
-msgid "详情"
-msgstr "تفاصيل"
 
 msgid "语言"
 msgstr "لغة"
 
-msgid "说明"
-msgstr "يوضح"
-
 msgid "请求"
 msgstr "بسأل"
 
-msgid "读取"
-msgstr "يقرأ"
-
-msgid "调用"
-msgstr "يتصل"
-
-msgid "调试"
-msgstr "تصحيح"
+msgid "请求头"
+msgstr "رأس الطلب"
 
 msgid "谨慎"
 msgstr "حذر"
 
-msgid "账号"
-msgstr "حساب"
-
-msgid "账户"
-msgstr "حساب"
-
-msgid "资源"
-msgstr "الموارد"
-
 msgid "起始"
 msgstr "يبدأ"
-
-msgid "超时"
-msgstr "نفذ الوقت"
-
-msgid "足够"
-msgstr "كافٍ"
-
-msgid "跟踪"
-msgstr "مسار"
-
-msgid "路径"
-msgstr "طريق"
-
-msgid "路由"
-msgstr "التوجيه"
-
-msgid "跳转"
-msgstr "القفز"
-
-msgid "跳过"
-msgstr "القفز فوق"
-
-msgid "转换"
-msgstr "يتحول"
-
-msgid "转移"
-msgstr "تحويل"
-
-msgid "转让"
-msgstr "تحويل"
 
 msgid "轮询"
 msgstr "الاقتراع"
 
-msgid "输入"
-msgstr "يدخل"
-
-msgid "过滤"
-msgstr "فلتر"
-
 msgid "运行"
 msgstr "يجري"
 
-msgid "返回"
-msgstr "يعود"
-
-msgid "还原"
-msgstr "تخفيض"
-
-msgid "这个"
-msgstr "هذا"
-
-msgid "这封"
-msgstr "هذه الرسالة"
-
-msgid "这是"
-msgstr "هذا هو"
-
 msgid "这里"
 msgstr "هنا"
-
-msgid "进行"
-msgstr "سلوك"
-
-msgid "远程"
-msgstr "بعيد"
-
-msgid "连接"
-msgstr "يتصل"
-
-msgid "选中"
-msgstr "مختارة"
-
-msgid "选择"
-msgstr "يختار"
-
-msgid "选项"
-msgstr "خيارات"
-
-msgid "递归"
-msgstr "العودية"
-
-msgid "逗号"
-msgstr "فاصلة"
-
-msgid "通用"
-msgstr "عالمي"
-
-msgid "通知"
-msgstr "يخطر"
-
-msgid "通过"
-msgstr "يمر"
-
-msgid "逻辑"
-msgstr "منطق"
-
-msgid "遍历"
-msgstr "اجتياز"
-
-msgid "避免"
-msgstr "يتجنب"
-
-msgid "邮件"
-msgstr "بريد"
-
-msgid "邮箱"
-msgstr "بريد"
-
-msgid "部分"
-msgstr "جزء"
-
-msgid "配置"
-msgstr "إعدادات"
-
-msgid "配额"
-msgstr "حصة"
-
-msgid "重启"
-msgstr "إعادة تشغيل"
 
 msgid "重复"
 msgstr "يكرر"
@@ -2334,68 +2889,86 @@ msgstr "يكرر"
 msgid "重新"
 msgstr "مرة أخرى"
 
-msgid "重置"
-msgstr "إعادة ضبط"
-
-msgid "重装"
-msgstr "أعد التثبيت"
-
-msgid "重要"
-msgstr "مهم"
-
-msgid "重试"
-msgstr "حاول ثانية"
-
-msgid "错误"
-msgstr "خطأ"
-
 msgid "键中"
 msgstr "مفتاح"
-
-msgid "镜像"
-msgstr "مرآة"
-
-msgid "长度"
-msgstr "طول"
-
-msgid "闭包"
-msgstr "إنهاء"
-
-msgid "问题"
-msgstr "سؤال"
-
-msgid "限制"
-msgstr "حد"
 
 msgid "随机"
 msgstr "عشوائي"
 
-msgid "需要"
-msgstr "يحتاج"
+msgid "默认值"
+msgstr "القيمة الافتراضية"
 
-msgid "静态"
-msgstr "ثابت"
+msgid "一键"
+msgstr "نقرة واحدة"
 
-msgid "非常"
-msgstr "جداً"
+msgid "上一步"
+msgstr "الخطوة السابقة"
 
-msgid "页面"
-msgstr "صفحة"
+msgid "下一步"
+msgstr "الخطوة التالية"
 
-msgid "顶部"
-msgstr "قمة"
+msgid "完成"
+msgstr "ينهي"
 
-msgid "颜色"
-msgstr "لون"
+msgid "确定"
+msgstr "بالتأكيد"
 
-msgid "验证"
-msgstr "يؤكد"
+msgid "稍候"
+msgstr "انتظر لحظة"
 
-msgid "高级"
-msgstr "متقدم"
+msgid "立即"
+msgstr "في الحال"
 
-msgid "默认"
-msgstr "تقصير"
+msgid "结束"
+msgstr "ينهي"
+
+msgid "继续"
+msgstr "يكمل"
+
+msgid "重试"
+msgstr "حاول ثانية"
+
+msgid "请输入"
+msgstr "الرجاء الدخول"
+
+msgid "请选择"
+msgstr "الرجاء التحديد"
+
+msgid "输入"
+msgstr "يدخل"
+
+msgid "输出"
+msgstr "الإخراج"
+
+msgid "响应"
+msgstr "إجابة"
+
+msgid "主机管理"
+msgstr "إدارة المضيف"
+
+msgid "创建备份"
+msgstr "إنشاء نسخة احتياطية"
+
+msgid "备份名称"
+msgstr "اسم النسخة الاحتياطية"
+
+msgid "备份文件"
+msgstr "ملفات النسخ الاحتياطي"
+
+msgid "备份注释"
+msgstr "تعليقات احتياطية"
+
+msgid "备份管理"
+msgstr "إدارة النسخ الاحتياطي"
+
+msgid "备份说明"
+msgstr "تعليمات النسخ الاحتياطي"
+
+msgid "扫描备份"
+msgstr "مسح النسخ الاحتياطي"
+
+msgid "暂无备份"
+msgstr "لا يوجد نسخة احتياطية حتى الآن"
 
 msgid "下"
 msgstr "تحت"
@@ -2409,156 +2982,9 @@ msgstr "خلف"
 msgid "否"
 msgstr "لا"
 
-msgid "多"
-msgstr "كثير"
-
-msgid "大"
-msgstr "كبير"
-
-msgid "对"
-msgstr "يمين"
-
-msgid "新"
-msgstr "جديد"
-
-msgid "旧"
-msgstr "قديم"
-
 msgid "是"
 msgstr "نعم"
 
 msgid "空"
 msgstr "باطل"
-
-msgid "全局"
-msgstr "الوضع العام"
-
-msgid "查看您的资源使用情况和配额信息"
-msgstr "عرض استخدام الموارد الخاصة بك ومعلومات الحصص"
-
-msgid "用户空间"
-msgstr "مساحة المستخدم"
-
-msgid "系统空间"
-msgstr "مساحة النظام"
-
-msgid "实例管理"
-msgstr "إدارة المثيلات"
-
-msgid "监控"
-msgstr "شاشة"
-
-msgid "网络端口"
-msgstr "منفذ الشبكة"
-
-msgid "网络与配额"
-msgstr "الشبكات والحصص"
-
-msgid "上传带宽"
-msgstr "تحميل عرض النطاق الترددي"
-
-msgid "下载带宽"
-msgstr "تحميل عرض النطاق الترددي"
-
-msgid "实例配置"
-msgstr "تكوين المثيل"
-
-msgid "设置密码"
-msgstr "تعيين كلمة المرور"
-
-msgid "一键远程"
-msgstr "بنقرة واحدة عن بعد"
-
-msgid "网卡列表"
-msgstr "قائمة بطاقات الشبكة"
-
-msgid "转发规则"
-msgstr "قواعد إعادة التوجيه"
-
-msgid "设备直通"
-msgstr "مرور الجهاز"
-
-msgid "物理"
-msgstr "الفيزياء"
-
-msgid "设备名"
-msgstr "اسم الجهاز"
-
-msgid "存储路径"
-msgstr "مسار التخزين"
-
-msgid "程序启动路径"
-msgstr "مسار بدء تشغيل البرنامج"
-
-msgid "爱快配置"
-msgstr "تكوين ايكواي"
-
-msgid "限制配置"
-msgstr "تكوين الحد"
-
-msgid "（多个用逗号分隔）"
-msgstr "(افصل بين المتعددة بفواصل)"
-
-msgid "高级配置"
-msgstr "التكوين المتقدم"
-
-msgid "系统映射"
-msgstr "رسم خرائط النظام"
-
-msgid "配置池"
-msgstr "تكوين تجمع"
-
-msgid "扩展选项"
-msgstr "خيارات موسعة"
-
-msgid "扩展数据"
-msgstr "البيانات الموسعة"
-
-msgid "(JSON格式)"
-msgstr "(تنسيق جيسون)"
-
-msgid "和事件记录"
-msgstr "وتسجيل الأحداث"
-
-msgid "请从左侧选择一条"
-msgstr "الرجاء اختيار واحد من اليسار"
-
-msgid "安全提示"
-msgstr "نصائح السلامة"
-
-msgid "重置Token后，所有使用旧Token的API调用都将失效。请确保更新所有相关配置。"
-msgstr "بعد إعادة تعيين الرمز المميز، ستصبح جميع استدعاءات واجهة برمجة التطبيقات (API) التي تستخدم الرمز المميز القديم غير صالحة. يرجى التأكد من تحديث كافة التكوينات ذات الصلة."
-
-msgid "在请求头中添加："
-msgstr "أضف في رأس الطلب:"
-
-msgid "受控端"
-msgstr "نهاية تسيطر عليها"
-
-msgid "访问配置"
-msgstr "تكوين الوصول"
-
-msgid "新账号"
-msgstr "حساب جديد"
-
-msgid "注册时需要验证邮箱"
-msgstr "مطلوب التحقق من البريد الإلكتروني عند التسجيل"
-
-msgid "新用户默认"
-msgstr "الافتراضي للمستخدم الجديد"
-
-msgid "这是一封来自"
-msgstr "هذه رسالة من"
-
-msgid "系统的测试邮件"
-msgstr "البريد الإلكتروني لاختبار النظام"
-
-msgid "如果您收到这封邮件"
-msgstr "إذا تلقيت هذا البريد الإلكتروني"
-
-msgid "说明邮件服务配置正常"
-msgstr "يشير إلى أن تكوين خدمة البريد طبيعي"
-
-msgid "您的"
-msgstr "لك"
 

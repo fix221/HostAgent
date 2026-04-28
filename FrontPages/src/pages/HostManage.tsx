@@ -496,7 +496,7 @@ function HostManage() {
             }
         } catch (error) {
             console.error('加载主机信息失败:', error)
-            message.error('加载主机信息失败:', error)
+            message.error('加载主机信息失败:' + (error as Error).message)
         }
     }
 
@@ -813,20 +813,19 @@ function HostManage() {
                 extra={
                     <Space>
                         <Button
-                            type="link"
+                            icon={<EditOutlined/>}
+                            onClick={() => handleEdit(name)}
+                            disabled={host.status !== 'active'}
+                        >
+                            编辑
+                        </Button>
+                        <Button
+                            type="primary"
                             onClick={() => navigate(`/hosts/${name}/vms`)}
                             title="虚拟机管理"
                             disabled={host.status !== 'active'}
                         >
                             管理
-                        </Button>
-                        <Button
-                            type={host.status === 'active' ? 'default' : 'primary'}
-                            danger={host.status === 'active'}
-                            icon={host.status === 'active' ? <StopOutlined/> : <PlayCircleOutlined/>}
-                            onClick={() => handleToggle(name, host.status !== 'active')}
-                        >
-                            {host.status === 'active' ? '禁用' : '启用'}
                         </Button>
                     </Space>
                 }
@@ -982,34 +981,32 @@ function HostManage() {
                 <div style={{borderTop: '1px solid var(--border-color, #f0f0f0)', marginTop: 16, paddingTop: 12, display: 'flex', justifyContent: 'flex-end'}}>
                     <Space>
                         <Button
-                            type="text"
                             icon={<CloudSyncOutlined/>}
                             onClick={() => handleScanBackups(name)}
                             disabled={host.status !== 'active'}
+                            style={{backgroundColor: '#d9d9d9', borderColor: '#d9d9d9', color: '#333'}}
                         >
                             扫描备份
                         </Button>
                         <Button
-                            type="text"
                             icon={<ScanOutlined/>}
                             onClick={() => handleScanVMs(name)}
                             disabled={host.status !== 'active'}
+                            style={{backgroundColor: '#d9d9d9', borderColor: '#d9d9d9', color: '#333'}}
                         >
                             扫描虚拟机
                         </Button>
                         <Button
-                            type="text"
-                            icon={<EditOutlined/>}
-                            onClick={() => handleEdit(name)}
-                            disabled={host.status !== 'active'}
+                            icon={host.status === 'active' ? <StopOutlined/> : <PlayCircleOutlined/>}
+                            onClick={() => handleToggle(name, host.status !== 'active')}
+                            style={host.status === 'active' ? {backgroundColor: '#faad14', borderColor: '#faad14', color: '#fff'} : {backgroundColor: '#52c41a', borderColor: '#52c41a', color: '#fff'}}
                         >
-                            编辑
+                            {host.status === 'active' ? '禁用' : '启用'}
                         </Button>
                         <Button
-                            type="text"
                             danger
+                            type="primary"
                             icon={<DeleteOutlined/>}
-                            disabled={host.status !== 'active'}
                             onClick={() => {
                                 Modal.confirm({
                                     title: '确认删除',

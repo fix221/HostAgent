@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: OpenIDCS 1.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-02-09 23:15\n"
-"PO-Revision-Date: 2026-02-09 23:15\n"
+"POT-Creation-Date: 2026-04-28 16:14\n"
+"PO-Revision-Date: 2026-04-28 16:14\n"
 "Last-Translator: Auto Generated\n"
 "Language-Team: French\n"
 "Language: fr\n"
@@ -15,11 +15,1262 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-msgid "访问Token"
-msgstr "Jeton d'accès"
+msgid "保存"
+msgstr "sauvegarder"
 
-msgid "VNC控制台"
-msgstr "Console VNC"
+msgid "保持"
+msgstr "Garder"
+
+msgid "保留"
+msgstr "réserve"
+
+msgid "修改"
+msgstr "Réviser"
+
+msgid "修正"
+msgstr "Correction"
+
+msgid "停止"
+msgstr "arrêt"
+
+msgid "允许"
+msgstr "permettre"
+
+msgid "共享"
+msgstr "commun"
+
+msgid "关机"
+msgstr "Fermer"
+
+msgid "关闭"
+msgstr "fermeture"
+
+msgid "写入"
+msgstr "écrire"
+
+msgid "分享"
+msgstr "partager"
+
+msgid "分割"
+msgstr "segmentation"
+
+msgid "分离"
+msgstr "séparation"
+
+msgid "分配"
+msgstr "distribuer"
+
+msgid "切换"
+msgstr "changer"
+
+msgid "创建"
+msgstr "créer"
+
+msgid "删除"
+msgstr "supprimer"
+
+msgid "刷新"
+msgstr "rafraîchir"
+
+msgid "勾选"
+msgstr "Vérifier"
+
+msgid "卸载"
+msgstr "désinstaller"
+
+msgid "发送"
+msgstr "envoyer"
+
+msgid "取消"
+msgstr "Annuler"
+
+msgid "变换"
+msgstr "transformer"
+
+msgid "变更"
+msgstr "changement"
+
+msgid "合并"
+msgstr "fusionner"
+
+msgid "同意"
+msgstr "accepter"
+
+msgid "启动"
+msgstr "démarrer"
+
+msgid "启用"
+msgstr "activer"
+
+msgid "复制"
+msgstr "copie"
+
+msgid "导入"
+msgstr "importer"
+
+msgid "导出"
+msgstr "Exporter"
+
+msgid "展开"
+msgstr "Développer"
+
+msgid "强制"
+msgstr "forcer"
+
+msgid "恢复"
+msgstr "récupérer"
+
+msgid "成为"
+msgstr "devenir"
+
+msgid "打印"
+msgstr "Imprimer"
+
+msgid "打开"
+msgstr "Ouvrir"
+
+msgid "执行"
+msgstr "mettre en œuvre"
+
+msgid "扫描"
+msgstr "balayage"
+
+msgid "折叠"
+msgstr "pli"
+
+msgid "拒绝"
+msgstr "rejeter"
+
+msgid "拖拽"
+msgstr "traîner"
+
+msgid "挂载"
+msgstr "monter"
+
+msgid "指定"
+msgstr "Spécifier"
+
+msgid "授权"
+msgstr "Autoriser"
+
+msgid "排序"
+msgstr "trier"
+
+msgid "接受"
+msgstr "accepter"
+
+msgid "提交"
+msgstr "soumettre"
+
+msgid "提取"
+msgstr "extrait"
+
+msgid "搜索"
+msgstr "recherche"
+
+msgid "撤销"
+msgstr "Annuler"
+
+msgid "支持"
+msgstr "soutien"
+
+msgid "收集"
+msgstr "collecter"
+
+msgid "断开"
+msgstr "déconnecter"
+
+msgid "暂停"
+msgstr "pause"
+
+msgid "更新"
+msgstr "renouveler"
+
+msgid "构建"
+msgstr "construire"
+
+msgid "构造"
+msgstr "structure"
+
+msgid "查找"
+msgstr "Trouver"
+
+msgid "查收"
+msgstr "vérifier"
+
+msgid "查看"
+msgstr "Vérifier"
+
+msgid "格式化"
+msgstr "format"
+
+msgid "检查"
+msgstr "examiner"
+
+msgid "检测"
+msgstr "Détection"
+
+msgid "注册"
+msgstr "registre"
+
+msgid "添加"
+msgstr "Ajouter à"
+
+msgid "清空"
+msgstr "Clair"
+
+msgid "清除"
+msgstr "Clair"
+
+msgid "渲染"
+msgstr "rendu"
+
+msgid "点击"
+msgstr "Cliquez"
+
+msgid "生成"
+msgstr "générer"
+
+msgid "生效"
+msgstr "Prendre effet"
+
+msgid "用尽"
+msgstr "épuisé"
+
+msgid "登出"
+msgstr "se déconnecter"
+
+msgid "登录"
+msgstr "Se connecter"
+
+msgid "监听"
+msgstr "moniteur"
+
+msgid "监控"
+msgstr "moniteur"
+
+msgid "看到"
+msgstr "Voir"
+
+msgid "确保"
+msgstr "s'assurer"
+
+msgid "确认"
+msgstr "confirmer"
+
+msgid "禁止"
+msgstr "interdire"
+
+msgid "禁用"
+msgstr "Désactiver"
+
+msgid "移交"
+msgstr "transfert"
+
+msgid "移除"
+msgstr "Retirer"
+
+msgid "筛选"
+msgstr "filtre"
+
+msgid "简化"
+msgstr "simplifier"
+
+msgid "编辑"
+msgstr "modifier"
+
+msgid "联系"
+msgstr "connecter"
+
+msgid "获取"
+msgstr "obtenir"
+
+msgid "表示"
+msgstr "exprimer"
+
+msgid "解析"
+msgstr "analyser"
+
+msgid "触发"
+msgstr "déclenchement"
+
+msgid "警告"
+msgstr "avertir"
+
+msgid "读取"
+msgstr "lire"
+
+msgid "调用"
+msgstr "appel"
+
+msgid "调试"
+msgstr "déboguer"
+
+msgid "跟踪"
+msgstr "piste"
+
+msgid "跳转"
+msgstr "Saut"
+
+msgid "跳过"
+msgstr "franchir"
+
+msgid "转换"
+msgstr "Convertir"
+
+msgid "转移"
+msgstr "transfert"
+
+msgid "转让"
+msgstr "transfert"
+
+msgid "过滤"
+msgstr "filtre"
+
+msgid "返回"
+msgstr "retour"
+
+msgid "还原"
+msgstr "réduction"
+
+msgid "进行"
+msgstr "conduire"
+
+msgid "连接"
+msgstr "connecter"
+
+msgid "选中"
+msgstr "choisi"
+
+msgid "选择"
+msgstr "choisir"
+
+msgid "递归"
+msgstr "récursivité"
+
+msgid "通知"
+msgstr "notifier"
+
+msgid "遍历"
+msgstr "Traverser"
+
+msgid "避免"
+msgstr "éviter"
+
+msgid "重做"
+msgstr "Refaire"
+
+msgid "重启"
+msgstr "Redémarrage"
+
+msgid "重置"
+msgstr "réinitialiser"
+
+msgid "重装"
+msgstr "Réinstaller"
+
+msgid "验证"
+msgstr "vérifier"
+
+msgid "一致性"
+msgstr "cohérence"
+
+msgid "主机"
+msgstr "Hôte"
+
+msgid "主题"
+msgstr "thème"
+
+msgid "事件"
+msgstr "événement"
+
+msgid "交互"
+msgstr "interaction"
+
+msgid "代理"
+msgstr "par intérim"
+
+msgid "代码"
+msgstr "code"
+
+msgid "令牌"
+msgstr "jeton"
+
+msgid "仪表盘"
+msgstr "Tableau de bord"
+
+msgid "任务"
+msgstr "Tâche"
+
+msgid "使用率"
+msgstr "Taux d'utilisation"
+
+msgid "侧边"
+msgstr "côté"
+
+msgid "信息"
+msgstr "information"
+
+msgid "假设"
+msgstr "hypothèse"
+
+msgid "元素"
+msgstr "élément"
+
+msgid "关系"
+msgstr "relation"
+
+msgid "内存"
+msgstr "Mémoire"
+
+msgid "内容"
+msgstr "contenu"
+
+msgid "函数"
+msgstr "fonction"
+
+msgid "利用率"
+msgstr "Utilisation"
+
+msgid "别名"
+msgstr "Alias"
+
+msgid "剪贴板"
+msgstr "presse-papiers"
+
+msgid "功耗"
+msgstr "Consommation d'énergie"
+
+msgid "功能"
+msgstr "Fonction"
+
+msgid "动作"
+msgstr "action"
+
+msgid "匹配"
+msgstr "correspondre"
+
+msgid "区域"
+msgstr "zone"
+
+msgid "协议"
+msgstr "protocole"
+
+msgid "单位"
+msgstr "unité"
+
+msgid "参数"
+msgstr "paramètre"
+
+msgid "变量"
+msgstr "variable"
+
+msgid "可用性"
+msgstr "Disponibilité"
+
+msgid "可靠性"
+msgstr "fiabilité"
+
+msgid "名称"
+msgstr "nom"
+
+msgid "命令"
+msgstr "Commande"
+
+msgid "图标"
+msgstr "icône"
+
+msgid "地址"
+msgstr "adresse"
+
+msgid "域名"
+msgstr "nom de domaine"
+
+msgid "堆栈"
+msgstr "empiler"
+
+msgid "备份"
+msgstr "sauvegarde"
+
+msgid "备注"
+msgstr "Remarque"
+
+msgid "复杂度"
+msgstr "complexité"
+
+msgid "存储"
+msgstr "stockage"
+
+msgid "安全性"
+msgstr "sécurité"
+
+msgid "定义"
+msgstr "définition"
+
+msgid "实例"
+msgstr "Exemple"
+
+msgid "容器"
+msgstr "récipient"
+
+msgid "密码"
+msgstr "mot de passe"
+
+msgid "对话框"
+msgstr "boîte de dialogue"
+
+msgid "对象"
+msgstr "objet"
+
+msgid "导航"
+msgstr "navigation"
+
+msgid "属性"
+msgstr "propriété"
+
+msgid "布局"
+msgstr "mise en page"
+
+msgid "带宽"
+msgstr "bande passante"
+
+msgid "平台"
+msgstr "plate-forme"
+
+msgid "应用"
+msgstr "application"
+
+msgid "引擎"
+msgstr "moteur"
+
+msgid "弹窗"
+msgstr "Fenêtre contextuelle"
+
+msgid "强度"
+msgstr "force"
+
+msgid "快照"
+msgstr "Instantané"
+
+msgid "性能"
+msgstr "performance"
+
+msgid "截图"
+msgstr "capture d'écran"
+
+msgid "所有权"
+msgstr "possession"
+
+msgid "所有者"
+msgstr "propriétaire"
+
+msgid "报告"
+msgstr "Rapport"
+
+msgid "拦截器"
+msgstr "Intercepteur"
+
+msgid "指令"
+msgstr "instruction"
+
+msgid "按钮"
+msgstr "bouton"
+
+msgid "接口"
+msgstr "interface"
+
+msgid "控制台"
+msgstr "console"
+
+msgid "描述"
+msgstr "décrire"
+
+msgid "插件"
+msgstr "plug-in"
+
+msgid "效率"
+msgstr "efficacité"
+
+msgid "数据"
+msgstr "données"
+
+msgid "数组"
+msgstr "tableau"
+
+msgid "文件"
+msgstr "document"
+
+msgid "文字"
+msgstr "Mot"
+
+msgid "文本"
+msgstr "texte"
+
+msgid "方式"
+msgstr "Chemin"
+
+msgid "方法"
+msgstr "méthode"
+
+msgid "日志"
+msgstr "enregistrer"
+
+msgid "映射"
+msgstr "cartographie"
+
+msgid "显卡"
+msgstr "carte graphique"
+
+msgid "显存"
+msgstr "Mémoire vidéo"
+
+msgid "有效性"
+msgstr "efficacité"
+
+msgid "服务"
+msgstr "Servir"
+
+msgid "服务器"
+msgstr "serveur"
+
+msgid "机器"
+msgstr "machine"
+
+msgid "权限"
+msgstr "Autorisations"
+
+msgid "条件"
+msgstr "condition"
+
+msgid "标签"
+msgstr "Étiquette"
+
+msgid "标题"
+msgstr "titre"
+
+msgid "样式"
+msgstr "style"
+
+msgid "核心"
+msgstr "cœur"
+
+msgid "格式"
+msgstr "Format"
+
+msgid "桌面"
+msgstr "ordinateur de bureau"
+
+msgid "概览"
+msgstr "Aperçu"
+
+msgid "模块"
+msgstr "module"
+
+msgid "模式"
+msgstr "modèle"
+
+msgid "模板"
+msgstr "modèle"
+
+msgid "正文"
+msgstr "texte"
+
+msgid "注释"
+msgstr "Commentaire"
+
+msgid "流量"
+msgstr "couler"
+
+msgid "消息"
+msgstr "information"
+
+msgid "温度"
+msgstr "température"
+
+msgid "版本"
+msgstr "Version"
+
+msgid "状态"
+msgstr "État"
+
+msgid "用户"
+msgstr "utilisateur"
+
+msgid "用途"
+msgstr "utiliser"
+
+msgid "用量"
+msgstr "Dosage"
+
+msgid "电源"
+msgstr "alimentation"
+
+msgid "目录"
+msgstr "Table des matières"
+
+msgid "硬盘"
+msgstr "disque dur"
+
+msgid "磁盘"
+msgstr "disque"
+
+msgid "程序"
+msgstr "programme"
+
+msgid "稳定性"
+msgstr "stabilité"
+
+msgid "端口"
+msgstr "port"
+
+msgid "策略"
+msgstr "Stratégie"
+
+msgid "管理员"
+msgstr "administrateur"
+
+msgid "类型"
+msgstr "taper"
+
+msgid "精度"
+msgstr "Précision"
+
+msgid "系统"
+msgstr "système"
+
+msgid "约束"
+msgstr "contrainte"
+
+msgid "级别"
+msgstr "niveau"
+
+msgid "线程"
+msgstr "fil"
+
+msgid "组件"
+msgstr "composants"
+
+msgid "结果"
+msgstr "résultat"
+
+msgid "统计"
+msgstr "statistiques"
+
+msgid "网关"
+msgstr "porte"
+
+msgid "网卡"
+msgstr "carte réseau"
+
+msgid "网桥"
+msgstr "pont"
+
+msgid "网络"
+msgstr "réseau"
+
+msgid "网网"
+msgstr "netnet"
+
+msgid "脚本"
+msgstr "scénario"
+
+msgid "节点"
+msgstr "nœud"
+
+msgid "范围"
+msgstr "portée"
+
+msgid "菜单"
+msgstr "menu"
+
+msgid "虚拟机"
+msgstr "machine virtuelle"
+
+msgid "表单"
+msgstr "formulaire"
+
+msgid "要求"
+msgstr "Exiger"
+
+msgid "规则"
+msgstr "règle"
+
+msgid "视图"
+msgstr "voir"
+
+msgid "角色"
+msgstr "Rôle"
+
+msgid "记录"
+msgstr "Enregistrer"
+
+msgid "设备"
+msgstr "équipement"
+
+msgid "设置"
+msgstr "installation"
+
+msgid "详情"
+msgstr "Détails"
+
+msgid "说明"
+msgstr "illustrer"
+
+msgid "账号"
+msgstr "compte"
+
+msgid "账户"
+msgstr "Compte"
+
+msgid "资源"
+msgstr "ressource"
+
+msgid "路径"
+msgstr "chemin"
+
+msgid "路由"
+msgstr "routage"
+
+msgid "过滤器"
+msgstr "filtre"
+
+msgid "进度条"
+msgstr "barre de progression"
+
+msgid "进程"
+msgstr "processus"
+
+msgid "选择器"
+msgstr "sélecteur"
+
+msgid "选项"
+msgstr "Possibilités"
+
+msgid "通道"
+msgstr "allée"
+
+msgid "速度"
+msgstr "vitesse"
+
+msgid "邮件"
+msgstr "mail"
+
+msgid "邮箱"
+msgstr "Mail"
+
+msgid "配置"
+msgstr "Configuration"
+
+msgid "配额"
+msgstr "quota"
+
+msgid "镜像"
+msgstr "miroir"
+
+msgid "闭包"
+msgstr "fermeture"
+
+msgid "问题"
+msgstr "question"
+
+msgid "限制"
+msgstr "limite"
+
+msgid "页面"
+msgstr "page"
+
+msgid "顶部"
+msgstr "haut"
+
+msgid "一致"
+msgstr "cohérent"
+
+msgid "上行"
+msgstr "Vers le haut"
+
+msgid "下行"
+msgstr "Vers le bas"
+
+msgid "不会"
+msgstr "Ne le fera pas"
+
+msgid "不再"
+msgstr "plus maintenant"
+
+msgid "不可"
+msgstr "Non"
+
+msgid "不稳定"
+msgstr "instable"
+
+msgid "不能"
+msgstr "ne peut pas"
+
+msgid "不足"
+msgstr "insuffisant"
+
+msgid "专用"
+msgstr "dédié"
+
+msgid "丢失"
+msgstr "perdu"
+
+msgid "中"
+msgstr "milieu"
+
+msgid "中等"
+msgstr "moyen"
+
+msgid "临时"
+msgstr "temporaire"
+
+msgid "为空"
+msgstr "est vide"
+
+msgid "主要"
+msgstr "principal"
+
+msgid "二次"
+msgstr "secondaire"
+
+msgid "优先"
+msgstr "priorité"
+
+msgid "低"
+msgstr "Faible"
+
+msgid "全局"
+msgstr "situation globale"
+
+msgid "全部"
+msgstr "tous"
+
+msgid "公共"
+msgstr "publique"
+
+msgid "公网"
+msgstr "Réseau public"
+
+msgid "兼容"
+msgstr "compatible"
+
+msgid "内网"
+msgstr "Intranet"
+
+msgid "内部"
+msgstr "interne"
+
+msgid "再次"
+msgstr "encore"
+
+msgid "出错"
+msgstr "Erreur"
+
+msgid "初始"
+msgstr "initial"
+
+msgid "动态"
+msgstr "dynamique"
+
+msgid "单个"
+msgstr "célibataire"
+
+msgid "危险"
+msgstr "Danger"
+
+msgid "原始"
+msgstr "original"
+
+msgid "反向"
+msgstr "inverse"
+
+msgid "受控"
+msgstr "contrôlé"
+
+msgid "只能"
+msgstr "ne peut que"
+
+msgid "可以"
+msgstr "Peut"
+
+msgid "可用"
+msgstr "Disponible"
+
+msgid "可能"
+msgstr "possible"
+
+msgid "可逆"
+msgstr "Réversible"
+
+msgid "可选"
+msgstr "Facultatif"
+
+msgid "各种"
+msgstr "Divers"
+
+msgid "唯一"
+msgstr "seulement"
+
+msgid "在线"
+msgstr "en ligne"
+
+msgid "基本"
+msgstr "Basique"
+
+msgid "复杂"
+msgstr "complexe"
+
+msgid "外网"
+msgstr "Extranet"
+
+msgid "外部"
+msgstr "externe"
+
+msgid "多"
+msgstr "beaucoup"
+
+msgid "多个"
+msgstr "Multiple"
+
+msgid "大"
+msgstr "grand"
+
+msgid "失效"
+msgstr "Invalide"
+
+msgid "失败"
+msgstr "échouer"
+
+msgid "安全"
+msgstr "Sécurité"
+
+msgid "完整"
+msgstr "entier"
+
+msgid "实际"
+msgstr "réel"
+
+msgid "小"
+msgstr "Petit"
+
+msgid "少"
+msgstr "peu"
+
+msgid "局部"
+msgstr "locale"
+
+msgid "已用"
+msgstr "Utilisé"
+
+msgid "异常"
+msgstr "anormal"
+
+msgid "强关"
+msgstr "passe forte"
+
+msgid "当前"
+msgstr "actuel"
+
+msgid "必选"
+msgstr "Requis"
+
+msgid "快速"
+msgstr "rapide"
+
+msgid "成功"
+msgstr "succès"
+
+msgid "手动"
+msgstr "Manuel"
+
+msgid "整个"
+msgstr "entier"
+
+msgid "新"
+msgstr "nouveau"
+
+msgid "新增"
+msgstr "Nouveau"
+
+msgid "无描述"
+msgstr "Pas de description"
+
+msgid "无效"
+msgstr "invalide"
+
+msgid "无限制"
+msgstr "Illimité"
+
+msgid "旧"
+msgstr "vieux"
+
+msgid "最新"
+msgstr "à jour"
+
+msgid "最终"
+msgstr "final"
+
+msgid "有效"
+msgstr "efficace"
+
+msgid "未知"
+msgstr "inconnu"
+
+msgid "本地"
+msgstr "locale"
+
+msgid "次要"
+msgstr "secondaire"
+
+msgid "正常"
+msgstr "normale"
+
+msgid "正确"
+msgstr "correct"
+
+msgid "永久"
+msgstr "permanent"
+
+msgid "活跃"
+msgstr "actif"
+
+msgid "浅"
+msgstr "peu profond"
+
+msgid "深"
+msgstr "profond"
+
+msgid "物理"
+msgstr "physique"
+
+msgid "独立"
+msgstr "indépendant"
+
+msgid "现有"
+msgstr "existant"
+
+msgid "直接"
+msgstr "direct"
+
+msgid "相关"
+msgstr "En rapport"
+
+msgid "短"
+msgstr "court"
+
+msgid "离线"
+msgstr "Hors ligne"
+
+msgid "私有"
+msgstr "privé"
+
+msgid "稳定"
+msgstr "Stabiliser"
+
+msgid "空闲"
+msgstr "inactif"
+
+msgid "简单"
+msgstr "Simple"
+
+msgid "精确"
+msgstr "précis"
+
+msgid "紧急"
+msgstr "urgent"
+
+msgid "繁忙"
+msgstr "occupé"
+
+msgid "缓慢"
+msgstr "lent"
+
+msgid "自动"
+msgstr "automatique"
+
+msgid "自定义"
+msgstr "Personnaliser"
+
+msgid "虚拟"
+msgstr "virtuel"
+
+msgid "超时"
+msgstr "temps mort"
+
+msgid "足够"
+msgstr "assez"
+
+msgid "过期"
+msgstr "Expiré"
+
+msgid "近似"
+msgstr "approximatif"
+
+msgid "远程"
+msgstr "télécommande"
+
+msgid "通用"
+msgstr "Universel"
+
+msgid "逻辑"
+msgstr "logique"
+
+msgid "部分"
+msgstr "partie"
+
+msgid "重要"
+msgstr "important"
+
+msgid "错误"
+msgstr "erreur"
+
+msgid "长"
+msgstr "long"
+
+msgid "静态"
+msgstr "statique"
+
+msgid "高"
+msgstr "haut"
+
+msgid "高级"
+msgstr "avancé"
+
+msgid "默认"
+msgstr "défaut"
+
+msgid "API"
+msgstr "API"
+
+msgid "CPU"
+msgstr "Processeur"
+
+msgid "GPU"
+msgstr "GPU"
+
+msgid "HTTP"
+msgstr "HTTP"
+
+msgid "IP"
+msgstr "IP"
+
+msgid "ISO"
+msgstr "OIN"
+
+msgid "JSON"
+msgstr "JSON"
+
+msgid "NAT"
+msgstr "NAT"
+
+msgid "Token"
+msgstr "Jeton"
+
+msgid "VNC"
+msgstr "VNC"
+
+msgid "Web"
+msgstr "Web"
 
 msgid "CPU核心"
 msgstr "Cœur du processeur"
@@ -27,56 +1278,44 @@ msgstr "Cœur du processeur"
 msgid "GPU显存"
 msgstr "Mémoire graphique"
 
-msgid "ISO镜像"
-msgstr "Image ISO"
-
-msgid "NAT端口"
-msgstr "Port NAT"
-
-msgid "Web代理"
-msgstr "Proxy Web"
-
-msgid "创建虚拟机"
-msgstr "Créer une machine virtuelle"
-
-msgid "删除虚拟机"
-msgstr "Supprimer la machine virtuelle"
-
-msgid "卸载ISO"
-msgstr "Désinstaller l'ISO"
-
-msgid "卸载数据盘"
-msgstr "Démontez le disque de données"
-
-msgid "扫描虚拟机"
-msgstr "Analyser les machines virtuelles"
-
-msgid "挂载ISO"
-msgstr "Monter l'ISO"
-
-msgid "挂载数据盘"
-msgstr "Monter le disque de données"
-
-msgid "编辑虚拟机"
-msgstr "Modifier la machine virtuelle"
-
-msgid "虚拟机详情"
-msgstr "Détails de la machine virtuelle"
-
 msgid "IP地址"
 msgstr "Adresse IP"
 
 msgid "IP配额"
 msgstr "Quota de propriété intellectuelle"
 
+msgid "ISO镜像"
+msgstr "Image ISO"
+
+msgid "NAT端口"
+msgstr "Port NAT"
+
+msgid "VNC控制台"
+msgstr "Console VNC"
+
+msgid "Web代理"
+msgstr "Proxy Web"
+
+msgid "一键远程"
+msgstr "Télécommande en un clic"
+
+msgid "上传带宽"
+msgstr "Bande passante de téléchargement"
+
 msgid "上行带宽"
 msgstr "Bande passante en amont"
 
-msgid "下拉菜单"
-msgstr "menu déroulant"
+msgid "下划线"
+msgstr "Souligner"
 
 msgid "下行带宽"
 msgstr "Bande passante de liaison descendante"
+
+msgid "下载带宽"
+msgstr "Bande passante de téléchargement"
+
+msgid "个主机"
+msgstr "hôtes"
 
 msgid "个人信息"
 msgstr "informations personnelles"
@@ -87,17 +1326,23 @@ msgstr "paramètres personnels"
 msgid "个人资料"
 msgstr "informations personnelles"
 
+msgid "个字符"
+msgstr "personnages"
+
 msgid "为虚拟机"
 msgstr "pour machine virtuelle"
 
-msgid "主所有者"
-msgstr "propriétaire principal"
+msgid "主机名"
+msgstr "nom d'hôte"
 
 msgid "主机名称"
 msgstr "nom d'hôte"
 
 msgid "主机总数"
 msgstr "Nombre total d'hôtes"
+
+msgid "主机数"
+msgstr "Nombre d'hôtes"
 
 msgid "主机数量"
 msgstr "Nombre d'hôtes"
@@ -108,9 +1353,6 @@ msgstr "Présentation de l'hôte"
 msgid "主机筛选"
 msgstr "Filtrage des hôtes"
 
-msgid "主机管理"
-msgstr "Gestion des hôtes"
-
 msgid "主机类型"
 msgstr "Type d'hôte"
 
@@ -119,6 +1361,9 @@ msgstr "Détails de l'hôte"
 
 msgid "主要接口"
 msgstr "Interface principale"
+
+msgid "从文件"
+msgstr "à partir du fichier"
 
 msgid "任务列表"
 msgstr "liste de tâches"
@@ -135,20 +1380,20 @@ msgstr "Type de tâche"
 msgid "任务详情"
 msgstr "Détails de la mission"
 
+msgid "使用者"
+msgstr "utilisateur"
+
+msgid "供选择"
+msgstr "pour la sélection"
+
+msgid "保存中"
+msgstr "Économie"
+
 msgid "保存失败"
 msgstr "Échec de l'enregistrement"
 
 msgid "保存确认"
 msgstr "Enregistrer la confirmation"
-
-msgid "保存设置"
-msgstr "Enregistrer les paramètres"
-
-msgid "保存配置"
-msgstr "Enregistrer la configuration"
-
-msgid "保持一致"
-msgstr "Soyez cohérent"
 
 msgid "修改密码"
 msgstr "Changer le mot de passe"
@@ -156,20 +1401,14 @@ msgstr "Changer le mot de passe"
 msgid "修改邮箱"
 msgstr "Modifier l'e-mail"
 
-msgid "停止刷新"
-msgstr "Arrêter d'actualiser"
+msgid "停止中"
+msgstr "Arrêt"
 
 msgid "光盘镜像"
 msgstr "image disque"
 
 msgid "全部主机"
 msgstr "Tous les hôtes"
-
-msgid "全部状态"
-msgstr "Tous les statuts"
-
-msgid "全部级别"
-msgstr "Tous niveaux"
 
 msgid "公网IP"
 msgstr "IP publique"
@@ -179,6 +1418,9 @@ msgstr "Port réseau public"
 
 msgid "公网网桥"
 msgstr "Pont de réseau public"
+
+msgid "关机中"
+msgstr "Arrêt"
 
 msgid "内网IP"
 msgstr "IP intranet"
@@ -195,9 +1437,6 @@ msgstr "Pont intranet"
 msgid "分配主机"
 msgstr "Attribuer un hôte"
 
-msgid "创建备份"
-msgstr "Créer une sauvegarde"
-
 msgid "创建失败"
 msgstr "La création a échoué"
 
@@ -210,11 +1449,14 @@ msgstr "temps de création"
 msgid "创建用户"
 msgstr "Créer un utilisateur"
 
+msgid "创建虚拟机"
+msgstr "Créer une machine virtuelle"
+
+msgid "初始化"
+msgstr "initialisation"
+
 msgid "删除主机"
 msgstr "Supprimer l'hôte"
-
-msgid "删除代理"
-msgstr "Supprimer le proxy"
 
 msgid "删除失败"
 msgstr "Échec de la suppression"
@@ -231,11 +1473,23 @@ msgstr "Supprimer un utilisateur"
 msgid "删除硬盘"
 msgstr "Supprimer le disque dur"
 
+msgid "删除虚拟机"
+msgstr "Supprimer la machine virtuelle"
+
+msgid "加载中"
+msgstr "chargement"
+
 msgid "加载失败"
 msgstr "Le chargement a échoué"
 
+msgid "卸载ISO"
+msgstr "Désinstaller l'ISO"
+
 msgid "卸载失败"
 msgstr "Échec de la désinstallation"
+
+msgid "卸载数据盘"
+msgstr "Démontez le disque de données"
 
 msgid "反向代理"
 msgstr "proxy inverse"
@@ -243,8 +1497,11 @@ msgstr "proxy inverse"
 msgid "发件邮箱"
 msgstr "Envoi d'e-mail"
 
-msgid "发送域名"
-msgstr "Envoyer le nom de domaine"
+msgid "取决于"
+msgstr "selon"
+
+msgid "受控端"
+msgstr "Fin contrôlée"
 
 msgid "台虚拟机"
 msgstr "machine virtuelle"
@@ -258,6 +1515,9 @@ msgstr "Adresse du serveur principal"
 msgid "后端端口"
 msgstr "port principal"
 
+msgid "启动中"
+msgstr "Départ"
+
 msgid "启用失败"
 msgstr "Échec de l'activation"
 
@@ -267,8 +1527,8 @@ msgstr "activer l'utilisateur"
 msgid "响应错误"
 msgstr "Erreur de réponse"
 
-msgid "基本信息"
-msgstr "Informations de base"
+msgid "国际化"
+msgstr "internationalisation"
 
 msgid "基本配置"
 msgstr "Configuration de base"
@@ -282,20 +1542,11 @@ msgstr "Fonction de manipulation"
 msgid "处理响应"
 msgstr "Gérer la réponse"
 
-msgid "备份名称"
-msgstr "Nom de la sauvegarde"
+msgid "备份中"
+msgstr "Sauvegarde"
 
-msgid "备份文件"
-msgstr "Fichiers de sauvegarde"
-
-msgid "备份注释"
-msgstr "Commentaires de sauvegarde"
-
-msgid "备份管理"
-msgstr "Gestion des sauvegardes"
-
-msgid "备份说明"
-msgstr "Instructions de sauvegarde"
+msgid "复制到"
+msgstr "Copier vers"
 
 msgid "复制失败"
 msgstr "Échec de la copie"
@@ -303,11 +1554,23 @@ msgstr "Échec de la copie"
 msgid "外网端口"
 msgstr "Port réseau externe"
 
+msgid "大写字母"
+msgstr "lettre majuscule"
+
 msgid "子网掩码"
 msgstr "masque de sous-réseau"
 
 msgid "存储容量"
 msgstr "capacité de stockage"
+
+msgid "存储路径"
+msgstr "chemin de stockage"
+
+msgid "安全提示"
+msgstr "Conseils de sécurité"
+
+msgid "安装盘"
+msgstr "Disque d'installation"
 
 msgid "完整数据"
 msgstr "données complètes"
@@ -321,8 +1584,11 @@ msgstr "Nom de l'instance"
 msgid "实例概览"
 msgstr "Aperçu des instances"
 
-msgid "容器管理"
-msgstr "Gestion des conteneurs"
+msgid "实例管理"
+msgstr "Gestion des instances"
+
+msgid "实例配置"
+msgstr "Configuration des instances"
 
 msgid "密码强度"
 msgstr "Force du mot de passe"
@@ -330,8 +1596,41 @@ msgstr "Force du mot de passe"
 msgid "小写字母"
 msgstr "lettres minuscules"
 
-msgid "开放注册"
-msgstr "Inscription ouverte"
+msgid "已保存"
+msgstr "enregistré"
+
+msgid "已停止"
+msgstr "Arrêté"
+
+msgid "已关闭"
+msgstr "Fermé"
+
+msgid "已删除"
+msgstr "Supprimé"
+
+msgid "已启用"
+msgstr "Activé"
+
+msgid "已完成"
+msgstr "Complété"
+
+msgid "已崩溃"
+msgstr "s'est écrasé"
+
+msgid "已开启"
+msgstr "Déjà allumé"
+
+msgid "已挂载"
+msgstr "Monté"
+
+msgid "已暂停"
+msgstr "Suspendu"
+
+msgid "已禁用"
+msgstr "Désactivé"
+
+msgid "已验证"
+msgstr "Vérifié"
 
 msgid "强制关机"
 msgstr "Forcer l'arrêt"
@@ -348,8 +1647,17 @@ msgstr "oublier le mot de passe"
 msgid "快速操作"
 msgstr "Fonctionnement rapide"
 
+msgid "总代理"
+msgstr "agent général"
+
 msgid "总代理数"
 msgstr "Nombre total d'agents"
+
+msgid "总配额"
+msgstr "quota total"
+
+msgid "恢复中"
+msgstr "Récupération"
 
 msgid "恢复失败"
 msgstr "La récupération a échoué"
@@ -360,20 +1668,32 @@ msgstr "Tous les hôtes"
 msgid "所有协议"
 msgstr "Tous les accords"
 
-msgid "扫描备份"
-msgstr "Sauvegarde de numérisation"
+msgid "扩展数据"
+msgstr "données étendues"
+
+msgid "扩展选项"
+msgstr "Options étendues"
 
 msgid "扫描失败"
 msgstr "Échec de l'analyse"
 
+msgid "扫描虚拟机"
+msgstr "Analyser les machines virtuelles"
+
 msgid "找回密码"
 msgstr "Récupérer le mot de passe"
+
+msgid "挂载ISO"
+msgstr "Monter l'ISO"
 
 msgid "挂载名称"
 msgstr "Nom de la monture"
 
 msgid "挂载失败"
 msgstr "Le montage a échoué"
+
+msgid "挂载数据盘"
+msgstr "Monter le disque de données"
 
 msgid "接口类型"
 msgstr "Type d'interface"
@@ -399,6 +1719,9 @@ msgstr "Réception d'e-mail"
 msgid "数十分钟"
 msgstr "dizaines de minutes"
 
+msgid "数据盘"
+msgstr "disque de données"
+
 msgid "数据磁盘"
 msgstr "disque de données"
 
@@ -407,6 +1730,15 @@ msgstr "Gestion des données"
 
 msgid "数据结构"
 msgstr "structure des données"
+
+msgid "文件名"
+msgstr "nom de fichier"
+
+msgid "新密码"
+msgstr "Nouveau mot de passe"
+
+msgid "新账号"
+msgstr "nouveau compte"
 
 msgid "日志查看"
 msgstr "Vue du journal"
@@ -432,11 +1764,11 @@ msgstr "Afficher le numéro"
 msgid "普通用户"
 msgstr "Utilisateur ordinaire"
 
+msgid "暂停中"
+msgstr "En pause"
+
 msgid "暂无主机"
 msgstr "Pas encore d'hôte"
-
-msgid "暂无备份"
-msgstr "Pas encore de sauvegarde"
 
 msgid "更新主机"
 msgstr "Mettre à jour l'hôte"
@@ -446,6 +1778,9 @@ msgstr "agent de mise à jour"
 
 msgid "更新失败"
 msgstr "La mise à jour a échoué"
+
+msgid "更新成功"
+msgstr "Mise à jour réussie"
 
 msgid "更新用户"
 msgstr "Mettre à jour l'utilisateur"
@@ -459,6 +1794,15 @@ msgstr "dernière mise à jour"
 msgid "最小要求"
 msgstr "Exigences minimales"
 
+msgid "月流量"
+msgstr "Trafic mensuel"
+
+msgid "未分配"
+msgstr "Non attribué"
+
+msgid "未挂载"
+msgstr "Non monté"
+
 msgid "未知主机"
 msgstr "Hôte inconnu"
 
@@ -471,11 +1815,20 @@ msgstr "heure inconnue"
 msgid "未知系统"
 msgstr "système inconnu"
 
+msgid "未配置"
+msgstr "Non configuré"
+
+msgid "未验证"
+msgstr "Non vérifié"
+
 msgid "权限不足"
 msgstr "Autorisations insuffisantes"
 
 msgid "权限信息"
 msgstr "Informations sur les autorisations"
+
+msgid "条记录"
+msgstr "enregistrements"
 
 msgid "查看全部"
 msgstr "Voir tout"
@@ -485,6 +1838,12 @@ msgstr "vérifier les détails"
 
 msgid "桌面端口"
 msgstr "port de bureau"
+
+msgid "模板数"
+msgstr "Nombre de modèles"
+
+msgid "正在"
+msgstr "sont"
 
 msgid "正常运行"
 msgstr "fonctionnement normal"
@@ -537,11 +1896,17 @@ msgstr "affichage clair"
 msgid "爱快地址"
 msgstr "Adresse d'Aikuai"
 
+msgid "爱快配置"
+msgstr "Configuration Aikuai"
+
 msgid "特殊字符"
 msgstr "caractères spéciaux"
 
 msgid "用户列表"
 msgstr "Liste des utilisateurs"
+
+msgid "用户名"
+msgstr "nom d'utilisateur"
 
 msgid "用户权限"
 msgstr "Autorisations utilisateur"
@@ -558,6 +1923,9 @@ msgstr "Utilisateur déconnecté"
 msgid "用户登录"
 msgstr "Connexion utilisateur"
 
+msgid "用户空间"
+msgstr "espace utilisateur"
+
 msgid "用户管理"
 msgstr "Gestion des utilisateurs"
 
@@ -566,6 +1934,9 @@ msgstr "Fonctionnement électrique"
 
 msgid "电源管理"
 msgstr "Gestion de l'alimentation"
+
+msgid "登录失败"
+msgstr "La connexion a échoué"
 
 msgid "硬盘大小"
 msgstr "Taille du disque dur"
@@ -609,6 +1980,9 @@ msgstr "Échec de la désactivation"
 msgid "移交失败"
 msgstr "Le transfert a échoué"
 
+msgid "程序启动路径"
+msgstr "Chemin de démarrage du programme"
+
 msgid "端口数量"
 msgstr "Nombre de ports"
 
@@ -623,6 +1997,9 @@ msgstr "redirection de port"
 
 msgid "端口配置"
 msgstr "Configuration des ports"
+
+msgid "等待中"
+msgstr "En attendant"
 
 msgid "管理主机"
 msgstr "Hôte de gestion"
@@ -642,6 +2019,9 @@ msgstr "Mot de passe système"
 msgid "系统日志"
 msgstr "Journal système"
 
+msgid "系统映射"
+msgstr "Cartographie du système"
+
 msgid "系统概览"
 msgstr "Présentation du système"
 
@@ -650,6 +2030,12 @@ msgstr "État du système"
 
 msgid "系统界面"
 msgstr "Interface système"
+
+msgid "系统盘"
+msgstr "disque système"
+
+msgid "系统空间"
+msgstr "espace système"
 
 msgid "系统管理"
 msgstr "Gestion du système"
@@ -669,6 +2055,9 @@ msgstr "Statistiques"
 msgid "编辑主机"
 msgstr "Modifier l'hôte"
 
+msgid "编辑虚拟机"
+msgstr "Modifier la machine virtuelle"
+
 msgid "网关地址"
 msgstr "Adresse de la passerelle"
 
@@ -677,6 +2066,9 @@ msgstr "Erreur de passerelle"
 
 msgid "网卡信息"
 msgstr "Informations sur la carte réseau"
+
+msgid "网卡列表"
+msgstr "Liste des cartes réseau"
 
 msgid "网卡名称"
 msgstr "Nom de la carte réseau"
@@ -690,11 +2082,17 @@ msgstr "Type de carte réseau"
 msgid "网卡配置"
 msgstr "Configuration de la carte réseau"
 
+msgid "网络与配额"
+msgstr "Réseautage et quotas"
+
 msgid "网络带宽"
 msgstr "Bande passante réseau"
 
 msgid "网络服务"
 msgstr "services réseau"
+
+msgid "网络端口"
+msgstr "port réseau"
 
 msgid "网络管理"
 msgstr "gestion de réseau"
@@ -714,6 +2112,9 @@ msgstr "allocation automatique"
 msgid "自动刷新"
 msgstr "Actualisation automatique"
 
+msgid "自动化"
+msgstr "automation"
+
 msgid "自动更新"
 msgstr "Mises à jour automatiques"
 
@@ -726,17 +2127,41 @@ msgstr "Lettres anglaises"
 msgid "获取数据"
 msgstr "Obtenir des données"
 
+msgid "菜单项"
+msgstr "élément de menu"
+
+msgid "虚拟化"
+msgstr "virtualisation"
+
+msgid "虚拟机详情"
+msgstr "Détails de la machine virtuelle"
+
 msgid "计算资源"
 msgstr "Ressources informatiques"
 
 msgid "认证方式"
 msgstr "Méthode d'authentification"
 
+msgid "设备名"
+msgstr "Nom de l'appareil"
+
+msgid "设备直通"
+msgstr "Passage de périphérique"
+
 msgid "设置失败"
 msgstr "Échec de l'installation"
 
+msgid "设置密码"
+msgstr "Définir le mot de passe"
+
+msgid "访问Token"
+msgstr "Jeton d'accès"
+
 msgid "访问端口"
 msgstr "port d'accès"
+
+msgid "访问配置"
+msgstr "configuration d'accès"
 
 msgid "请求失败"
 msgstr "La demande a échoué"
@@ -753,11 +2178,20 @@ msgstr "Allocation des ressources"
 msgid "资源配额"
 msgstr "Quota de ressources"
 
+msgid "转发规则"
+msgstr "Règles de transfert"
+
+msgid "运行中"
+msgstr "En cours d'exécution"
+
 msgid "运行日志"
 msgstr "Journal d'exécution"
 
 msgid "返回登录"
 msgstr "Revenir à la connexion"
+
+msgid "还原中"
+msgstr "Restauration"
 
 msgid "还原备份"
 msgstr "Restaurer la sauvegarde"
@@ -789,8 +2223,14 @@ msgstr "Adresse email"
 msgid "邮箱验证"
 msgstr "Vérification des e-mails"
 
+msgid "配置中"
+msgstr "Configuration"
+
 msgid "配置名称"
 msgstr "Nom de la configuration"
+
+msgid "配置池"
+msgstr "Configurer le pool"
 
 msgid "配额不足"
 msgstr "Quota insuffisant"
@@ -798,11 +2238,17 @@ msgstr "Quota insuffisant"
 msgid "配额充足"
 msgstr "Quota suffisant"
 
+msgid "重启中"
+msgstr "Redémarrage"
+
 msgid "重置失败"
 msgstr "Échec de la réinitialisation"
 
 msgid "重置密码"
 msgstr "réinitialiser le mot de passe"
+
+msgid "重装中"
+msgstr "Réinstallation"
 
 msgid "重装失败"
 msgstr "La réinstallation a échoué"
@@ -822,257 +2268,14 @@ msgstr "Gestion des erreurs"
 msgid "镜像文件"
 msgstr "Fichier image"
 
+msgid "限制配置"
+msgstr "Configuration des limites"
+
 msgid "随机生成"
 msgstr "généré aléatoirement"
 
-msgid "下划线"
-msgstr "Souligner"
-
-msgid "个主机"
-msgstr "hôtes"
-
-msgid "个字符"
-msgstr "personnages"
-
-msgid "主机名"
-msgstr "nom d'hôte"
-
-msgid "主机数"
-msgstr "Nombre d'hôtes"
-
-msgid "从文件"
-msgstr "à partir du fichier"
-
-msgid "仪表盘"
-msgstr "Tableau de bord"
-
-msgid "使用率"
-msgstr "Taux d'utilisation"
-
-msgid "使用者"
-msgstr "utilisateur"
-
-msgid "供选择"
-msgstr "pour la sélection"
-
-msgid "保存中"
-msgstr "Économie"
-
-msgid "停止中"
-msgstr "Arrêt"
-
-msgid "关机中"
-msgstr "Arrêt"
-
-msgid "初始化"
-msgstr "initialisation"
-
-msgid "利用率"
-msgstr "Utilisation"
-
-msgid "剪贴板"
-msgstr "presse-papiers"
-
-msgid "加载中"
-msgstr "chargement"
-
-msgid "取决于"
-msgstr "selon"
-
-msgid "启动中"
-msgstr "Départ"
-
-msgid "国际化"
-msgstr "internationalisation"
-
-msgid "备份中"
-msgstr "Sauvegarde"
-
-msgid "复制到"
-msgstr "Copier vers"
-
-msgid "复杂度"
-msgstr "complexité"
-
-msgid "安装盘"
-msgstr "Disque d'installation"
-
-msgid "对话框"
-msgstr "boîte de dialogue"
-
-msgid "已保存"
-msgstr "enregistré"
-
-msgid "已停止"
-msgstr "Arrêté"
-
-msgid "已关闭"
-msgstr "Fermé"
-
-msgid "已删除"
-msgstr "Supprimé"
-
-msgid "已启用"
-msgstr "Activé"
-
-msgid "已完成"
-msgstr "Complété"
-
-msgid "已崩溃"
-msgstr "s'est écrasé"
-
-msgid "已开启"
-msgstr "Déjà allumé"
-
-msgid "已挂载"
-msgstr "Monté"
-
-msgid "已暂停"
-msgstr "Suspendu"
-
-msgid "已禁用"
-msgstr "Désactivé"
-
-msgid "已验证"
-msgstr "Vérifié"
-
-msgid "总代理"
-msgstr "agent général"
-
-msgid "总配额"
-msgstr "quota total"
-
-msgid "恢复中"
-msgstr "Récupération"
-
-msgid "所有权"
-msgstr "possession"
-
-msgid "所有者"
-msgstr "propriétaire"
-
-msgid "拦截器"
-msgstr "Intercepteur"
-
-msgid "控制台"
-msgstr "console"
-
-msgid "数据盘"
-msgstr "disque de données"
-
-msgid "文件名"
-msgstr "nom de fichier"
-
-msgid "新密码"
-msgstr "Nouveau mot de passe"
-
-msgid "无描述"
-msgstr "Pas de description"
-
-msgid "无限制"
-msgstr "Illimité"
-
-msgid "暂停中"
-msgstr "En pause"
-
-msgid "月流量"
-msgstr "Trafic mensuel"
-
-msgid "有效性"
-msgstr "efficacité"
-
-msgid "服务器"
-msgstr "serveur"
-
-msgid "未分配"
-msgstr "Non attribué"
-
-msgid "未挂载"
-msgstr "Non monté"
-
-msgid "未配置"
-msgstr "Non configuré"
-
-msgid "未验证"
-msgstr "Non vérifié"
-
-msgid "条记录"
-msgstr "enregistrements"
-
-msgid "格式化"
-msgstr "format"
-
-msgid "模板数"
-msgstr "Nombre de modèles"
-
-msgid "注册表"
-msgstr "Enregistrement"
-
-msgid "浏览器"
-msgstr "Navigateur"
-
-msgid "用户名"
-msgstr "nom d'utilisateur"
-
-msgid "第一个"
-msgstr "le premier"
-
-msgid "第一台"
-msgstr "Le premier"
-
-msgid "等待中"
-msgstr "En attendant"
-
-msgid "管理员"
-msgstr "administrateur"
-
-msgid "系统盘"
-msgstr "disque système"
-
-msgid "自动化"
-msgstr "automation"
-
-msgid "菜单项"
-msgstr "élément de menu"
-
-msgid "虚拟化"
-msgstr "virtualisation"
-
-msgid "虚拟机"
-msgstr "machine virtuelle"
-
-msgid "请输入"
-msgstr "Veuillez entrer"
-
-msgid "请选择"
-msgstr "Veuillez sélectionner"
-
-msgid "过滤器"
-msgstr "filtre"
-
-msgid "运行中"
-msgstr "En cours d'exécution"
-
-msgid "还原中"
-msgstr "Restauration"
-
-msgid "进度条"
-msgstr "barre de progression"
-
-msgid "选择器"
-msgstr "sélecteur"
-
-msgid "配置中"
-msgstr "Configuration"
-
-msgid "重启中"
-msgstr "Redémarrage"
-
-msgid "重装中"
-msgstr "Réinstallation"
-
-msgid "默认值"
-msgstr "valeur par défaut"
+msgid "高级配置"
+msgstr "Configuration avancée"
 
 msgid "一个"
 msgstr "un"
@@ -1080,692 +2283,50 @@ msgstr "un"
 msgid "一封"
 msgstr "une lettre"
 
-msgid "一致"
-msgstr "cohérent"
-
-msgid "一键"
-msgstr "Un clic"
-
-msgid "上行"
-msgstr "Vers le haut"
-
-msgid "下行"
-msgstr "Vers le bas"
-
-msgid "不会"
-msgstr "Ne le fera pas"
-
-msgid "不再"
-msgstr "plus maintenant"
-
-msgid "不可"
-msgstr "Non"
-
-msgid "不能"
-msgstr "ne peut pas"
-
-msgid "不足"
-msgstr "insuffisant"
-
-msgid "丢失"
-msgstr "perdu"
-
-msgid "两次"
-msgstr "deux fois"
-
-msgid "中文"
-msgstr "Chinois"
-
-msgid "中等"
-msgstr "moyen"
-
-msgid "临时"
-msgstr "temporaire"
-
-msgid "为空"
-msgstr "est vide"
-
-msgid "主机"
-msgstr "Hôte"
-
-msgid "主要"
-msgstr "principal"
-
-msgid "主题"
-msgstr "thème"
-
-msgid "事件"
-msgstr "événement"
-
-msgid "二次"
-msgstr "secondaire"
-
-msgid "交互"
-msgstr "interaction"
-
-msgid "代理"
-msgstr "par intérim"
-
-msgid "代码"
-msgstr "code"
-
-msgid "任务"
-msgstr "Tâche"
-
-msgid "优先"
-msgstr "priorité"
-
-msgid "作为"
-msgstr "comme"
-
-msgid "使用"
-msgstr "utiliser"
-
-msgid "例如"
-msgstr "Par exemple"
-
-msgid "侧边"
-msgstr "côté"
-
-msgid "保存"
-msgstr "sauvegarder"
-
-msgid "保持"
-msgstr "Garder"
-
-msgid "保留"
-msgstr "réserve"
-
-msgid "信息"
-msgstr "information"
-
-msgid "修改"
-msgstr "Réviser"
-
-msgid "修正"
-msgstr "Correction"
-
-msgid "假设"
-msgstr "hypothèse"
-
-msgid "停止"
-msgstr "arrêt"
-
-msgid "允许"
-msgstr "permettre"
-
-msgid "元素"
-msgstr "élément"
-
-msgid "光盘"
-msgstr "CD"
-
-msgid "全部"
-msgstr "tous"
-
-msgid "公共"
-msgstr "publique"
-
-msgid "公网"
-msgstr "Réseau public"
-
-msgid "共享"
-msgstr "commun"
-
-msgid "关机"
-msgstr "Fermer"
-
-msgid "关系"
-msgstr "relation"
-
-msgid "关闭"
-msgstr "fermeture"
-
-msgid "其他"
-msgstr "autre"
-
-msgid "兼容"
-msgstr "compatible"
-
-msgid "内存"
-msgstr "Mémoire"
-
-msgid "内容"
-msgstr "contenu"
-
-msgid "内网"
-msgstr "Intranet"
-
-msgid "内部"
-msgstr "interne"
-
-msgid "再次"
-msgstr "encore"
-
-msgid "出错"
-msgstr "Erreur"
-
-msgid "函数"
-msgstr "fonction"
-
-msgid "分享"
-msgstr "partager"
-
-msgid "分割"
-msgstr "segmentation"
-
-msgid "分离"
-msgstr "séparation"
-
-msgid "分配"
-msgstr "distribuer"
-
-msgid "分钟"
-msgstr "minute"
-
-msgid "分隔"
-msgstr "séparé"
-
-msgid "切换"
-msgstr "changer"
-
-msgid "列表"
-msgstr "liste"
-
-msgid "创建"
-msgstr "créer"
-
-msgid "删除"
-msgstr "supprimer"
-
-msgid "判断"
-msgstr "juge"
-
-msgid "别名"
-msgstr "Alias"
-
-msgid "刷新"
-msgstr "rafraîchir"
-
-msgid "前缀"
-msgstr "préfixe"
-
-msgid "功耗"
-msgstr "Consommation d'énergie"
-
-msgid "功能"
-msgstr "Fonction"
-
-msgid "加载"
-msgstr "charger"
-
-msgid "动作"
-msgstr "action"
-
-msgid "动态"
-msgstr "dynamique"
-
-msgid "勾选"
-msgstr "Vérifier"
-
-msgid "包含"
-msgstr "Inclure"
-
-msgid "匹配"
-msgstr "correspondre"
-
-msgid "区域"
-msgstr "zone"
-
-msgid "协议"
-msgstr "protocole"
-
-msgid "单个"
-msgstr "célibataire"
-
-msgid "单位"
-msgstr "unité"
-
-msgid "占用"
-msgstr "occuper"
-
-msgid "卡片"
-msgstr "carte"
-
-msgid "卸载"
-msgstr "désinstaller"
-
-msgid "历史"
-msgstr "histoire"
-
-msgid "原始"
-msgstr "original"
-
-msgid "参数"
-msgstr "paramètre"
-
-msgid "及其"
-msgstr "et"
-
-msgid "反向"
-msgstr "inverse"
-
-msgid "发件"
-msgstr "Envoyer"
-
-msgid "发送"
-msgstr "envoyer"
-
-msgid "取消"
-msgstr "Annuler"
-
-msgid "受控"
-msgstr "contrôlé"
-
-msgid "变为"
-msgstr "devenir"
-
-msgid "变化"
-msgstr "changement"
-
-msgid "变更"
-msgstr "changement"
-
-msgid "变量"
-msgstr "variable"
-
-msgid "只能"
-msgstr "ne peut que"
-
-msgid "可以"
-msgstr "Peut"
-
-msgid "可用"
-msgstr "Disponible"
-
-msgid "可能"
-msgstr "possible"
-
-msgid "可逆"
-msgstr "Réversible"
-
-msgid "可选"
-msgstr "Facultatif"
-
-msgid "各种"
-msgstr "Divers"
-
-msgid "合并"
-msgstr "fusionner"
-
-msgid "同意"
-msgstr "accepter"
-
-msgid "同时"
-msgstr "en même temps"
-
-msgid "名称"
-msgstr "nom"
-
-msgid "后续"
-msgstr "Suivi"
-
-msgid "后缀"
-msgstr "suffixe"
-
-msgid "后该"
-msgstr "Il est temps plus tard"
-
-msgid "否则"
-msgstr "sinon"
-
-msgid "启动"
-msgstr "démarrer"
-
-msgid "启用"
-msgstr "activer"
-
-msgid "响应"
-msgstr "réponse"
-
-msgid "唯一"
-msgstr "seulement"
-
-msgid "因为"
-msgstr "parce que"
-
-msgid "图标"
-msgstr "icône"
-
-msgid "地址"
-msgstr "adresse"
-
-msgid "域名"
-msgstr "nom de domaine"
-
-msgid "基本"
-msgstr "Basique"
-
-msgid "堆栈"
-msgstr "empiler"
-
-msgid "处理"
-msgstr "traiter avec"
-
-msgid "备份"
-msgstr "sauvegarde"
-
-msgid "备注"
-msgstr "Remarque"
-
-msgid "复制"
-msgstr "copie"
-
-msgid "复合"
-msgstr "complexe"
-
-msgid "外部"
-msgstr "externe"
-
-msgid "多个"
-msgstr "Multiple"
+msgid "个数"
+msgstr "nombre"
 
 msgid "大小"
 msgstr "taille"
 
-msgid "失效"
-msgstr "Invalide"
-
-msgid "失败"
-msgstr "échouer"
-
-msgid "如果"
-msgstr "si"
-
-msgid "字母"
-msgstr "lettre"
-
-msgid "字符"
-msgstr "personnage"
-
-msgid "字节"
-msgstr "octet"
-
-msgid "存储"
-msgstr "stockage"
-
-msgid "存在"
-msgstr "exister"
-
-msgid "安全"
-msgstr "Sécurité"
-
-msgid "完全"
-msgstr "complètement"
-
-msgid "完成"
-msgstr "Finition"
-
-msgid "完整"
-msgstr "entier"
-
-msgid "定义"
-msgstr "définition"
-
-msgid "实例"
-msgstr "Exemple"
-
-msgid "实际"
-msgstr "réel"
-
-msgid "容器"
-msgstr "récipient"
-
 msgid "容量"
 msgstr "capacité"
-
-msgid "密码"
-msgstr "mot de passe"
-
-msgid "对应"
-msgstr "correspondre"
-
-msgid "对象"
-msgstr "objet"
-
-msgid "导入"
-msgstr "importer"
-
-msgid "导出"
-msgstr "Exporter"
-
-msgid "导致"
-msgstr "conduire à"
-
-msgid "导航"
-msgstr "navigation"
-
-msgid "少于"
-msgstr "moins que"
-
-msgid "属性"
-msgstr "propriété"
-
-msgid "已用"
-msgstr "Utilisé"
-
-msgid "布局"
-msgstr "mise en page"
-
-msgid "带宽"
-msgstr "bande passante"
-
-msgid "平台"
-msgstr "plate-forme"
-
-msgid "应用"
-msgstr "application"
-
-msgid "应该"
-msgstr "devrait"
-
-msgid "引擎"
-msgstr "moteur"
-
-msgid "弹窗"
-msgstr "Fenêtre contextuelle"
-
-msgid "强关"
-msgstr "passe forte"
-
-msgid "强制"
-msgstr "forcer"
-
-msgid "强度"
-msgstr "force"
-
-msgid "当前"
-msgstr "actuel"
-
-msgid "必须"
-msgstr "doit"
-
-msgid "忘记"
-msgstr "oublier"
-
-msgid "快速"
-msgstr "rapide"
-
-msgid "性能"
-msgstr "performance"
 
 msgid "总数"
 msgstr "total"
 
-msgid "恢复"
-msgstr "récupérer"
-
-msgid "您好"
-msgstr "Bonjour"
-
-msgid "情况"
-msgstr "Condition"
-
-msgid "成为"
-msgstr "devenir"
-
-msgid "成功"
-msgstr "succès"
-
-msgid "我们"
-msgstr "nous"
-
-msgid "截图"
-msgstr "capture d'écran"
-
-msgid "所有"
-msgstr "tous"
-
-msgid "才能"
-msgstr "Talent"
-
-msgid "打开"
-msgstr "Ouvrir"
-
-msgid "执行"
-msgstr "mettre en œuvre"
-
-msgid "扩展"
-msgstr "Développer"
-
-msgid "扫描"
-msgstr "balayage"
-
-msgid "折叠"
-msgstr "pli"
-
-msgid "拥有"
-msgstr "avoir"
-
-msgid "挂载"
-msgstr "monter"
-
-msgid "指令"
-msgstr "instruction"
-
-msgid "指定"
-msgstr "Spécifier"
-
-msgid "按钮"
-msgstr "bouton"
-
-msgid "授权"
-msgstr "Autoriser"
-
-msgid "接口"
-msgstr "interface"
-
-msgid "控制"
-msgstr "contrôle"
-
-msgid "描述"
-msgstr "décrire"
-
-msgid "提交"
-msgstr "soumettre"
-
-msgid "提取"
-msgstr "extrait"
-
-msgid "提示"
-msgstr "indice"
-
-msgid "搜索"
-msgstr "recherche"
-
-msgid "撤销"
-msgstr "Annuler"
-
-msgid "操作"
-msgstr "fonctionner"
-
-msgid "支持"
-msgstr "soutien"
-
-msgid "收件"
-msgstr "Recevoir"
-
-msgid "收到"
-msgstr "recevoir"
-
-msgid "收集"
-msgstr "collecter"
-
-msgid "改密"
-msgstr "Changer le mot de passe"
-
-msgid "数字"
-msgstr "nombre"
-
-msgid "数据"
-msgstr "données"
-
-msgid "数组"
-msgstr "tableau"
-
 msgid "数量"
 msgstr "quantité"
 
-msgid "整个"
-msgstr "entier"
+msgid "条数"
+msgstr "Nombre d'articles"
 
-msgid "文件"
-msgstr "document"
+msgid "长度"
+msgstr "longueur"
 
-msgid "文字"
-msgstr "Mot"
+msgid "分钟"
+msgstr "minute"
 
-msgid "文本"
-msgstr "texte"
+msgid "周期"
+msgstr "faire du vélo"
 
-msgid "新增"
-msgstr "Nouveau"
-
-msgid "方式"
-msgstr "Chemin"
-
-msgid "无效"
-msgstr "invalide"
-
-msgid "无法"
-msgstr "Incapable"
-
-msgid "日志"
-msgstr "enregistrer"
-
-msgid "时会"
-msgstr "réunion de temps"
+msgid "日期"
+msgstr "date"
 
 msgid "时间"
 msgstr "temps"
 
-msgid "映射"
-msgstr "cartographie"
+msgid "每小时"
+msgstr "par heure"
 
-msgid "是否"
-msgstr "si"
+msgid "每日"
+msgstr "tous les jours"
 
-msgid "显卡"
-msgstr "carte graphique"
+msgid "每月"
+msgstr "par mois"
 
-msgid "显存"
-msgstr "Mémoire vidéo"
-
-msgid "显示"
-msgstr "montrer"
-
-msgid "暂停"
-msgstr "pause"
+msgid "秒"
+msgstr "Deuxième"
 
 msgid "暂无"
 msgstr "Aucun pour l'instant"
@@ -1776,8 +2337,461 @@ msgstr "temporaire"
 msgid "暂未"
 msgstr "Pas encore"
 
-msgid "更新"
-msgstr "renouveler"
+msgid "与"
+msgstr "et"
+
+msgid "且"
+msgstr "et"
+
+msgid "但是"
+msgstr "mais"
+
+msgid "及其"
+msgstr "et"
+
+msgid "同时"
+msgstr "en même temps"
+
+msgid "否则"
+msgstr "sinon"
+
+msgid "和"
+msgstr "et"
+
+msgid "因为"
+msgstr "parce que"
+
+msgid "如果"
+msgstr "si"
+
+msgid "或"
+msgstr "ou"
+
+msgid "所以"
+msgstr "donc"
+
+msgid "然而"
+msgstr "Cependant"
+
+msgid "虽然"
+msgstr "Bien que"
+
+msgid "非"
+msgstr "Non"
+
+msgid "不"
+msgstr "Non"
+
+msgid "也"
+msgstr "aussi"
+
+msgid "从"
+msgstr "depuis"
+
+msgid "会"
+msgstr "réunion"
+
+msgid "只"
+msgstr "Seulement"
+
+msgid "太"
+msgstr "aussi"
+
+msgid "将"
+msgstr "Volonté"
+
+msgid "就"
+msgstr "Immédiatement"
+
+msgid "已"
+msgstr "déjà"
+
+msgid "应该"
+msgstr "devrait"
+
+msgid "很"
+msgstr "très"
+
+msgid "必须"
+msgstr "doit"
+
+msgid "您"
+msgstr "toi"
+
+msgid "才"
+msgstr "talent"
+
+msgid "时"
+msgstr "heure"
+
+msgid "更加"
+msgstr "plus"
+
+msgid "最"
+msgstr "la plupart"
+
+msgid "未"
+msgstr "pas encore"
+
+msgid "比较"
+msgstr "Comparer"
+
+msgid "的"
+msgstr "de"
+
+msgid "相当"
+msgstr "assez"
+
+msgid "真的"
+msgstr "réel"
+
+msgid "确实"
+msgstr "vraiment"
+
+msgid "能"
+msgstr "capable"
+
+msgid "至少"
+msgstr "Au moins"
+
+msgid "请"
+msgstr "s'il te plaît"
+
+msgid "还"
+msgstr "retour"
+
+msgid "都"
+msgstr "Tous"
+
+msgid "都将"
+msgstr "Général"
+
+msgid "需要"
+msgstr "besoin"
+
+msgid "非常"
+msgstr "Très"
+
+msgid "为"
+msgstr "pour"
+
+msgid "作为"
+msgstr "comme"
+
+msgid "使用"
+msgstr "utiliser"
+
+msgid "关于"
+msgstr "à propos"
+
+msgid "到"
+msgstr "arriver"
+
+msgid "在"
+msgstr "exister"
+
+msgid "对"
+msgstr "droite"
+
+msgid "对于"
+msgstr "pour"
+
+msgid "按"
+msgstr "selon"
+
+msgid "按照"
+msgstr "selon"
+
+msgid "根据"
+msgstr "selon"
+
+msgid "用于"
+msgstr "utilisé pour"
+
+msgid "由于"
+msgstr "parce que"
+
+msgid "通过"
+msgstr "passer"
+
+msgid "其他"
+msgstr "autre"
+
+msgid "另"
+msgstr "Autre"
+
+msgid "所有"
+msgstr "tous"
+
+msgid "每个"
+msgstr "chaque"
+
+msgid "自己"
+msgstr "Propre"
+
+msgid "这"
+msgstr "ce"
+
+msgid "这个"
+msgstr "ce"
+
+msgid "这些"
+msgstr "Ces"
+
+msgid "这封"
+msgstr "Cette lettre"
+
+msgid "这是"
+msgstr "C'est"
+
+msgid "那"
+msgstr "Que"
+
+msgid "那个"
+msgstr "que"
+
+msgid "那些"
+msgstr "Ceux-là"
+
+msgid "例如"
+msgstr "Par exemple"
+
+msgid "包含"
+msgstr "Inclure"
+
+msgid "包括"
+msgstr "inclure"
+
+msgid "提示"
+msgstr "indice"
+
+msgid "提醒"
+msgstr "rappeler"
+
+msgid "比如"
+msgstr "Par exemple"
+
+msgid "注意"
+msgstr "Avis"
+
+msgid "补充"
+msgstr "Remplir"
+
+msgid "除外"
+msgstr "sauf"
+
+msgid "使得"
+msgstr "faire"
+
+msgid "导致"
+msgstr "conduire à"
+
+msgid "引起"
+msgstr "cause"
+
+msgid "造成"
+msgstr "cause"
+
+msgid "中文"
+msgstr "Chinois"
+
+msgid "句号"
+msgstr "période"
+
+msgid "字母"
+msgstr "lettre"
+
+msgid "字符"
+msgstr "personnage"
+
+msgid "字节"
+msgstr "octet"
+
+msgid "数字"
+msgstr "nombre"
+
+msgid "英文"
+msgstr "Anglais"
+
+msgid "逗号"
+msgstr "virgule"
+
+msgid "浅色"
+msgstr "couleur claire"
+
+msgid "深色"
+msgstr "Sombre"
+
+msgid "灰色"
+msgstr "gris"
+
+msgid "白色"
+msgstr "Blanc"
+
+msgid "红色"
+msgstr "rouge"
+
+msgid "绿色"
+msgstr "vert"
+
+msgid "蓝色"
+msgstr "bleu"
+
+msgid "颜色"
+msgstr "couleur"
+
+msgid "黄色"
+msgstr "jaune"
+
+msgid "黑色"
+msgstr "noir"
+
+msgid "(JSON格式)"
+msgstr "(format JSON)"
+
+msgid "一条"
+msgstr "une pièce"
+
+msgid "两次"
+msgstr "deux fois"
+
+msgid "主所有者"
+msgstr "propriétaire principal"
+
+msgid "使用情况"
+msgstr "Usage"
+
+msgid "停止刷新"
+msgstr "Arrêter d'actualiser"
+
+msgid "光盘"
+msgstr "CD"
+
+msgid "分隔"
+msgstr "séparé"
+
+msgid "列表"
+msgstr "liste"
+
+msgid "判断"
+msgstr "juge"
+
+msgid "前缀"
+msgstr "préfixe"
+
+msgid "加载"
+msgstr "charger"
+
+msgid "占用"
+msgstr "occuper"
+
+msgid "卡片"
+msgstr "carte"
+
+msgid "历史"
+msgstr "histoire"
+
+msgid "发件"
+msgstr "Envoyer"
+
+msgid "变为"
+msgstr "devenir"
+
+msgid "变化"
+msgstr "changement"
+
+msgid "后续"
+msgstr "Suivi"
+
+msgid "后缀"
+msgstr "suffixe"
+
+msgid "后该"
+msgstr "Il est temps plus tard"
+
+msgid "基本信息"
+msgstr "Informations de base"
+
+msgid "处理"
+msgstr "traiter avec"
+
+msgid "复合"
+msgstr "complexe"
+
+msgid "存在"
+msgstr "exister"
+
+msgid "完全"
+msgstr "complètement"
+
+msgid "容器管理"
+msgstr "Gestion des conteneurs"
+
+msgid "对应"
+msgstr "correspondre"
+
+msgid "少于"
+msgstr "moins que"
+
+msgid "左侧"
+msgstr "côté gauche"
+
+msgid "开放注册"
+msgstr "Inscription ouverte"
+
+msgid "忘记"
+msgstr "oublier"
+
+msgid "您好"
+msgstr "Bonjour"
+
+msgid "您的"
+msgstr "ton"
+
+msgid "情况"
+msgstr "Condition"
+
+msgid "我们"
+msgstr "nous"
+
+msgid "才能"
+msgstr "Talent"
+
+msgid "扩展"
+msgstr "Développer"
+
+msgid "拥有"
+msgstr "avoir"
+
+msgid "控制"
+msgstr "contrôle"
+
+msgid "提供"
+msgstr "fournir"
+
+msgid "操作"
+msgstr "fonctionner"
+
+msgid "收件"
+msgstr "Recevoir"
+
+msgid "收到"
+msgstr "recevoir"
+
+msgid "改密"
+msgstr "Changer le mot de passe"
+
+msgid "无法"
+msgstr "Incapable"
+
+msgid "时会"
+msgstr "réunion de temps"
+
+msgid "是否"
+msgstr "si"
+
+msgid "显示"
+msgstr "montrer"
 
 msgid "最低"
 msgstr "le plus bas"
@@ -1788,263 +2802,41 @@ msgstr "enfin"
 msgid "最小"
 msgstr "le plus petit"
 
-msgid "最新"
-msgstr "à jour"
-
-msgid "最终"
-msgstr "final"
-
-msgid "有效"
-msgstr "efficace"
-
-msgid "服务"
-msgstr "Servir"
-
-msgid "未知"
-msgstr "inconnu"
-
-msgid "机器"
-msgstr "machine"
-
-msgid "权限"
-msgstr "Autorisations"
-
-msgid "条件"
-msgstr "condition"
-
-msgid "条数"
-msgstr "Nombre d'articles"
-
 msgid "来自"
 msgstr "depuis"
-
-msgid "构建"
-msgstr "construire"
-
-msgid "构造"
-msgstr "structure"
-
-msgid "查找"
-msgstr "Trouver"
-
-msgid "查收"
-msgstr "vérifier"
-
-msgid "查看"
-msgstr "Vérifier"
-
-msgid "标签"
-msgstr "Étiquette"
-
-msgid "样式"
-msgstr "style"
-
-msgid "核心"
-msgstr "cœur"
-
-msgid "根据"
-msgstr "selon"
-
-msgid "格式"
-msgstr "Format"
-
-msgid "桌面"
-msgstr "ordinateur de bureau"
-
-msgid "检查"
-msgstr "examiner"
-
-msgid "检测"
-msgstr "Détection"
-
-msgid "概览"
-msgstr "Aperçu"
-
-msgid "模块"
-msgstr "module"
-
-msgid "模式"
-msgstr "modèle"
 
 msgid "模态"
 msgstr "modal"
 
-msgid "模板"
-msgstr "modèle"
-
-msgid "正在"
-msgstr "sont"
-
-msgid "正常"
-msgstr "normale"
-
-msgid "正文"
-msgstr "texte"
-
-msgid "正确"
-msgstr "correct"
-
-msgid "每月"
-msgstr "par mois"
-
-msgid "比如"
-msgstr "Par exemple"
-
 msgid "没有"
 msgstr "Non"
 
-msgid "注册"
-msgstr "registre"
+msgid "注册表"
+msgstr "Enregistrement"
 
-msgid "注意"
-msgstr "Avis"
-
-msgid "注释"
-msgstr "Commentaire"
-
-msgid "流量"
-msgstr "couler"
-
-msgid "浅色"
-msgstr "couleur claire"
-
-msgid "消息"
-msgstr "information"
-
-msgid "深色"
-msgstr "Sombre"
-
-msgid "添加"
-msgstr "Ajouter à"
-
-msgid "清空"
-msgstr "Clair"
-
-msgid "清除"
-msgstr "Clair"
-
-msgid "温度"
-msgstr "température"
-
-msgid "渲染"
-msgstr "rendu"
-
-msgid "灰色"
-msgstr "gris"
-
-msgid "点击"
-msgstr "Cliquez"
+msgid "浏览器"
+msgstr "Navigateur"
 
 msgid "爱快"
 msgstr "aimer vite"
 
-msgid "版本"
-msgstr "Version"
-
-msgid "状态"
-msgstr "État"
-
-msgid "独立"
-msgstr "indépendant"
-
-msgid "生成"
-msgstr "générer"
-
-msgid "生效"
-msgstr "Prendre effet"
-
-msgid "用于"
-msgstr "utilisé pour"
-
-msgid "用尽"
-msgstr "épuisé"
-
-msgid "用户"
-msgstr "utilisateur"
-
-msgid "用途"
-msgstr "utiliser"
-
-msgid "用量"
-msgstr "Dosage"
-
 msgid "由后"
 msgstr "par derrière"
-
-msgid "电源"
-msgstr "alimentation"
 
 msgid "留空"
 msgstr "Laisser vide"
 
-msgid "登出"
-msgstr "se déconnecter"
-
-msgid "登录"
-msgstr "Se connecter"
-
-msgid "监听"
-msgstr "moniteur"
-
-msgid "监控"
-msgstr "moniteur"
-
 msgid "目标"
 msgstr "Cible"
 
-msgid "直接"
-msgstr "direct"
+msgid "第一个"
+msgstr "le premier"
 
-msgid "相关"
-msgstr "En rapport"
-
-msgid "看到"
-msgstr "Voir"
-
-msgid "硬盘"
-msgstr "disque dur"
-
-msgid "确保"
-msgstr "s'assurer"
-
-msgid "确定"
-msgstr "Bien sûr"
-
-msgid "确认"
-msgstr "confirmer"
-
-msgid "磁盘"
-msgstr "disque"
-
-msgid "禁用"
-msgstr "Désactiver"
-
-msgid "移交"
-msgstr "transfert"
-
-msgid "移除"
-msgstr "Retirer"
-
-msgid "程序"
-msgstr "programme"
-
-msgid "稍候"
-msgstr "Attends un instant"
-
-msgid "立即"
-msgstr "immédiatement"
-
-msgid "端口"
-msgstr "port"
+msgid "第一台"
+msgstr "Le premier"
 
 msgid "等待"
 msgstr "attendez"
-
-msgid "筛选"
-msgstr "filtre"
-
-msgid "简化"
-msgstr "simplifier"
 
 msgid "管理"
 msgstr "gérer"
@@ -2052,107 +2844,11 @@ msgstr "gérer"
 msgid "类名"
 msgstr "Nom de la classe"
 
-msgid "类型"
-msgstr "taper"
-
-msgid "系统"
-msgstr "système"
-
-msgid "红色"
-msgstr "rouge"
-
-msgid "级别"
-msgstr "niveau"
-
-msgid "组件"
-msgstr "composants"
-
-msgid "结束"
-msgstr "Finition"
-
-msgid "统计"
-msgstr "statistiques"
-
-msgid "继续"
-msgstr "continuer"
-
-msgid "绿色"
-msgstr "vert"
-
-msgid "编辑"
-msgstr "modifier"
-
-msgid "网关"
-msgstr "porte"
-
-msgid "网卡"
-msgstr "carte réseau"
-
-msgid "网桥"
-msgstr "pont"
-
-msgid "网络"
-msgstr "réseau"
-
-msgid "网网"
-msgstr "netnet"
-
 msgid "翻译"
 msgstr "traduire"
 
 msgid "耐心"
 msgstr "patience"
-
-msgid "联系"
-msgstr "connecter"
-
-msgid "自动"
-msgstr "automatique"
-
-msgid "至少"
-msgstr "Au moins"
-
-msgid "节点"
-msgstr "nœud"
-
-msgid "范围"
-msgstr "portée"
-
-msgid "获取"
-msgstr "obtenir"
-
-msgid "菜单"
-msgstr "menu"
-
-msgid "补充"
-msgstr "Remplir"
-
-msgid "表单"
-msgstr "formulaire"
-
-msgid "表示"
-msgstr "exprimer"
-
-msgid "要求"
-msgstr "Exiger"
-
-msgid "规则"
-msgstr "règle"
-
-msgid "视图"
-msgstr "voir"
-
-msgid "角色"
-msgstr "Rôle"
-
-msgid "解析"
-msgstr "analyser"
-
-msgid "触发"
-msgstr "déclenchement"
-
-msgid "警告"
-msgstr "avertir"
 
 msgid "计算"
 msgstr "calculer"
@@ -2160,173 +2856,32 @@ msgstr "calculer"
 msgid "认证"
 msgstr "Attestation"
 
-msgid "记录"
-msgstr "Enregistrer"
-
-msgid "设备"
-msgstr "équipement"
-
-msgid "设置"
-msgstr "installation"
-
 msgid "访问"
 msgstr "accéder"
-
-msgid "详情"
-msgstr "Détails"
 
 msgid "语言"
 msgstr "langue"
 
-msgid "说明"
-msgstr "illustrer"
-
 msgid "请求"
 msgstr "demander"
 
-msgid "读取"
-msgstr "lire"
-
-msgid "调用"
-msgstr "appel"
-
-msgid "调试"
-msgstr "déboguer"
+msgid "请求头"
+msgstr "En-tête de requête"
 
 msgid "谨慎"
 msgstr "prudent"
 
-msgid "账号"
-msgstr "compte"
-
-msgid "账户"
-msgstr "Compte"
-
-msgid "资源"
-msgstr "ressource"
-
 msgid "起始"
 msgstr "commencer"
-
-msgid "超时"
-msgstr "temps mort"
-
-msgid "足够"
-msgstr "assez"
-
-msgid "跟踪"
-msgstr "piste"
-
-msgid "路径"
-msgstr "chemin"
-
-msgid "路由"
-msgstr "routage"
-
-msgid "跳转"
-msgstr "Saut"
-
-msgid "跳过"
-msgstr "franchir"
-
-msgid "转换"
-msgstr "Convertir"
-
-msgid "转移"
-msgstr "transfert"
-
-msgid "转让"
-msgstr "transfert"
 
 msgid "轮询"
 msgstr "vote"
 
-msgid "输入"
-msgstr "entrer"
-
-msgid "过滤"
-msgstr "filtre"
-
 msgid "运行"
 msgstr "courir"
 
-msgid "返回"
-msgstr "retour"
-
-msgid "还原"
-msgstr "réduction"
-
-msgid "这个"
-msgstr "ce"
-
-msgid "这封"
-msgstr "Cette lettre"
-
-msgid "这是"
-msgstr "C'est"
-
 msgid "这里"
 msgstr "ici"
-
-msgid "进行"
-msgstr "conduire"
-
-msgid "远程"
-msgstr "télécommande"
-
-msgid "连接"
-msgstr "connecter"
-
-msgid "选中"
-msgstr "choisi"
-
-msgid "选择"
-msgstr "choisir"
-
-msgid "选项"
-msgstr "Possibilités"
-
-msgid "递归"
-msgstr "récursivité"
-
-msgid "逗号"
-msgstr "virgule"
-
-msgid "通用"
-msgstr "Universel"
-
-msgid "通知"
-msgstr "notifier"
-
-msgid "通过"
-msgstr "passer"
-
-msgid "逻辑"
-msgstr "logique"
-
-msgid "遍历"
-msgstr "Traverser"
-
-msgid "避免"
-msgstr "éviter"
-
-msgid "邮件"
-msgstr "mail"
-
-msgid "邮箱"
-msgstr "Mail"
-
-msgid "部分"
-msgstr "partie"
-
-msgid "配置"
-msgstr "Configuration"
-
-msgid "配额"
-msgstr "quota"
-
-msgid "重启"
-msgstr "Redémarrage"
 
 msgid "重复"
 msgstr "répéter"
@@ -2334,68 +2889,86 @@ msgstr "répéter"
 msgid "重新"
 msgstr "encore"
 
-msgid "重置"
-msgstr "réinitialiser"
-
-msgid "重装"
-msgstr "Réinstaller"
-
-msgid "重要"
-msgstr "important"
-
-msgid "重试"
-msgstr "Essayer à nouveau"
-
-msgid "错误"
-msgstr "erreur"
-
 msgid "键中"
 msgstr "clé"
-
-msgid "镜像"
-msgstr "miroir"
-
-msgid "长度"
-msgstr "longueur"
-
-msgid "闭包"
-msgstr "fermeture"
-
-msgid "问题"
-msgstr "question"
-
-msgid "限制"
-msgstr "limite"
 
 msgid "随机"
 msgstr "aléatoire"
 
-msgid "需要"
-msgstr "besoin"
+msgid "默认值"
+msgstr "valeur par défaut"
 
-msgid "静态"
-msgstr "statique"
+msgid "一键"
+msgstr "Un clic"
 
-msgid "非常"
-msgstr "Très"
+msgid "上一步"
+msgstr "Étape précédente"
 
-msgid "页面"
-msgstr "page"
+msgid "下一步"
+msgstr "Étape suivante"
 
-msgid "顶部"
-msgstr "haut"
+msgid "完成"
+msgstr "Finition"
 
-msgid "颜色"
-msgstr "couleur"
+msgid "确定"
+msgstr "Bien sûr"
 
-msgid "验证"
-msgstr "vérifier"
+msgid "稍候"
+msgstr "Attends un instant"
 
-msgid "高级"
-msgstr "avancé"
+msgid "立即"
+msgstr "immédiatement"
 
-msgid "默认"
-msgstr "défaut"
+msgid "结束"
+msgstr "Finition"
+
+msgid "继续"
+msgstr "continuer"
+
+msgid "重试"
+msgstr "Essayer à nouveau"
+
+msgid "请输入"
+msgstr "Veuillez entrer"
+
+msgid "请选择"
+msgstr "Veuillez sélectionner"
+
+msgid "输入"
+msgstr "entrer"
+
+msgid "输出"
+msgstr "sortir"
+
+msgid "响应"
+msgstr "réponse"
+
+msgid "主机管理"
+msgstr "Gestion des hôtes"
+
+msgid "创建备份"
+msgstr "Créer une sauvegarde"
+
+msgid "备份名称"
+msgstr "Nom de la sauvegarde"
+
+msgid "备份文件"
+msgstr "Fichiers de sauvegarde"
+
+msgid "备份注释"
+msgstr "Commentaires de sauvegarde"
+
+msgid "备份管理"
+msgstr "Gestion des sauvegardes"
+
+msgid "备份说明"
+msgstr "Instructions de sauvegarde"
+
+msgid "扫描备份"
+msgstr "Sauvegarde de numérisation"
+
+msgid "暂无备份"
+msgstr "Pas encore de sauvegarde"
 
 msgid "下"
 msgstr "Vers le bas"
@@ -2409,156 +2982,9 @@ msgstr "dos"
 msgid "否"
 msgstr "Non"
 
-msgid "多"
-msgstr "beaucoup"
-
-msgid "大"
-msgstr "grand"
-
-msgid "对"
-msgstr "droite"
-
-msgid "新"
-msgstr "nouveau"
-
-msgid "旧"
-msgstr "vieux"
-
 msgid "是"
 msgstr "Oui"
 
 msgid "空"
 msgstr "nul"
-
-msgid "全局"
-msgstr "situation globale"
-
-msgid "查看您的资源使用情况和配额信息"
-msgstr "Afficher vos informations d'utilisation des ressources et de quota"
-
-msgid "用户空间"
-msgstr "espace utilisateur"
-
-msgid "系统空间"
-msgstr "espace système"
-
-msgid "实例管理"
-msgstr "Gestion des instances"
-
-msgid "监控"
-msgstr "moniteur"
-
-msgid "网络端口"
-msgstr "port réseau"
-
-msgid "网络与配额"
-msgstr "Réseautage et quotas"
-
-msgid "上传带宽"
-msgstr "Bande passante de téléchargement"
-
-msgid "下载带宽"
-msgstr "Bande passante de téléchargement"
-
-msgid "实例配置"
-msgstr "Configuration des instances"
-
-msgid "设置密码"
-msgstr "Définir le mot de passe"
-
-msgid "一键远程"
-msgstr "Télécommande en un clic"
-
-msgid "网卡列表"
-msgstr "Liste des cartes réseau"
-
-msgid "转发规则"
-msgstr "Règles de transfert"
-
-msgid "设备直通"
-msgstr "Passage de périphérique"
-
-msgid "物理"
-msgstr "physique"
-
-msgid "设备名"
-msgstr "Nom de l'appareil"
-
-msgid "存储路径"
-msgstr "chemin de stockage"
-
-msgid "程序启动路径"
-msgstr "Chemin de démarrage du programme"
-
-msgid "爱快配置"
-msgstr "Configuration Aikuai"
-
-msgid "限制配置"
-msgstr "Configuration des limites"
-
-msgid "（多个用逗号分隔）"
-msgstr "(séparez les multiples par des virgules)"
-
-msgid "高级配置"
-msgstr "Configuration avancée"
-
-msgid "系统映射"
-msgstr "Cartographie du système"
-
-msgid "配置池"
-msgstr "Configurer le pool"
-
-msgid "扩展选项"
-msgstr "Options étendues"
-
-msgid "扩展数据"
-msgstr "données étendues"
-
-msgid "(JSON格式)"
-msgstr "(format JSON)"
-
-msgid "和事件记录"
-msgstr "et journalisation des événements"
-
-msgid "请从左侧选择一条"
-msgstr "Veuillez en choisir un à gauche"
-
-msgid "安全提示"
-msgstr "Conseils de sécurité"
-
-msgid "重置Token后，所有使用旧Token的API调用都将失效。请确保更新所有相关配置。"
-msgstr "Après avoir réinitialisé le jeton, tous les appels d'API utilisant l'ancien jeton deviendront invalides. Veuillez vous assurer de mettre à jour toutes les configurations pertinentes."
-
-msgid "在请求头中添加："
-msgstr "Ajoutez l'en-tête de la requête :"
-
-msgid "受控端"
-msgstr "Fin contrôlée"
-
-msgid "访问配置"
-msgstr "configuration d'accès"
-
-msgid "新账号"
-msgstr "nouveau compte"
-
-msgid "注册时需要验证邮箱"
-msgstr "La vérification de l'e-mail est requise lors de l'inscription"
-
-msgid "新用户默认"
-msgstr "Nouvel utilisateur par défaut"
-
-msgid "这是一封来自"
-msgstr "Ceci est une lettre de"
-
-msgid "系统的测试邮件"
-msgstr "E-mail de test du système"
-
-msgid "如果您收到这封邮件"
-msgstr "Si vous recevez cet email"
-
-msgid "说明邮件服务配置正常"
-msgstr "Indique que la configuration du service de messagerie est normale"
-
-msgid "您的"
-msgstr "ton"
 

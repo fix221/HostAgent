@@ -126,7 +126,8 @@ class HostServer(BasicServer):
             hw_status.cpu_total = online_cpus
 
             if system_delta > 0 and cpu_delta > 0:
-                cpu_percent = (cpu_delta / system_delta) * online_cpus * 100.0
+                # 计算单核百分比（0~100），与 psutil.cpu_percent / Proxmox 等后端保持一致
+                cpu_percent = (cpu_delta / system_delta) * 100.0
                 hw_status.cpu_usage = int(cpu_percent)
             else:
                 hw_status.cpu_usage = 0

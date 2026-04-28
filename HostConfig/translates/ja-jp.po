@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: OpenIDCS 1.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-02-10 00:11\n"
-"PO-Revision-Date: 2026-02-10 00:11\n"
+"POT-Creation-Date: 2026-04-28 16:24\n"
+"PO-Revision-Date: 2026-04-28 16:24\n"
 "Last-Translator: Auto Generated\n"
 "Language-Team: Japanese\n"
 "Language: ja\n"
@@ -15,11 +15,1262 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-msgid "访问Token"
-msgstr "アクセストークン"
+msgid "保存"
+msgstr "保存"
 
-msgid "VNC控制台"
-msgstr "VNCコンソール"
+msgid "保持"
+msgstr "保つ"
+
+msgid "保留"
+msgstr "予約する"
+
+msgid "修改"
+msgstr "改訂"
+
+msgid "修正"
+msgstr "修正"
+
+msgid "停止"
+msgstr "停止"
+
+msgid "允许"
+msgstr "許可する"
+
+msgid "共享"
+msgstr "共有"
+
+msgid "关机"
+msgstr "シャットダウン"
+
+msgid "关闭"
+msgstr "閉鎖"
+
+msgid "写入"
+msgstr "書く"
+
+msgid "分享"
+msgstr "共有"
+
+msgid "分割"
+msgstr "セグメンテーション"
+
+msgid "分离"
+msgstr "分離"
+
+msgid "分配"
+msgstr "配布する"
+
+msgid "切换"
+msgstr "スイッチ"
+
+msgid "创建"
+msgstr "作成する"
+
+msgid "删除"
+msgstr "消去"
+
+msgid "刷新"
+msgstr "リフレッシュする"
+
+msgid "勾选"
+msgstr "チェック"
+
+msgid "卸载"
+msgstr "アンインストールする"
+
+msgid "发送"
+msgstr "送信"
+
+msgid "取消"
+msgstr "キャンセル"
+
+msgid "变换"
+msgstr "変身"
+
+msgid "变更"
+msgstr "変化"
+
+msgid "合并"
+msgstr "マージ"
+
+msgid "同意"
+msgstr "同意する"
+
+msgid "启动"
+msgstr "起動する"
+
+msgid "启用"
+msgstr "有効にする"
+
+msgid "复制"
+msgstr "コピー"
+
+msgid "导入"
+msgstr "輸入"
+
+msgid "导出"
+msgstr "輸出"
+
+msgid "展开"
+msgstr "拡大する"
+
+msgid "强制"
+msgstr "力"
+
+msgid "恢复"
+msgstr "回復する"
+
+msgid "成为"
+msgstr "なる"
+
+msgid "打印"
+msgstr "印刷する"
+
+msgid "打开"
+msgstr "開ける"
+
+msgid "执行"
+msgstr "埋め込む"
+
+msgid "扫描"
+msgstr "走査"
+
+msgid "折叠"
+msgstr "折り畳み"
+
+msgid "拒绝"
+msgstr "拒否する"
+
+msgid "拖拽"
+msgstr "ドラッグ"
+
+msgid "挂载"
+msgstr "マウント"
+
+msgid "指定"
+msgstr "特定"
+
+msgid "授权"
+msgstr "承認する"
+
+msgid "排序"
+msgstr "選別"
+
+msgid "接受"
+msgstr "受け入れる"
+
+msgid "提交"
+msgstr "提出する"
+
+msgid "提取"
+msgstr "抽出する"
+
+msgid "搜索"
+msgstr "検索"
+
+msgid "撤销"
+msgstr "キャンセル"
+
+msgid "支持"
+msgstr "サポート"
+
+msgid "收集"
+msgstr "集める"
+
+msgid "断开"
+msgstr "切断する"
+
+msgid "暂停"
+msgstr "一時停止"
+
+msgid "更新"
+msgstr "更新する"
+
+msgid "构建"
+msgstr "建てる"
+
+msgid "构造"
+msgstr "構造"
+
+msgid "查找"
+msgstr "探す"
+
+msgid "查收"
+msgstr "チェック"
+
+msgid "查看"
+msgstr "チェック"
+
+msgid "格式化"
+msgstr "形式"
+
+msgid "检查"
+msgstr "診る"
+
+msgid "检测"
+msgstr "検出"
+
+msgid "注册"
+msgstr "登録する"
+
+msgid "添加"
+msgstr "に追加"
+
+msgid "清空"
+msgstr "クリア"
+
+msgid "清除"
+msgstr "クリア"
+
+msgid "渲染"
+msgstr "レンダリング"
+
+msgid "点击"
+msgstr "クリック"
+
+msgid "生成"
+msgstr "生成する"
+
+msgid "生效"
+msgstr "発効する"
+
+msgid "用尽"
+msgstr "疲れ果てた"
+
+msgid "登出"
+msgstr "サインアウト"
+
+msgid "登录"
+msgstr "ログイン"
+
+msgid "监听"
+msgstr "モニター"
+
+msgid "监控"
+msgstr "モニター"
+
+msgid "看到"
+msgstr "見る"
+
+msgid "确保"
+msgstr "確認する"
+
+msgid "确认"
+msgstr "確認する"
+
+msgid "禁止"
+msgstr "禁止する"
+
+msgid "禁用"
+msgstr "無効にする"
+
+msgid "移交"
+msgstr "移行"
+
+msgid "移除"
+msgstr "取り除く"
+
+msgid "筛选"
+msgstr "フィルター"
+
+msgid "简化"
+msgstr "単純化する"
+
+msgid "编辑"
+msgstr "編集"
+
+msgid "联系"
+msgstr "接続する"
+
+msgid "获取"
+msgstr "得る"
+
+msgid "表示"
+msgstr "急行"
+
+msgid "解析"
+msgstr "解析する"
+
+msgid "触发"
+msgstr "トリガー"
+
+msgid "警告"
+msgstr "警告する"
+
+msgid "读取"
+msgstr "読む"
+
+msgid "调用"
+msgstr "電話"
+
+msgid "调试"
+msgstr "デバッグ"
+
+msgid "跟踪"
+msgstr "追跡"
+
+msgid "跳转"
+msgstr "ジャンプ"
+
+msgid "跳过"
+msgstr "飛び越える"
+
+msgid "转换"
+msgstr "変換する"
+
+msgid "转移"
+msgstr "移行"
+
+msgid "转让"
+msgstr "移行"
+
+msgid "过滤"
+msgstr "フィルター"
+
+msgid "返回"
+msgstr "戻る"
+
+msgid "还原"
+msgstr "削減"
+
+msgid "进行"
+msgstr "行為"
+
+msgid "连接"
+msgstr "接続する"
+
+msgid "选中"
+msgstr "選択された"
+
+msgid "选择"
+msgstr "選ぶ"
+
+msgid "递归"
+msgstr "再帰"
+
+msgid "通知"
+msgstr "通知する"
+
+msgid "遍历"
+msgstr "トラバース"
+
+msgid "避免"
+msgstr "避ける"
+
+msgid "重做"
+msgstr "やり直し"
+
+msgid "重启"
+msgstr "再起動"
+
+msgid "重置"
+msgstr "リセット"
+
+msgid "重装"
+msgstr "再インストール"
+
+msgid "验证"
+msgstr "確認する"
+
+msgid "一致性"
+msgstr "一貫性"
+
+msgid "主机"
+msgstr "ホスト"
+
+msgid "主题"
+msgstr "テーマ"
+
+msgid "事件"
+msgstr "イベント"
+
+msgid "交互"
+msgstr "交流"
+
+msgid "代理"
+msgstr "演技"
+
+msgid "代码"
+msgstr "コード"
+
+msgid "令牌"
+msgstr "トークン"
+
+msgid "仪表盘"
+msgstr "ダッシュボード"
+
+msgid "任务"
+msgstr "タスク"
+
+msgid "使用率"
+msgstr "使用率"
+
+msgid "侧边"
+msgstr "側"
+
+msgid "信息"
+msgstr "情報"
+
+msgid "假设"
+msgstr "仮説"
+
+msgid "元素"
+msgstr "要素"
+
+msgid "关系"
+msgstr "関係"
+
+msgid "内存"
+msgstr "メモリ"
+
+msgid "内容"
+msgstr "コンテンツ"
+
+msgid "函数"
+msgstr "関数"
+
+msgid "利用率"
+msgstr "利用"
+
+msgid "别名"
+msgstr "エイリアス"
+
+msgid "剪贴板"
+msgstr "クリップボード"
+
+msgid "功耗"
+msgstr "消費電力"
+
+msgid "功能"
+msgstr "関数"
+
+msgid "动作"
+msgstr "アクション"
+
+msgid "匹配"
+msgstr "マッチ"
+
+msgid "区域"
+msgstr "エリア"
+
+msgid "协议"
+msgstr "プロトコル"
+
+msgid "单位"
+msgstr "ユニット"
+
+msgid "参数"
+msgstr "パラメータ"
+
+msgid "变量"
+msgstr "変数"
+
+msgid "可用性"
+msgstr "可用性"
+
+msgid "可靠性"
+msgstr "信頼性"
+
+msgid "名称"
+msgstr "名前"
+
+msgid "命令"
+msgstr "注文"
+
+msgid "图标"
+msgstr "アイコン"
+
+msgid "地址"
+msgstr "住所"
+
+msgid "域名"
+msgstr "ドメイン名"
+
+msgid "堆栈"
+msgstr "スタック"
+
+msgid "备份"
+msgstr "バックアップ"
+
+msgid "备注"
+msgstr "述べる"
+
+msgid "复杂度"
+msgstr "複雑"
+
+msgid "存储"
+msgstr "ストレージ"
+
+msgid "安全性"
+msgstr "安全"
+
+msgid "定义"
+msgstr "意味"
+
+msgid "实例"
+msgstr "例"
+
+msgid "容器"
+msgstr "容器"
+
+msgid "密码"
+msgstr "パスワード"
+
+msgid "对话框"
+msgstr "ダイアログボックス"
+
+msgid "对象"
+msgstr "物体"
+
+msgid "导航"
+msgstr "ナビゲーション"
+
+msgid "属性"
+msgstr "財産"
+
+msgid "布局"
+msgstr "レイアウト"
+
+msgid "带宽"
+msgstr "帯域幅"
+
+msgid "平台"
+msgstr "プラットフォーム"
+
+msgid "应用"
+msgstr "応用"
+
+msgid "引擎"
+msgstr "エンジン"
+
+msgid "弹窗"
+msgstr "ポップアップウィンドウ"
+
+msgid "强度"
+msgstr "強さ"
+
+msgid "快照"
+msgstr "スナップショット"
+
+msgid "性能"
+msgstr "パフォーマンス"
+
+msgid "截图"
+msgstr "スクリーンショット"
+
+msgid "所有权"
+msgstr "所有"
+
+msgid "所有者"
+msgstr "所有者"
+
+msgid "报告"
+msgstr "報告"
+
+msgid "拦截器"
+msgstr "インターセプター"
+
+msgid "指令"
+msgstr "命令"
+
+msgid "按钮"
+msgstr "ボタン"
+
+msgid "接口"
+msgstr "インタフェース"
+
+msgid "控制台"
+msgstr "コンソール"
+
+msgid "描述"
+msgstr "説明する"
+
+msgid "插件"
+msgstr "プラグイン"
+
+msgid "效率"
+msgstr "効率"
+
+msgid "数据"
+msgstr "データ"
+
+msgid "数组"
+msgstr "配列"
+
+msgid "文件"
+msgstr "書類"
+
+msgid "文字"
+msgstr "言葉"
+
+msgid "文本"
+msgstr "文章"
+
+msgid "方式"
+msgstr "方法"
+
+msgid "方法"
+msgstr "方法"
+
+msgid "日志"
+msgstr "ログ"
+
+msgid "映射"
+msgstr "マッピング"
+
+msgid "显卡"
+msgstr "グラフィックスカード"
+
+msgid "显存"
+msgstr "ビデオメモリ"
+
+msgid "有效性"
+msgstr "効果"
+
+msgid "服务"
+msgstr "仕える"
+
+msgid "服务器"
+msgstr "サーバ"
+
+msgid "机器"
+msgstr "機械"
+
+msgid "权限"
+msgstr "権限"
+
+msgid "条件"
+msgstr "状態"
+
+msgid "标签"
+msgstr "ラベル"
+
+msgid "标题"
+msgstr "タイトル"
+
+msgid "样式"
+msgstr "スタイル"
+
+msgid "核心"
+msgstr "コア"
+
+msgid "格式"
+msgstr "形式"
+
+msgid "桌面"
+msgstr "デスクトップ"
+
+msgid "概览"
+msgstr "概要"
+
+msgid "模块"
+msgstr "モジュール"
+
+msgid "模式"
+msgstr "モデル"
+
+msgid "模板"
+msgstr "テンプレート"
+
+msgid "正文"
+msgstr "文章"
+
+msgid "注释"
+msgstr "コメント"
+
+msgid "流量"
+msgstr "流れ"
+
+msgid "消息"
+msgstr "情報"
+
+msgid "温度"
+msgstr "温度"
+
+msgid "版本"
+msgstr "バージョン"
+
+msgid "状态"
+msgstr "州"
+
+msgid "用户"
+msgstr "ユーザー"
+
+msgid "用途"
+msgstr "使用"
+
+msgid "用量"
+msgstr "投与量"
+
+msgid "电源"
+msgstr "電源"
+
+msgid "目录"
+msgstr "目次"
+
+msgid "硬盘"
+msgstr "ハードディスク"
+
+msgid "磁盘"
+msgstr "ディスク"
+
+msgid "程序"
+msgstr "プログラム"
+
+msgid "稳定性"
+msgstr "安定性"
+
+msgid "端口"
+msgstr "ポート"
+
+msgid "策略"
+msgstr "戦略"
+
+msgid "管理员"
+msgstr "管理者"
+
+msgid "类型"
+msgstr "タイプ"
+
+msgid "精度"
+msgstr "正確さ"
+
+msgid "系统"
+msgstr "システム"
+
+msgid "约束"
+msgstr "制約"
+
+msgid "级别"
+msgstr "レベル"
+
+msgid "线程"
+msgstr "糸"
+
+msgid "组件"
+msgstr "コンポーネント"
+
+msgid "结果"
+msgstr "結果"
+
+msgid "统计"
+msgstr "統計"
+
+msgid "网关"
+msgstr "ゲートウェイ"
+
+msgid "网卡"
+msgstr "ネットワークカード"
+
+msgid "网桥"
+msgstr "橋"
+
+msgid "网络"
+msgstr "ネットワーク"
+
+msgid "网网"
+msgstr "ネットネット"
+
+msgid "脚本"
+msgstr "スクリプト"
+
+msgid "节点"
+msgstr "ノード"
+
+msgid "范围"
+msgstr "範囲"
+
+msgid "菜单"
+msgstr "メニュー"
+
+msgid "虚拟机"
+msgstr "仮想マシン"
+
+msgid "表单"
+msgstr "形状"
+
+msgid "要求"
+msgstr "必要とする"
+
+msgid "规则"
+msgstr "ルール"
+
+msgid "视图"
+msgstr "ビュー"
+
+msgid "角色"
+msgstr "役割"
+
+msgid "记录"
+msgstr "記録"
+
+msgid "设备"
+msgstr "装置"
+
+msgid "设置"
+msgstr "設定"
+
+msgid "详情"
+msgstr "詳細"
+
+msgid "说明"
+msgstr "説明する"
+
+msgid "账号"
+msgstr "アカウント"
+
+msgid "账户"
+msgstr "アカウント"
+
+msgid "资源"
+msgstr "リソース"
+
+msgid "路径"
+msgstr "パス"
+
+msgid "路由"
+msgstr "ルーティング"
+
+msgid "过滤器"
+msgstr "フィルター"
+
+msgid "进度条"
+msgstr "プログレスバー"
+
+msgid "进程"
+msgstr "プロセス"
+
+msgid "选择器"
+msgstr "セレクタ"
+
+msgid "选项"
+msgstr "オプション"
+
+msgid "通道"
+msgstr "通路"
+
+msgid "速度"
+msgstr "スピード"
+
+msgid "邮件"
+msgstr "郵便"
+
+msgid "邮箱"
+msgstr "郵便"
+
+msgid "配置"
+msgstr "構成"
+
+msgid "配额"
+msgstr "クォータ"
+
+msgid "镜像"
+msgstr "鏡"
+
+msgid "闭包"
+msgstr "閉鎖"
+
+msgid "问题"
+msgstr "質問"
+
+msgid "限制"
+msgstr "限界"
+
+msgid "页面"
+msgstr "ページ"
+
+msgid "顶部"
+msgstr "トップ"
+
+msgid "一致"
+msgstr "一貫性のある"
+
+msgid "上行"
+msgstr "上向き"
+
+msgid "下行"
+msgstr "下向き"
+
+msgid "不会"
+msgstr "しません"
+
+msgid "不再"
+msgstr "もはや"
+
+msgid "不可"
+msgstr "いいえ"
+
+msgid "不稳定"
+msgstr "不安定な"
+
+msgid "不能"
+msgstr "できない"
+
+msgid "不足"
+msgstr "不十分"
+
+msgid "专用"
+msgstr "ひたむきな"
+
+msgid "丢失"
+msgstr "失った"
+
+msgid "中"
+msgstr "真ん中"
+
+msgid "中等"
+msgstr "中くらい"
+
+msgid "临时"
+msgstr "一時的"
+
+msgid "为空"
+msgstr "空です"
+
+msgid "主要"
+msgstr "主要"
+
+msgid "二次"
+msgstr "二次的"
+
+msgid "优先"
+msgstr "優先度"
+
+msgid "低"
+msgstr "低い"
+
+msgid "全局"
+msgstr "全体的な状況"
+
+msgid "全部"
+msgstr "全て"
+
+msgid "公共"
+msgstr "公共"
+
+msgid "公网"
+msgstr "パブリックネットワーク"
+
+msgid "兼容"
+msgstr "互換性がある"
+
+msgid "内网"
+msgstr "イントラネット"
+
+msgid "内部"
+msgstr "内部"
+
+msgid "再次"
+msgstr "また"
+
+msgid "出错"
+msgstr "エラー"
+
+msgid "初始"
+msgstr "イニシャル"
+
+msgid "动态"
+msgstr "動的"
+
+msgid "单个"
+msgstr "シングル"
+
+msgid "危险"
+msgstr "危険"
+
+msgid "原始"
+msgstr "オリジナル"
+
+msgid "反向"
+msgstr "逆行する"
+
+msgid "受控"
+msgstr "制御された"
+
+msgid "只能"
+msgstr "しかできない"
+
+msgid "可以"
+msgstr "できる"
+
+msgid "可用"
+msgstr "利用可能"
+
+msgid "可能"
+msgstr "可能"
+
+msgid "可逆"
+msgstr "可逆"
+
+msgid "可选"
+msgstr "オプション"
+
+msgid "各种"
+msgstr "様々な"
+
+msgid "唯一"
+msgstr "のみ"
+
+msgid "在线"
+msgstr "オンライン"
+
+msgid "基本"
+msgstr "基本"
+
+msgid "复杂"
+msgstr "複雑な"
+
+msgid "外网"
+msgstr "エクストラネット"
+
+msgid "外部"
+msgstr "外部の"
+
+msgid "多"
+msgstr "多くの"
+
+msgid "多个"
+msgstr "複数"
+
+msgid "大"
+msgstr "大きい"
+
+msgid "失效"
+msgstr "無効"
+
+msgid "失败"
+msgstr "失敗"
+
+msgid "安全"
+msgstr "安全性"
+
+msgid "完整"
+msgstr "全体"
+
+msgid "实际"
+msgstr "実際の"
+
+msgid "小"
+msgstr "小さい"
+
+msgid "少"
+msgstr "少し"
+
+msgid "局部"
+msgstr "地元"
+
+msgid "已用"
+msgstr "使用済み"
+
+msgid "异常"
+msgstr "異常な"
+
+msgid "强关"
+msgstr "強いパス"
+
+msgid "当前"
+msgstr "現在"
+
+msgid "必选"
+msgstr "必須"
+
+msgid "快速"
+msgstr "速い"
+
+msgid "成功"
+msgstr "成功"
+
+msgid "手动"
+msgstr "マニュアル"
+
+msgid "整个"
+msgstr "全体"
+
+msgid "新"
+msgstr "新しい"
+
+msgid "新增"
+msgstr "新しい"
+
+msgid "无描述"
+msgstr "説明なし"
+
+msgid "无效"
+msgstr "無効"
+
+msgid "无限制"
+msgstr "無制限"
+
+msgid "旧"
+msgstr "古い"
+
+msgid "最新"
+msgstr "最新の"
+
+msgid "最终"
+msgstr "ファイナル"
+
+msgid "有效"
+msgstr "効率的"
+
+msgid "未知"
+msgstr "未知"
+
+msgid "本地"
+msgstr "地元"
+
+msgid "次要"
+msgstr "二次的"
+
+msgid "正常"
+msgstr "普通"
+
+msgid "正确"
+msgstr "正しい"
+
+msgid "永久"
+msgstr "永続"
+
+msgid "活跃"
+msgstr "アクティブ"
+
+msgid "浅"
+msgstr "浅い"
+
+msgid "深"
+msgstr "深い"
+
+msgid "物理"
+msgstr "物理"
+
+msgid "独立"
+msgstr "独立した"
+
+msgid "现有"
+msgstr "既存"
+
+msgid "直接"
+msgstr "直接"
+
+msgid "相关"
+msgstr "関連している"
+
+msgid "短"
+msgstr "短い"
+
+msgid "离线"
+msgstr "オフライン"
+
+msgid "私有"
+msgstr "プライベート"
+
+msgid "稳定"
+msgstr "安定させる"
+
+msgid "空闲"
+msgstr "アイドル状態"
+
+msgid "简单"
+msgstr "単純"
+
+msgid "精确"
+msgstr "正確な"
+
+msgid "紧急"
+msgstr "緊急"
+
+msgid "繁忙"
+msgstr "忙しい"
+
+msgid "缓慢"
+msgstr "遅い"
+
+msgid "自动"
+msgstr "自動"
+
+msgid "自定义"
+msgstr "カスタマイズ"
+
+msgid "虚拟"
+msgstr "バーチャル"
+
+msgid "超时"
+msgstr "タイムアウト"
+
+msgid "足够"
+msgstr "十分"
+
+msgid "过期"
+msgstr "期限切れ"
+
+msgid "近似"
+msgstr "近似"
+
+msgid "远程"
+msgstr "リモート"
+
+msgid "通用"
+msgstr "ユニバーサル"
+
+msgid "逻辑"
+msgstr "論理"
+
+msgid "部分"
+msgstr "一部"
+
+msgid "重要"
+msgstr "重要"
+
+msgid "错误"
+msgstr "間違い"
+
+msgid "长"
+msgstr "長さ"
+
+msgid "静态"
+msgstr "静的"
+
+msgid "高"
+msgstr "高い"
+
+msgid "高级"
+msgstr "高度な"
+
+msgid "默认"
+msgstr "デフォルト"
+
+msgid "API"
+msgstr "API"
+
+msgid "CPU"
+msgstr "CPU"
+
+msgid "GPU"
+msgstr "GPU"
+
+msgid "HTTP"
+msgstr "HTTP"
+
+msgid "IP"
+msgstr "IP"
+
+msgid "ISO"
+msgstr "ISO"
+
+msgid "JSON"
+msgstr "JSON"
+
+msgid "NAT"
+msgstr "NAT"
+
+msgid "Token"
+msgstr "トークン"
+
+msgid "VNC"
+msgstr "VNC"
+
+msgid "Web"
+msgstr "ウェブ"
 
 msgid "CPU核心"
 msgstr "CPUコア"
@@ -27,56 +1278,44 @@ msgstr "CPUコア"
 msgid "GPU显存"
 msgstr "GPUメモリ"
 
-msgid "ISO镜像"
-msgstr "ISOイメージ"
-
-msgid "NAT端口"
-msgstr "NATポート"
-
-msgid "Web代理"
-msgstr "ウェブプロキシ"
-
-msgid "创建虚拟机"
-msgstr "仮想マシンを作成する"
-
-msgid "删除虚拟机"
-msgstr "仮想マシンを削除する"
-
-msgid "卸载ISO"
-msgstr "ISOをアンインストールする"
-
-msgid "卸载数据盘"
-msgstr "データディスクをアンマウントする"
-
-msgid "扫描虚拟机"
-msgstr "仮想マシンをスキャンする"
-
-msgid "挂载ISO"
-msgstr "ISO をマウントする"
-
-msgid "挂载数据盘"
-msgstr "データディスクをマウントする"
-
-msgid "编辑虚拟机"
-msgstr "仮想マシンの編集"
-
-msgid "虚拟机详情"
-msgstr "仮想マシンの詳細"
-
 msgid "IP地址"
 msgstr "IPアドレス"
 
 msgid "IP配额"
 msgstr "IP クォータ"
 
+msgid "ISO镜像"
+msgstr "ISOイメージ"
+
+msgid "NAT端口"
+msgstr "NATポート"
+
+msgid "VNC控制台"
+msgstr "VNCコンソール"
+
+msgid "Web代理"
+msgstr "ウェブプロキシ"
+
+msgid "一键远程"
+msgstr "ワンクリックリモコン"
+
+msgid "上传带宽"
+msgstr "アップロード帯域幅"
+
 msgid "上行带宽"
 msgstr "アップストリーム帯域幅"
 
-msgid "下拉菜单"
-msgstr "ドロップダウンメニュー"
+msgid "下划线"
+msgstr "下線"
 
 msgid "下行带宽"
 msgstr "ダウンリンク帯域幅"
+
+msgid "下载带宽"
+msgstr "ダウンロード帯域幅"
+
+msgid "个主机"
+msgstr "ホスト"
 
 msgid "个人信息"
 msgstr "個人情報"
@@ -87,17 +1326,23 @@ msgstr "個人設定"
 msgid "个人资料"
 msgstr "個人情報"
 
+msgid "个字符"
+msgstr "キャラクター"
+
 msgid "为虚拟机"
 msgstr "仮想マシン用"
 
-msgid "主所有者"
-msgstr "主要所有者"
+msgid "主机名"
+msgstr "ホスト名"
 
 msgid "主机名称"
 msgstr "ホスト名"
 
 msgid "主机总数"
 msgstr "ホストの総数"
+
+msgid "主机数"
+msgstr "ホストの数"
 
 msgid "主机数量"
 msgstr "ホストの数"
@@ -108,9 +1353,6 @@ msgstr "ホストの概要"
 msgid "主机筛选"
 msgstr "ホストフィルタリング"
 
-msgid "主机管理"
-msgstr "ホスト管理"
-
 msgid "主机类型"
 msgstr "ホストの種類"
 
@@ -119,6 +1361,9 @@ msgstr "ホストの詳細"
 
 msgid "主要接口"
 msgstr "メインインターフェース"
+
+msgid "从文件"
+msgstr "ファイルから"
 
 msgid "任务列表"
 msgstr "タスクリスト"
@@ -135,20 +1380,20 @@ msgstr "タスクの種類"
 msgid "任务详情"
 msgstr "ミッション詳細"
 
+msgid "使用者"
+msgstr "ユーザー"
+
+msgid "供选择"
+msgstr "選択用"
+
+msgid "保存中"
+msgstr "保存"
+
 msgid "保存失败"
 msgstr "保存に失敗しました"
 
 msgid "保存确认"
 msgstr "保存の確認"
-
-msgid "保存设置"
-msgstr "設定を保存する"
-
-msgid "保存配置"
-msgstr "設定の保存"
-
-msgid "保持一致"
-msgstr "一貫性を保つ"
 
 msgid "修改密码"
 msgstr "パスワードを変更する"
@@ -156,20 +1401,14 @@ msgstr "パスワードを変更する"
 msgid "修改邮箱"
 msgstr "電子メールを変更する"
 
-msgid "停止刷新"
-msgstr "リフレッシュをやめる"
+msgid "停止中"
+msgstr "停止中"
 
 msgid "光盘镜像"
 msgstr "ディスクイメージ"
 
 msgid "全部主机"
 msgstr "すべてのホスト"
-
-msgid "全部状态"
-msgstr "すべてのステータス"
-
-msgid "全部级别"
-msgstr "すべてのレベル"
 
 msgid "公网IP"
 msgstr "パブリックIP"
@@ -179,6 +1418,9 @@ msgstr "パブリックネットワークポート"
 
 msgid "公网网桥"
 msgstr "パブリックネットワークブリッジ"
+
+msgid "关机中"
+msgstr "シャットダウン中"
 
 msgid "内网IP"
 msgstr "イントラネットIP"
@@ -195,9 +1437,6 @@ msgstr "イントラネットブリッジ"
 msgid "分配主机"
 msgstr "ホストの割り当て"
 
-msgid "创建备份"
-msgstr "バックアップの作成"
-
 msgid "创建失败"
 msgstr "作成に失敗しました"
 
@@ -210,11 +1449,14 @@ msgstr "作成時間"
 msgid "创建用户"
 msgstr "ユーザーの作成"
 
+msgid "创建虚拟机"
+msgstr "仮想マシンを作成する"
+
+msgid "初始化"
+msgstr "初期化"
+
 msgid "删除主机"
 msgstr "ホストの削除"
-
-msgid "删除代理"
-msgstr "プロキシの削除"
 
 msgid "删除失败"
 msgstr "削除に失敗しました"
@@ -231,11 +1473,23 @@ msgstr "ユーザーの削除"
 msgid "删除硬盘"
 msgstr "ハードドライブを削除する"
 
+msgid "删除虚拟机"
+msgstr "仮想マシンを削除する"
+
+msgid "加载中"
+msgstr "読み込み中"
+
 msgid "加载失败"
 msgstr "読み込みに失敗しました"
 
+msgid "卸载ISO"
+msgstr "ISOをアンインストールする"
+
 msgid "卸载失败"
 msgstr "アンインストールに失敗しました"
+
+msgid "卸载数据盘"
+msgstr "データディスクをアンマウントする"
 
 msgid "反向代理"
 msgstr "リバースプロキシ"
@@ -243,8 +1497,11 @@ msgstr "リバースプロキシ"
 msgid "发件邮箱"
 msgstr "電子メールの送信"
 
-msgid "发送域名"
-msgstr "ドメイン名を送信する"
+msgid "取决于"
+msgstr "に応じて"
+
+msgid "受控端"
+msgstr "制御された端"
 
 msgid "台虚拟机"
 msgstr "仮想マシン"
@@ -258,6 +1515,9 @@ msgstr "バックエンドアドレス"
 msgid "后端端口"
 msgstr "バックエンドポート"
 
+msgid "启动中"
+msgstr "起動"
+
 msgid "启用失败"
 msgstr "有効化に失敗しました"
 
@@ -267,8 +1527,8 @@ msgstr "ユーザーを有効にする"
 msgid "响应错误"
 msgstr "応答エラー"
 
-msgid "基本信息"
-msgstr "基本情報"
+msgid "国际化"
+msgstr "国際化"
 
 msgid "基本配置"
 msgstr "基本構成"
@@ -282,20 +1542,11 @@ msgstr "ハンドリング機能"
 msgid "处理响应"
 msgstr "ハンドル応答"
 
-msgid "备份名称"
-msgstr "バックアップ名"
+msgid "备份中"
+msgstr "バックアップ中"
 
-msgid "备份文件"
-msgstr "バックアップファイル"
-
-msgid "备份注释"
-msgstr "バックアップコメント"
-
-msgid "备份管理"
-msgstr "バックアップ管理"
-
-msgid "备份说明"
-msgstr "バックアップ手順"
+msgid "复制到"
+msgstr "コピー先"
 
 msgid "复制失败"
 msgstr "コピーに失敗しました"
@@ -303,11 +1554,23 @@ msgstr "コピーに失敗しました"
 msgid "外网端口"
 msgstr "外部ネットワークポート"
 
+msgid "大写字母"
+msgstr "大文字"
+
 msgid "子网掩码"
 msgstr "サブネットマスク"
 
 msgid "存储容量"
 msgstr "ストレージ容量"
+
+msgid "存储路径"
+msgstr "ストレージパス"
+
+msgid "安全提示"
+msgstr "安全に関するヒント"
+
+msgid "安装盘"
+msgstr "インストールディスク"
 
 msgid "完整数据"
 msgstr "完全なデータ"
@@ -321,8 +1584,11 @@ msgstr "インスタンス名"
 msgid "实例概览"
 msgstr "インスタンスの概要"
 
-msgid "容器管理"
-msgstr "コンテナ管理"
+msgid "实例管理"
+msgstr "インスタンス管理"
+
+msgid "实例配置"
+msgstr "インスタンス構成"
 
 msgid "密码强度"
 msgstr "パスワードの強度"
@@ -330,8 +1596,41 @@ msgstr "パスワードの強度"
 msgid "小写字母"
 msgstr "小文字"
 
-msgid "开放注册"
-msgstr "オープン登録"
+msgid "已保存"
+msgstr "保存されました"
+
+msgid "已停止"
+msgstr "停止しました"
+
+msgid "已关闭"
+msgstr "閉店"
+
+msgid "已删除"
+msgstr "削除されました"
+
+msgid "已启用"
+msgstr "有効"
+
+msgid "已完成"
+msgstr "完了しました"
+
+msgid "已崩溃"
+msgstr "クラッシュした"
+
+msgid "已开启"
+msgstr "すでにオンになっています"
+
+msgid "已挂载"
+msgstr "取り付け済み"
+
+msgid "已暂停"
+msgstr "一時停止中"
+
+msgid "已禁用"
+msgstr "無効"
+
+msgid "已验证"
+msgstr "確認済み"
 
 msgid "强制关机"
 msgstr "強制シャットダウン"
@@ -348,8 +1647,17 @@ msgstr "パスワードを忘れる"
 msgid "快速操作"
 msgstr "素早い操作"
 
+msgid "总代理"
+msgstr "総代理店"
+
 msgid "总代理数"
 msgstr "エージェントの総数"
+
+msgid "总配额"
+msgstr "合計割り当て量"
+
+msgid "恢复中"
+msgstr "回復"
 
 msgid "恢复失败"
 msgstr "回復に失敗しました"
@@ -360,20 +1668,32 @@ msgstr "すべてのホスト"
 msgid "所有协议"
 msgstr "すべての契約"
 
-msgid "扫描备份"
-msgstr "スキャンバックアップ"
+msgid "扩展数据"
+msgstr "拡張データ"
+
+msgid "扩展选项"
+msgstr "拡張オプション"
 
 msgid "扫描失败"
 msgstr "スキャンに失敗しました"
 
+msgid "扫描虚拟机"
+msgstr "仮想マシンをスキャンする"
+
 msgid "找回密码"
 msgstr "パスワードを取得する"
+
+msgid "挂载ISO"
+msgstr "ISO をマウントする"
 
 msgid "挂载名称"
 msgstr "マウント名"
 
 msgid "挂载失败"
 msgstr "マウントに失敗しました"
+
+msgid "挂载数据盘"
+msgstr "データディスクをマウントする"
 
 msgid "接口类型"
 msgstr "インターフェースの種類"
@@ -399,6 +1719,9 @@ msgstr "メールの受信"
 msgid "数十分钟"
 msgstr "数十分"
 
+msgid "数据盘"
+msgstr "データディスク"
+
 msgid "数据磁盘"
 msgstr "データディスク"
 
@@ -407,6 +1730,15 @@ msgstr "データ管理"
 
 msgid "数据结构"
 msgstr "データ構造"
+
+msgid "文件名"
+msgstr "ファイル名"
+
+msgid "新密码"
+msgstr "新しいパスワード"
+
+msgid "新账号"
+msgstr "新しいアカウント"
 
 msgid "日志查看"
 msgstr "ログビュー"
@@ -432,11 +1764,11 @@ msgstr "表示番号"
 msgid "普通用户"
 msgstr "一般ユーザー"
 
+msgid "暂停中"
+msgstr "一時停止中"
+
 msgid "暂无主机"
 msgstr "まだホストがいません"
-
-msgid "暂无备份"
-msgstr "まだバックアップがありません"
 
 msgid "更新主机"
 msgstr "ホストを更新する"
@@ -446,6 +1778,9 @@ msgstr "アップデートエージェント"
 
 msgid "更新失败"
 msgstr "アップデートに失敗しました"
+
+msgid "更新成功"
+msgstr "更新に成功しました"
 
 msgid "更新用户"
 msgstr "ユーザーを更新する"
@@ -459,6 +1794,15 @@ msgstr "最終更新日"
 msgid "最小要求"
 msgstr "最小要件"
 
+msgid "月流量"
+msgstr "月間トラフィック"
+
+msgid "未分配"
+msgstr "割り当てられていません"
+
+msgid "未挂载"
+msgstr "未実装"
+
 msgid "未知主机"
 msgstr "不明なホスト"
 
@@ -471,11 +1815,20 @@ msgstr "不明な時間"
 msgid "未知系统"
 msgstr "未知のシステム"
 
+msgid "未配置"
+msgstr "未設定"
+
+msgid "未验证"
+msgstr "未検証"
+
 msgid "权限不足"
 msgstr "権限が不十分です"
 
 msgid "权限信息"
 msgstr "許可情報"
+
+msgid "条记录"
+msgstr "記録"
 
 msgid "查看全部"
 msgstr "すべて見る"
@@ -485,6 +1838,12 @@ msgstr "詳細を確認する"
 
 msgid "桌面端口"
 msgstr "デスクトップポート"
+
+msgid "模板数"
+msgstr "テンプレートの数"
+
+msgid "正在"
+msgstr "は"
 
 msgid "正常运行"
 msgstr "通常動作"
@@ -537,11 +1896,17 @@ msgstr "クリアなディスプレイ"
 msgid "爱快地址"
 msgstr "アイクアイアドレス"
 
+msgid "爱快配置"
+msgstr "アイクアイの構成"
+
 msgid "特殊字符"
 msgstr "特殊文字"
 
 msgid "用户列表"
 msgstr "ユーザーリスト"
+
+msgid "用户名"
+msgstr "ユーザー名"
 
 msgid "用户权限"
 msgstr "ユーザー権限"
@@ -558,6 +1923,9 @@ msgstr "ユーザーのログアウト"
 msgid "用户登录"
 msgstr "ユーザーログイン"
 
+msgid "用户空间"
+msgstr "ユーザースペース"
+
 msgid "用户管理"
 msgstr "ユーザー管理"
 
@@ -566,6 +1934,9 @@ msgstr "電源操作"
 
 msgid "电源管理"
 msgstr "電源管理"
+
+msgid "登录失败"
+msgstr "ログインに失敗しました"
 
 msgid "硬盘大小"
 msgstr "ハードドライブのサイズ"
@@ -609,6 +1980,9 @@ msgstr "無効化に失敗しました"
 msgid "移交失败"
 msgstr "ハンドオーバーが失敗しました"
 
+msgid "程序启动路径"
+msgstr "プログラムの起動パス"
+
 msgid "端口数量"
 msgstr "ポート数"
 
@@ -623,6 +1997,9 @@ msgstr "ポートフォワーディング"
 
 msgid "端口配置"
 msgstr "ポート設定"
+
+msgid "等待中"
+msgstr "待っている"
 
 msgid "管理主机"
 msgstr "管理ホスト"
@@ -642,6 +2019,9 @@ msgstr "システムパスワード"
 msgid "系统日志"
 msgstr "システムログ"
 
+msgid "系统映射"
+msgstr "システムマッピング"
+
 msgid "系统概览"
 msgstr "システム概要"
 
@@ -650,6 +2030,12 @@ msgstr "システムステータス"
 
 msgid "系统界面"
 msgstr "システムインターフェース"
+
+msgid "系统盘"
+msgstr "システムディスク"
+
+msgid "系统空间"
+msgstr "システムスペース"
 
 msgid "系统管理"
 msgstr "システム管理"
@@ -669,6 +2055,9 @@ msgstr "統計"
 msgid "编辑主机"
 msgstr "ホストの編集"
 
+msgid "编辑虚拟机"
+msgstr "仮想マシンの編集"
+
 msgid "网关地址"
 msgstr "ゲートウェイアドレス"
 
@@ -677,6 +2066,9 @@ msgstr "ゲートウェイエラー"
 
 msgid "网卡信息"
 msgstr "ネットワークカード情報"
+
+msgid "网卡列表"
+msgstr "ネットワークカード一覧"
 
 msgid "网卡名称"
 msgstr "ネットワークカード名"
@@ -690,11 +2082,17 @@ msgstr "ネットワークカードの種類"
 msgid "网卡配置"
 msgstr "ネットワークカードの構成"
 
+msgid "网络与配额"
+msgstr "ネットワークとクォータ"
+
 msgid "网络带宽"
 msgstr "ネットワーク帯域幅"
 
 msgid "网络服务"
 msgstr "ネットワークサービス"
+
+msgid "网络端口"
+msgstr "ネットワークポート"
 
 msgid "网络管理"
 msgstr "ネットワーク管理"
@@ -714,6 +2112,9 @@ msgstr "自動割り当て"
 msgid "自动刷新"
 msgstr "自動更新"
 
+msgid "自动化"
+msgstr "オートメーション"
+
 msgid "自动更新"
 msgstr "自動更新"
 
@@ -726,17 +2127,41 @@ msgstr "英字"
 msgid "获取数据"
 msgstr "データの取得"
 
+msgid "菜单项"
+msgstr "メニュー項目"
+
+msgid "虚拟化"
+msgstr "仮想化"
+
+msgid "虚拟机详情"
+msgstr "仮想マシンの詳細"
+
 msgid "计算资源"
 msgstr "コンピューティングリソース"
 
 msgid "认证方式"
 msgstr "認証方式"
 
+msgid "设备名"
+msgstr "デバイス名"
+
+msgid "设备直通"
+msgstr "デバイスのパススルー"
+
 msgid "设置失败"
 msgstr "セットアップに失敗しました"
 
+msgid "设置密码"
+msgstr "パスワードを設定する"
+
+msgid "访问Token"
+msgstr "アクセストークン"
+
 msgid "访问端口"
 msgstr "アクセスポート"
+
+msgid "访问配置"
+msgstr "アクセス構成"
 
 msgid "请求失败"
 msgstr "リクエストが失敗しました"
@@ -753,11 +2178,20 @@ msgstr "リソースの割り当て"
 msgid "资源配额"
 msgstr "リソース割り当て"
 
+msgid "转发规则"
+msgstr "転送ルール"
+
+msgid "运行中"
+msgstr "ランニング"
+
 msgid "运行日志"
 msgstr "実行ログ"
 
 msgid "返回登录"
 msgstr "ログインに戻る"
+
+msgid "还原中"
+msgstr "復元中"
 
 msgid "还原备份"
 msgstr "バックアップを復元する"
@@ -789,8 +2223,14 @@ msgstr "電子メールアドレス"
 msgid "邮箱验证"
 msgstr "メール認証"
 
+msgid "配置中"
+msgstr "設定中"
+
 msgid "配置名称"
 msgstr "構成名"
+
+msgid "配置池"
+msgstr "プールの構成"
 
 msgid "配额不足"
 msgstr "割り当てが不十分です"
@@ -798,11 +2238,17 @@ msgstr "割り当てが不十分です"
 msgid "配额充足"
 msgstr "十分な割り当て"
 
+msgid "重启中"
+msgstr "再起動中"
+
 msgid "重置失败"
 msgstr "リセットに失敗しました"
 
 msgid "重置密码"
 msgstr "パスワードをリセットする"
+
+msgid "重装中"
+msgstr "再インストール中"
 
 msgid "重装失败"
 msgstr "再インストールに失敗しました"
@@ -822,257 +2268,14 @@ msgstr "エラー処理"
 msgid "镜像文件"
 msgstr "画像ファイル"
 
+msgid "限制配置"
+msgstr "制限設定"
+
 msgid "随机生成"
 msgstr "ランダムに生成される"
 
-msgid "下划线"
-msgstr "下線"
-
-msgid "个主机"
-msgstr "ホスト"
-
-msgid "个字符"
-msgstr "キャラクター"
-
-msgid "主机名"
-msgstr "ホスト名"
-
-msgid "主机数"
-msgstr "ホストの数"
-
-msgid "从文件"
-msgstr "ファイルから"
-
-msgid "仪表盘"
-msgstr "ダッシュボード"
-
-msgid "使用率"
-msgstr "使用率"
-
-msgid "使用者"
-msgstr "ユーザー"
-
-msgid "供选择"
-msgstr "選択用"
-
-msgid "保存中"
-msgstr "保存"
-
-msgid "停止中"
-msgstr "停止中"
-
-msgid "关机中"
-msgstr "シャットダウン中"
-
-msgid "初始化"
-msgstr "初期化"
-
-msgid "利用率"
-msgstr "利用"
-
-msgid "剪贴板"
-msgstr "クリップボード"
-
-msgid "加载中"
-msgstr "読み込み中"
-
-msgid "取决于"
-msgstr "に応じて"
-
-msgid "启动中"
-msgstr "起動"
-
-msgid "国际化"
-msgstr "国際化"
-
-msgid "备份中"
-msgstr "バックアップ中"
-
-msgid "复制到"
-msgstr "コピー先"
-
-msgid "复杂度"
-msgstr "複雑"
-
-msgid "安装盘"
-msgstr "インストールディスク"
-
-msgid "对话框"
-msgstr "ダイアログボックス"
-
-msgid "已保存"
-msgstr "保存されました"
-
-msgid "已停止"
-msgstr "停止しました"
-
-msgid "已关闭"
-msgstr "閉店"
-
-msgid "已删除"
-msgstr "削除されました"
-
-msgid "已启用"
-msgstr "有効"
-
-msgid "已完成"
-msgstr "完了しました"
-
-msgid "已崩溃"
-msgstr "クラッシュした"
-
-msgid "已开启"
-msgstr "すでにオンになっています"
-
-msgid "已挂载"
-msgstr "取り付け済み"
-
-msgid "已暂停"
-msgstr "一時停止中"
-
-msgid "已禁用"
-msgstr "無効"
-
-msgid "已验证"
-msgstr "確認済み"
-
-msgid "总代理"
-msgstr "総代理店"
-
-msgid "总配额"
-msgstr "合計割り当て量"
-
-msgid "恢复中"
-msgstr "回復"
-
-msgid "所有权"
-msgstr "所有"
-
-msgid "所有者"
-msgstr "所有者"
-
-msgid "拦截器"
-msgstr "インターセプター"
-
-msgid "控制台"
-msgstr "コンソール"
-
-msgid "数据盘"
-msgstr "データディスク"
-
-msgid "文件名"
-msgstr "ファイル名"
-
-msgid "新密码"
-msgstr "新しいパスワード"
-
-msgid "无描述"
-msgstr "説明なし"
-
-msgid "无限制"
-msgstr "無制限"
-
-msgid "暂停中"
-msgstr "一時停止中"
-
-msgid "月流量"
-msgstr "月間トラフィック"
-
-msgid "有效性"
-msgstr "効果"
-
-msgid "服务器"
-msgstr "サーバ"
-
-msgid "未分配"
-msgstr "割り当てられていません"
-
-msgid "未挂载"
-msgstr "未実装"
-
-msgid "未配置"
-msgstr "未設定"
-
-msgid "未验证"
-msgstr "未検証"
-
-msgid "条记录"
-msgstr "記録"
-
-msgid "格式化"
-msgstr "形式"
-
-msgid "模板数"
-msgstr "テンプレートの数"
-
-msgid "注册表"
-msgstr "レジストリ"
-
-msgid "浏览器"
-msgstr "ブラウザ"
-
-msgid "用户名"
-msgstr "ユーザー名"
-
-msgid "第一个"
-msgstr "最初のもの"
-
-msgid "第一台"
-msgstr "最初のもの"
-
-msgid "等待中"
-msgstr "待っている"
-
-msgid "管理员"
-msgstr "管理者"
-
-msgid "系统盘"
-msgstr "システムディスク"
-
-msgid "自动化"
-msgstr "オートメーション"
-
-msgid "菜单项"
-msgstr "メニュー項目"
-
-msgid "虚拟化"
-msgstr "仮想化"
-
-msgid "虚拟机"
-msgstr "仮想マシン"
-
-msgid "请输入"
-msgstr "入力してください"
-
-msgid "请选择"
-msgstr "選択してください"
-
-msgid "过滤器"
-msgstr "フィルター"
-
-msgid "运行中"
-msgstr "ランニング"
-
-msgid "还原中"
-msgstr "復元中"
-
-msgid "进度条"
-msgstr "プログレスバー"
-
-msgid "选择器"
-msgstr "セレクタ"
-
-msgid "配置中"
-msgstr "設定中"
-
-msgid "重启中"
-msgstr "再起動中"
-
-msgid "重装中"
-msgstr "再インストール中"
-
-msgid "默认值"
-msgstr "デフォルト値"
+msgid "高级配置"
+msgstr "高度な構成"
 
 msgid "一个"
 msgstr "1つ"
@@ -1080,692 +2283,50 @@ msgstr "1つ"
 msgid "一封"
 msgstr "一文字"
 
-msgid "一致"
-msgstr "一貫性のある"
-
-msgid "一键"
-msgstr "ワンクリック"
-
-msgid "上行"
-msgstr "上向き"
-
-msgid "下行"
-msgstr "下向き"
-
-msgid "不会"
-msgstr "しません"
-
-msgid "不再"
-msgstr "もはや"
-
-msgid "不可"
-msgstr "いいえ"
-
-msgid "不能"
-msgstr "できない"
-
-msgid "不足"
-msgstr "不十分"
-
-msgid "丢失"
-msgstr "失った"
-
-msgid "两次"
-msgstr "二度"
-
-msgid "中文"
-msgstr "中国語"
-
-msgid "中等"
-msgstr "中くらい"
-
-msgid "临时"
-msgstr "一時的"
-
-msgid "为空"
-msgstr "空です"
-
-msgid "主机"
-msgstr "ホスト"
-
-msgid "主要"
-msgstr "主要"
-
-msgid "主题"
-msgstr "テーマ"
-
-msgid "事件"
-msgstr "イベント"
-
-msgid "二次"
-msgstr "二次的"
-
-msgid "交互"
-msgstr "交流"
-
-msgid "代理"
-msgstr "演技"
-
-msgid "代码"
-msgstr "コード"
-
-msgid "任务"
-msgstr "タスク"
-
-msgid "优先"
-msgstr "優先度"
-
-msgid "作为"
-msgstr "として"
-
-msgid "使用"
-msgstr "使用"
-
-msgid "例如"
-msgstr "例えば"
-
-msgid "侧边"
-msgstr "側"
-
-msgid "保存"
-msgstr "保存"
-
-msgid "保持"
-msgstr "保つ"
-
-msgid "保留"
-msgstr "予約する"
-
-msgid "信息"
-msgstr "情報"
-
-msgid "修改"
-msgstr "改訂"
-
-msgid "修正"
-msgstr "修正"
-
-msgid "假设"
-msgstr "仮説"
-
-msgid "停止"
-msgstr "停止"
-
-msgid "允许"
-msgstr "許可する"
-
-msgid "元素"
-msgstr "要素"
-
-msgid "光盘"
-msgstr "CD"
-
-msgid "全部"
-msgstr "全て"
-
-msgid "公共"
-msgstr "公共"
-
-msgid "公网"
-msgstr "パブリックネットワーク"
-
-msgid "共享"
-msgstr "共有"
-
-msgid "关机"
-msgstr "シャットダウン"
-
-msgid "关系"
-msgstr "関係"
-
-msgid "关闭"
-msgstr "閉鎖"
-
-msgid "其他"
-msgstr "他の"
-
-msgid "兼容"
-msgstr "互換性がある"
-
-msgid "内存"
-msgstr "メモリ"
-
-msgid "内容"
-msgstr "コンテンツ"
-
-msgid "内网"
-msgstr "イントラネット"
-
-msgid "内部"
-msgstr "内部"
-
-msgid "再次"
-msgstr "また"
-
-msgid "出错"
-msgstr "エラー"
-
-msgid "函数"
-msgstr "関数"
-
-msgid "分享"
-msgstr "共有"
-
-msgid "分割"
-msgstr "セグメンテーション"
-
-msgid "分离"
-msgstr "分離"
-
-msgid "分配"
-msgstr "配布する"
-
-msgid "分钟"
-msgstr "分"
-
-msgid "分隔"
-msgstr "別"
-
-msgid "切换"
-msgstr "スイッチ"
-
-msgid "列表"
-msgstr "リスト"
-
-msgid "创建"
-msgstr "作成する"
-
-msgid "删除"
-msgstr "消去"
-
-msgid "判断"
-msgstr "裁判官"
-
-msgid "别名"
-msgstr "エイリアス"
-
-msgid "刷新"
-msgstr "リフレッシュする"
-
-msgid "前缀"
-msgstr "接頭辞"
-
-msgid "功耗"
-msgstr "消費電力"
-
-msgid "功能"
-msgstr "関数"
-
-msgid "加载"
-msgstr "負荷"
-
-msgid "动作"
-msgstr "アクション"
-
-msgid "动态"
-msgstr "動的"
-
-msgid "勾选"
-msgstr "チェック"
-
-msgid "包含"
-msgstr "含む"
-
-msgid "匹配"
-msgstr "マッチ"
-
-msgid "区域"
-msgstr "エリア"
-
-msgid "协议"
-msgstr "プロトコル"
-
-msgid "单个"
-msgstr "シングル"
-
-msgid "单位"
-msgstr "ユニット"
-
-msgid "占用"
-msgstr "占める"
-
-msgid "卡片"
-msgstr "カード"
-
-msgid "卸载"
-msgstr "アンインストールする"
-
-msgid "历史"
-msgstr "歴史"
-
-msgid "原始"
-msgstr "オリジナル"
-
-msgid "参数"
-msgstr "パラメータ"
-
-msgid "及其"
-msgstr "そして"
-
-msgid "反向"
-msgstr "逆行する"
-
-msgid "发件"
-msgstr "送信"
-
-msgid "发送"
-msgstr "送信"
-
-msgid "取消"
-msgstr "キャンセル"
-
-msgid "受控"
-msgstr "制御された"
-
-msgid "变为"
-msgstr "なる"
-
-msgid "变化"
-msgstr "変化"
-
-msgid "变更"
-msgstr "変化"
-
-msgid "变量"
-msgstr "変数"
-
-msgid "只能"
-msgstr "しかできない"
-
-msgid "可以"
-msgstr "できる"
-
-msgid "可用"
-msgstr "利用可能"
-
-msgid "可能"
-msgstr "可能"
-
-msgid "可逆"
-msgstr "可逆"
-
-msgid "可选"
-msgstr "オプション"
-
-msgid "各种"
-msgstr "様々な"
-
-msgid "合并"
-msgstr "マージ"
-
-msgid "同意"
-msgstr "同意する"
-
-msgid "同时"
-msgstr "同時に"
-
-msgid "名称"
-msgstr "名前"
-
-msgid "后续"
-msgstr "フォローアップ"
-
-msgid "后缀"
-msgstr "サフィックス"
-
-msgid "后该"
-msgstr "後は時間だ"
-
-msgid "否则"
-msgstr "さもないと"
-
-msgid "启动"
-msgstr "起動する"
-
-msgid "启用"
-msgstr "有効にする"
-
-msgid "响应"
-msgstr "応答"
-
-msgid "唯一"
-msgstr "のみ"
-
-msgid "因为"
-msgstr "なぜなら"
-
-msgid "图标"
-msgstr "アイコン"
-
-msgid "地址"
-msgstr "住所"
-
-msgid "域名"
-msgstr "ドメイン名"
-
-msgid "基本"
-msgstr "基本"
-
-msgid "堆栈"
-msgstr "スタック"
-
-msgid "处理"
-msgstr "対処する"
-
-msgid "备份"
-msgstr "バックアップ"
-
-msgid "备注"
-msgstr "述べる"
-
-msgid "复制"
-msgstr "コピー"
-
-msgid "复合"
-msgstr "複雑な"
-
-msgid "外部"
-msgstr "外部の"
-
-msgid "多个"
-msgstr "複数"
+msgid "个数"
+msgstr "番号"
 
 msgid "大小"
 msgstr "サイズ"
 
-msgid "失效"
-msgstr "無効"
-
-msgid "失败"
-msgstr "失敗"
-
-msgid "如果"
-msgstr "もし"
-
-msgid "字母"
-msgstr "手紙"
-
-msgid "字符"
-msgstr "キャラクター"
-
-msgid "字节"
-msgstr "バイト"
-
-msgid "存储"
-msgstr "ストレージ"
-
-msgid "存在"
-msgstr "存在する"
-
-msgid "安全"
-msgstr "安全性"
-
-msgid "完全"
-msgstr "完全に"
-
-msgid "完成"
-msgstr "仕上げる"
-
-msgid "完整"
-msgstr "全体"
-
-msgid "定义"
-msgstr "意味"
-
-msgid "实例"
-msgstr "例"
-
-msgid "实际"
-msgstr "実際の"
-
-msgid "容器"
-msgstr "容器"
-
 msgid "容量"
 msgstr "容量"
-
-msgid "密码"
-msgstr "パスワード"
-
-msgid "对应"
-msgstr "対応する"
-
-msgid "对象"
-msgstr "物体"
-
-msgid "导入"
-msgstr "輸入"
-
-msgid "导出"
-msgstr "輸出"
-
-msgid "导致"
-msgstr "につながる"
-
-msgid "导航"
-msgstr "ナビゲーション"
-
-msgid "少于"
-msgstr "未満"
-
-msgid "属性"
-msgstr "財産"
-
-msgid "已用"
-msgstr "使用済み"
-
-msgid "布局"
-msgstr "レイアウト"
-
-msgid "带宽"
-msgstr "帯域幅"
-
-msgid "平台"
-msgstr "プラットフォーム"
-
-msgid "应用"
-msgstr "応用"
-
-msgid "应该"
-msgstr "すべき"
-
-msgid "引擎"
-msgstr "エンジン"
-
-msgid "弹窗"
-msgstr "ポップアップウィンドウ"
-
-msgid "强关"
-msgstr "強いパス"
-
-msgid "强制"
-msgstr "力"
-
-msgid "强度"
-msgstr "強さ"
-
-msgid "当前"
-msgstr "現在"
-
-msgid "必须"
-msgstr "しなければならない"
-
-msgid "忘记"
-msgstr "忘れる"
-
-msgid "快速"
-msgstr "速い"
-
-msgid "性能"
-msgstr "パフォーマンス"
 
 msgid "总数"
 msgstr "合計"
 
-msgid "恢复"
-msgstr "回復する"
-
-msgid "您好"
-msgstr "こんにちは"
-
-msgid "情况"
-msgstr "状態"
-
-msgid "成为"
-msgstr "なる"
-
-msgid "成功"
-msgstr "成功"
-
-msgid "我们"
-msgstr "私たち"
-
-msgid "截图"
-msgstr "スクリーンショット"
-
-msgid "所有"
-msgstr "全て"
-
-msgid "才能"
-msgstr "タレント"
-
-msgid "打开"
-msgstr "開ける"
-
-msgid "执行"
-msgstr "埋め込む"
-
-msgid "扩展"
-msgstr "拡大する"
-
-msgid "扫描"
-msgstr "走査"
-
-msgid "折叠"
-msgstr "折り畳み"
-
-msgid "拥有"
-msgstr "持っている"
-
-msgid "挂载"
-msgstr "マウント"
-
-msgid "指令"
-msgstr "命令"
-
-msgid "指定"
-msgstr "特定"
-
-msgid "按钮"
-msgstr "ボタン"
-
-msgid "授权"
-msgstr "承認する"
-
-msgid "接口"
-msgstr "インタフェース"
-
-msgid "控制"
-msgstr "コントロール"
-
-msgid "描述"
-msgstr "説明する"
-
-msgid "提交"
-msgstr "提出する"
-
-msgid "提取"
-msgstr "抽出する"
-
-msgid "提示"
-msgstr "ヒント"
-
-msgid "搜索"
-msgstr "検索"
-
-msgid "撤销"
-msgstr "キャンセル"
-
-msgid "操作"
-msgstr "操作する"
-
-msgid "支持"
-msgstr "サポート"
-
-msgid "收件"
-msgstr "受け取る"
-
-msgid "收到"
-msgstr "受け取る"
-
-msgid "收集"
-msgstr "集める"
-
-msgid "改密"
-msgstr "パスワードを変更する"
-
-msgid "数字"
-msgstr "番号"
-
-msgid "数据"
-msgstr "データ"
-
-msgid "数组"
-msgstr "配列"
-
 msgid "数量"
 msgstr "量"
 
-msgid "整个"
-msgstr "全体"
+msgid "条数"
+msgstr "アイテム数"
 
-msgid "文件"
-msgstr "書類"
+msgid "长度"
+msgstr "長さ"
 
-msgid "文字"
-msgstr "言葉"
+msgid "分钟"
+msgstr "分"
 
-msgid "文本"
-msgstr "文章"
+msgid "周期"
+msgstr "サイクル"
 
-msgid "新增"
-msgstr "新しい"
-
-msgid "方式"
-msgstr "方法"
-
-msgid "无效"
-msgstr "無効"
-
-msgid "无法"
-msgstr "不可能"
-
-msgid "日志"
-msgstr "ログ"
-
-msgid "时会"
-msgstr "時間の打ち合わせ"
+msgid "日期"
+msgstr "日付"
 
 msgid "时间"
 msgstr "時間"
 
-msgid "映射"
-msgstr "マッピング"
+msgid "每小时"
+msgstr "1時間あたり"
 
-msgid "是否"
-msgstr "かどうか"
+msgid "每日"
+msgstr "毎日"
 
-msgid "显卡"
-msgstr "グラフィックスカード"
+msgid "每月"
+msgstr "月あたり"
 
-msgid "显存"
-msgstr "ビデオメモリ"
-
-msgid "显示"
-msgstr "見せる"
-
-msgid "暂停"
-msgstr "一時停止"
+msgid "秒"
+msgstr "2番"
 
 msgid "暂无"
 msgstr "まだありません"
@@ -1776,8 +2337,461 @@ msgstr "一時的"
 msgid "暂未"
 msgstr "まだ"
 
-msgid "更新"
-msgstr "更新する"
+msgid "与"
+msgstr "そして"
+
+msgid "且"
+msgstr "そして"
+
+msgid "但是"
+msgstr "しかし"
+
+msgid "及其"
+msgstr "そして"
+
+msgid "同时"
+msgstr "同時に"
+
+msgid "否则"
+msgstr "さもないと"
+
+msgid "和"
+msgstr "そして"
+
+msgid "因为"
+msgstr "なぜなら"
+
+msgid "如果"
+msgstr "もし"
+
+msgid "或"
+msgstr "または"
+
+msgid "所以"
+msgstr "それで"
+
+msgid "然而"
+msgstr "しかし"
+
+msgid "虽然"
+msgstr "それでも"
+
+msgid "非"
+msgstr "いいえ"
+
+msgid "不"
+msgstr "いいえ"
+
+msgid "也"
+msgstr "また"
+
+msgid "从"
+msgstr "から"
+
+msgid "会"
+msgstr "ミーティング"
+
+msgid "只"
+msgstr "のみ"
+
+msgid "太"
+msgstr "あまりにも"
+
+msgid "将"
+msgstr "意思"
+
+msgid "就"
+msgstr "すぐに"
+
+msgid "已"
+msgstr "すでに"
+
+msgid "应该"
+msgstr "すべき"
+
+msgid "很"
+msgstr "とても"
+
+msgid "必须"
+msgstr "しなければならない"
+
+msgid "您"
+msgstr "あなた"
+
+msgid "才"
+msgstr "タレント"
+
+msgid "时"
+msgstr "時間"
+
+msgid "更加"
+msgstr "もっと"
+
+msgid "最"
+msgstr "ほとんど"
+
+msgid "未"
+msgstr "まだ"
+
+msgid "比较"
+msgstr "比較する"
+
+msgid "的"
+msgstr "の"
+
+msgid "相当"
+msgstr "とても"
+
+msgid "真的"
+msgstr "本物"
+
+msgid "确实"
+msgstr "本当に"
+
+msgid "能"
+msgstr "できる"
+
+msgid "至少"
+msgstr "少なくとも"
+
+msgid "请"
+msgstr "お願いします"
+
+msgid "还"
+msgstr "戻る"
+
+msgid "都"
+msgstr "全て"
+
+msgid "都将"
+msgstr "一般的な"
+
+msgid "需要"
+msgstr "必要"
+
+msgid "非常"
+msgstr "とても"
+
+msgid "为"
+msgstr "のために"
+
+msgid "作为"
+msgstr "として"
+
+msgid "使用"
+msgstr "使用"
+
+msgid "关于"
+msgstr "について"
+
+msgid "到"
+msgstr "到着"
+
+msgid "在"
+msgstr "存在する"
+
+msgid "对"
+msgstr "右"
+
+msgid "对于"
+msgstr "のために"
+
+msgid "按"
+msgstr "によると"
+
+msgid "按照"
+msgstr "によると"
+
+msgid "根据"
+msgstr "によると"
+
+msgid "用于"
+msgstr "に使用される"
+
+msgid "由于"
+msgstr "なぜなら"
+
+msgid "通过"
+msgstr "合格"
+
+msgid "其他"
+msgstr "他の"
+
+msgid "另"
+msgstr "他の"
+
+msgid "所有"
+msgstr "全て"
+
+msgid "每个"
+msgstr "それぞれ"
+
+msgid "自己"
+msgstr "自分の"
+
+msgid "这"
+msgstr "これ"
+
+msgid "这个"
+msgstr "これ"
+
+msgid "这些"
+msgstr "これら"
+
+msgid "这封"
+msgstr "この手紙"
+
+msgid "这是"
+msgstr "これは"
+
+msgid "那"
+msgstr "それ"
+
+msgid "那个"
+msgstr "それ"
+
+msgid "那些"
+msgstr "それらです"
+
+msgid "例如"
+msgstr "例えば"
+
+msgid "包含"
+msgstr "含む"
+
+msgid "包括"
+msgstr "含む"
+
+msgid "提示"
+msgstr "ヒント"
+
+msgid "提醒"
+msgstr "思い出させる"
+
+msgid "比如"
+msgstr "例えば"
+
+msgid "注意"
+msgstr "知らせ"
+
+msgid "补充"
+msgstr "補充する"
+
+msgid "除外"
+msgstr "を除外する"
+
+msgid "使得"
+msgstr "作る"
+
+msgid "导致"
+msgstr "につながる"
+
+msgid "引起"
+msgstr "原因"
+
+msgid "造成"
+msgstr "原因"
+
+msgid "中文"
+msgstr "中国語"
+
+msgid "句号"
+msgstr "期間"
+
+msgid "字母"
+msgstr "手紙"
+
+msgid "字符"
+msgstr "キャラクター"
+
+msgid "字节"
+msgstr "バイト"
+
+msgid "数字"
+msgstr "番号"
+
+msgid "英文"
+msgstr "英語"
+
+msgid "逗号"
+msgstr "コンマ"
+
+msgid "浅色"
+msgstr "明るい色"
+
+msgid "深色"
+msgstr "暗い"
+
+msgid "灰色"
+msgstr "グレー"
+
+msgid "白色"
+msgstr "白"
+
+msgid "红色"
+msgstr "赤"
+
+msgid "绿色"
+msgstr "緑"
+
+msgid "蓝色"
+msgstr "青"
+
+msgid "颜色"
+msgstr "色"
+
+msgid "黄色"
+msgstr "黄色"
+
+msgid "黑色"
+msgstr "黒"
+
+msgid "(JSON格式)"
+msgstr "(JSON形式)"
+
+msgid "一条"
+msgstr "ワンピース"
+
+msgid "两次"
+msgstr "二度"
+
+msgid "主所有者"
+msgstr "主要所有者"
+
+msgid "使用情况"
+msgstr "使用法"
+
+msgid "停止刷新"
+msgstr "リフレッシュをやめる"
+
+msgid "光盘"
+msgstr "CD"
+
+msgid "分隔"
+msgstr "別"
+
+msgid "列表"
+msgstr "リスト"
+
+msgid "判断"
+msgstr "裁判官"
+
+msgid "前缀"
+msgstr "接頭辞"
+
+msgid "加载"
+msgstr "負荷"
+
+msgid "占用"
+msgstr "占める"
+
+msgid "卡片"
+msgstr "カード"
+
+msgid "历史"
+msgstr "歴史"
+
+msgid "发件"
+msgstr "送信"
+
+msgid "变为"
+msgstr "なる"
+
+msgid "变化"
+msgstr "変化"
+
+msgid "后续"
+msgstr "フォローアップ"
+
+msgid "后缀"
+msgstr "サフィックス"
+
+msgid "后该"
+msgstr "後は時間だ"
+
+msgid "基本信息"
+msgstr "基本情報"
+
+msgid "处理"
+msgstr "対処する"
+
+msgid "复合"
+msgstr "複雑な"
+
+msgid "存在"
+msgstr "存在する"
+
+msgid "完全"
+msgstr "完全に"
+
+msgid "容器管理"
+msgstr "コンテナ管理"
+
+msgid "对应"
+msgstr "対応する"
+
+msgid "少于"
+msgstr "未満"
+
+msgid "左侧"
+msgstr "左側"
+
+msgid "开放注册"
+msgstr "オープン登録"
+
+msgid "忘记"
+msgstr "忘れる"
+
+msgid "您好"
+msgstr "こんにちは"
+
+msgid "您的"
+msgstr "あなたの"
+
+msgid "情况"
+msgstr "状態"
+
+msgid "我们"
+msgstr "私たち"
+
+msgid "才能"
+msgstr "タレント"
+
+msgid "扩展"
+msgstr "拡大する"
+
+msgid "拥有"
+msgstr "持っている"
+
+msgid "控制"
+msgstr "コントロール"
+
+msgid "提供"
+msgstr "供給"
+
+msgid "操作"
+msgstr "操作する"
+
+msgid "收件"
+msgstr "受け取る"
+
+msgid "收到"
+msgstr "受け取る"
+
+msgid "改密"
+msgstr "パスワードを変更する"
+
+msgid "无法"
+msgstr "不可能"
+
+msgid "时会"
+msgstr "時間の打ち合わせ"
+
+msgid "是否"
+msgstr "かどうか"
+
+msgid "显示"
+msgstr "見せる"
 
 msgid "最低"
 msgstr "最低"
@@ -1788,263 +2802,41 @@ msgstr "やっと"
 msgid "最小"
 msgstr "最小"
 
-msgid "最新"
-msgstr "最新の"
-
-msgid "最终"
-msgstr "ファイナル"
-
-msgid "有效"
-msgstr "効率的"
-
-msgid "服务"
-msgstr "仕える"
-
-msgid "未知"
-msgstr "未知"
-
-msgid "机器"
-msgstr "機械"
-
-msgid "权限"
-msgstr "権限"
-
-msgid "条件"
-msgstr "状態"
-
-msgid "条数"
-msgstr "アイテム数"
-
 msgid "来自"
 msgstr "から"
-
-msgid "构建"
-msgstr "建てる"
-
-msgid "构造"
-msgstr "構造"
-
-msgid "查找"
-msgstr "探す"
-
-msgid "查收"
-msgstr "チェック"
-
-msgid "查看"
-msgstr "チェック"
-
-msgid "标签"
-msgstr "ラベル"
-
-msgid "样式"
-msgstr "スタイル"
-
-msgid "核心"
-msgstr "コア"
-
-msgid "根据"
-msgstr "によると"
-
-msgid "格式"
-msgstr "形式"
-
-msgid "桌面"
-msgstr "デスクトップ"
-
-msgid "检查"
-msgstr "診る"
-
-msgid "检测"
-msgstr "検出"
-
-msgid "概览"
-msgstr "概要"
-
-msgid "模块"
-msgstr "モジュール"
-
-msgid "模式"
-msgstr "モデル"
 
 msgid "模态"
 msgstr "モーダル"
 
-msgid "模板"
-msgstr "テンプレート"
-
-msgid "正在"
-msgstr "は"
-
-msgid "正常"
-msgstr "普通"
-
-msgid "正文"
-msgstr "文章"
-
-msgid "正确"
-msgstr "正しい"
-
-msgid "每月"
-msgstr "月あたり"
-
-msgid "比如"
-msgstr "例えば"
-
 msgid "没有"
 msgstr "いいえ"
 
-msgid "注册"
-msgstr "登録する"
+msgid "注册表"
+msgstr "レジストリ"
 
-msgid "注意"
-msgstr "知らせ"
-
-msgid "注释"
-msgstr "コメント"
-
-msgid "流量"
-msgstr "流れ"
-
-msgid "浅色"
-msgstr "明るい色"
-
-msgid "消息"
-msgstr "情報"
-
-msgid "深色"
-msgstr "暗い"
-
-msgid "添加"
-msgstr "に追加"
-
-msgid "清空"
-msgstr "クリア"
-
-msgid "清除"
-msgstr "クリア"
-
-msgid "温度"
-msgstr "温度"
-
-msgid "渲染"
-msgstr "レンダリング"
-
-msgid "灰色"
-msgstr "グレー"
-
-msgid "点击"
-msgstr "クリック"
+msgid "浏览器"
+msgstr "ブラウザ"
 
 msgid "爱快"
 msgstr "早く愛してください"
 
-msgid "版本"
-msgstr "バージョン"
-
-msgid "状态"
-msgstr "州"
-
-msgid "独立"
-msgstr "独立した"
-
-msgid "生成"
-msgstr "生成する"
-
-msgid "生效"
-msgstr "発効する"
-
-msgid "用于"
-msgstr "に使用される"
-
-msgid "用尽"
-msgstr "疲れ果てた"
-
-msgid "用户"
-msgstr "ユーザー"
-
-msgid "用途"
-msgstr "使用"
-
-msgid "用量"
-msgstr "投与量"
-
 msgid "由后"
 msgstr "後ろから"
-
-msgid "电源"
-msgstr "電源"
 
 msgid "留空"
 msgstr "空白のままにしておきます"
 
-msgid "登出"
-msgstr "サインアウト"
-
-msgid "登录"
-msgstr "ログイン"
-
-msgid "监听"
-msgstr "モニター"
-
-msgid "监控"
-msgstr "モニター"
-
 msgid "目标"
 msgstr "ターゲット"
 
-msgid "直接"
-msgstr "直接"
+msgid "第一个"
+msgstr "最初のもの"
 
-msgid "相关"
-msgstr "関連している"
-
-msgid "看到"
-msgstr "見る"
-
-msgid "硬盘"
-msgstr "ハードディスク"
-
-msgid "确保"
-msgstr "確認する"
-
-msgid "确定"
-msgstr "もちろん"
-
-msgid "确认"
-msgstr "確認する"
-
-msgid "磁盘"
-msgstr "ディスク"
-
-msgid "禁用"
-msgstr "無効にする"
-
-msgid "移交"
-msgstr "移行"
-
-msgid "移除"
-msgstr "取り除く"
-
-msgid "程序"
-msgstr "プログラム"
-
-msgid "稍候"
-msgstr "ちょっと待ってください"
-
-msgid "立即"
-msgstr "すぐに"
-
-msgid "端口"
-msgstr "ポート"
+msgid "第一台"
+msgstr "最初のもの"
 
 msgid "等待"
 msgstr "待って"
-
-msgid "筛选"
-msgstr "フィルター"
-
-msgid "简化"
-msgstr "単純化する"
 
 msgid "管理"
 msgstr "管理"
@@ -2052,107 +2844,11 @@ msgstr "管理"
 msgid "类名"
 msgstr "クラス名"
 
-msgid "类型"
-msgstr "タイプ"
-
-msgid "系统"
-msgstr "システム"
-
-msgid "红色"
-msgstr "赤"
-
-msgid "级别"
-msgstr "レベル"
-
-msgid "组件"
-msgstr "コンポーネント"
-
-msgid "结束"
-msgstr "仕上げる"
-
-msgid "统计"
-msgstr "統計"
-
-msgid "继续"
-msgstr "続く"
-
-msgid "绿色"
-msgstr "緑"
-
-msgid "编辑"
-msgstr "編集"
-
-msgid "网关"
-msgstr "ゲートウェイ"
-
-msgid "网卡"
-msgstr "ネットワークカード"
-
-msgid "网桥"
-msgstr "橋"
-
-msgid "网络"
-msgstr "ネットワーク"
-
-msgid "网网"
-msgstr "ネットネット"
-
 msgid "翻译"
 msgstr "翻訳する"
 
 msgid "耐心"
 msgstr "忍耐"
-
-msgid "联系"
-msgstr "接続する"
-
-msgid "自动"
-msgstr "自動"
-
-msgid "至少"
-msgstr "少なくとも"
-
-msgid "节点"
-msgstr "ノード"
-
-msgid "范围"
-msgstr "範囲"
-
-msgid "获取"
-msgstr "得る"
-
-msgid "菜单"
-msgstr "メニュー"
-
-msgid "补充"
-msgstr "補充する"
-
-msgid "表单"
-msgstr "形状"
-
-msgid "表示"
-msgstr "急行"
-
-msgid "要求"
-msgstr "必要とする"
-
-msgid "规则"
-msgstr "ルール"
-
-msgid "视图"
-msgstr "ビュー"
-
-msgid "角色"
-msgstr "役割"
-
-msgid "解析"
-msgstr "解析する"
-
-msgid "触发"
-msgstr "トリガー"
-
-msgid "警告"
-msgstr "警告する"
 
 msgid "计算"
 msgstr "計算する"
@@ -2160,173 +2856,32 @@ msgstr "計算する"
 msgid "认证"
 msgstr "認証"
 
-msgid "记录"
-msgstr "記録"
-
-msgid "设备"
-msgstr "装置"
-
-msgid "设置"
-msgstr "設定"
-
 msgid "访问"
 msgstr "アクセス"
-
-msgid "详情"
-msgstr "詳細"
 
 msgid "语言"
 msgstr "言語"
 
-msgid "说明"
-msgstr "説明する"
-
 msgid "请求"
 msgstr "聞く"
 
-msgid "读取"
-msgstr "読む"
-
-msgid "调用"
-msgstr "電話"
-
-msgid "调试"
-msgstr "デバッグ"
+msgid "请求头"
+msgstr "リクエストヘッダー"
 
 msgid "谨慎"
 msgstr "用心深い"
 
-msgid "账号"
-msgstr "アカウント"
-
-msgid "账户"
-msgstr "アカウント"
-
-msgid "资源"
-msgstr "リソース"
-
 msgid "起始"
 msgstr "始める"
-
-msgid "超时"
-msgstr "タイムアウト"
-
-msgid "足够"
-msgstr "十分"
-
-msgid "跟踪"
-msgstr "追跡"
-
-msgid "路径"
-msgstr "パス"
-
-msgid "路由"
-msgstr "ルーティング"
-
-msgid "跳转"
-msgstr "ジャンプ"
-
-msgid "跳过"
-msgstr "飛び越える"
-
-msgid "转换"
-msgstr "変換する"
-
-msgid "转移"
-msgstr "移行"
-
-msgid "转让"
-msgstr "移行"
 
 msgid "轮询"
 msgstr "投票"
 
-msgid "输入"
-msgstr "入力"
-
-msgid "过滤"
-msgstr "フィルター"
-
 msgid "运行"
 msgstr "走る"
 
-msgid "返回"
-msgstr "戻る"
-
-msgid "还原"
-msgstr "削減"
-
-msgid "这个"
-msgstr "これ"
-
-msgid "这封"
-msgstr "この手紙"
-
-msgid "这是"
-msgstr "これは"
-
 msgid "这里"
 msgstr "ここ"
-
-msgid "进行"
-msgstr "行為"
-
-msgid "远程"
-msgstr "リモート"
-
-msgid "连接"
-msgstr "接続する"
-
-msgid "选中"
-msgstr "選択された"
-
-msgid "选择"
-msgstr "選ぶ"
-
-msgid "选项"
-msgstr "オプション"
-
-msgid "递归"
-msgstr "再帰"
-
-msgid "逗号"
-msgstr "コンマ"
-
-msgid "通用"
-msgstr "ユニバーサル"
-
-msgid "通知"
-msgstr "通知する"
-
-msgid "通过"
-msgstr "合格"
-
-msgid "逻辑"
-msgstr "論理"
-
-msgid "遍历"
-msgstr "トラバース"
-
-msgid "避免"
-msgstr "避ける"
-
-msgid "邮件"
-msgstr "郵便"
-
-msgid "邮箱"
-msgstr "郵便"
-
-msgid "部分"
-msgstr "一部"
-
-msgid "配置"
-msgstr "構成"
-
-msgid "配额"
-msgstr "クォータ"
-
-msgid "重启"
-msgstr "再起動"
 
 msgid "重复"
 msgstr "繰り返す"
@@ -2334,68 +2889,86 @@ msgstr "繰り返す"
 msgid "重新"
 msgstr "また"
 
-msgid "重置"
-msgstr "リセット"
-
-msgid "重装"
-msgstr "再インストール"
-
-msgid "重要"
-msgstr "重要"
-
-msgid "重试"
-msgstr "もう一度やり直してください"
-
-msgid "错误"
-msgstr "間違い"
-
 msgid "键中"
 msgstr "鍵"
-
-msgid "镜像"
-msgstr "鏡"
-
-msgid "长度"
-msgstr "長さ"
-
-msgid "闭包"
-msgstr "閉鎖"
-
-msgid "问题"
-msgstr "質問"
-
-msgid "限制"
-msgstr "限界"
 
 msgid "随机"
 msgstr "ランダム"
 
-msgid "需要"
-msgstr "必要"
+msgid "默认值"
+msgstr "デフォルト値"
 
-msgid "静态"
-msgstr "静的"
+msgid "一键"
+msgstr "ワンクリック"
 
-msgid "非常"
-msgstr "とても"
+msgid "上一步"
+msgstr "前のステップ"
 
-msgid "页面"
-msgstr "ページ"
+msgid "下一步"
+msgstr "次のステップ"
 
-msgid "顶部"
-msgstr "トップ"
+msgid "完成"
+msgstr "仕上げる"
 
-msgid "颜色"
-msgstr "色"
+msgid "确定"
+msgstr "もちろん"
 
-msgid "验证"
-msgstr "確認する"
+msgid "稍候"
+msgstr "ちょっと待ってください"
 
-msgid "高级"
-msgstr "高度な"
+msgid "立即"
+msgstr "すぐに"
 
-msgid "默认"
-msgstr "デフォルト"
+msgid "结束"
+msgstr "仕上げる"
+
+msgid "继续"
+msgstr "続く"
+
+msgid "重试"
+msgstr "もう一度やり直してください"
+
+msgid "请输入"
+msgstr "入力してください"
+
+msgid "请选择"
+msgstr "選択してください"
+
+msgid "输入"
+msgstr "入力"
+
+msgid "输出"
+msgstr "出力"
+
+msgid "响应"
+msgstr "応答"
+
+msgid "主机管理"
+msgstr "ホスト管理"
+
+msgid "创建备份"
+msgstr "バックアップの作成"
+
+msgid "备份名称"
+msgstr "バックアップ名"
+
+msgid "备份文件"
+msgstr "バックアップファイル"
+
+msgid "备份注释"
+msgstr "バックアップコメント"
+
+msgid "备份管理"
+msgstr "バックアップ管理"
+
+msgid "备份说明"
+msgstr "バックアップ手順"
+
+msgid "扫描备份"
+msgstr "スキャンバックアップ"
+
+msgid "暂无备份"
+msgstr "まだバックアップがありません"
 
 msgid "下"
 msgstr "下"
@@ -2409,156 +2982,9 @@ msgstr "戻る"
 msgid "否"
 msgstr "いいえ"
 
-msgid "多"
-msgstr "多くの"
-
-msgid "大"
-msgstr "大きい"
-
-msgid "对"
-msgstr "右"
-
-msgid "新"
-msgstr "新しい"
-
-msgid "旧"
-msgstr "古い"
-
 msgid "是"
 msgstr "はい"
 
 msgid "空"
 msgstr "ヌル"
-
-msgid "全局"
-msgstr "全体的な状況"
-
-msgid "查看您的资源使用情况和配额信息"
-msgstr "リソースの使用状況とクォータ情報を表示する"
-
-msgid "用户空间"
-msgstr "ユーザースペース"
-
-msgid "系统空间"
-msgstr "システムスペース"
-
-msgid "实例管理"
-msgstr "インスタンス管理"
-
-msgid "监控"
-msgstr "モニター"
-
-msgid "网络端口"
-msgstr "ネットワークポート"
-
-msgid "网络与配额"
-msgstr "ネットワークとクォータ"
-
-msgid "上传带宽"
-msgstr "アップロード帯域幅"
-
-msgid "下载带宽"
-msgstr "ダウンロード帯域幅"
-
-msgid "实例配置"
-msgstr "インスタンス構成"
-
-msgid "设置密码"
-msgstr "パスワードを設定する"
-
-msgid "一键远程"
-msgstr "ワンクリックリモコン"
-
-msgid "网卡列表"
-msgstr "ネットワークカード一覧"
-
-msgid "转发规则"
-msgstr "転送ルール"
-
-msgid "设备直通"
-msgstr "デバイスのパススルー"
-
-msgid "物理"
-msgstr "物理"
-
-msgid "设备名"
-msgstr "デバイス名"
-
-msgid "存储路径"
-msgstr "ストレージパス"
-
-msgid "程序启动路径"
-msgstr "プログラムの起動パス"
-
-msgid "爱快配置"
-msgstr "アイクアイの構成"
-
-msgid "限制配置"
-msgstr "制限設定"
-
-msgid "（多个用逗号分隔）"
-msgstr "(複数の場合はカンマで区切ります)"
-
-msgid "高级配置"
-msgstr "高度な構成"
-
-msgid "系统映射"
-msgstr "システムマッピング"
-
-msgid "配置池"
-msgstr "プールの構成"
-
-msgid "扩展选项"
-msgstr "拡張オプション"
-
-msgid "扩展数据"
-msgstr "拡張データ"
-
-msgid "(JSON格式)"
-msgstr "(JSON形式)"
-
-msgid "和事件记录"
-msgstr "そしてイベントロギング"
-
-msgid "请从左侧选择一条"
-msgstr "左から1つお選びください"
-
-msgid "安全提示"
-msgstr "安全に関するヒント"
-
-msgid "重置Token后，所有使用旧Token的API调用都将失效。请确保更新所有相关配置。"
-msgstr "トークンをリセットすると、古いトークンを使用したすべての API 呼び出しが無効になります。関連するすべての構成を必ず更新してください。"
-
-msgid "在请求头中添加："
-msgstr "リクエストヘッダーを追加します。"
-
-msgid "受控端"
-msgstr "制御された端"
-
-msgid "访问配置"
-msgstr "アクセス構成"
-
-msgid "新账号"
-msgstr "新しいアカウント"
-
-msgid "注册时需要验证邮箱"
-msgstr "登録時にメール認証が必要です"
-
-msgid "新用户默认"
-msgstr "新規ユーザーのデフォルト"
-
-msgid "这是一封来自"
-msgstr "これはからの手紙です"
-
-msgid "系统的测试邮件"
-msgstr "システムテストメール"
-
-msgid "如果您收到这封邮件"
-msgstr "このメールを受け取った場合"
-
-msgid "说明邮件服务配置正常"
-msgstr "メールサービスの設定が正常であることを示します"
-
-msgid "您的"
-msgstr "あなたの"
 

@@ -1,6 +1,6 @@
 import {useState, useEffect} from 'react'
 import {Outlet, useNavigate, useLocation} from 'react-router-dom'
-import {Layout, Menu, Avatar, Dropdown, Badge, Button, Input, Tooltip} from 'antd'
+import {Layout, Menu, Avatar, Dropdown, Badge, Button, Input, Tooltip, Modal, Form, Space, Popconfirm, message} from 'antd'
 import {
     DashboardOutlined,
     CloudServerOutlined,
@@ -24,7 +24,13 @@ import {
     QuestionCircleOutlined,
     AppstoreOutlined,
     ControlOutlined,
+    PictureOutlined,
+    PlusOutlined,
+    EditOutlined,
+    DeleteOutlined,
+    CloseCircleOutlined,
 } from '@ant-design/icons'
+import { addCustomAnimeTheme, updateCustomAnimeTheme, deleteCustomAnimeTheme, AnimeTheme, isSolidTheme } from '@/config/animeThemes.config'
 import {useUserStore} from '@/utils/data.ts'
 import api from '@/utils/apis.ts'
 import { changeLanguage, getAvailableLanguages, getCurrentLanguage } from '@/utils/i18n.ts'
@@ -42,11 +48,15 @@ function MainLayout() {
     const navigate = useNavigate()
     const location = useLocation()
     const {user, logout, setUser} = useUserStore()
-    const { theme: currentTheme, toggleTheme, transparentMode, toggleTransparentMode, roundedMode, toggleRoundedMode, liquidMode, toggleLiquidMode } = useTheme()
+    const { theme: currentTheme, toggleTheme, transparentMode, toggleTransparentMode, roundedMode, toggleRoundedMode, liquidMode, toggleLiquidMode, animeThemeId, setAnimeTheme, animeThemes, refreshAnimeThemes, animeBlurMode, toggleAnimeBlurMode } = useTheme()
     const [collapsed, setCollapsed] = useState(false)
     const [notifications, setNotifications] = useState(0)
     const [currentLang, setCurrentLang] = useState('zh-cn')
     const [languages, setLanguages] = useState<any[]>([])
+    // 二次元主题管理弹窗
+    const [animeModalOpen, setAnimeModalOpen] = useState(false)
+    const [editingTheme, setEditingTheme] = useState<AnimeTheme | null>(null)
+    const [themeForm] = Form.useForm()
 
     useEffect(() => {
         if (!user || user.is_admin === undefined) {
@@ -137,62 +147,97 @@ function MainLayout() {
         <div style={{
             background: currentTheme === 'dark' ? '#1a1d23' : '#fff',
             border: currentTheme === 'dark' ? '1px solid rgba(255,255,255,0.08)' : '1px solid #f0f0f0',
-            borderRadius: 12,
-            boxShadow: '0 8px 32px rgba(0,0,0,0.18)',
-            padding: '8px',
-            minWidth: 180,
+            borderRadius: 14,
+            boxShadow: '0 12px 40px rgba(0,0,0,0.2)',
+            padding: '10px',
+            width: 280,
         }}>
-            <div style={{
-                padding: '4px 8px 8px',
-                fontSize: 11,
-                fontWeight: 600,
-                letterSpacing: '0.08em',
-                color: currentTheme === 'dark' ? 'rgba(255,255,255,0.35)' : '#999',
-                textTransform: 'uppercase',
-            }}>主题设置</div>
-
-            {/* 暗黑模式 */}
-            <div onClick={toggleTheme} className="theme-menu-item" style={{
-                display: 'flex', alignItems: 'center', gap: 10,
-                padding: '8px 10px', borderRadius: 8, cursor: 'pointer', transition: 'background 0.2s',
-            }}>
-                {currentTheme === 'dark'
-                    ? <SunOutlined style={{ fontSize: 16, color: '#faad14' }} />
-                    : <MoonOutlined style={{ fontSize: 16, color: '#595959' }} />}
-                <span style={{ flex: 1, fontSize: 14, color: currentTheme === 'dark' ? '#e6e9ef' : '#333' }}>
-                    {currentTheme === 'dark' ? '浅色模式' : '深色模式'}
-                </span>
-                {currentTheme === 'dark' && <CheckOutlined style={{ fontSize: 12, color: '#faad14' }} />}
+            {/* ── 开关区（图标网格） ── */}
+            <div style={{ padding: '2px 6px 6px', fontSize: 10, fontWeight: 700, letterSpacing: '0.1em', color: currentTheme === 'dark' ? 'rgba(255,255,255,0.3)' : '#bbb', textTransform: 'uppercase' }}>
+                显示
+            </div>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(5, 1fr)', gap: 4, padding: '0 2px 4px' }}>
+                {[
+                    { label: currentTheme === 'dark' ? '浅色' : '深色', active: currentTheme === 'dark', color: '#faad14', icon: currentTheme === 'dark' ? <SunOutlined /> : <MoonOutlined />, onClick: toggleTheme },
+                    { label: '透明', active: transparentMode, color: '#6968fd', icon: <BgColorsOutlined />, onClick: toggleTransparentMode },
+                    { label: '圆角', active: roundedMode, color: '#52c41a', icon: <RadiusSettingOutlined />, onClick: toggleRoundedMode },
+                    { label: '玻璃', active: liquidMode, color: '#13c2c2', icon: <AppstoreOutlined />, onClick: toggleLiquidMode },
+                    { label: '模糊', active: animeBlurMode, color: '#eb2f96', icon: <BgColorsOutlined />, onClick: toggleAnimeBlurMode },
+                ].map((item, i) => (
+                    <div
+                        key={i}
+                        onClick={item.onClick}
+                        className="theme-menu-item"
+                        style={{
+                            display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 3,
+                            padding: '8px 2px 6px', borderRadius: 10, cursor: 'pointer', transition: 'all 0.2s',
+                            border: item.active ? `2px solid ${item.color}` : `1px solid ${currentTheme === 'dark' ? 'rgba(255,255,255,0.08)' : '#eee'}`,
+                            background: item.active ? `${item.color}12` : 'transparent',
+                        }}
+                    >
+                        <div style={{
+                            width: 32, height: 32, borderRadius: 8,
+                            background: item.active ? `${item.color}20` : (currentTheme === 'dark' ? 'rgba(255,255,255,0.04)' : '#f5f5f5'),
+                            display: 'flex', alignItems: 'center', justifyContent: 'center',
+                            transition: 'all 0.2s',
+                        }}>
+                            <span style={{ fontSize: 15, color: item.active ? item.color : (currentTheme === 'dark' ? '#555' : '#aaa'), transition: 'color 0.2s' }}>{item.icon}</span>
+                        </div>
+                        <span style={{ fontSize: 9, color: item.active ? item.color : (currentTheme === 'dark' ? '#888' : '#999'), fontWeight: item.active ? 600 : 400, lineHeight: 1 }}>{item.label}</span>
+                    </div>
+                ))}
             </div>
 
-            {/* 透明模式 */}
-            <div onClick={toggleTransparentMode} className="theme-menu-item" style={{
-                display: 'flex', alignItems: 'center', gap: 10,
-                padding: '8px 10px', borderRadius: 8, cursor: 'pointer', transition: 'background 0.2s',
-            }}>
-                <BgColorsOutlined style={{ fontSize: 16, color: transparentMode ? '#6968fd' : (currentTheme === 'dark' ? '#888' : '#595959') }} />
-                <span style={{ flex: 1, fontSize: 14, color: currentTheme === 'dark' ? '#e6e9ef' : '#333' }}>透明模式</span>
-                {transparentMode && <CheckOutlined style={{ fontSize: 12, color: '#6968fd' }} />}
+            {/* ── 分割线 ── */}
+            <div style={{ height: 1, background: currentTheme === 'dark' ? 'rgba(255,255,255,0.06)' : '#f0f0f0', margin: '6px 0' }} />
+
+            {/* ── 壁纸背景区 ── */}
+            <div style={{ padding: '2px 6px 6px', fontSize: 10, fontWeight: 700, letterSpacing: '0.1em', color: currentTheme === 'dark' ? 'rgba(255,255,255,0.3)' : '#bbb', textTransform: 'uppercase', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                <span>壁纸</span>
+                <span
+                    onClick={(e) => { e.stopPropagation(); setAnimeModalOpen(true); }}
+                    style={{ cursor: 'pointer', fontSize: 11, color: '#6968fd', fontWeight: 500, letterSpacing: 0, textTransform: 'none' }}
+                >管理</span>
             </div>
 
-            {/* 圆角模式 */}
-            <div onClick={toggleRoundedMode} className="theme-menu-item" style={{
-                display: 'flex', alignItems: 'center', gap: 10,
-                padding: '8px 10px', borderRadius: 8, cursor: 'pointer', transition: 'background 0.2s',
-            }}>
-                <RadiusSettingOutlined style={{ fontSize: 16, color: roundedMode ? '#52c41a' : (currentTheme === 'dark' ? '#888' : '#595959') }} />
-                <span style={{ flex: 1, fontSize: 14, color: currentTheme === 'dark' ? '#e6e9ef' : '#333' }}>圆角模式</span>
-                {roundedMode && <CheckOutlined style={{ fontSize: 12, color: '#52c41a' }} />}
-            </div>
-
-            {/* 液态玻璃模式 */}
-            <div onClick={toggleLiquidMode} className="theme-menu-item" style={{
-                display: 'flex', alignItems: 'center', gap: 10,
-                padding: '8px 10px', borderRadius: 8, cursor: 'pointer', transition: 'background 0.2s',
-            }}>
-                <AppstoreOutlined style={{ fontSize: 16, color: liquidMode ? '#13c2c2' : (currentTheme === 'dark' ? '#888' : '#595959') }} />
-                <span style={{ flex: 1, fontSize: 14, color: currentTheme === 'dark' ? '#e6e9ef' : '#333' }}>液态玻璃</span>
-                {liquidMode && <CheckOutlined style={{ fontSize: 12, color: '#13c2c2' }} />}
+            {/* 壁纸网格：缩略图/色块 + 名称 */}
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 6, padding: '2px 2px', maxHeight: 240, overflowY: 'auto' }}>
+                {/* 主题列表（纯色 + 壁纸统一显示） */}
+                {animeThemes.map(t => (
+                    <div
+                        key={t.id}
+                        onClick={() => setAnimeTheme(t.id)}
+                        style={{
+                            display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 4,
+                            padding: '8px 2px 6px', borderRadius: 10, cursor: 'pointer', transition: 'all 0.2s',
+                            border: animeThemeId === t.id ? `2px solid ${t.primaryColor}` : `1px solid ${currentTheme === 'dark' ? 'rgba(255,255,255,0.08)' : '#eee'}`,
+                            background: animeThemeId === t.id ? `${t.primaryColor}12` : 'transparent',
+                        }}
+                        className="theme-menu-item"
+                    >
+                        <div style={{
+                            width: 40, height: 40, borderRadius: 10,
+                            background: isSolidTheme(t)
+                                ? t.solidColor!
+                                : (t.thumbnail
+                                    ? `url(${t.thumbnail}) center/cover no-repeat`
+                                    : `linear-gradient(135deg, ${t.primaryColor}, ${t.accentColor})`),
+                            display: 'flex', alignItems: 'center', justifyContent: 'center',
+                            boxShadow: animeThemeId === t.id ? `0 4px 12px ${t.primaryColor}40` : 'none',
+                            transition: 'box-shadow 0.2s',
+                            overflow: 'hidden',
+                            border: isSolidTheme(t) && t.solidColor === '#ffffff' ? '1px solid #e0e0e0' : 'none',
+                        }}>
+                            {!isSolidTheme(t) && !t.thumbnail && <PictureOutlined style={{ fontSize: 16, color: '#fff' }} />}
+                        </div>
+                        <span style={{
+                            fontSize: 10, color: currentTheme === 'dark' ? '#ccc' : '#555',
+                            lineHeight: 1.2, textAlign: 'center',
+                            maxWidth: '100%', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap',
+                            fontWeight: animeThemeId === t.id ? 600 : 400,
+                        }}>{t.name}</span>
+                    </div>
+                ))}
             </div>
         </div>
     )
@@ -266,9 +311,9 @@ function MainLayout() {
                     <Input
                         className="header-search"
                         placeholder="搜索功能..."
+                        variant="borderless"
                         prefix={<SearchOutlined style={{ fontSize: 14 }} />}
                         style={{
-                            borderRadius: 6,
                             height: 36,
                             width: 220,
                         }}
@@ -277,9 +322,9 @@ function MainLayout() {
                     {/* 主题切换 */}
                     <Dropdown
                         placement="bottomRight"
-                        overlayStyle={{ zIndex: 20000 }}
+overlayStyle={{ zIndex: 1050 }}
                         getPopupContainer={() => document.body}
-                        dropdownRender={() => themePanelContent}
+                        popupRender={() => themePanelContent}
                     >
                         <Tooltip title="主题设置">
                             <Button
@@ -300,7 +345,7 @@ function MainLayout() {
                     <Dropdown
                         menu={{ items: languageMenuItems, onClick: ({key}) => changeLanguage(key) }}
                         placement="bottomRight"
-                        overlayStyle={{ zIndex: 20000 }}
+overlayStyle={{ zIndex: 1050 }}
                         getPopupContainer={() => document.body}
                     >
                         <Tooltip title="切换语言">
@@ -352,7 +397,7 @@ function MainLayout() {
                     <Dropdown
                         menu={{ items: dropdownMenuItems }}
                         placement="bottomRight"
-                        overlayStyle={{ zIndex: 20000 }}
+overlayStyle={{ zIndex: 1050 }}
                         getPopupContainer={() => document.body}
                     >
                         <div style={{
@@ -418,11 +463,185 @@ function MainLayout() {
                         padding: 24,
                         minHeight: 280,
                         overflow: 'auto',
+                        display: 'flex',
+                        flexDirection: 'column',
                     }}
                 >
-                    <Outlet/>
+                    <div style={{ flex: 1 }}>
+                        <Outlet/>
+                    </div>
+                    {/* 底部 Footer */}
+                    <div style={{
+                        textAlign: 'center',
+                        padding: '16px 0 4px',
+                        marginTop: 24,
+                        borderTop: '1px solid var(--border-color, rgba(255,255,255,0.06))',
+                        color: 'var(--text-secondary, rgba(255,255,255,0.35))',
+                        fontSize: 12,
+                        lineHeight: 1.8,
+                    }}>
+                        <div>OpenIDCS 虚拟化管理平台 · v{__APP_VERSION__}</div>
+                        <div style={{ opacity: 0.6 }}>© {new Date().getFullYear()} OpenIDCS Team. All rights reserved.</div>
+                    </div>
                 </Content>
             </Layout>
+
+            {/* 二次元主题管理弹窗 */}
+            <Modal
+                title="🎨 二次元主题管理"
+                open={animeModalOpen}
+                onCancel={() => { setAnimeModalOpen(false); setEditingTheme(null); themeForm.resetFields(); }}
+                footer={null}
+                width={640}
+                styles={{ body: { maxHeight: '70vh', overflowY: 'auto' } }}
+            >
+                {/* 添加/编辑表单 */}
+                <div style={{
+                    background: currentTheme === 'dark' ? '#1f2937' : '#f9fafb',
+                    borderRadius: 12, padding: 16, marginBottom: 16,
+                    border: `1px solid ${currentTheme === 'dark' ? '#374151' : '#e5e7eb'}`,
+                }}>
+                    <div style={{ fontSize: 14, fontWeight: 600, marginBottom: 12, color: currentTheme === 'dark' ? '#e5e7eb' : '#374151' }}>
+                        {editingTheme ? '✏️ 编辑主题' : '➕ 添加自定义主题'}
+                    </div>
+                    <Form
+                        form={themeForm}
+                        layout="vertical"
+                        size="small"
+                        onFinish={(values) => {
+                            if (editingTheme) {
+                                updateCustomAnimeTheme(editingTheme.id, values);
+                                message.success('主题已更新');
+                            } else {
+                                addCustomAnimeTheme(values);
+                                message.success('主题已添加');
+                            }
+                            refreshAnimeThemes();
+                            themeForm.resetFields();
+                            setEditingTheme(null);
+                        }}
+                    >
+                        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
+                            <Form.Item name="name" label="主题名称" rules={[{ required: true, message: '请输入名称' }]}>
+                                <Input placeholder="如：三月七" />
+                            </Form.Item>
+                            <Form.Item name="description" label="描述">
+                                <Input placeholder="如：崩坏：星穹铁道" />
+                            </Form.Item>
+                        </div>
+                        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
+                            <Form.Item name="pcBackground" label="PC端背景图URL" rules={[{ required: true, message: '请输入URL' }]}>
+                                <Input placeholder="https://..." />
+                            </Form.Item>
+                            <Form.Item name="mobileBackground" label="手机端背景图URL" rules={[{ required: true, message: '请输入URL' }]}>
+                                <Input placeholder="https://..." />
+                            </Form.Item>
+                        </div>
+                        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 12 }}>
+                            <Form.Item name="primaryColor" label="主色调" rules={[{ required: true }]}>
+                                <Input type="color" style={{ height: 32, padding: 2 }} />
+                            </Form.Item>
+                            <Form.Item name="accentColor" label="强调色" rules={[{ required: true }]}>
+                                <Input type="color" style={{ height: 32, padding: 2 }} />
+                            </Form.Item>
+                            <Form.Item name="thumbnail" label="缩略图URL">
+                                <Input placeholder="可选" />
+                            </Form.Item>
+                        </div>
+                        <Space>
+                            <Button type="primary" htmlType="submit" icon={editingTheme ? <EditOutlined /> : <PlusOutlined />}>
+                                {editingTheme ? '保存修改' : '添加主题'}
+                            </Button>
+                            {editingTheme && (
+                                <Button onClick={() => { setEditingTheme(null); themeForm.resetFields(); }}>
+                                    取消编辑
+                                </Button>
+                            )}
+                        </Space>
+                    </Form>
+                </div>
+
+                {/* 主题列表 */}
+                <div style={{ fontSize: 14, fontWeight: 600, marginBottom: 8, color: currentTheme === 'dark' ? '#e5e7eb' : '#374151' }}>
+                    📋 主题列表（{animeThemes.length}个）
+                </div>
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(180px, 1fr))', gap: 12 }}>
+                    {animeThemes.map(t => (
+                        <div
+                            key={t.id}
+                            style={{
+                                borderRadius: 12, overflow: 'hidden',
+                                border: animeThemeId === t.id
+                                    ? `2px solid ${t.primaryColor}`
+                                    : `1px solid ${currentTheme === 'dark' ? '#374151' : '#e5e7eb'}`,
+                                cursor: 'pointer',
+                                transition: 'all 0.2s',
+                                background: currentTheme === 'dark' ? '#1f2937' : '#fff',
+                            }}
+                            onClick={() => setAnimeTheme(t.id)}
+                        >
+                            {/* 缩略图预览 */}
+                            <div style={{
+                                height: 80,
+                                background: `linear-gradient(135deg, ${t.primaryColor}40, ${t.accentColor}40)`,
+                                display: 'flex', alignItems: 'center', justifyContent: 'center',
+                                position: 'relative',
+                            }}>
+                                <PictureOutlined style={{ fontSize: 24, color: t.primaryColor }} />
+                                {animeThemeId === t.id && (
+                                    <div style={{
+                                        position: 'absolute', top: 6, right: 6,
+                                        width: 20, height: 20, borderRadius: '50%',
+                                        background: t.primaryColor, display: 'flex',
+                                        alignItems: 'center', justifyContent: 'center',
+                                    }}>
+                                        <CheckOutlined style={{ fontSize: 10, color: '#fff' }} />
+                                    </div>
+                                )}
+                            </div>
+                            {/* 信息 */}
+                            <div style={{ padding: '8px 10px' }}>
+                                <div style={{ fontSize: 13, fontWeight: 600, color: currentTheme === 'dark' ? '#e5e7eb' : '#333', marginBottom: 2 }}>
+                                    {t.name}
+                                </div>
+                                <div style={{ fontSize: 11, color: '#999', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                                    {t.description}
+                                </div>
+                                {/* 操作按钮 */}
+                                {!t.builtin && (
+                                    <div style={{ display: 'flex', gap: 4, marginTop: 6 }} onClick={e => e.stopPropagation()}>
+                                        <Button
+                                            size="small" type="text" icon={<EditOutlined />}
+                                            style={{ fontSize: 11, height: 22, padding: '0 4px' }}
+                                            onClick={() => {
+                                                setEditingTheme(t);
+                                                themeForm.setFieldsValue(t);
+                                            }}
+                                        />
+                                        <Popconfirm
+                                            title="确定删除此主题？"
+                                            onConfirm={() => {
+                                                if (animeThemeId === t.id) setAnimeTheme(null);
+                                                deleteCustomAnimeTheme(t.id);
+                                                refreshAnimeThemes();
+                                                message.success('已删除');
+                                            }}
+                                        >
+                                            <Button
+                                                size="small" type="text" danger icon={<DeleteOutlined />}
+                                                style={{ fontSize: 11, height: 22, padding: '0 4px' }}
+                                            />
+                                        </Popconfirm>
+                                    </div>
+                                )}
+                                {t.builtin && (
+                                    <div style={{ fontSize: 10, color: '#999', marginTop: 4 }}>内置主题</div>
+                                )}
+                            </div>
+                        </div>
+                    ))}
+                </div>
+            </Modal>
         </Layout>
     )
 }

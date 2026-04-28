@@ -1091,13 +1091,16 @@ class HostServer(BasicServer):
         try:
             ok, out, _ = self._host_exec(
                 f"ps -p {pid} -o %cpu= 2>/dev/null || true")
-            cpu = 0
+            cpu_percent = 0
             if ok and out.strip():
                 try:
-                    cpu = int(float(out.strip()))
+                    # ps -o %cpu 返回多核总百分比（4核满载=400），除以核心数得到单核百分比（0~100）
+                    raw_percent = float(out.strip())
+                    cores = max(1, int(vm_conf.cpu_num or 1))
+                    cpu_percent = int(raw_percent / cores)
                 except Exception:
-                    cpu = 0
-            hw.cpu_usage = cpu
+                    cpu_percent = 0
+            hw.cpu_usage = cpu_percent
             hw.cpu_total = max(1, int(vm_conf.cpu_num or 1))
         except Exception:
             pass

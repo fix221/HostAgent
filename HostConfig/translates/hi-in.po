@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: OpenIDCS 1.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-02-09 23:34\n"
-"PO-Revision-Date: 2026-02-09 23:34\n"
+"POT-Creation-Date: 2026-04-28 16:17\n"
+"PO-Revision-Date: 2026-04-28 16:17\n"
 "Last-Translator: Auto Generated\n"
 "Language-Team: Hindi\n"
 "Language: hi\n"
@@ -15,11 +15,1262 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-msgid "访问Token"
-msgstr "एक्सेस टोकन"
+msgid "保存"
+msgstr "बचाना"
 
-msgid "VNC控制台"
-msgstr "वीएनसी कंसोल"
+msgid "保持"
+msgstr "रखना"
+
+msgid "保留"
+msgstr "संरक्षित"
+
+msgid "修改"
+msgstr "दोहराना"
+
+msgid "修正"
+msgstr "सुधार"
+
+msgid "停止"
+msgstr "रुकना"
+
+msgid "允许"
+msgstr "अनुमति दें"
+
+msgid "共享"
+msgstr "साझा"
+
+msgid "关机"
+msgstr "शट डाउन"
+
+msgid "关闭"
+msgstr "बंद"
+
+msgid "写入"
+msgstr "लिखना"
+
+msgid "分享"
+msgstr "शेयर करना"
+
+msgid "分割"
+msgstr "विभाजन"
+
+msgid "分离"
+msgstr "पृथक्करण"
+
+msgid "分配"
+msgstr "वितरित करें"
+
+msgid "切换"
+msgstr "बदलना"
+
+msgid "创建"
+msgstr "बनाएं"
+
+msgid "删除"
+msgstr "मिटाना"
+
+msgid "刷新"
+msgstr "ताज़ा"
+
+msgid "勾选"
+msgstr "जाँच करना"
+
+msgid "卸载"
+msgstr "अनइंस्टॉल करें"
+
+msgid "发送"
+msgstr "भेजना"
+
+msgid "取消"
+msgstr "रद्द करना"
+
+msgid "变换"
+msgstr "परिवर्तन"
+
+msgid "变更"
+msgstr "परिवर्तन"
+
+msgid "合并"
+msgstr "मर्ज"
+
+msgid "同意"
+msgstr "सहमत"
+
+msgid "启动"
+msgstr "चालू होना"
+
+msgid "启用"
+msgstr "सक्षम"
+
+msgid "复制"
+msgstr "कॉपी"
+
+msgid "导入"
+msgstr "आयात"
+
+msgid "导出"
+msgstr "निर्यात"
+
+msgid "展开"
+msgstr "बढ़ाना"
+
+msgid "强制"
+msgstr "बल"
+
+msgid "恢复"
+msgstr "वापस पाना"
+
+msgid "成为"
+msgstr "बनना"
+
+msgid "打印"
+msgstr "छाप"
+
+msgid "打开"
+msgstr "खुला"
+
+msgid "执行"
+msgstr "अमल में लाना"
+
+msgid "扫描"
+msgstr "स्कैनिंग"
+
+msgid "折叠"
+msgstr "तह करना"
+
+msgid "拒绝"
+msgstr "अस्वीकार करना"
+
+msgid "拖拽"
+msgstr "खींचना"
+
+msgid "挂载"
+msgstr "पर्वत"
+
+msgid "指定"
+msgstr "निर्दिष्ट करें"
+
+msgid "授权"
+msgstr "अधिकृत"
+
+msgid "排序"
+msgstr "क्रम से लगाना"
+
+msgid "接受"
+msgstr "स्वीकार करना"
+
+msgid "提交"
+msgstr "जमा करना"
+
+msgid "提取"
+msgstr "निकालना"
+
+msgid "搜索"
+msgstr "खोज"
+
+msgid "撤销"
+msgstr "रद्द करना"
+
+msgid "支持"
+msgstr "सहायता"
+
+msgid "收集"
+msgstr "इकट्ठा करना"
+
+msgid "断开"
+msgstr "डिस्कनेक्ट"
+
+msgid "暂停"
+msgstr "विराम"
+
+msgid "更新"
+msgstr "नवीकरण"
+
+msgid "构建"
+msgstr "निर्माण"
+
+msgid "构造"
+msgstr "संरचना"
+
+msgid "查找"
+msgstr "खोजो"
+
+msgid "查收"
+msgstr "जाँच करना"
+
+msgid "查看"
+msgstr "जाँच करना"
+
+msgid "格式化"
+msgstr "प्रारूप"
+
+msgid "检查"
+msgstr "परीक्षण करना"
+
+msgid "检测"
+msgstr "खोज"
+
+msgid "注册"
+msgstr "पंजीकरण करवाना"
+
+msgid "添加"
+msgstr "इसमें जोड़ें"
+
+msgid "清空"
+msgstr "स्पष्ट"
+
+msgid "清除"
+msgstr "स्पष्ट"
+
+msgid "渲染"
+msgstr "प्रतिपादन"
+
+msgid "点击"
+msgstr "क्लिक"
+
+msgid "生成"
+msgstr "उत्पन्न"
+
+msgid "生效"
+msgstr "लागू"
+
+msgid "用尽"
+msgstr "थका हुआ"
+
+msgid "登出"
+msgstr "साइन आउट"
+
+msgid "登录"
+msgstr "लॉग इन करें"
+
+msgid "监听"
+msgstr "निगरानी करना"
+
+msgid "监控"
+msgstr "निगरानी करना"
+
+msgid "看到"
+msgstr "देखना"
+
+msgid "确保"
+msgstr "सुनिश्चित करें"
+
+msgid "确认"
+msgstr "पुष्टि करना"
+
+msgid "禁止"
+msgstr "निषेध"
+
+msgid "禁用"
+msgstr "अक्षम करना"
+
+msgid "移交"
+msgstr "स्थानांतरण"
+
+msgid "移除"
+msgstr "निकालना"
+
+msgid "筛选"
+msgstr "फ़िल्टर"
+
+msgid "简化"
+msgstr "आसान बनाने में"
+
+msgid "编辑"
+msgstr "संपादन करना"
+
+msgid "联系"
+msgstr "जोड़ना"
+
+msgid "获取"
+msgstr "पाना"
+
+msgid "表示"
+msgstr "अभिव्यक्त करना"
+
+msgid "解析"
+msgstr "पार्स"
+
+msgid "触发"
+msgstr "चालू कर देना"
+
+msgid "警告"
+msgstr "चेतावनी देना"
+
+msgid "读取"
+msgstr "पढ़ना"
+
+msgid "调用"
+msgstr "पुकारना"
+
+msgid "调试"
+msgstr "डिबग"
+
+msgid "跟踪"
+msgstr "रास्ता"
+
+msgid "跳转"
+msgstr "कूदना"
+
+msgid "跳过"
+msgstr "इस पर से कूद जाओ"
+
+msgid "转换"
+msgstr "बदलना"
+
+msgid "转移"
+msgstr "स्थानांतरण"
+
+msgid "转让"
+msgstr "स्थानांतरण"
+
+msgid "过滤"
+msgstr "फ़िल्टर"
+
+msgid "返回"
+msgstr "वापस करना"
+
+msgid "还原"
+msgstr "कमी"
+
+msgid "进行"
+msgstr "आचरण"
+
+msgid "连接"
+msgstr "जोड़ना"
+
+msgid "选中"
+msgstr "चयनित"
+
+msgid "选择"
+msgstr "चुनना"
+
+msgid "递归"
+msgstr "प्रत्यावर्तन"
+
+msgid "通知"
+msgstr "सूचित करें"
+
+msgid "遍历"
+msgstr "पार"
+
+msgid "避免"
+msgstr "टालना"
+
+msgid "重做"
+msgstr "फिर से करना"
+
+msgid "重启"
+msgstr "पुनः आरंभ करें"
+
+msgid "重置"
+msgstr "रीसेट करें"
+
+msgid "重装"
+msgstr "पुनर्स्थापित"
+
+msgid "验证"
+msgstr "सत्यापित करें"
+
+msgid "一致性"
+msgstr "स्थिरता"
+
+msgid "主机"
+msgstr "मेज़बान"
+
+msgid "主题"
+msgstr "विषय"
+
+msgid "事件"
+msgstr "आयोजन"
+
+msgid "交互"
+msgstr "इंटरैक्शन"
+
+msgid "代理"
+msgstr "अभिनय"
+
+msgid "代码"
+msgstr "कोड"
+
+msgid "令牌"
+msgstr "टोकन"
+
+msgid "仪表盘"
+msgstr "डैशबोर्ड"
+
+msgid "任务"
+msgstr "काम"
+
+msgid "使用率"
+msgstr "उपयोग दर"
+
+msgid "侧边"
+msgstr "ओर"
+
+msgid "信息"
+msgstr "जानकारी"
+
+msgid "假设"
+msgstr "परिकल्पना"
+
+msgid "元素"
+msgstr "तत्व"
+
+msgid "关系"
+msgstr "रिश्ता"
+
+msgid "内存"
+msgstr "याद"
+
+msgid "内容"
+msgstr "सामग्री"
+
+msgid "函数"
+msgstr "समारोह"
+
+msgid "利用率"
+msgstr "उपयोग"
+
+msgid "别名"
+msgstr "उपनाम"
+
+msgid "剪贴板"
+msgstr "क्लिपबोर्ड"
+
+msgid "功耗"
+msgstr "बिजली की खपत"
+
+msgid "功能"
+msgstr "समारोह"
+
+msgid "动作"
+msgstr "कार्रवाई"
+
+msgid "匹配"
+msgstr "मिलान"
+
+msgid "区域"
+msgstr "क्षेत्र"
+
+msgid "协议"
+msgstr "शिष्टाचार"
+
+msgid "单位"
+msgstr "इकाई"
+
+msgid "参数"
+msgstr "पैरामीटर"
+
+msgid "变量"
+msgstr "चर"
+
+msgid "可用性"
+msgstr "उपलब्धता"
+
+msgid "可靠性"
+msgstr "विश्वसनीयता"
+
+msgid "名称"
+msgstr "नाम"
+
+msgid "命令"
+msgstr "आदेश"
+
+msgid "图标"
+msgstr "आइकन"
+
+msgid "地址"
+msgstr "पता"
+
+msgid "域名"
+msgstr "डोमेन नाम"
+
+msgid "堆栈"
+msgstr "ढेर"
+
+msgid "备份"
+msgstr "बैकअप"
+
+msgid "备注"
+msgstr "टिप्पणी"
+
+msgid "复杂度"
+msgstr "जटिलता"
+
+msgid "存储"
+msgstr "भंडारण"
+
+msgid "安全性"
+msgstr "सुरक्षा"
+
+msgid "定义"
+msgstr "परिभाषा"
+
+msgid "实例"
+msgstr "उदाहरण"
+
+msgid "容器"
+msgstr "CONTAINER"
+
+msgid "密码"
+msgstr "पासवर्ड"
+
+msgid "对话框"
+msgstr "संवाद बकस"
+
+msgid "对象"
+msgstr "वस्तु"
+
+msgid "导航"
+msgstr "मार्गदर्शन"
+
+msgid "属性"
+msgstr "संपत्ति"
+
+msgid "布局"
+msgstr "लेआउट"
+
+msgid "带宽"
+msgstr "बैंडविड्थ"
+
+msgid "平台"
+msgstr "प्लैटफ़ॉर्म"
+
+msgid "应用"
+msgstr "आवेदन"
+
+msgid "引擎"
+msgstr "इंजन"
+
+msgid "弹窗"
+msgstr "पॉप-अप विंडो"
+
+msgid "强度"
+msgstr "ताकत"
+
+msgid "快照"
+msgstr "स्नैपशॉट"
+
+msgid "性能"
+msgstr "प्रदर्शन"
+
+msgid "截图"
+msgstr "स्क्रीनशॉट"
+
+msgid "所有权"
+msgstr "स्वामित्व"
+
+msgid "所有者"
+msgstr "मालिक"
+
+msgid "报告"
+msgstr "प्रतिवेदन"
+
+msgid "拦截器"
+msgstr "इंटरसेप्टर"
+
+msgid "指令"
+msgstr "अनुदेश"
+
+msgid "按钮"
+msgstr "बटन"
+
+msgid "接口"
+msgstr "इंटरफ़ेस"
+
+msgid "控制台"
+msgstr "सांत्वना देना"
+
+msgid "描述"
+msgstr "वर्णन करना"
+
+msgid "插件"
+msgstr "लगाना"
+
+msgid "效率"
+msgstr "क्षमता"
+
+msgid "数据"
+msgstr "डेटा"
+
+msgid "数组"
+msgstr "सरणी"
+
+msgid "文件"
+msgstr "दस्तावेज़"
+
+msgid "文字"
+msgstr "शब्द"
+
+msgid "文本"
+msgstr "मूलपाठ"
+
+msgid "方式"
+msgstr "रास्ता"
+
+msgid "方法"
+msgstr "तरीका"
+
+msgid "日志"
+msgstr "लकड़ी का लट्ठा"
+
+msgid "映射"
+msgstr "मानचित्रण"
+
+msgid "显卡"
+msgstr "चित्रोपमा पत्रक"
+
+msgid "显存"
+msgstr "वीडियो मेमोरी"
+
+msgid "有效性"
+msgstr "प्रभावशीलता"
+
+msgid "服务"
+msgstr "सेवा करना"
+
+msgid "服务器"
+msgstr "सर्वर"
+
+msgid "机器"
+msgstr "मशीन"
+
+msgid "权限"
+msgstr "अनुमतियां"
+
+msgid "条件"
+msgstr "स्थिति"
+
+msgid "标签"
+msgstr "लेबल"
+
+msgid "标题"
+msgstr "शीर्षक"
+
+msgid "样式"
+msgstr "शैली"
+
+msgid "核心"
+msgstr "मुख्य"
+
+msgid "格式"
+msgstr "प्रारूप"
+
+msgid "桌面"
+msgstr "डेस्कटॉप"
+
+msgid "概览"
+msgstr "सिंहावलोकन"
+
+msgid "模块"
+msgstr "मॉड्यूल"
+
+msgid "模式"
+msgstr "नमूना"
+
+msgid "模板"
+msgstr "खाका"
+
+msgid "正文"
+msgstr "मूलपाठ"
+
+msgid "注释"
+msgstr "टिप्पणी"
+
+msgid "流量"
+msgstr "प्रवाह"
+
+msgid "消息"
+msgstr "जानकारी"
+
+msgid "温度"
+msgstr "तापमान"
+
+msgid "版本"
+msgstr "संस्करण"
+
+msgid "状态"
+msgstr "राज्य"
+
+msgid "用户"
+msgstr "उपयोगकर्ता"
+
+msgid "用途"
+msgstr "उपयोग"
+
+msgid "用量"
+msgstr "मात्रा बनाने की विधि"
+
+msgid "电源"
+msgstr "बिजली की आपूर्ति"
+
+msgid "目录"
+msgstr "विषयसूची"
+
+msgid "硬盘"
+msgstr "हार्डडिस्क"
+
+msgid "磁盘"
+msgstr "डिस्क"
+
+msgid "程序"
+msgstr "कार्यक्रम"
+
+msgid "稳定性"
+msgstr "स्थिरता"
+
+msgid "端口"
+msgstr "पत्तन"
+
+msgid "策略"
+msgstr "रणनीति"
+
+msgid "管理员"
+msgstr "प्रशासक"
+
+msgid "类型"
+msgstr "प्रकार"
+
+msgid "精度"
+msgstr "शुद्धता"
+
+msgid "系统"
+msgstr "प्रणाली"
+
+msgid "约束"
+msgstr "बाधा"
+
+msgid "级别"
+msgstr "स्तर"
+
+msgid "线程"
+msgstr "धागा"
+
+msgid "组件"
+msgstr "अवयव"
+
+msgid "结果"
+msgstr "परिणाम"
+
+msgid "统计"
+msgstr "आंकड़े"
+
+msgid "网关"
+msgstr "द्वार"
+
+msgid "网卡"
+msgstr "नेटवर्क कार्ड"
+
+msgid "网桥"
+msgstr "पुल"
+
+msgid "网络"
+msgstr "नेटवर्क"
+
+msgid "网网"
+msgstr "नेटनेट"
+
+msgid "脚本"
+msgstr "लिखी हुई कहानी"
+
+msgid "节点"
+msgstr "नोड"
+
+msgid "范围"
+msgstr "दायरा"
+
+msgid "菜单"
+msgstr "मेनू"
+
+msgid "虚拟机"
+msgstr "आभासी मशीन"
+
+msgid "表单"
+msgstr "रूप"
+
+msgid "要求"
+msgstr "ज़रूरत होना"
+
+msgid "规则"
+msgstr "नियम"
+
+msgid "视图"
+msgstr "देखना"
+
+msgid "角色"
+msgstr "भूमिका"
+
+msgid "记录"
+msgstr "अभिलेख"
+
+msgid "设备"
+msgstr "उपकरण"
+
+msgid "设置"
+msgstr "स्थापित करना"
+
+msgid "详情"
+msgstr "विवरण"
+
+msgid "说明"
+msgstr "उदाहरण देकर स्पष्ट करना"
+
+msgid "账号"
+msgstr "खाता"
+
+msgid "账户"
+msgstr "खाता"
+
+msgid "资源"
+msgstr "संसाधन"
+
+msgid "路径"
+msgstr "पथ"
+
+msgid "路由"
+msgstr "मार्ग"
+
+msgid "过滤器"
+msgstr "फ़िल्टर"
+
+msgid "进度条"
+msgstr "प्रोगेस बार"
+
+msgid "进程"
+msgstr "प्रक्रिया"
+
+msgid "选择器"
+msgstr "चयनकर्ता"
+
+msgid "选项"
+msgstr "विकल्प"
+
+msgid "通道"
+msgstr "गलियारा"
+
+msgid "速度"
+msgstr "रफ़्तार"
+
+msgid "邮件"
+msgstr "मेल"
+
+msgid "邮箱"
+msgstr "मेल"
+
+msgid "配置"
+msgstr "विन्यास"
+
+msgid "配额"
+msgstr "कोटा"
+
+msgid "镜像"
+msgstr "आईना"
+
+msgid "闭包"
+msgstr "बंद"
+
+msgid "问题"
+msgstr "सवाल"
+
+msgid "限制"
+msgstr "आप LIMIT"
+
+msgid "页面"
+msgstr "पेज"
+
+msgid "顶部"
+msgstr "शीर्ष"
+
+msgid "一致"
+msgstr "सुसंगत"
+
+msgid "上行"
+msgstr "ऊपर की ओर"
+
+msgid "下行"
+msgstr "नीचे"
+
+msgid "不会"
+msgstr "नहीं होगा"
+
+msgid "不再"
+msgstr "अब और नहीं"
+
+msgid "不可"
+msgstr "नहीं"
+
+msgid "不稳定"
+msgstr "अस्थिर"
+
+msgid "不能"
+msgstr "नही सकता"
+
+msgid "不足"
+msgstr "नाकाफी"
+
+msgid "专用"
+msgstr "समर्पित"
+
+msgid "丢失"
+msgstr "खो गया"
+
+msgid "中"
+msgstr "मध्य"
+
+msgid "中等"
+msgstr "मध्यम"
+
+msgid "临时"
+msgstr "अस्थायी"
+
+msgid "为空"
+msgstr "खाली है"
+
+msgid "主要"
+msgstr "मुख्य"
+
+msgid "二次"
+msgstr "माध्यमिक"
+
+msgid "优先"
+msgstr "प्राथमिकता"
+
+msgid "低"
+msgstr "कम"
+
+msgid "全局"
+msgstr "समग्र स्थिति"
+
+msgid "全部"
+msgstr "सभी"
+
+msgid "公共"
+msgstr "जनता"
+
+msgid "公网"
+msgstr "सार्वजनिक नेटवर्क"
+
+msgid "兼容"
+msgstr "अनुकूल"
+
+msgid "内网"
+msgstr "इंट्रानेट"
+
+msgid "内部"
+msgstr "आंतरिक"
+
+msgid "再次"
+msgstr "दोबारा"
+
+msgid "出错"
+msgstr "गलती"
+
+msgid "初始"
+msgstr "प्रारंभिक"
+
+msgid "动态"
+msgstr "गतिशील"
+
+msgid "单个"
+msgstr "अकेला"
+
+msgid "危险"
+msgstr "खतरा"
+
+msgid "原始"
+msgstr "मूल"
+
+msgid "反向"
+msgstr "रिवर्स"
+
+msgid "受控"
+msgstr "नियंत्रित"
+
+msgid "只能"
+msgstr "ही कर सकते हैं"
+
+msgid "可以"
+msgstr "कर सकना"
+
+msgid "可用"
+msgstr "उपलब्ध"
+
+msgid "可能"
+msgstr "संभव"
+
+msgid "可逆"
+msgstr "प्रतिवर्ती"
+
+msgid "可选"
+msgstr "वैकल्पिक"
+
+msgid "各种"
+msgstr "विभिन्न"
+
+msgid "唯一"
+msgstr "केवल"
+
+msgid "在线"
+msgstr "ऑनलाइन"
+
+msgid "基本"
+msgstr "बुनियादी"
+
+msgid "复杂"
+msgstr "जटिल"
+
+msgid "外网"
+msgstr "एक्स्ट्रानेट"
+
+msgid "外部"
+msgstr "बाहरी"
+
+msgid "多"
+msgstr "अनेक"
+
+msgid "多个"
+msgstr "विभिन्न"
+
+msgid "大"
+msgstr "बड़ा"
+
+msgid "失效"
+msgstr "अमान्य"
+
+msgid "失败"
+msgstr "असफल"
+
+msgid "安全"
+msgstr "सुरक्षा"
+
+msgid "完整"
+msgstr "साबुत"
+
+msgid "实际"
+msgstr "वास्तविक"
+
+msgid "小"
+msgstr "छोटा"
+
+msgid "少"
+msgstr "कुछ"
+
+msgid "局部"
+msgstr "स्थानीय"
+
+msgid "已用"
+msgstr "इस्तेमाल किया गया"
+
+msgid "异常"
+msgstr "असामान्य"
+
+msgid "强关"
+msgstr "मजबूत पास"
+
+msgid "当前"
+msgstr "मौजूदा"
+
+msgid "必选"
+msgstr "आवश्यक"
+
+msgid "快速"
+msgstr "तेज़"
+
+msgid "成功"
+msgstr "सफलता"
+
+msgid "手动"
+msgstr "नियमावली"
+
+msgid "整个"
+msgstr "पूरा"
+
+msgid "新"
+msgstr "नया"
+
+msgid "新增"
+msgstr "नया"
+
+msgid "无描述"
+msgstr "कोई विवरण नहीं"
+
+msgid "无效"
+msgstr "अमान्य"
+
+msgid "无限制"
+msgstr "असीमित"
+
+msgid "旧"
+msgstr "पुराना"
+
+msgid "最新"
+msgstr "अप टू डेट"
+
+msgid "最终"
+msgstr "अंतिम"
+
+msgid "有效"
+msgstr "कुशल"
+
+msgid "未知"
+msgstr "अज्ञात"
+
+msgid "本地"
+msgstr "स्थानीय"
+
+msgid "次要"
+msgstr "माध्यमिक"
+
+msgid "正常"
+msgstr "सामान्य"
+
+msgid "正确"
+msgstr "सही"
+
+msgid "永久"
+msgstr "स्थायी"
+
+msgid "活跃"
+msgstr "सक्रिय"
+
+msgid "浅"
+msgstr "उथला"
+
+msgid "深"
+msgstr "गहरा"
+
+msgid "物理"
+msgstr "भौतिक विज्ञान"
+
+msgid "独立"
+msgstr "स्वतंत्र"
+
+msgid "现有"
+msgstr "मौजूदा"
+
+msgid "直接"
+msgstr "प्रत्यक्ष"
+
+msgid "相关"
+msgstr "संबंधित"
+
+msgid "短"
+msgstr "छोटा"
+
+msgid "离线"
+msgstr "ऑफलाइन"
+
+msgid "私有"
+msgstr "निजी"
+
+msgid "稳定"
+msgstr "स्थिर"
+
+msgid "空闲"
+msgstr "निठल्ला"
+
+msgid "简单"
+msgstr "सरल"
+
+msgid "精确"
+msgstr "शुद्ध"
+
+msgid "紧急"
+msgstr "अति आवश्यक"
+
+msgid "繁忙"
+msgstr "व्यस्त"
+
+msgid "缓慢"
+msgstr "धीमा"
+
+msgid "自动"
+msgstr "स्वचालित"
+
+msgid "自定义"
+msgstr "अनुकूलित करें"
+
+msgid "虚拟"
+msgstr "आभासी"
+
+msgid "超时"
+msgstr "समय समाप्त"
+
+msgid "足够"
+msgstr "पर्याप्त"
+
+msgid "过期"
+msgstr "खत्म हो चुका"
+
+msgid "近似"
+msgstr "अनुमानित"
+
+msgid "远程"
+msgstr "दूर"
+
+msgid "通用"
+msgstr "सार्वभौमिक"
+
+msgid "逻辑"
+msgstr "तर्क"
+
+msgid "部分"
+msgstr "भाग"
+
+msgid "重要"
+msgstr "महत्वपूर्ण"
+
+msgid "错误"
+msgstr "गलती"
+
+msgid "长"
+msgstr "लंबा"
+
+msgid "静态"
+msgstr "स्थिर"
+
+msgid "高"
+msgstr "उच्च"
+
+msgid "高级"
+msgstr "विकसित"
+
+msgid "默认"
+msgstr "गलती करना"
+
+msgid "API"
+msgstr "एपीआई"
+
+msgid "CPU"
+msgstr "CPU"
+
+msgid "GPU"
+msgstr "जीपीयू"
+
+msgid "HTTP"
+msgstr "HTTP"
+
+msgid "IP"
+msgstr "आई पी"
+
+msgid "ISO"
+msgstr "आईएसओ"
+
+msgid "JSON"
+msgstr "JSON"
+
+msgid "NAT"
+msgstr "नेट"
+
+msgid "Token"
+msgstr "टोकन"
+
+msgid "VNC"
+msgstr "वीएनसी"
+
+msgid "Web"
+msgstr "वेब"
 
 msgid "CPU核心"
 msgstr "सीपीयू कोर"
@@ -27,56 +1278,44 @@ msgstr "सीपीयू कोर"
 msgid "GPU显存"
 msgstr "जीपीयू मेमोरी"
 
-msgid "ISO镜像"
-msgstr "आईएसओ छवि"
-
-msgid "NAT端口"
-msgstr "NAT पोर्ट"
-
-msgid "Web代理"
-msgstr "वेब प्रॉक्सी"
-
-msgid "创建虚拟机"
-msgstr "एक वर्चुअल मशीन बनाएं"
-
-msgid "删除虚拟机"
-msgstr "वर्चुअल मशीन हटाएँ"
-
-msgid "卸载ISO"
-msgstr "आईएसओ अनइंस्टॉल करें"
-
-msgid "卸载数据盘"
-msgstr "डेटा डिस्क को अनमाउंट करें"
-
-msgid "扫描虚拟机"
-msgstr "वर्चुअल मशीन स्कैन करें"
-
-msgid "挂载ISO"
-msgstr "माउंट आईएसओ"
-
-msgid "挂载数据盘"
-msgstr "डेटा डिस्क माउंट करें"
-
-msgid "编辑虚拟机"
-msgstr "वर्चुअल मशीन संपादित करें"
-
-msgid "虚拟机详情"
-msgstr "वर्चुअल मशीन विवरण"
-
 msgid "IP地址"
 msgstr "आईपी ​​पता"
 
 msgid "IP配额"
 msgstr "आईपी ​​कोटा"
 
+msgid "ISO镜像"
+msgstr "आईएसओ छवि"
+
+msgid "NAT端口"
+msgstr "NAT पोर्ट"
+
+msgid "VNC控制台"
+msgstr "वीएनसी कंसोल"
+
+msgid "Web代理"
+msgstr "वेब प्रॉक्सी"
+
+msgid "一键远程"
+msgstr "एक क्लिक रिमोट"
+
+msgid "上传带宽"
+msgstr "बैंडविड्थ अपलोड करें"
+
 msgid "上行带宽"
 msgstr "अपस्ट्रीम बैंडविड्थ"
 
-msgid "下拉菜单"
-msgstr "ड्रॉप डाउन मेनू"
+msgid "下划线"
+msgstr "रेखांकन"
 
 msgid "下行带宽"
 msgstr "डाउनलिंक बैंडविड्थ"
+
+msgid "下载带宽"
+msgstr "बैंडविड्थ डाउनलोड करें"
+
+msgid "个主机"
+msgstr "मेजबान"
 
 msgid "个人信息"
 msgstr "व्यक्तिगत जानकारी"
@@ -87,17 +1326,23 @@ msgstr "व्यक्तिगत सेटिंग्स"
 msgid "个人资料"
 msgstr "व्यक्तिगत जानकारी"
 
+msgid "个字符"
+msgstr "अक्षर"
+
 msgid "为虚拟机"
 msgstr "वर्चुअल मशीन के लिए"
 
-msgid "主所有者"
-msgstr "प्राथमिक स्वामी"
+msgid "主机名"
+msgstr "होस्ट का नाम"
 
 msgid "主机名称"
 msgstr "होस्ट का नाम"
 
 msgid "主机总数"
 msgstr "मेज़बानों की कुल संख्या"
+
+msgid "主机数"
+msgstr "मेज़बानों की संख्या"
 
 msgid "主机数量"
 msgstr "मेज़बानों की संख्या"
@@ -108,9 +1353,6 @@ msgstr "मेज़बान सिंहावलोकन"
 msgid "主机筛选"
 msgstr "होस्ट फ़िल्टरिंग"
 
-msgid "主机管理"
-msgstr "मेज़बान प्रबंधन"
-
 msgid "主机类型"
 msgstr "होस्ट प्रकार"
 
@@ -119,6 +1361,9 @@ msgstr "मेज़बान विवरण"
 
 msgid "主要接口"
 msgstr "मुख्य इंटरफ़ेस"
+
+msgid "从文件"
+msgstr "लेख्यपत्र से"
 
 msgid "任务列表"
 msgstr "कार्य सूची"
@@ -135,20 +1380,20 @@ msgstr "कार्य का प्रकार"
 msgid "任务详情"
 msgstr "मिशन विवरण"
 
+msgid "使用者"
+msgstr "उपयोगकर्ता"
+
+msgid "供选择"
+msgstr "चयन के लिए"
+
+msgid "保存中"
+msgstr "सहेजा जा रहा है"
+
 msgid "保存失败"
 msgstr "सहेजना विफल"
 
 msgid "保存确认"
 msgstr "पुष्टिकरण सहेजें"
-
-msgid "保存设置"
-msgstr "सेटिंग्स सेव करें"
-
-msgid "保存配置"
-msgstr "कॉन्फ़िगरेशन सहेजें"
-
-msgid "保持一致"
-msgstr "स्तिर रहो"
 
 msgid "修改密码"
 msgstr "पासवर्ड बदलें"
@@ -156,20 +1401,14 @@ msgstr "पासवर्ड बदलें"
 msgid "修改邮箱"
 msgstr "ईमेल संशोधित करें"
 
-msgid "停止刷新"
-msgstr "ताज़ा करना बंद करो"
+msgid "停止中"
+msgstr "रोक"
 
 msgid "光盘镜像"
 msgstr "डिस्क छवि"
 
 msgid "全部主机"
 msgstr "सभी मेज़बान"
-
-msgid "全部状态"
-msgstr "सभी स्थिति"
-
-msgid "全部级别"
-msgstr "सभी स्तर"
 
 msgid "公网IP"
 msgstr "सार्वजनिक आईपी"
@@ -179,6 +1418,9 @@ msgstr "सार्वजनिक नेटवर्क पोर्ट"
 
 msgid "公网网桥"
 msgstr "सार्वजनिक नेटवर्क ब्रिज"
+
+msgid "关机中"
+msgstr "बंद करना"
 
 msgid "内网IP"
 msgstr "इंट्रानेट आईपी"
@@ -195,9 +1437,6 @@ msgstr "इंट्रानेट ब्रिज"
 msgid "分配主机"
 msgstr "होस्ट नियुक्त करें"
 
-msgid "创建备份"
-msgstr "बैकअप बनाएं"
-
 msgid "创建失败"
 msgstr "सृजन विफल रहा"
 
@@ -210,11 +1449,14 @@ msgstr "रचना समय"
 msgid "创建用户"
 msgstr "उपयोगकर्ता बनाएं"
 
+msgid "创建虚拟机"
+msgstr "एक वर्चुअल मशीन बनाएं"
+
+msgid "初始化"
+msgstr "प्रारंभ"
+
 msgid "删除主机"
 msgstr "होस्ट हटाएँ"
-
-msgid "删除代理"
-msgstr "प्रॉक्सी हटाएँ"
 
 msgid "删除失败"
 msgstr "हटाना विफल"
@@ -231,11 +1473,23 @@ msgstr "उपयोगकर्ता हटाएँ"
 msgid "删除硬盘"
 msgstr "हार्ड ड्राइव हटाएं"
 
+msgid "删除虚拟机"
+msgstr "वर्चुअल मशीन हटाएँ"
+
+msgid "加载中"
+msgstr "लोड हो रहा है"
+
 msgid "加载失败"
 msgstr "लोडिंग विफल रही"
 
+msgid "卸载ISO"
+msgstr "आईएसओ अनइंस्टॉल करें"
+
 msgid "卸载失败"
 msgstr "अनइंस्टॉल विफल रहा"
+
+msgid "卸载数据盘"
+msgstr "डेटा डिस्क को अनमाउंट करें"
 
 msgid "反向代理"
 msgstr "रिवर्स प्रॉक्सी"
@@ -243,8 +1497,11 @@ msgstr "रिवर्स प्रॉक्सी"
 msgid "发件邮箱"
 msgstr "ईमेल भेजा जा रहा है"
 
-msgid "发送域名"
-msgstr "डोमेन नाम भेजें"
+msgid "取决于"
+msgstr "इस पर निर्भर करते हुए"
+
+msgid "受控端"
+msgstr "नियंत्रित अंत"
 
 msgid "台虚拟机"
 msgstr "आभासी मशीन"
@@ -258,6 +1515,9 @@ msgstr "बैकएंड पता"
 msgid "后端端口"
 msgstr "बैकएंड पोर्ट"
 
+msgid "启动中"
+msgstr "प्रारंभ"
+
 msgid "启用失败"
 msgstr "सक्षम करने में विफल"
 
@@ -267,8 +1527,8 @@ msgstr "उपयोगकर्ता को सक्षम करें"
 msgid "响应错误"
 msgstr "प्रतिक्रिया त्रुटि"
 
-msgid "基本信息"
-msgstr "मूल जानकारी"
+msgid "国际化"
+msgstr "अंतर्राष्ट्रीयकरण"
 
 msgid "基本配置"
 msgstr "बुनियादी विन्यास"
@@ -282,20 +1542,11 @@ msgstr "हैंडलिंग फ़ंक्शन"
 msgid "处理响应"
 msgstr "प्रतिक्रिया संभालें"
 
-msgid "备份名称"
-msgstr "बैकअप नाम"
+msgid "备份中"
+msgstr "समर्थन करना"
 
-msgid "备份文件"
-msgstr "बैकअप फ़ाइलें"
-
-msgid "备份注释"
-msgstr "बैकअप टिप्पणियाँ"
-
-msgid "备份管理"
-msgstr "बैकअप प्रबंधन"
-
-msgid "备份说明"
-msgstr "बैकअप निर्देश"
+msgid "复制到"
+msgstr "में कॉपी"
 
 msgid "复制失败"
 msgstr "प्रतिलिपि विफल"
@@ -303,11 +1554,23 @@ msgstr "प्रतिलिपि विफल"
 msgid "外网端口"
 msgstr "बाहरी नेटवर्क पोर्ट"
 
+msgid "大写字母"
+msgstr "बड़े अक्षर"
+
 msgid "子网掩码"
 msgstr "सबनेट मास्क"
 
 msgid "存储容量"
 msgstr "भण्डारण क्षमता"
+
+msgid "存储路径"
+msgstr "भंडारण पथ"
+
+msgid "安全提示"
+msgstr "सुरक्षा टिप्स"
+
+msgid "安装盘"
+msgstr "स्थापना डिस्क"
 
 msgid "完整数据"
 msgstr "पूरा डेटा"
@@ -321,8 +1584,11 @@ msgstr "उदाहरण का नाम"
 msgid "实例概览"
 msgstr "उदाहरण सिंहावलोकन"
 
-msgid "容器管理"
-msgstr "कंटेनर प्रबंधन"
+msgid "实例管理"
+msgstr "उदाहरण प्रबंधन"
+
+msgid "实例配置"
+msgstr "उदाहरण विन्यास"
 
 msgid "密码强度"
 msgstr "पासवर्ड की मजबूती"
@@ -330,8 +1596,41 @@ msgstr "पासवर्ड की मजबूती"
 msgid "小写字母"
 msgstr "छोटे अक्षर"
 
-msgid "开放注册"
-msgstr "पंजीकरण खोलें"
+msgid "已保存"
+msgstr "बचाया"
+
+msgid "已停止"
+msgstr "रुक गया"
+
+msgid "已关闭"
+msgstr "बंद किया हुआ"
+
+msgid "已删除"
+msgstr "हटाए गए"
+
+msgid "已启用"
+msgstr "सक्रिय"
+
+msgid "已完成"
+msgstr "पुरा होना।"
+
+msgid "已崩溃"
+msgstr "दुर्घटनाग्रस्त"
+
+msgid "已开启"
+msgstr "पहले से ही चालू है"
+
+msgid "已挂载"
+msgstr "स्थापित"
+
+msgid "已暂停"
+msgstr "निलंबित"
+
+msgid "已禁用"
+msgstr "अक्षम"
+
+msgid "已验证"
+msgstr "सत्यापित"
 
 msgid "强制关机"
 msgstr "बलपूर्वक बंद करना"
@@ -348,8 +1647,17 @@ msgstr "पासवर्ड भूल जाओ"
 msgid "快速操作"
 msgstr "त्वरित संचालन"
 
+msgid "总代理"
+msgstr "सामान्य एजेंट"
+
 msgid "总代理数"
 msgstr "एजेंटों की कुल संख्या"
+
+msgid "总配额"
+msgstr "कुल कोटा"
+
+msgid "恢复中"
+msgstr "पुन: प्राप्त करना"
 
 msgid "恢复失败"
 msgstr "पुनर्प्राप्ति विफल रही"
@@ -360,20 +1668,32 @@ msgstr "सभी मेज़बान"
 msgid "所有协议"
 msgstr "सभी समझौते"
 
-msgid "扫描备份"
-msgstr "बैकअप स्कैन करें"
+msgid "扩展数据"
+msgstr "विस्तारित डेटा"
+
+msgid "扩展选项"
+msgstr "विस्तारित विकल्प"
 
 msgid "扫描失败"
 msgstr "स्कैन विफल"
 
+msgid "扫描虚拟机"
+msgstr "वर्चुअल मशीन स्कैन करें"
+
 msgid "找回密码"
 msgstr "पासवर्ड पुनःप्राप्त करें"
+
+msgid "挂载ISO"
+msgstr "माउंट आईएसओ"
 
 msgid "挂载名称"
 msgstr "पर्वत का नाम"
 
 msgid "挂载失败"
 msgstr "माउंट विफल रहा"
+
+msgid "挂载数据盘"
+msgstr "डेटा डिस्क माउंट करें"
 
 msgid "接口类型"
 msgstr "इंटरफ़ेस प्रकार"
@@ -399,6 +1719,9 @@ msgstr "ईमेल प्राप्त हो रहा है"
 msgid "数十分钟"
 msgstr "दसियों मिनट"
 
+msgid "数据盘"
+msgstr "डेटा डिस्क"
+
 msgid "数据磁盘"
 msgstr "डेटा डिस्क"
 
@@ -407,6 +1730,15 @@ msgstr "डेटा प्रबंधन"
 
 msgid "数据结构"
 msgstr "डेटा संरचना"
+
+msgid "文件名"
+msgstr "फ़ाइल नाम"
+
+msgid "新密码"
+msgstr "नया पासवर्ड"
+
+msgid "新账号"
+msgstr "नया खाता"
 
 msgid "日志查看"
 msgstr "लॉग दृश्य"
@@ -432,11 +1764,11 @@ msgstr "प्रदर्शन संख्या"
 msgid "普通用户"
 msgstr "साधारण उपयोगकर्ता"
 
+msgid "暂停中"
+msgstr "रुका हुआ"
+
 msgid "暂无主机"
 msgstr "अभी तक कोई मेज़बान नहीं"
-
-msgid "暂无备份"
-msgstr "अभी तक कोई बैकअप नहीं है"
 
 msgid "更新主机"
 msgstr "होस्ट अपडेट करें"
@@ -446,6 +1778,9 @@ msgstr "अद्यतन एजेंट"
 
 msgid "更新失败"
 msgstr "भार बढ़ाना विफल हुवा"
+
+msgid "更新成功"
+msgstr "सफलतापूर्वक नवीनीकरण"
 
 msgid "更新用户"
 msgstr "उपयोगकर्ता को अद्यतन करें"
@@ -459,6 +1794,15 @@ msgstr "आखरी अपडेट"
 msgid "最小要求"
 msgstr "न्यूनतम आवश्यकताओं"
 
+msgid "月流量"
+msgstr "मासिक यातायात"
+
+msgid "未分配"
+msgstr "आवंटित नहीं किया गया"
+
+msgid "未挂载"
+msgstr "नहीं लगाया हुआ है"
+
 msgid "未知主机"
 msgstr "अज्ञात मेज़बान"
 
@@ -471,11 +1815,20 @@ msgstr "अज्ञात समय"
 msgid "未知系统"
 msgstr "अज्ञात प्रणाली"
 
+msgid "未配置"
+msgstr "कॉन्फ़िगर नहीं किया गया"
+
+msgid "未验证"
+msgstr "सत्यापित नहीं है"
+
 msgid "权限不足"
 msgstr "अपर्याप्त अनुमतियाँ"
 
 msgid "权限信息"
 msgstr "अनुमति की जानकारी"
+
+msgid "条记录"
+msgstr "अभिलेख"
 
 msgid "查看全部"
 msgstr "सभी को देखें"
@@ -485,6 +1838,12 @@ msgstr "विवरण जांचें"
 
 msgid "桌面端口"
 msgstr "डेस्कटॉप पोर्ट"
+
+msgid "模板数"
+msgstr "टेम्पलेट्स की संख्या"
+
+msgid "正在"
+msgstr "हैं"
 
 msgid "正常运行"
 msgstr "सामान्य संचालन"
@@ -537,11 +1896,17 @@ msgstr "स्पष्ट प्रदर्शन"
 msgid "爱快地址"
 msgstr "ऐकुई पता"
 
+msgid "爱快配置"
+msgstr "ऐकुई विन्यास"
+
 msgid "特殊字符"
 msgstr "विशेष पात्र"
 
 msgid "用户列表"
 msgstr "उपयोगकर्ता सूची"
+
+msgid "用户名"
+msgstr "उपयोक्तानाम"
 
 msgid "用户权限"
 msgstr "उपयोगकर्ता अनुमतियाँ"
@@ -558,6 +1923,9 @@ msgstr "उपयोगकर्ता लॉगआउट"
 msgid "用户登录"
 msgstr "उपयोगकर्ता लॉगिन"
 
+msgid "用户空间"
+msgstr "उपयोगकर्ता स्थान"
+
 msgid "用户管理"
 msgstr "प्रयोक्ता प्रबंधन"
 
@@ -566,6 +1934,9 @@ msgstr "शक्ति संचालन"
 
 msgid "电源管理"
 msgstr "बिजली प्रबंधन"
+
+msgid "登录失败"
+msgstr "लॉगिन विफल"
 
 msgid "硬盘大小"
 msgstr "हार्ड ड्राइव का आकार"
@@ -609,6 +1980,9 @@ msgstr "अक्षम करना विफल"
 msgid "移交失败"
 msgstr "हैंडओवर विफल रहा"
 
+msgid "程序启动路径"
+msgstr "प्रोग्राम स्टार्टअप पथ"
+
 msgid "端口数量"
 msgstr "बंदरगाहों की संख्या"
 
@@ -623,6 +1997,9 @@ msgstr "अग्रेषण पोर्ट"
 
 msgid "端口配置"
 msgstr "पोर्ट कॉन्फ़िगरेशन"
+
+msgid "等待中"
+msgstr "इंतज़ार में"
 
 msgid "管理主机"
 msgstr "प्रबंधन मेज़बान"
@@ -642,6 +2019,9 @@ msgstr "सिस्टम पासवर्ड"
 msgid "系统日志"
 msgstr "सिस्टम लॉग"
 
+msgid "系统映射"
+msgstr "सिस्टम मैपिंग"
+
 msgid "系统概览"
 msgstr "तंत्र अवलोकन"
 
@@ -650,6 +2030,12 @@ msgstr "सिस्टम स्थिति"
 
 msgid "系统界面"
 msgstr "सिस्टम इंटरफ़ेस"
+
+msgid "系统盘"
+msgstr "सिस्टम डिस्क"
+
+msgid "系统空间"
+msgstr "सिस्टम स्थान"
 
 msgid "系统管理"
 msgstr "सिस्टम प्रबंधन"
@@ -669,6 +2055,9 @@ msgstr "आंकड़े"
 msgid "编辑主机"
 msgstr "होस्ट संपादित करें"
 
+msgid "编辑虚拟机"
+msgstr "वर्चुअल मशीन संपादित करें"
+
 msgid "网关地址"
 msgstr "प्रवेश द्वार का पता"
 
@@ -677,6 +2066,9 @@ msgstr "गेटवे त्रुटि"
 
 msgid "网卡信息"
 msgstr "नेटवर्क कार्ड की जानकारी"
+
+msgid "网卡列表"
+msgstr "नेटवर्क कार्ड सूची"
 
 msgid "网卡名称"
 msgstr "नेटवर्क कार्ड का नाम"
@@ -690,11 +2082,17 @@ msgstr "नेटवर्क कार्ड का प्रकार"
 msgid "网卡配置"
 msgstr "नेटवर्क कार्ड कॉन्फ़िगरेशन"
 
+msgid "网络与配额"
+msgstr "नेटवर्किंग और कोटा"
+
 msgid "网络带宽"
 msgstr "नेटवर्क बैंडविड्थ"
 
 msgid "网络服务"
 msgstr "नेटवर्क सेवाएँ"
+
+msgid "网络端口"
+msgstr "नेटवर्क पोर्ट"
 
 msgid "网络管理"
 msgstr "नेटवर्क प्रबंधन"
@@ -714,6 +2112,9 @@ msgstr "स्वचालित आवंटन"
 msgid "自动刷新"
 msgstr "स्वतः ताज़ा करें"
 
+msgid "自动化"
+msgstr "स्वचालन"
+
 msgid "自动更新"
 msgstr "स्वचालित अद्यतन"
 
@@ -726,17 +2127,41 @@ msgstr "अंग्रेजी अक्षर"
 msgid "获取数据"
 msgstr "डेटा प्राप्त करें"
 
+msgid "菜单项"
+msgstr "मेनू आइटम"
+
+msgid "虚拟化"
+msgstr "वर्चुअलाइजेशन"
+
+msgid "虚拟机详情"
+msgstr "वर्चुअल मशीन विवरण"
+
 msgid "计算资源"
 msgstr "कंप्यूटिंग संसाधन"
 
 msgid "认证方式"
 msgstr "प्रमाणीकरण विधि"
 
+msgid "设备名"
+msgstr "डिवाइस का नाम"
+
+msgid "设备直通"
+msgstr "डिवाइस पास-थ्रू"
+
 msgid "设置失败"
 msgstr "सेटअप विफल रहा"
 
+msgid "设置密码"
+msgstr "सांकेतिक शब्द लगना"
+
+msgid "访问Token"
+msgstr "एक्सेस टोकन"
+
 msgid "访问端口"
 msgstr "एक्सेस पोर्ट"
+
+msgid "访问配置"
+msgstr "एक्सेस कॉन्फ़िगरेशन"
 
 msgid "请求失败"
 msgstr "अनुरोध विफल रहा"
@@ -753,11 +2178,20 @@ msgstr "संसाधनों का आवंटन"
 msgid "资源配额"
 msgstr "संसाधन कोटा"
 
+msgid "转发规则"
+msgstr "अग्रेषण नियम"
+
+msgid "运行中"
+msgstr "दौड़ना"
+
 msgid "运行日志"
 msgstr "लॉग चलाएँ"
 
 msgid "返回登录"
 msgstr "लॉगिन पर लौटें"
+
+msgid "还原中"
+msgstr "पुनर्स्थापित कर रहा है"
 
 msgid "还原备份"
 msgstr "बैकअप बहाल"
@@ -789,8 +2223,14 @@ msgstr "मेल पता"
 msgid "邮箱验证"
 msgstr "ईमेल सत्यापन"
 
+msgid "配置中"
+msgstr "का विन्यास"
+
 msgid "配置名称"
 msgstr "कॉन्फ़िगरेशन नाम"
+
+msgid "配置池"
+msgstr "पूल कॉन्फ़िगर करें"
 
 msgid "配额不足"
 msgstr "अपर्याप्त कोटा"
@@ -798,11 +2238,17 @@ msgstr "अपर्याप्त कोटा"
 msgid "配额充足"
 msgstr "पर्याप्त कोटा"
 
+msgid "重启中"
+msgstr "पुन: प्रारंभ हो"
+
 msgid "重置失败"
 msgstr "रीसेट विफल रहा"
 
 msgid "重置密码"
 msgstr "पासवर्ड रीसेट"
+
+msgid "重装中"
+msgstr "फिर से स्थापित करने"
 
 msgid "重装失败"
 msgstr "पुनर्स्थापना विफल रही"
@@ -822,257 +2268,14 @@ msgstr "त्रुटि प्रबंधन"
 msgid "镜像文件"
 msgstr "छवि फ़ाइल"
 
+msgid "限制配置"
+msgstr "विन्यास सीमित करें"
+
 msgid "随机生成"
 msgstr "बेतरतीब ढंग से उत्पन्न"
 
-msgid "下划线"
-msgstr "रेखांकन"
-
-msgid "个主机"
-msgstr "मेजबान"
-
-msgid "个字符"
-msgstr "अक्षर"
-
-msgid "主机名"
-msgstr "होस्ट का नाम"
-
-msgid "主机数"
-msgstr "मेज़बानों की संख्या"
-
-msgid "从文件"
-msgstr "लेख्यपत्र से"
-
-msgid "仪表盘"
-msgstr "डैशबोर्ड"
-
-msgid "使用率"
-msgstr "उपयोग दर"
-
-msgid "使用者"
-msgstr "उपयोगकर्ता"
-
-msgid "供选择"
-msgstr "चयन के लिए"
-
-msgid "保存中"
-msgstr "सहेजा जा रहा है"
-
-msgid "停止中"
-msgstr "रोक"
-
-msgid "关机中"
-msgstr "बंद करना"
-
-msgid "初始化"
-msgstr "प्रारंभ"
-
-msgid "利用率"
-msgstr "उपयोग"
-
-msgid "剪贴板"
-msgstr "क्लिपबोर्ड"
-
-msgid "加载中"
-msgstr "लोड हो रहा है"
-
-msgid "取决于"
-msgstr "इस पर निर्भर करते हुए"
-
-msgid "启动中"
-msgstr "प्रारंभ"
-
-msgid "国际化"
-msgstr "अंतर्राष्ट्रीयकरण"
-
-msgid "备份中"
-msgstr "समर्थन करना"
-
-msgid "复制到"
-msgstr "में कॉपी"
-
-msgid "复杂度"
-msgstr "जटिलता"
-
-msgid "安装盘"
-msgstr "स्थापना डिस्क"
-
-msgid "对话框"
-msgstr "संवाद बकस"
-
-msgid "已保存"
-msgstr "बचाया"
-
-msgid "已停止"
-msgstr "रुक गया"
-
-msgid "已关闭"
-msgstr "बंद किया हुआ"
-
-msgid "已删除"
-msgstr "हटाए गए"
-
-msgid "已启用"
-msgstr "सक्रिय"
-
-msgid "已完成"
-msgstr "पुरा होना।"
-
-msgid "已崩溃"
-msgstr "दुर्घटनाग्रस्त"
-
-msgid "已开启"
-msgstr "पहले से ही चालू है"
-
-msgid "已挂载"
-msgstr "स्थापित"
-
-msgid "已暂停"
-msgstr "निलंबित"
-
-msgid "已禁用"
-msgstr "अक्षम"
-
-msgid "已验证"
-msgstr "सत्यापित"
-
-msgid "总代理"
-msgstr "सामान्य एजेंट"
-
-msgid "总配额"
-msgstr "कुल कोटा"
-
-msgid "恢复中"
-msgstr "पुन: प्राप्त करना"
-
-msgid "所有权"
-msgstr "स्वामित्व"
-
-msgid "所有者"
-msgstr "मालिक"
-
-msgid "拦截器"
-msgstr "इंटरसेप्टर"
-
-msgid "控制台"
-msgstr "सांत्वना देना"
-
-msgid "数据盘"
-msgstr "डेटा डिस्क"
-
-msgid "文件名"
-msgstr "फ़ाइल नाम"
-
-msgid "新密码"
-msgstr "नया पासवर्ड"
-
-msgid "无描述"
-msgstr "कोई विवरण नहीं"
-
-msgid "无限制"
-msgstr "असीमित"
-
-msgid "暂停中"
-msgstr "रुका हुआ"
-
-msgid "月流量"
-msgstr "मासिक यातायात"
-
-msgid "有效性"
-msgstr "प्रभावशीलता"
-
-msgid "服务器"
-msgstr "सर्वर"
-
-msgid "未分配"
-msgstr "आवंटित नहीं किया गया"
-
-msgid "未挂载"
-msgstr "नहीं लगाया हुआ है"
-
-msgid "未配置"
-msgstr "कॉन्फ़िगर नहीं किया गया"
-
-msgid "未验证"
-msgstr "सत्यापित नहीं है"
-
-msgid "条记录"
-msgstr "अभिलेख"
-
-msgid "格式化"
-msgstr "प्रारूप"
-
-msgid "模板数"
-msgstr "टेम्पलेट्स की संख्या"
-
-msgid "注册表"
-msgstr "रजिस्ट्री"
-
-msgid "浏览器"
-msgstr "ब्राउज़र"
-
-msgid "用户名"
-msgstr "उपयोक्तानाम"
-
-msgid "第一个"
-msgstr "पहले वाला"
-
-msgid "第一台"
-msgstr "सबसे पहला"
-
-msgid "等待中"
-msgstr "इंतज़ार में"
-
-msgid "管理员"
-msgstr "प्रशासक"
-
-msgid "系统盘"
-msgstr "सिस्टम डिस्क"
-
-msgid "自动化"
-msgstr "स्वचालन"
-
-msgid "菜单项"
-msgstr "मेनू आइटम"
-
-msgid "虚拟化"
-msgstr "वर्चुअलाइजेशन"
-
-msgid "虚拟机"
-msgstr "आभासी मशीन"
-
-msgid "请输入"
-msgstr "कृपया दर्ज करें"
-
-msgid "请选择"
-msgstr "कृपया चयन कीजिए"
-
-msgid "过滤器"
-msgstr "फ़िल्टर"
-
-msgid "运行中"
-msgstr "दौड़ना"
-
-msgid "还原中"
-msgstr "पुनर्स्थापित कर रहा है"
-
-msgid "进度条"
-msgstr "प्रोगेस बार"
-
-msgid "选择器"
-msgstr "चयनकर्ता"
-
-msgid "配置中"
-msgstr "का विन्यास"
-
-msgid "重启中"
-msgstr "पुन: प्रारंभ हो"
-
-msgid "重装中"
-msgstr "फिर से स्थापित करने"
-
-msgid "默认值"
-msgstr "डिफ़ॉल्ट मान"
+msgid "高级配置"
+msgstr "उन्नत विन्यास"
 
 msgid "一个"
 msgstr "एक"
@@ -1080,692 +2283,50 @@ msgstr "एक"
 msgid "一封"
 msgstr "एक अक्षर"
 
-msgid "一致"
-msgstr "सुसंगत"
-
-msgid "一键"
-msgstr "एक क्लिक"
-
-msgid "上行"
-msgstr "ऊपर की ओर"
-
-msgid "下行"
-msgstr "नीचे"
-
-msgid "不会"
-msgstr "नहीं होगा"
-
-msgid "不再"
-msgstr "अब और नहीं"
-
-msgid "不可"
-msgstr "नहीं"
-
-msgid "不能"
-msgstr "नही सकता"
-
-msgid "不足"
-msgstr "नाकाफी"
-
-msgid "丢失"
-msgstr "खो गया"
-
-msgid "两次"
-msgstr "दो बार"
-
-msgid "中文"
-msgstr "चीनी"
-
-msgid "中等"
-msgstr "मध्यम"
-
-msgid "临时"
-msgstr "अस्थायी"
-
-msgid "为空"
-msgstr "खाली है"
-
-msgid "主机"
-msgstr "मेज़बान"
-
-msgid "主要"
-msgstr "मुख्य"
-
-msgid "主题"
-msgstr "विषय"
-
-msgid "事件"
-msgstr "आयोजन"
-
-msgid "二次"
-msgstr "माध्यमिक"
-
-msgid "交互"
-msgstr "इंटरैक्शन"
-
-msgid "代理"
-msgstr "अभिनय"
-
-msgid "代码"
-msgstr "कोड"
-
-msgid "任务"
-msgstr "काम"
-
-msgid "优先"
-msgstr "प्राथमिकता"
-
-msgid "作为"
-msgstr "जैसा"
-
-msgid "使用"
-msgstr "उपयोग"
-
-msgid "例如"
-msgstr "उदाहरण के लिए"
-
-msgid "侧边"
-msgstr "ओर"
-
-msgid "保存"
-msgstr "बचाना"
-
-msgid "保持"
-msgstr "रखना"
-
-msgid "保留"
-msgstr "संरक्षित"
-
-msgid "信息"
-msgstr "जानकारी"
-
-msgid "修改"
-msgstr "दोहराना"
-
-msgid "修正"
-msgstr "सुधार"
-
-msgid "假设"
-msgstr "परिकल्पना"
-
-msgid "停止"
-msgstr "रुकना"
-
-msgid "允许"
-msgstr "अनुमति दें"
-
-msgid "元素"
-msgstr "तत्व"
-
-msgid "光盘"
-msgstr "सीडी"
-
-msgid "全部"
-msgstr "सभी"
-
-msgid "公共"
-msgstr "जनता"
-
-msgid "公网"
-msgstr "सार्वजनिक नेटवर्क"
-
-msgid "共享"
-msgstr "साझा"
-
-msgid "关机"
-msgstr "शट डाउन"
-
-msgid "关系"
-msgstr "रिश्ता"
-
-msgid "关闭"
-msgstr "बंद"
-
-msgid "其他"
-msgstr "अन्य"
-
-msgid "兼容"
-msgstr "अनुकूल"
-
-msgid "内存"
-msgstr "याद"
-
-msgid "内容"
-msgstr "सामग्री"
-
-msgid "内网"
-msgstr "इंट्रानेट"
-
-msgid "内部"
-msgstr "आंतरिक"
-
-msgid "再次"
-msgstr "दोबारा"
-
-msgid "出错"
-msgstr "गलती"
-
-msgid "函数"
-msgstr "समारोह"
-
-msgid "分享"
-msgstr "शेयर करना"
-
-msgid "分割"
-msgstr "विभाजन"
-
-msgid "分离"
-msgstr "पृथक्करण"
-
-msgid "分配"
-msgstr "वितरित करें"
-
-msgid "分钟"
-msgstr "मिनट"
-
-msgid "分隔"
-msgstr "अलग"
-
-msgid "切换"
-msgstr "बदलना"
-
-msgid "列表"
-msgstr "सूची"
-
-msgid "创建"
-msgstr "बनाएं"
-
-msgid "删除"
-msgstr "मिटाना"
-
-msgid "判断"
-msgstr "न्यायाधीश"
-
-msgid "别名"
-msgstr "उपनाम"
-
-msgid "刷新"
-msgstr "ताज़ा"
-
-msgid "前缀"
-msgstr "उपसर्ग"
-
-msgid "功耗"
-msgstr "बिजली की खपत"
-
-msgid "功能"
-msgstr "समारोह"
-
-msgid "加载"
-msgstr "भार"
-
-msgid "动作"
-msgstr "कार्रवाई"
-
-msgid "动态"
-msgstr "गतिशील"
-
-msgid "勾选"
-msgstr "जाँच करना"
-
-msgid "包含"
-msgstr "शामिल करना"
-
-msgid "匹配"
-msgstr "मिलान"
-
-msgid "区域"
-msgstr "क्षेत्र"
-
-msgid "协议"
-msgstr "शिष्टाचार"
-
-msgid "单个"
-msgstr "अकेला"
-
-msgid "单位"
-msgstr "इकाई"
-
-msgid "占用"
-msgstr "पर कब्जा"
-
-msgid "卡片"
-msgstr "कार्ड"
-
-msgid "卸载"
-msgstr "अनइंस्टॉल करें"
-
-msgid "历史"
-msgstr "इतिहास"
-
-msgid "原始"
-msgstr "मूल"
-
-msgid "参数"
-msgstr "पैरामीटर"
-
-msgid "及其"
-msgstr "और"
-
-msgid "反向"
-msgstr "रिवर्स"
-
-msgid "发件"
-msgstr "भेजना"
-
-msgid "发送"
-msgstr "भेजना"
-
-msgid "取消"
-msgstr "रद्द करना"
-
-msgid "受控"
-msgstr "नियंत्रित"
-
-msgid "变为"
-msgstr "बनना"
-
-msgid "变化"
-msgstr "परिवर्तन"
-
-msgid "变更"
-msgstr "परिवर्तन"
-
-msgid "变量"
-msgstr "चर"
-
-msgid "只能"
-msgstr "ही कर सकते हैं"
-
-msgid "可以"
-msgstr "कर सकना"
-
-msgid "可用"
-msgstr "उपलब्ध"
-
-msgid "可能"
-msgstr "संभव"
-
-msgid "可逆"
-msgstr "प्रतिवर्ती"
-
-msgid "可选"
-msgstr "वैकल्पिक"
-
-msgid "各种"
-msgstr "विभिन्न"
-
-msgid "合并"
-msgstr "मर्ज"
-
-msgid "同意"
-msgstr "सहमत"
-
-msgid "同时"
-msgstr "एक ही समय पर"
-
-msgid "名称"
-msgstr "नाम"
-
-msgid "后续"
-msgstr "पालन ​​करें"
-
-msgid "后缀"
-msgstr "प्रत्यय"
-
-msgid "后该"
-msgstr "बाद का समय है"
-
-msgid "否则"
-msgstr "अन्यथा"
-
-msgid "启动"
-msgstr "चालू होना"
-
-msgid "启用"
-msgstr "सक्षम"
-
-msgid "响应"
-msgstr "प्रतिक्रिया"
-
-msgid "唯一"
-msgstr "केवल"
-
-msgid "因为"
-msgstr "क्योंकि"
-
-msgid "图标"
-msgstr "आइकन"
-
-msgid "地址"
-msgstr "पता"
-
-msgid "域名"
-msgstr "डोमेन नाम"
-
-msgid "基本"
-msgstr "बुनियादी"
-
-msgid "堆栈"
-msgstr "ढेर"
-
-msgid "处理"
-msgstr "से निपटें"
-
-msgid "备份"
-msgstr "बैकअप"
-
-msgid "备注"
-msgstr "टिप्पणी"
-
-msgid "复制"
-msgstr "कॉपी"
-
-msgid "复合"
-msgstr "जटिल"
-
-msgid "外部"
-msgstr "बाहरी"
-
-msgid "多个"
-msgstr "विभिन्न"
+msgid "个数"
+msgstr "संख्या"
 
 msgid "大小"
 msgstr "आकार"
 
-msgid "失效"
-msgstr "अमान्य"
-
-msgid "失败"
-msgstr "असफल"
-
-msgid "如果"
-msgstr "अगर"
-
-msgid "字母"
-msgstr "पत्र"
-
-msgid "字符"
-msgstr "चरित्र"
-
-msgid "字节"
-msgstr "बाइट"
-
-msgid "存储"
-msgstr "भंडारण"
-
-msgid "存在"
-msgstr "अस्तित्व"
-
-msgid "安全"
-msgstr "सुरक्षा"
-
-msgid "完全"
-msgstr "पूरी तरह"
-
-msgid "完成"
-msgstr "खत्म करना"
-
-msgid "完整"
-msgstr "साबुत"
-
-msgid "定义"
-msgstr "परिभाषा"
-
-msgid "实例"
-msgstr "उदाहरण"
-
-msgid "实际"
-msgstr "वास्तविक"
-
-msgid "容器"
-msgstr "CONTAINER"
-
 msgid "容量"
 msgstr "क्षमता"
-
-msgid "密码"
-msgstr "पासवर्ड"
-
-msgid "对应"
-msgstr "अनुरूप"
-
-msgid "对象"
-msgstr "वस्तु"
-
-msgid "导入"
-msgstr "आयात"
-
-msgid "导出"
-msgstr "निर्यात"
-
-msgid "导致"
-msgstr "नेतृत्व करने के लिए"
-
-msgid "导航"
-msgstr "मार्गदर्शन"
-
-msgid "少于"
-msgstr "से कम"
-
-msgid "属性"
-msgstr "संपत्ति"
-
-msgid "已用"
-msgstr "इस्तेमाल किया गया"
-
-msgid "布局"
-msgstr "लेआउट"
-
-msgid "带宽"
-msgstr "बैंडविड्थ"
-
-msgid "平台"
-msgstr "प्लैटफ़ॉर्म"
-
-msgid "应用"
-msgstr "आवेदन"
-
-msgid "应该"
-msgstr "चाहिए"
-
-msgid "引擎"
-msgstr "इंजन"
-
-msgid "弹窗"
-msgstr "पॉप-अप विंडो"
-
-msgid "强关"
-msgstr "मजबूत पास"
-
-msgid "强制"
-msgstr "बल"
-
-msgid "强度"
-msgstr "ताकत"
-
-msgid "当前"
-msgstr "मौजूदा"
-
-msgid "必须"
-msgstr "अवश्य"
-
-msgid "忘记"
-msgstr "भूल जाओ"
-
-msgid "快速"
-msgstr "तेज़"
-
-msgid "性能"
-msgstr "प्रदर्शन"
 
 msgid "总数"
 msgstr "कुल"
 
-msgid "恢复"
-msgstr "वापस पाना"
-
-msgid "您好"
-msgstr "नमस्ते"
-
-msgid "情况"
-msgstr "स्थिति"
-
-msgid "成为"
-msgstr "बनना"
-
-msgid "成功"
-msgstr "सफलता"
-
-msgid "我们"
-msgstr "हम"
-
-msgid "截图"
-msgstr "स्क्रीनशॉट"
-
-msgid "所有"
-msgstr "सभी"
-
-msgid "才能"
-msgstr "प्रतिभा"
-
-msgid "打开"
-msgstr "खुला"
-
-msgid "执行"
-msgstr "अमल में लाना"
-
-msgid "扩展"
-msgstr "बढ़ाना"
-
-msgid "扫描"
-msgstr "स्कैनिंग"
-
-msgid "折叠"
-msgstr "तह करना"
-
-msgid "拥有"
-msgstr "पास होना"
-
-msgid "挂载"
-msgstr "पर्वत"
-
-msgid "指令"
-msgstr "अनुदेश"
-
-msgid "指定"
-msgstr "निर्दिष्ट करें"
-
-msgid "按钮"
-msgstr "बटन"
-
-msgid "授权"
-msgstr "अधिकृत"
-
-msgid "接口"
-msgstr "इंटरफ़ेस"
-
-msgid "控制"
-msgstr "नियंत्रण"
-
-msgid "描述"
-msgstr "वर्णन करना"
-
-msgid "提交"
-msgstr "जमा करना"
-
-msgid "提取"
-msgstr "निकालना"
-
-msgid "提示"
-msgstr "संकेत देना"
-
-msgid "搜索"
-msgstr "खोज"
-
-msgid "撤销"
-msgstr "रद्द करना"
-
-msgid "操作"
-msgstr "प्रचालन"
-
-msgid "支持"
-msgstr "सहायता"
-
-msgid "收件"
-msgstr "प्राप्त करें"
-
-msgid "收到"
-msgstr "प्राप्त करें"
-
-msgid "收集"
-msgstr "इकट्ठा करना"
-
-msgid "改密"
-msgstr "पासवर्ड बदलें"
-
-msgid "数字"
-msgstr "संख्या"
-
-msgid "数据"
-msgstr "डेटा"
-
-msgid "数组"
-msgstr "सरणी"
-
 msgid "数量"
 msgstr "मात्रा"
 
-msgid "整个"
-msgstr "पूरा"
+msgid "条数"
+msgstr "मदों की संख्या"
 
-msgid "文件"
-msgstr "दस्तावेज़"
+msgid "长度"
+msgstr "लंबाई"
 
-msgid "文字"
-msgstr "शब्द"
+msgid "分钟"
+msgstr "मिनट"
 
-msgid "文本"
-msgstr "मूलपाठ"
+msgid "周期"
+msgstr "चक्र"
 
-msgid "新增"
-msgstr "नया"
-
-msgid "方式"
-msgstr "रास्ता"
-
-msgid "无效"
-msgstr "अमान्य"
-
-msgid "无法"
-msgstr "असमर्थ"
-
-msgid "日志"
-msgstr "लकड़ी का लट्ठा"
-
-msgid "时会"
-msgstr "समय बैठक"
+msgid "日期"
+msgstr "तारीख"
 
 msgid "时间"
 msgstr "समय"
 
-msgid "映射"
-msgstr "मानचित्रण"
+msgid "每小时"
+msgstr "घंटे से"
 
-msgid "是否"
-msgstr "चाहे"
+msgid "每日"
+msgstr "दैनिक"
 
-msgid "显卡"
-msgstr "चित्रोपमा पत्रक"
+msgid "每月"
+msgstr "प्रति महीने"
 
-msgid "显存"
-msgstr "वीडियो मेमोरी"
-
-msgid "显示"
-msgstr "दिखाओ"
-
-msgid "暂停"
-msgstr "विराम"
+msgid "秒"
+msgstr "दूसरा"
 
 msgid "暂无"
 msgstr "अभी तक कोई नहीं"
@@ -1776,8 +2337,461 @@ msgstr "अस्थायी"
 msgid "暂未"
 msgstr "अभी तक नहीं"
 
-msgid "更新"
-msgstr "नवीकरण"
+msgid "与"
+msgstr "और"
+
+msgid "且"
+msgstr "और"
+
+msgid "但是"
+msgstr "लेकिन"
+
+msgid "及其"
+msgstr "और"
+
+msgid "同时"
+msgstr "एक ही समय पर"
+
+msgid "否则"
+msgstr "अन्यथा"
+
+msgid "和"
+msgstr "और"
+
+msgid "因为"
+msgstr "क्योंकि"
+
+msgid "如果"
+msgstr "अगर"
+
+msgid "或"
+msgstr "या"
+
+msgid "所以"
+msgstr "इसलिए"
+
+msgid "然而"
+msgstr "तथापि"
+
+msgid "虽然"
+msgstr "हालांकि"
+
+msgid "非"
+msgstr "नहीं"
+
+msgid "不"
+msgstr "नहीं"
+
+msgid "也"
+msgstr "भी"
+
+msgid "从"
+msgstr "से"
+
+msgid "会"
+msgstr "बैठक"
+
+msgid "只"
+msgstr "केवल"
+
+msgid "太"
+msgstr "बहुत"
+
+msgid "将"
+msgstr "इच्छा"
+
+msgid "就"
+msgstr "तुरंत"
+
+msgid "已"
+msgstr "पहले से"
+
+msgid "应该"
+msgstr "चाहिए"
+
+msgid "很"
+msgstr "बहुत"
+
+msgid "必须"
+msgstr "अवश्य"
+
+msgid "您"
+msgstr "आप"
+
+msgid "才"
+msgstr "प्रतिभा"
+
+msgid "时"
+msgstr "घंटा"
+
+msgid "更加"
+msgstr "अधिक"
+
+msgid "最"
+msgstr "अधिकांश"
+
+msgid "未"
+msgstr "अभी तक नहीं"
+
+msgid "比较"
+msgstr "तुलना करना"
+
+msgid "的"
+msgstr "का"
+
+msgid "相当"
+msgstr "अत्यंत"
+
+msgid "真的"
+msgstr "असली"
+
+msgid "确实"
+msgstr "वास्तव में"
+
+msgid "能"
+msgstr "योग्य"
+
+msgid "至少"
+msgstr "कम से कम"
+
+msgid "请"
+msgstr "कृपया"
+
+msgid "还"
+msgstr "वापस करना"
+
+msgid "都"
+msgstr "सभी"
+
+msgid "都将"
+msgstr "सामान्य"
+
+msgid "需要"
+msgstr "ज़रूरत"
+
+msgid "非常"
+msgstr "बहुत"
+
+msgid "为"
+msgstr "के लिए"
+
+msgid "作为"
+msgstr "जैसा"
+
+msgid "使用"
+msgstr "उपयोग"
+
+msgid "关于"
+msgstr "के बारे में"
+
+msgid "到"
+msgstr "आना"
+
+msgid "在"
+msgstr "अस्तित्व"
+
+msgid "对"
+msgstr "सही"
+
+msgid "对于"
+msgstr "के लिए"
+
+msgid "按"
+msgstr "के अनुसार"
+
+msgid "按照"
+msgstr "के अनुसार"
+
+msgid "根据"
+msgstr "के अनुसार"
+
+msgid "用于"
+msgstr "के लिए इस्तेमाल होता है"
+
+msgid "由于"
+msgstr "क्योंकि"
+
+msgid "通过"
+msgstr "उत्तीर्ण"
+
+msgid "其他"
+msgstr "अन्य"
+
+msgid "另"
+msgstr "अन्य"
+
+msgid "所有"
+msgstr "सभी"
+
+msgid "每个"
+msgstr "प्रत्येक"
+
+msgid "自己"
+msgstr "अपना"
+
+msgid "这"
+msgstr "यह"
+
+msgid "这个"
+msgstr "यह"
+
+msgid "这些"
+msgstr "इन"
+
+msgid "这封"
+msgstr "इस पत्र"
+
+msgid "这是"
+msgstr "यह है"
+
+msgid "那"
+msgstr "वह"
+
+msgid "那个"
+msgstr "वह"
+
+msgid "那些"
+msgstr "उनका एक"
+
+msgid "例如"
+msgstr "उदाहरण के लिए"
+
+msgid "包含"
+msgstr "शामिल करना"
+
+msgid "包括"
+msgstr "शामिल करना"
+
+msgid "提示"
+msgstr "संकेत देना"
+
+msgid "提醒"
+msgstr "याद दिलाना"
+
+msgid "比如"
+msgstr "उदाहरण के लिए"
+
+msgid "注意"
+msgstr "सूचना"
+
+msgid "补充"
+msgstr "Replenish"
+
+msgid "除外"
+msgstr "के अलावा"
+
+msgid "使得"
+msgstr "बनाना"
+
+msgid "导致"
+msgstr "नेतृत्व करने के लिए"
+
+msgid "引起"
+msgstr "कारण"
+
+msgid "造成"
+msgstr "कारण"
+
+msgid "中文"
+msgstr "चीनी"
+
+msgid "句号"
+msgstr "अवधि"
+
+msgid "字母"
+msgstr "पत्र"
+
+msgid "字符"
+msgstr "चरित्र"
+
+msgid "字节"
+msgstr "बाइट"
+
+msgid "数字"
+msgstr "संख्या"
+
+msgid "英文"
+msgstr "अंग्रेज़ी"
+
+msgid "逗号"
+msgstr "अल्पविराम"
+
+msgid "浅色"
+msgstr "हल्के रंग"
+
+msgid "深色"
+msgstr "अँधेरा"
+
+msgid "灰色"
+msgstr "स्लेटी"
+
+msgid "白色"
+msgstr "सफ़ेद"
+
+msgid "红色"
+msgstr "लाल"
+
+msgid "绿色"
+msgstr "हरा"
+
+msgid "蓝色"
+msgstr "नीला"
+
+msgid "颜色"
+msgstr "रंग"
+
+msgid "黄色"
+msgstr "पीला"
+
+msgid "黑色"
+msgstr "काला"
+
+msgid "(JSON格式)"
+msgstr "(JSON प्रारूप)"
+
+msgid "一条"
+msgstr "एक टुकड़ा"
+
+msgid "两次"
+msgstr "दो बार"
+
+msgid "主所有者"
+msgstr "प्राथमिक स्वामी"
+
+msgid "使用情况"
+msgstr "प्रयोग"
+
+msgid "停止刷新"
+msgstr "ताज़ा करना बंद करो"
+
+msgid "光盘"
+msgstr "सीडी"
+
+msgid "分隔"
+msgstr "अलग"
+
+msgid "列表"
+msgstr "सूची"
+
+msgid "判断"
+msgstr "न्यायाधीश"
+
+msgid "前缀"
+msgstr "उपसर्ग"
+
+msgid "加载"
+msgstr "भार"
+
+msgid "占用"
+msgstr "पर कब्जा"
+
+msgid "卡片"
+msgstr "कार्ड"
+
+msgid "历史"
+msgstr "इतिहास"
+
+msgid "发件"
+msgstr "भेजना"
+
+msgid "变为"
+msgstr "बनना"
+
+msgid "变化"
+msgstr "परिवर्तन"
+
+msgid "后续"
+msgstr "पालन ​​करें"
+
+msgid "后缀"
+msgstr "प्रत्यय"
+
+msgid "后该"
+msgstr "बाद का समय है"
+
+msgid "基本信息"
+msgstr "मूल जानकारी"
+
+msgid "处理"
+msgstr "से निपटें"
+
+msgid "复合"
+msgstr "जटिल"
+
+msgid "存在"
+msgstr "अस्तित्व"
+
+msgid "完全"
+msgstr "पूरी तरह"
+
+msgid "容器管理"
+msgstr "कंटेनर प्रबंधन"
+
+msgid "对应"
+msgstr "अनुरूप"
+
+msgid "少于"
+msgstr "से कम"
+
+msgid "左侧"
+msgstr "बाईं तरफ"
+
+msgid "开放注册"
+msgstr "पंजीकरण खोलें"
+
+msgid "忘记"
+msgstr "भूल जाओ"
+
+msgid "您好"
+msgstr "नमस्ते"
+
+msgid "您的"
+msgstr "आपका"
+
+msgid "情况"
+msgstr "स्थिति"
+
+msgid "我们"
+msgstr "हम"
+
+msgid "才能"
+msgstr "प्रतिभा"
+
+msgid "扩展"
+msgstr "बढ़ाना"
+
+msgid "拥有"
+msgstr "पास होना"
+
+msgid "控制"
+msgstr "नियंत्रण"
+
+msgid "提供"
+msgstr "आपूर्ति"
+
+msgid "操作"
+msgstr "प्रचालन"
+
+msgid "收件"
+msgstr "प्राप्त करें"
+
+msgid "收到"
+msgstr "प्राप्त करें"
+
+msgid "改密"
+msgstr "पासवर्ड बदलें"
+
+msgid "无法"
+msgstr "असमर्थ"
+
+msgid "时会"
+msgstr "समय बैठक"
+
+msgid "是否"
+msgstr "चाहे"
+
+msgid "显示"
+msgstr "दिखाओ"
 
 msgid "最低"
 msgstr "सबसे कम"
@@ -1788,263 +2802,41 @@ msgstr "आखिरकार"
 msgid "最小"
 msgstr "सबसे छोटा"
 
-msgid "最新"
-msgstr "अप टू डेट"
-
-msgid "最终"
-msgstr "अंतिम"
-
-msgid "有效"
-msgstr "कुशल"
-
-msgid "服务"
-msgstr "सेवा करना"
-
-msgid "未知"
-msgstr "अज्ञात"
-
-msgid "机器"
-msgstr "मशीन"
-
-msgid "权限"
-msgstr "अनुमतियां"
-
-msgid "条件"
-msgstr "स्थिति"
-
-msgid "条数"
-msgstr "मदों की संख्या"
-
 msgid "来自"
 msgstr "से"
-
-msgid "构建"
-msgstr "निर्माण"
-
-msgid "构造"
-msgstr "संरचना"
-
-msgid "查找"
-msgstr "खोजो"
-
-msgid "查收"
-msgstr "जाँच करना"
-
-msgid "查看"
-msgstr "जाँच करना"
-
-msgid "标签"
-msgstr "लेबल"
-
-msgid "样式"
-msgstr "शैली"
-
-msgid "核心"
-msgstr "मुख्य"
-
-msgid "根据"
-msgstr "के अनुसार"
-
-msgid "格式"
-msgstr "प्रारूप"
-
-msgid "桌面"
-msgstr "डेस्कटॉप"
-
-msgid "检查"
-msgstr "परीक्षण करना"
-
-msgid "检测"
-msgstr "खोज"
-
-msgid "概览"
-msgstr "सिंहावलोकन"
-
-msgid "模块"
-msgstr "मॉड्यूल"
-
-msgid "模式"
-msgstr "नमूना"
 
 msgid "模态"
 msgstr "मॉडल"
 
-msgid "模板"
-msgstr "खाका"
-
-msgid "正在"
-msgstr "हैं"
-
-msgid "正常"
-msgstr "सामान्य"
-
-msgid "正文"
-msgstr "मूलपाठ"
-
-msgid "正确"
-msgstr "सही"
-
-msgid "每月"
-msgstr "प्रति महीने"
-
-msgid "比如"
-msgstr "उदाहरण के लिए"
-
 msgid "没有"
 msgstr "नहीं"
 
-msgid "注册"
-msgstr "पंजीकरण करवाना"
+msgid "注册表"
+msgstr "रजिस्ट्री"
 
-msgid "注意"
-msgstr "सूचना"
-
-msgid "注释"
-msgstr "टिप्पणी"
-
-msgid "流量"
-msgstr "प्रवाह"
-
-msgid "浅色"
-msgstr "हल्के रंग"
-
-msgid "消息"
-msgstr "जानकारी"
-
-msgid "深色"
-msgstr "अँधेरा"
-
-msgid "添加"
-msgstr "इसमें जोड़ें"
-
-msgid "清空"
-msgstr "स्पष्ट"
-
-msgid "清除"
-msgstr "स्पष्ट"
-
-msgid "温度"
-msgstr "तापमान"
-
-msgid "渲染"
-msgstr "प्रतिपादन"
-
-msgid "灰色"
-msgstr "स्लेटी"
-
-msgid "点击"
-msgstr "क्लिक"
+msgid "浏览器"
+msgstr "ब्राउज़र"
 
 msgid "爱快"
 msgstr "तेजी से प्यार करो"
 
-msgid "版本"
-msgstr "संस्करण"
-
-msgid "状态"
-msgstr "राज्य"
-
-msgid "独立"
-msgstr "स्वतंत्र"
-
-msgid "生成"
-msgstr "उत्पन्न"
-
-msgid "生效"
-msgstr "लागू"
-
-msgid "用于"
-msgstr "के लिए इस्तेमाल होता है"
-
-msgid "用尽"
-msgstr "थका हुआ"
-
-msgid "用户"
-msgstr "उपयोगकर्ता"
-
-msgid "用途"
-msgstr "उपयोग"
-
-msgid "用量"
-msgstr "मात्रा बनाने की विधि"
-
 msgid "由后"
 msgstr "पीछे से"
-
-msgid "电源"
-msgstr "बिजली की आपूर्ति"
 
 msgid "留空"
 msgstr "खाली छोड़ें"
 
-msgid "登出"
-msgstr "साइन आउट"
-
-msgid "登录"
-msgstr "लॉग इन करें"
-
-msgid "监听"
-msgstr "निगरानी करना"
-
-msgid "监控"
-msgstr "निगरानी करना"
-
 msgid "目标"
 msgstr "लक्ष्य"
 
-msgid "直接"
-msgstr "प्रत्यक्ष"
+msgid "第一个"
+msgstr "पहले वाला"
 
-msgid "相关"
-msgstr "संबंधित"
-
-msgid "看到"
-msgstr "देखना"
-
-msgid "硬盘"
-msgstr "हार्डडिस्क"
-
-msgid "确保"
-msgstr "सुनिश्चित करें"
-
-msgid "确定"
-msgstr "ज़रूर"
-
-msgid "确认"
-msgstr "पुष्टि करना"
-
-msgid "磁盘"
-msgstr "डिस्क"
-
-msgid "禁用"
-msgstr "अक्षम करना"
-
-msgid "移交"
-msgstr "स्थानांतरण"
-
-msgid "移除"
-msgstr "निकालना"
-
-msgid "程序"
-msgstr "कार्यक्रम"
-
-msgid "稍候"
-msgstr "एक पल इंतज़ार करें"
-
-msgid "立即"
-msgstr "तुरंत"
-
-msgid "端口"
-msgstr "पत्तन"
+msgid "第一台"
+msgstr "सबसे पहला"
 
 msgid "等待"
 msgstr "इंतज़ार"
-
-msgid "筛选"
-msgstr "फ़िल्टर"
-
-msgid "简化"
-msgstr "आसान बनाने में"
 
 msgid "管理"
 msgstr "प्रबंधित करना"
@@ -2052,107 +2844,11 @@ msgstr "प्रबंधित करना"
 msgid "类名"
 msgstr "कक्षा का नाम"
 
-msgid "类型"
-msgstr "प्रकार"
-
-msgid "系统"
-msgstr "प्रणाली"
-
-msgid "红色"
-msgstr "लाल"
-
-msgid "级别"
-msgstr "स्तर"
-
-msgid "组件"
-msgstr "अवयव"
-
-msgid "结束"
-msgstr "खत्म करना"
-
-msgid "统计"
-msgstr "आंकड़े"
-
-msgid "继续"
-msgstr "जारी रखना"
-
-msgid "绿色"
-msgstr "हरा"
-
-msgid "编辑"
-msgstr "संपादन करना"
-
-msgid "网关"
-msgstr "द्वार"
-
-msgid "网卡"
-msgstr "नेटवर्क कार्ड"
-
-msgid "网桥"
-msgstr "पुल"
-
-msgid "网络"
-msgstr "नेटवर्क"
-
-msgid "网网"
-msgstr "नेटनेट"
-
 msgid "翻译"
 msgstr "अनुवाद"
 
 msgid "耐心"
 msgstr "धैर्य"
-
-msgid "联系"
-msgstr "जोड़ना"
-
-msgid "自动"
-msgstr "स्वचालित"
-
-msgid "至少"
-msgstr "कम से कम"
-
-msgid "节点"
-msgstr "नोड"
-
-msgid "范围"
-msgstr "दायरा"
-
-msgid "获取"
-msgstr "पाना"
-
-msgid "菜单"
-msgstr "मेनू"
-
-msgid "补充"
-msgstr "Replenish"
-
-msgid "表单"
-msgstr "रूप"
-
-msgid "表示"
-msgstr "अभिव्यक्त करना"
-
-msgid "要求"
-msgstr "ज़रूरत होना"
-
-msgid "规则"
-msgstr "नियम"
-
-msgid "视图"
-msgstr "देखना"
-
-msgid "角色"
-msgstr "भूमिका"
-
-msgid "解析"
-msgstr "पार्स"
-
-msgid "触发"
-msgstr "चालू कर देना"
-
-msgid "警告"
-msgstr "चेतावनी देना"
 
 msgid "计算"
 msgstr "calculate"
@@ -2160,173 +2856,32 @@ msgstr "calculate"
 msgid "认证"
 msgstr "प्रमाणन"
 
-msgid "记录"
-msgstr "अभिलेख"
-
-msgid "设备"
-msgstr "उपकरण"
-
-msgid "设置"
-msgstr "स्थापित करना"
-
 msgid "访问"
 msgstr "पहुँच"
-
-msgid "详情"
-msgstr "विवरण"
 
 msgid "语言"
 msgstr "भाषा"
 
-msgid "说明"
-msgstr "उदाहरण देकर स्पष्ट करना"
-
 msgid "请求"
 msgstr "पूछना"
 
-msgid "读取"
-msgstr "पढ़ना"
-
-msgid "调用"
-msgstr "पुकारना"
-
-msgid "调试"
-msgstr "डिबग"
+msgid "请求头"
+msgstr "हेडर का अनुरोध करें"
 
 msgid "谨慎"
 msgstr "सावधान"
 
-msgid "账号"
-msgstr "खाता"
-
-msgid "账户"
-msgstr "खाता"
-
-msgid "资源"
-msgstr "संसाधन"
-
 msgid "起始"
 msgstr "शुरू"
-
-msgid "超时"
-msgstr "समय समाप्त"
-
-msgid "足够"
-msgstr "पर्याप्त"
-
-msgid "跟踪"
-msgstr "रास्ता"
-
-msgid "路径"
-msgstr "पथ"
-
-msgid "路由"
-msgstr "मार्ग"
-
-msgid "跳转"
-msgstr "कूदना"
-
-msgid "跳过"
-msgstr "इस पर से कूद जाओ"
-
-msgid "转换"
-msgstr "बदलना"
-
-msgid "转移"
-msgstr "स्थानांतरण"
-
-msgid "转让"
-msgstr "स्थानांतरण"
 
 msgid "轮询"
 msgstr "मतदान"
 
-msgid "输入"
-msgstr "प्रवेश करना"
-
-msgid "过滤"
-msgstr "फ़िल्टर"
-
 msgid "运行"
 msgstr "दौड़ना"
 
-msgid "返回"
-msgstr "वापस करना"
-
-msgid "还原"
-msgstr "कमी"
-
-msgid "这个"
-msgstr "यह"
-
-msgid "这封"
-msgstr "इस पत्र"
-
-msgid "这是"
-msgstr "यह है"
-
 msgid "这里"
 msgstr "यहाँ"
-
-msgid "进行"
-msgstr "आचरण"
-
-msgid "远程"
-msgstr "दूर"
-
-msgid "连接"
-msgstr "जोड़ना"
-
-msgid "选中"
-msgstr "चयनित"
-
-msgid "选择"
-msgstr "चुनना"
-
-msgid "选项"
-msgstr "विकल्प"
-
-msgid "递归"
-msgstr "प्रत्यावर्तन"
-
-msgid "逗号"
-msgstr "अल्पविराम"
-
-msgid "通用"
-msgstr "सार्वभौमिक"
-
-msgid "通知"
-msgstr "सूचित करें"
-
-msgid "通过"
-msgstr "उत्तीर्ण"
-
-msgid "逻辑"
-msgstr "तर्क"
-
-msgid "遍历"
-msgstr "पार"
-
-msgid "避免"
-msgstr "टालना"
-
-msgid "邮件"
-msgstr "मेल"
-
-msgid "邮箱"
-msgstr "मेल"
-
-msgid "部分"
-msgstr "भाग"
-
-msgid "配置"
-msgstr "विन्यास"
-
-msgid "配额"
-msgstr "कोटा"
-
-msgid "重启"
-msgstr "पुनः आरंभ करें"
 
 msgid "重复"
 msgstr "दोहराना"
@@ -2334,68 +2889,86 @@ msgstr "दोहराना"
 msgid "重新"
 msgstr "दोबारा"
 
-msgid "重置"
-msgstr "रीसेट करें"
-
-msgid "重装"
-msgstr "पुनर्स्थापित"
-
-msgid "重要"
-msgstr "महत्वपूर्ण"
-
-msgid "重试"
-msgstr "पुनः प्रयास करें"
-
-msgid "错误"
-msgstr "गलती"
-
 msgid "键中"
 msgstr "चाबी"
-
-msgid "镜像"
-msgstr "आईना"
-
-msgid "长度"
-msgstr "लंबाई"
-
-msgid "闭包"
-msgstr "बंद"
-
-msgid "问题"
-msgstr "सवाल"
-
-msgid "限制"
-msgstr "आप LIMIT"
 
 msgid "随机"
 msgstr "यादृच्छिक"
 
-msgid "需要"
-msgstr "ज़रूरत"
+msgid "默认值"
+msgstr "डिफ़ॉल्ट मान"
 
-msgid "静态"
-msgstr "स्थिर"
+msgid "一键"
+msgstr "एक क्लिक"
 
-msgid "非常"
-msgstr "बहुत"
+msgid "上一步"
+msgstr "पिछला चरण"
 
-msgid "页面"
-msgstr "पेज"
+msgid "下一步"
+msgstr "अगला कदम"
 
-msgid "顶部"
-msgstr "शीर्ष"
+msgid "完成"
+msgstr "खत्म करना"
 
-msgid "颜色"
-msgstr "रंग"
+msgid "确定"
+msgstr "ज़रूर"
 
-msgid "验证"
-msgstr "सत्यापित करें"
+msgid "稍候"
+msgstr "एक पल इंतज़ार करें"
 
-msgid "高级"
-msgstr "विकसित"
+msgid "立即"
+msgstr "तुरंत"
 
-msgid "默认"
-msgstr "गलती करना"
+msgid "结束"
+msgstr "खत्म करना"
+
+msgid "继续"
+msgstr "जारी रखना"
+
+msgid "重试"
+msgstr "पुनः प्रयास करें"
+
+msgid "请输入"
+msgstr "कृपया दर्ज करें"
+
+msgid "请选择"
+msgstr "कृपया चयन कीजिए"
+
+msgid "输入"
+msgstr "प्रवेश करना"
+
+msgid "输出"
+msgstr "आउटपुट"
+
+msgid "响应"
+msgstr "प्रतिक्रिया"
+
+msgid "主机管理"
+msgstr "मेज़बान प्रबंधन"
+
+msgid "创建备份"
+msgstr "बैकअप बनाएं"
+
+msgid "备份名称"
+msgstr "बैकअप नाम"
+
+msgid "备份文件"
+msgstr "बैकअप फ़ाइलें"
+
+msgid "备份注释"
+msgstr "बैकअप टिप्पणियाँ"
+
+msgid "备份管理"
+msgstr "बैकअप प्रबंधन"
+
+msgid "备份说明"
+msgstr "बैकअप निर्देश"
+
+msgid "扫描备份"
+msgstr "बैकअप स्कैन करें"
+
+msgid "暂无备份"
+msgstr "अभी तक कोई बैकअप नहीं है"
 
 msgid "下"
 msgstr "नीचे"
@@ -2409,156 +2982,9 @@ msgstr "पीछे"
 msgid "否"
 msgstr "नहीं"
 
-msgid "多"
-msgstr "अनेक"
-
-msgid "大"
-msgstr "बड़ा"
-
-msgid "对"
-msgstr "सही"
-
-msgid "新"
-msgstr "नया"
-
-msgid "旧"
-msgstr "पुराना"
-
 msgid "是"
 msgstr "हाँ"
 
 msgid "空"
 msgstr "व्यर्थ"
-
-msgid "全局"
-msgstr "समग्र स्थिति"
-
-msgid "查看您的资源使用情况和配额信息"
-msgstr "अपने संसाधन उपयोग और कोटा की जानकारी देखें"
-
-msgid "用户空间"
-msgstr "उपयोगकर्ता स्थान"
-
-msgid "系统空间"
-msgstr "सिस्टम स्थान"
-
-msgid "实例管理"
-msgstr "उदाहरण प्रबंधन"
-
-msgid "监控"
-msgstr "निगरानी करना"
-
-msgid "网络端口"
-msgstr "नेटवर्क पोर्ट"
-
-msgid "网络与配额"
-msgstr "नेटवर्किंग और कोटा"
-
-msgid "上传带宽"
-msgstr "बैंडविड्थ अपलोड करें"
-
-msgid "下载带宽"
-msgstr "बैंडविड्थ डाउनलोड करें"
-
-msgid "实例配置"
-msgstr "उदाहरण विन्यास"
-
-msgid "设置密码"
-msgstr "सांकेतिक शब्द लगना"
-
-msgid "一键远程"
-msgstr "एक क्लिक रिमोट"
-
-msgid "网卡列表"
-msgstr "नेटवर्क कार्ड सूची"
-
-msgid "转发规则"
-msgstr "अग्रेषण नियम"
-
-msgid "设备直通"
-msgstr "डिवाइस पास-थ्रू"
-
-msgid "物理"
-msgstr "भौतिक विज्ञान"
-
-msgid "设备名"
-msgstr "डिवाइस का नाम"
-
-msgid "存储路径"
-msgstr "भंडारण पथ"
-
-msgid "程序启动路径"
-msgstr "प्रोग्राम स्टार्टअप पथ"
-
-msgid "爱快配置"
-msgstr "ऐकुई विन्यास"
-
-msgid "限制配置"
-msgstr "विन्यास सीमित करें"
-
-msgid "（多个用逗号分隔）"
-msgstr "(एकाधिक को अल्पविराम से अलग करें)"
-
-msgid "高级配置"
-msgstr "उन्नत विन्यास"
-
-msgid "系统映射"
-msgstr "सिस्टम मैपिंग"
-
-msgid "配置池"
-msgstr "पूल कॉन्फ़िगर करें"
-
-msgid "扩展选项"
-msgstr "विस्तारित विकल्प"
-
-msgid "扩展数据"
-msgstr "विस्तारित डेटा"
-
-msgid "(JSON格式)"
-msgstr "(JSON प्रारूप)"
-
-msgid "和事件记录"
-msgstr "और इवेंट लॉगिंग"
-
-msgid "请从左侧选择一条"
-msgstr "कृपया बाईं ओर से एक चुनें"
-
-msgid "安全提示"
-msgstr "सुरक्षा टिप्स"
-
-msgid "重置Token后，所有使用旧Token的API调用都将失效。请确保更新所有相关配置。"
-msgstr "टोकन को रीसेट करने के बाद, पुराने टोकन का उपयोग करने वाली सभी एपीआई कॉल अमान्य हो जाएंगी। कृपया सभी प्रासंगिक कॉन्फ़िगरेशन को अद्यतन करना सुनिश्चित करें।"
-
-msgid "在请求头中添加："
-msgstr "अनुरोध शीर्षलेख में जोड़ें:"
-
-msgid "受控端"
-msgstr "नियंत्रित अंत"
-
-msgid "访问配置"
-msgstr "एक्सेस कॉन्फ़िगरेशन"
-
-msgid "新账号"
-msgstr "नया खाता"
-
-msgid "注册时需要验证邮箱"
-msgstr "पंजीकरण करते समय ईमेल सत्यापन आवश्यक है"
-
-msgid "新用户默认"
-msgstr "नया उपयोगकर्ता डिफ़ॉल्ट"
-
-msgid "这是一封来自"
-msgstr "यह एक पत्र है"
-
-msgid "系统的测试邮件"
-msgstr "सिस्टम परीक्षण ईमेल"
-
-msgid "如果您收到这封邮件"
-msgstr "यदि आपको यह ईमेल प्राप्त होता है"
-
-msgid "说明邮件服务配置正常"
-msgstr "इंगित करता है कि मेल सेवा कॉन्फ़िगरेशन सामान्य है"
-
-msgid "您的"
-msgstr "आपका"
 

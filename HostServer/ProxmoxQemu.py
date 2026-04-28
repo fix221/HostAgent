@@ -840,6 +840,17 @@ class HostServer(BasicServer):
             if status['status'] == 'running':
                 logger.info(f"[{self.hs_config.server_name}] 虚拟机正在运行，先停止...")
                 self.VMPowers(vm_name, VMPowers.H_CLOSE)
+                # 等待虚拟机完全停止（最多等待60秒）
+                for i in range(30):
+                    time.sleep(2)
+                    cur_status = vm.status.current.get()
+                    if cur_status['status'] == 'stopped':
+                        logger.info(f"[{self.hs_config.server_name}] 虚拟机已停止")
+                        break
+                else:
+                    logger.warning(f"[{self.hs_config.server_name}] 等待超时，尝试强制停止...")
+                    vm.status.stop.post()
+                    time.sleep(5)
             
             # 删除路由器绑定（iKuai层面）=======================================
             logger.info(f"[{self.hs_config.server_name}] 删除路由器IP绑定...")
