@@ -381,15 +381,17 @@ function Dashboards() {
    */
   const handleOsChange = (value: string) => {
     if (!hostConfig?.system_maps) return
-    
-    const entry = Object.entries(hostConfig.system_maps).find(([_, val]) => {
-      const imageFile = Array.isArray(val) ? val[0] : val
-      return imageFile === value
+
+    const list = Array.isArray(hostConfig.system_maps) ? hostConfig.system_maps : []
+    const matched = list.find((it: any) => {
+      if (it && typeof it === 'object' && 'sys_file' in it) {
+        return it.sys_file === value
+      }
+      return false
     })
-    
-    if (entry) {
-      const config = entry[1]
-      const minSize = Array.isArray(config) && config.length > 1 ? Number(config[1]) : 10
+
+    if (matched && typeof matched === 'object') {
+      const minSize = Number((matched as any).sys_size) || 10
       setMinDiskSize(minSize)
       // 触发硬盘字段验证
       createVMForm.validateFields(['hdd_num'])
@@ -411,14 +413,15 @@ function Dashboards() {
         
         // 设置可用镜像
         if (result.data.system_maps) {
-          // system_maps 值可能是 [filename, minSize] 或 filename
-          const images = Object.entries(result.data.system_maps).map(([name, val]) => {
-             return {
-               label: name,
-               value: Array.isArray(val) ? val[0] : val
-             }
-          })
-          setAvailableImages(images.map(i => i.value as string))
+          // system_maps 现在为 list[OSConfig] 或旧 dict 格式，统一成 list[OSConfig]风格
+          const rawList: any[] = Array.isArray(result.data.system_maps)
+            ? result.data.system_maps
+            : Object.entries(result.data.system_maps).map(([name, val]: [string, any]) => (
+                Array.isArray(val)
+                  ? { sys_name: name, sys_file: val[0], sys_size: String(val[1] ?? ''), sys_type: '' }
+                  : (val && typeof val === 'object' ? { sys_name: name, ...val } : { sys_name: name, sys_file: val, sys_size: '', sys_type: '' })
+              ))
+          setAvailableImages(rawList.filter((it: any) => it && it.sys_flag !== false).map((it: any) => it.sys_file as string).filter(Boolean))
           // 同时也需要保存映射关系以供选择显示，这里简化处理，假设value即文件名
         }
       }

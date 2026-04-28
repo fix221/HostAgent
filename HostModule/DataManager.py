@@ -400,7 +400,17 @@ class DataManager:
             logger.debug(f"[set_hs_config] hs_name: {hs_name}")
             logger.debug(f"[set_hs_config] hs_config.images_maps: {hs_config.images_maps}")
             logger.debug(f"[set_hs_config] images_maps类型: {type(hs_config.images_maps)}")
-            images_maps_json = json.dumps(hs_config.images_maps) if hs_config.images_maps else "{}"
+            # system_maps/images_maps 现在是 list[OSConfig]，序列化为 list[dict]
+            def _os_list_dump(os_list):
+                result = []
+                for it in (os_list or []):
+                    if hasattr(it, '__save__') and callable(getattr(it, '__save__')):
+                        result.append(it.__save__())
+                    elif isinstance(it, dict):
+                        result.append(it)
+                return result
+            system_maps_json = json.dumps(_os_list_dump(hs_config.system_maps))
+            images_maps_json = json.dumps(_os_list_dump(hs_config.images_maps))
             logger.debug(f"[set_hs_config] images_maps_json: {images_maps_json}")
             
             sql = """
@@ -410,8 +420,9 @@ class DataManager:
              launch_path, network_nat, network_pub, i_kuai_addr, i_kuai_user, 
              i_kuai_pass, ports_start, ports_close, remote_port, system_maps, images_maps,
              public_addr, extend_data, limits_nums, ipaddr_maps, ipaddr_ddns, enable_host,
-             server_area, server_plan, updated_at)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, CURRENT_TIMESTAMP)
+             server_area, n_cpu_price, n_mem_price, n_hdd_price, n_net_price,
+             server_plan, updated_at)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, CURRENT_TIMESTAMP)
             """
             # 序列化server_plan: dict[str, VMConfig] -> JSON
             server_plan_data = {}
@@ -443,7 +454,7 @@ class DataManager:
                 hs_config.ports_start,
                 hs_config.ports_close,
                 hs_config.remote_port,
-                json.dumps(hs_config.system_maps) if hs_config.system_maps else "{}",
+                system_maps_json,
                 images_maps_json,
                 json.dumps(hs_config.public_addr) if hs_config.public_addr else "[]",
                 json.dumps(hs_config.extend_data) if hs_config.extend_data else "{}",
@@ -452,6 +463,10 @@ class DataManager:
                 json.dumps(hs_config.ipaddr_ddns) if hs_config.ipaddr_ddns else '["119.29.29.29", "223.5.5.5"]',
                 1 if getattr(hs_config, 'enable_host', True) else 0,  # 主机启用状态
                 getattr(hs_config, 'server_area', ''),                 # 服务器区域
+                getattr(hs_config, 'n_cpu_price', 0),                  # CPU核心单价
+                getattr(hs_config, 'n_mem_price', 0),                  # 内存单价
+                getattr(hs_config, 'n_hdd_price', 0),                  # 硬盘单价
+                getattr(hs_config, 'n_net_price', 0),                  # 带宽单价
                 json.dumps(server_plan_data)                           # 套餐配置
             )
             conn.execute(sql, params)

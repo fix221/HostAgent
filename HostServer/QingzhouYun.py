@@ -374,8 +374,12 @@ class HostServer(BasicServer):
                 return net_result
             # 查找系统镜像映射 =================================================
             os_image = vm_conf.os_name
-            if os_image in self.hs_config.system_maps:
-                os_image = self.hs_config.system_maps[os_image][0]
+            for _it in (self.hs_config.system_maps or []):
+                _name = getattr(_it, 'sys_name', None) if hasattr(_it, 'sys_name') else (_it.get('sys_name') if isinstance(_it, dict) else None)
+                _file = getattr(_it, 'sys_file', None) if hasattr(_it, 'sys_file') else (_it.get('sys_file') if isinstance(_it, dict) else None)
+                if _name == os_image and _file:
+                    os_image = _file
+                    break
             # 构建创建参数 =====================================================
             payload = {
                 "name": vm_conf.vm_uuid,
@@ -441,8 +445,12 @@ class HostServer(BasicServer):
         try:
             pid = self._vm_id(vm_conf.vm_uuid)
             os_image = vm_conf.os_name
-            if os_image in self.hs_config.system_maps:
-                os_image = self.hs_config.system_maps[os_image][0]
+            for _it in (self.hs_config.system_maps or []):
+                _name = getattr(_it, 'sys_name', None) if hasattr(_it, 'sys_name') else (_it.get('sys_name') if isinstance(_it, dict) else None)
+                _file = getattr(_it, 'sys_file', None) if hasattr(_it, 'sys_file') else (_it.get('sys_file') if isinstance(_it, dict) else None)
+                if _name == os_image and _file:
+                    os_image = _file
+                    break
             data = self._api_post(f"vm/{pid}/reinstall", {
                 "os_image": os_image,
                 "password": vm_conf.os_pass or "Qz@123456",

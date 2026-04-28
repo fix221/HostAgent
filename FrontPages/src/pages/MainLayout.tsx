@@ -42,7 +42,7 @@ function MainLayout() {
     const navigate = useNavigate()
     const location = useLocation()
     const {user, logout, setUser} = useUserStore()
-    const { theme: currentTheme, toggleTheme, transparentMode, toggleTransparentMode, roundedMode, toggleRoundedMode } = useTheme()
+    const { theme: currentTheme, toggleTheme, transparentMode, toggleTransparentMode, roundedMode, toggleRoundedMode, liquidMode, toggleLiquidMode } = useTheme()
     const [collapsed, setCollapsed] = useState(false)
     const [notifications, setNotifications] = useState(0)
     const [currentLang, setCurrentLang] = useState('zh-cn')
@@ -184,6 +184,16 @@ function MainLayout() {
                 <span style={{ flex: 1, fontSize: 14, color: currentTheme === 'dark' ? '#e6e9ef' : '#333' }}>圆角模式</span>
                 {roundedMode && <CheckOutlined style={{ fontSize: 12, color: '#52c41a' }} />}
             </div>
+
+            {/* 液态玻璃模式 */}
+            <div onClick={toggleLiquidMode} className="theme-menu-item" style={{
+                display: 'flex', alignItems: 'center', gap: 10,
+                padding: '8px 10px', borderRadius: 8, cursor: 'pointer', transition: 'background 0.2s',
+            }}>
+                <AppstoreOutlined style={{ fontSize: 16, color: liquidMode ? '#13c2c2' : (currentTheme === 'dark' ? '#888' : '#595959') }} />
+                <span style={{ flex: 1, fontSize: 14, color: currentTheme === 'dark' ? '#e6e9ef' : '#333' }}>液态玻璃</span>
+                {liquidMode && <CheckOutlined style={{ fontSize: 12, color: '#13c2c2' }} />}
+            </div>
         </div>
     )
 
@@ -254,17 +264,14 @@ function MainLayout() {
 
                     {/* 搜索框 */}
                     <Input
+                        className="header-search"
                         placeholder="搜索功能..."
-                        prefix={<SearchOutlined style={{ color: 'rgba(255,255,255,0.45)', fontSize: 14 }} />}
+                        prefix={<SearchOutlined style={{ fontSize: 14 }} />}
                         style={{
-                            background: 'rgba(255,255,255,0.04)',
-                            border: '1px solid rgba(255,255,255,0.12)',
                             borderRadius: 6,
                             height: 36,
                             width: 220,
-                            color: '#e6e9ef',
                         }}
-                        styles={{ input: { background: 'transparent', color: '#e6e9ef' } }}
                     />
 
                     {/* 主题切换 */}
@@ -279,7 +286,7 @@ function MainLayout() {
                                 type="text"
                                 icon={<FormatPainterOutlined style={{ fontSize: 16 }} />}
                                 style={{
-                                    color: (currentTheme === 'dark' || transparentMode || roundedMode) ? '#8b8aff' : '#e6e9ef',
+                                    color: (currentTheme === 'dark' || transparentMode || roundedMode || liquidMode) ? '#8b8aff' : '#e6e9ef',
                                     border: 'none', boxShadow: 'none',
                                     width: 36, height: 36,
                                     display: 'flex', alignItems: 'center', justifyContent: 'center',

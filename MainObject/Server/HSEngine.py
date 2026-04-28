@@ -8,6 +8,7 @@ import HostServer.vSphereESXi as vSphereESXiModule
 import HostServer.VirtualBoxs as VirtualBoxsModule
 import HostServer.QEMUService as QEMUServerModule
 import HostServer.MemuAndroid as MemuAndroidModule
+import HostServer.SmolVM as SmolVMModule
 from HostServer import ProxmoxQemu, Win64HyperV, QingzhouYun
 
 HEConfig = {
@@ -189,6 +190,36 @@ HEConfig = {
         "Ban_Init": [],
         "Ban_Edit": [],
         "Tab_Lock": []
+    },
+    "SmolVM": {
+        "Imported": SmolVMModule.HostServer,
+        "Descript": "SmolVM MicroVM Runtime",
+        "isEnable": True,
+        "isRemote": True,
+        "Platform": ["Linux"],
+        "CPU_Arch": ["x86_64", "aarch64"],
+        "Optional": {
+            "smolvm_kernel": "自定义内核 vmlinux 路径（留空则使用 images_path/vmlinux-smolvm）",
+            "smolvm_hv": "hypervisor 名称(firecracker/cloud-hypervisor/qemu-system-x86_64)",
+            "smolvm_hv_path": "hypervisor 可执行文件路径（留空自动探测）",
+        },
+        "Messages": [
+            "1、依赖 KVM（/dev/kvm）与 Firecracker/Cloud-Hypervisor",
+            "2、不支持 GPU/PCI/USB 直通，不支持 ISO 挂载",
+            "3、使用 Docker 镜像作为 rootfs（docker export → ext4）",
+            "4、SSH 端口转发通过 socat / iptables 实现"
+        ],
+        "Ban_Init": [
+            "gpu_num", "gpu_mem",
+        ],
+        "Ban_Edit": [
+            "gpu_num", "gpu_mem",
+            "flu_num",
+            "speed_u", "speed_d",
+        ],
+        "Tab_Lock": [
+            "hdd", "iso", "pci", "usb", "efi", "gpu"
+        ]
     },
     "MemuAndroid": {
         "Imported": MemuAndroidModule.HostServer,

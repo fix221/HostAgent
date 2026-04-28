@@ -50,10 +50,19 @@ interface UserQuota {
     used_web: number
 }
 
+// 操作系统镜像配置
+interface OSConfigItem {
+    sys_name: string  // 显示名称
+    sys_file: string  // 文件名
+    sys_size: string  // 最低磁盘GB
+    sys_type: string  // WinNT/Linux/macOS
+    sys_flag?: boolean // 是否启用此镜像
+}
+
 interface HostConfig {
     filter_name: string
-    system_maps: Record<string, [string, number]>
-    images_maps: Record<string, string>
+    system_maps: OSConfigItem[]
+    images_maps: OSConfigItem[]
     server_type: string
     ban_init: string[]
     ban_edit: string[]
@@ -98,7 +107,7 @@ const DockCreateModal: React.FC<DockCreateModalProps> = ({
     const [nicCounter, setNicCounter] = useState(0)
     const [selectedHost, setSelectedHost] = useState<string>('')
     const [hostConfig, setHostConfig] = useState<HostConfig | null>(null)
-    const [hostImages, setHostImages] = useState<Record<string, [string, number]>>({})
+    const [hostImages, setHostImages] = useState<OSConfigItem[]>([])
     const [gpuList, setGpuList] = useState<Record<string, string>>({})
     const [pciDeviceList, setPciDeviceList] = useState<Record<string, any>>({})
     const [usbDeviceList, setUsbDeviceList] = useState<Record<string, any>>({})
@@ -193,10 +202,10 @@ const DockCreateModal: React.FC<DockCreateModalProps> = ({
     // Load host data，返回加载到的数据供调用方直接使用（避免依赖 React state 异步更新）
     const loadHostData = async (host: string) => {
         if (!host) {
-            setHostImages({})
+            setHostImages([])
             setGpuList({})
             setHostConfig(null)
-            return { hostImages: {}, gpuList: {}, pciDeviceList: {}, usbDeviceList: {}, hostConfig: null }
+            return { hostImages: [], gpuList: {}, pciDeviceList: {}, usbDeviceList: {}, hostConfig: null }
         }
         try {
             // 并行加载所有主机配置
@@ -208,7 +217,7 @@ const DockCreateModal: React.FC<DockCreateModalProps> = ({
             ])
 
             const loadedHostConfig = (imagesResult.code === 200 && imagesResult.data) ? imagesResult.data as any : null
-            const loadedHostImages = loadedHostConfig ? ((loadedHostConfig.system_maps || {}) as unknown as Record<string, [string, number]>) : {}
+            const loadedHostImages: OSConfigItem[] = loadedHostConfig ? ((loadedHostConfig.system_maps || []) as OSConfigItem[]) : []
             const loadedGpuList = (gpuResult.code === 200 && gpuResult.data) ? gpuResult.data : {}
             const loadedPciList = (pciResult.code === 200 && pciResult.data) ? pciResult.data : {}
             const loadedUsbList = (usbResult.code === 200 && usbResult.data) ? usbResult.data : {}
@@ -231,11 +240,11 @@ const DockCreateModal: React.FC<DockCreateModalProps> = ({
             }
         } catch (error) {
             console.error('加载主机配置失败:', error)
-            setHostImages({})
+            setHostImages([])
             setGpuList({})
             setPciDeviceList({})
             setUsbDeviceList({})
-            return { hostImages: {}, gpuList: {}, pciDeviceList: {}, usbDeviceList: {}, hostConfig: null }
+            return { hostImages: [], gpuList: {}, pciDeviceList: {}, usbDeviceList: {}, hostConfig: null }
         }
     }
 
@@ -309,10 +318,10 @@ const DockCreateModal: React.FC<DockCreateModalProps> = ({
 
                 // 计算最小磁盘要求（使用 loadHostData 返回的局部数据，不依赖 React state）
                 if (config.os_name && hostData?.hostImages) {
-                    const entry = Object.entries(hostData.hostImages as Record<string, [string, number]>)
-                        .find(([_, [img]]) => img === config.os_name)
-                    if (entry) {
-                        setSelectedOsMinDisk(entry[1][1] || 0)
+                    const matched = (hostData.hostImages as OSConfigItem[])
+                        .find(it => it.sys_file === config.os_name)
+                    if (matched) {
+                        setSelectedOsMinDisk(parseInt(matched.sys_size || '0', 10) || 0)
                     }
                 }
 
@@ -560,7 +569,7 @@ const DockCreateModal: React.FC<DockCreateModalProps> = ({
             await loadHostData(hostName)
         } else {
             setSelectedHost('')
-            setHostImages({})
+            setHostImages([])
             setGpuList({})
             setPciDeviceList({})
             setUsbDeviceList({})
@@ -702,18 +711,17 @@ const DockCreateModal: React.FC<DockCreateModalProps> = ({
                                         disabled={isEditMode && !canEditSys}
                                         getPopupContainer={triggerNode => triggerNode.parentNode}
                                         onChange={(val) => {
-                                            if (hostImages) {
-                                                const entry = Object.entries(hostImages).find(([_, [img]]) => img === val)
-                                                if (entry) {
-                                                    // entry is [osName, [imgFile, minDisk]]
-                                                    const minDisk = entry[1][1] || 0
+                                            if (hostImages && hostImages.length > 0) {
+                                                const matched = hostImages.find(it => it.sys_file === val)
+                                                if (matched) {
+                                                    const minDisk = parseInt(matched.sys_size || '0', 10) || 0
                                                     setSelectedOsMinDisk(minDisk)
                                                 }
                                             }
                                     }}
                                     >
-                                        {Object.entries(hostImages).map(([name, [file]]) => (
-                                            <Select.Option key={file} value={file}>{name}</Select.Option>
+                                        {hostImages.filter(item => item.sys_flag !== false).map((item) => (
+                                            <Select.Option key={item.sys_file} value={item.sys_file}>{item.sys_name}</Select.Option>
                                         ))}
                                     </Select>
                                 </Form.Item>

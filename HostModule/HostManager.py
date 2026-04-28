@@ -369,8 +369,8 @@ class HostManage:
                         
                         # 解析JSON字段 ============================================
                         hs_conf_data["extend_data"] = json.loads(host_config["extend_data"]) if host_config["extend_data"] else {}
-                        hs_conf_data["system_maps"] = json.loads(host_config["system_maps"]) if host_config.get("system_maps") else {}
-                        hs_conf_data["images_maps"] = json.loads(host_config["images_maps"]) if host_config.get("images_maps") else {}
+                        hs_conf_data["system_maps"] = json.loads(host_config["system_maps"]) if host_config.get("system_maps") else []
+                        hs_conf_data["images_maps"] = json.loads(host_config["images_maps"]) if host_config.get("images_maps") else []
                         hs_conf_data["public_addr"] = json.loads(host_config["public_addr"]) if host_config.get("public_addr") else []
                         hs_conf_data["ipaddr_maps"] = json.loads(host_config["ipaddr_maps"]) if host_config.get("ipaddr_maps") else {}
                         hs_conf_data["ipaddr_ddns"] = json.loads(host_config["ipaddr_ddns"]) if host_config.get("ipaddr_ddns") else ["119.29.29.29", "223.5.5.5"]
@@ -380,6 +380,12 @@ class HostManage:
 
                         # 加载server_area字段 ========================================
                         hs_conf_data["server_area"] = host_config.get("server_area", "")
+
+                        # 加载价格字段 ==================================================
+                        hs_conf_data["n_cpu_price"] = host_config.get("n_cpu_price", 0) or 0
+                        hs_conf_data["n_mem_price"] = host_config.get("n_mem_price", 0) or 0
+                        hs_conf_data["n_hdd_price"] = host_config.get("n_hdd_price", 0) or 0
+                        hs_conf_data["n_net_price"] = host_config.get("n_net_price", 0) or 0
 
                         # 加载server_plan字段 (JSON -> dict[str, VMConfig]) ===========
                         server_plan_raw = host_config.get("server_plan", "{}")
@@ -556,6 +562,15 @@ class HostManage:
             # 保存每个主机的配置数据 ============================================
             for hs_name, server in self.engine.items():
                 try:
+                    # 保存主机本身配置(hs_config), 避免运行时变更未落库
+                    try:
+                        if getattr(server, 'hs_config', None) is not None:
+                            self.saving.set_hs_config(hs_name, server.hs_config)
+                    except Exception as e:
+                        logger.error(f'[保存配置] 保存主机 {hs_name} hs_config 失败: {e}')
+                        traceback.print_exc()
+                        success = False
+
                     result = server.data_set()
                     if not result:
                         logger.warning(f'[保存配置] 主机 {hs_name} 配置保存失败')

@@ -13,6 +13,8 @@ interface ThemeContextType {
   toggleTransparentMode: () => void;
   roundedMode: boolean;
   toggleRoundedMode: () => void;
+  liquidMode: boolean;
+  toggleLiquidMode: () => void;
   getThemeConfig: () => ThemeConfig;
 }
 
@@ -46,6 +48,12 @@ export const ThemeProvider: React.FC<ThemeProviderProps> = ({ children }) => {
   // 从 localStorage 读取圆角模式状态，默认为关闭
   const [roundedMode, setRoundedMode] = useState<boolean>(() => {
     const savedMode = localStorage.getItem('roundedMode');
+    return savedMode === 'true';
+  });
+
+  // 从 localStorage 读取液态玻璃模式状态，默认为关闭
+  const [liquidMode, setLiquidMode] = useState<boolean>(() => {
+    const savedMode = localStorage.getItem('liquidMode');
     return savedMode === 'true';
   });
 
@@ -87,6 +95,17 @@ export const ThemeProvider: React.FC<ThemeProviderProps> = ({ children }) => {
     localStorage.setItem('roundedMode', String(roundedMode));
   }, [roundedMode]);
 
+  // 当液态玻璃模式变化时，更新 DOM 和 localStorage
+  useEffect(() => {
+    const root = document.documentElement;
+    if (liquidMode) {
+      root.setAttribute('data-liquid', 'true');
+    } else {
+      root.removeAttribute('data-liquid');
+    }
+    localStorage.setItem('liquidMode', String(liquidMode));
+  }, [liquidMode]);
+
   const toggleTheme = () => {
     setThemeState(prevTheme => prevTheme === 'light' ? 'dark' : 'light');
   };
@@ -101,6 +120,10 @@ export const ThemeProvider: React.FC<ThemeProviderProps> = ({ children }) => {
 
   const toggleRoundedMode = () => {
     setRoundedMode(prev => !prev);
+  };
+
+  const toggleLiquidMode = () => {
+    setLiquidMode(prev => !prev);
   };
 
   const getThemeConfig = (): ThemeConfig => {
@@ -139,7 +162,7 @@ export const ThemeProvider: React.FC<ThemeProviderProps> = ({ children }) => {
   };
 
   return (
-    <ThemeContext.Provider value={{ theme, toggleTheme, setTheme, transparentMode, toggleTransparentMode, roundedMode, toggleRoundedMode, getThemeConfig }}>
+    <ThemeContext.Provider value={{ theme, toggleTheme, setTheme, transparentMode, toggleTransparentMode, roundedMode, toggleRoundedMode, liquidMode, toggleLiquidMode, getThemeConfig }}>
       <ConfigProvider 
         theme={getThemeConfig()}
         locale={zhCN}

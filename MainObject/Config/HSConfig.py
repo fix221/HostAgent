@@ -1,6 +1,7 @@
 import json
 
 from MainObject.Config.VMConfig import VMConfig
+from MainObject.Config.OSConfig import OSConfig
 
 DNS_SERVER_LIST = ["119.29.29.29", "223.5.5.5"]
 
@@ -18,6 +19,11 @@ class HSConfig:
         self.filter_name: str = ""  # 过滤器名称
         self.extend_data: dict = {}  # API可选项
         self.enable_host: bool = False  # 已启用
+        # 售价配置 =============================
+        self.n_cpu_price = 0  # 处理器核心单价格
+        self.n_mem_price = 0  # 虚拟机内存单价格
+        self.n_hdd_price = 0  # 虚拟机硬盘单价格
+        self.n_net_price = 0  # 虚拟机双向带价格
         # 存储信息 =============================
         self.images_path: str = ""  # 系统存储池
         self.dvdrom_path: str = ""  # 光盘存储池
@@ -34,10 +40,10 @@ class HSConfig:
         self.limits_nums: int = 0  # VMS虚拟数量
         self.public_addr: list = []  # 公共IPV46
         # 系统映射 =============================
-        # 系统映射: 显示名称->[xxx.iso,最低大小]
-        self.system_maps: dict[str, list] = {}
-        # 镜像映射: 显示名称->[xxx.iso,镜像类型]
-        self.images_maps: dict[str, str] = {}
+        # 系统镜像列表: 每项为 OSConfig (sys_name/sys_file/sys_size/sys_type)
+        self.system_maps: list[OSConfig] = []
+        # 光盘镜像列表: 每项为 OSConfig (sys_name/sys_file/sys_size/sys_type)
+        self.images_maps: list[OSConfig] = []
         # 区域网络 =============================
         self.i_kuai_addr: str = ""  # 爱快OS地址
         self.i_kuai_user: str = ""  # 爱快OS用户
@@ -46,6 +52,12 @@ class HSConfig:
         self.ipaddr_maps: dict[str, dict] = {}
         # 套餐划分 =============================
         self.server_plan: dict[str, VMConfig] = {}
+        # 单价配置 =============================
+        # 由小黑云财务/计费侧读取，用于按规格计算套餐单价
+        self.n_cpu_price: int = 0  # 处理器核心单价格
+        self.n_mem_price: int = 0  # 虚拟机内存单价格
+        self.n_hdd_price: int = 0  # 虚拟机硬盘单价格
+        self.n_net_price: int = 0  # 虚拟机双向带价格
         # 加载传入的参数 =======================
         if config is not None:
             self.__read__(config)
@@ -64,6 +76,41 @@ class HSConfig:
                 self.server_plan[plan_name] = VMConfig(**plan_conf)
             elif isinstance(plan_conf, VMConfig):
                 self.server_plan[plan_name] = plan_conf
+        # 将system_maps/images_maps中的dict/兼容旧格式转换为OSConfig列表
+        self.system_maps = self.__to_os_list__(self.system_maps)
+        self.images_maps = self.__to_os_list__(self.images_maps, default_type="")
+
+    # 将任意来源(list/dict/旧dict[str,list]/dict[str,str])统一转为list[OSConfig]
+    @staticmethod
+    def __to_os_list__(data, default_type: str = "") -> list:
+        result: list = []
+        if data is None:
+            return result
+        # 新结构: list
+        if isinstance(data, list):
+            for item in data:
+                if isinstance(item, OSConfig):
+                    result.append(item)
+                elif isinstance(item, dict):
+                    result.append(OSConfig(**item))
+            return result
+        # 旧结构兼容: dict
+        if isinstance(data, dict):
+            for name, val in data.items():
+                if isinstance(val, list):
+                    # 旧 system_maps: {name: [file, size]}
+                    sys_file = val[0] if len(val) >= 1 else ""
+                    sys_size = str(val[1]) if len(val) >= 2 else ""
+                    result.append(OSConfig(sys_name=name, sys_file=sys_file,
+                                           sys_size=sys_size, sys_type=default_type))
+                elif isinstance(val, str):
+                    # 旧 images_maps: {name: file}
+                    result.append(OSConfig(sys_name=name, sys_file=val,
+                                           sys_size="", sys_type=default_type))
+                elif isinstance(val, dict):
+                    val.setdefault("sys_name", name)
+                    result.append(OSConfig(**val))
+        return result
 
     # 读取数据 =================================
     def __read__(self, data: dict):
@@ -96,18 +143,26 @@ class HSConfig:
             "ports_close": self.ports_close,
             "remote_port": self.remote_port,
             "limits_nums": self.limits_nums,
-            "system_maps": self.system_maps,
-            "images_maps": self.images_maps,
+            "system_maps": [it.__save__() if isinstance(it, OSConfig) else it for it in (self.system_maps or [])],
+            "images_maps": [it.__save__() if isinstance(it, OSConfig) else it for it in (self.images_maps or [])],
             "ipaddr_maps": self.ipaddr_maps,
             "ipaddr_ddns": self.ipaddr_ddns,
             "public_addr": self.public_addr,
             "extend_data": self.extend_data,
             "enable_host": self.enable_host,
             "server_area": self.server_area,
+            "n_cpu_price": self.n_cpu_price,
+            "n_mem_price": self.n_mem_price,
+            "n_hdd_price": self.n_hdd_price,
+            "n_net_price": self.n_net_price,
             "server_plan": {
                 k: v.__save__() if hasattr(v, '__save__') and callable(getattr(v, '__save__')) else v
                 for k, v in self.server_plan.items()
             },
+            "n_cpu_price": self.n_cpu_price,
+            "n_mem_price": self.n_mem_price,
+            "n_hdd_price": self.n_hdd_price,
+            "n_net_price": self.n_net_price,
         }
 
     # 转换为字符串 ===========================

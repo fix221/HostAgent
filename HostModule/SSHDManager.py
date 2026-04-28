@@ -1,5 +1,6 @@
 import random
 import socket
+import logging
 import threading
 import time
 from typing import Tuple, Optional
@@ -7,6 +8,11 @@ from typing import Tuple, Optional
 try:
     import paramiko
     PARAMIKO_AVAILABLE = True
+    # 抑制 paramiko Transport 后台线程的 stderr 噪声
+    # 例如 "Exception (client): Error reading SSH protocol banner" 这类
+    # 异常已在业务侧捕获并通过 loguru 输出友好日志，此处避免双重噪声刷屏
+    logging.getLogger("paramiko").setLevel(logging.CRITICAL)
+    logging.getLogger("paramiko.transport").setLevel(logging.CRITICAL)
 except ImportError:
     PARAMIKO_AVAILABLE = False
 

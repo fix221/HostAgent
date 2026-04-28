@@ -75,8 +75,8 @@ class HostServer(BasicServer):
             vms = client.nodes(self.hs_config.launch_path).qemu.get()
             now_vmid = [vm.get('vmid', 0) for vm in vms if vm.get('vmid')]
             
-            # 从100开始查找可用的VMID ===========================================
-            vmid = 100
+            # 从200开始查找可用的VMID ===========================================
+            vmid = 200
             while vmid in now_vmid:
                 vmid += 1
             
@@ -86,7 +86,7 @@ class HostServer(BasicServer):
         except Exception as e:
             logger.error(f"分配VMID失败: {str(e)}")
             traceback.print_exc()
-            return 100
+            return 200
 
     # 获取VMID #################################################################
     def get_vmid(self, vm_conf: VMConfig) -> Optional[int]:
@@ -473,9 +473,22 @@ class HostServer(BasicServer):
                 logger.warning(f"[{self.hs_config.server_name}] 系统安装失败: {result.message}")
             else:
                 logger.info(f"[{self.hs_config.server_name}] 系统安装完成")
-            
+
+            # 启动虚拟机 --------------------------------------------
+            # 注意：此时 vm_conf 尚未写入 self.vm_saving（将在 super().VMCreate 中写入），
+            # 因此不能走 self.VMPowers（其内部通过 vm_finds 查 vm_saving 会返回 None）。
+            # 直接通过 PVE API 启动虚拟机，避免时序问题。
             logger.info(f"[{self.hs_config.server_name}] 启动虚拟机...")
-            self.VMPowers(vm_conf.vm_uuid, VMPowers.S_START)
+            try:
+                vm_conn = client.nodes(self.hs_config.launch_path).qemu(vm_vmid)
+                cur_status = vm_conn.status.current.get()
+                if cur_status.get('status') != 'running':
+                    vm_conn.status.start.post()
+                    logger.info(f"[{self.hs_config.server_name}] 虚拟机 {vm_conf.vm_uuid} 启动指令已下发")
+                else:
+                    logger.info(f"[{self.hs_config.server_name}] 虚拟机 {vm_conf.vm_uuid} 已在运行")
+            except Exception as start_err:
+                logger.warning(f"[{self.hs_config.server_name}] 启动虚拟机失败: {start_err}")
         # 捕获所有异常 ==============================================
         except Exception as e:
             logger.error(f"[{self.hs_config.server_name}] 虚拟机创建失败: {str(e)}")
@@ -523,10 +536,38 @@ class HostServer(BasicServer):
             # 判断是否为PVE存储名（不含/则视为存储名，走import流程）=============
             images_is_storage = '/' not in self.hs_config.images_path
             if images_is_storage:
-                # import模式：images_path为PVE存储名，使用qm importdisk导入 ====
+                # import模式：images_path为PVE存储名，通过API查询存储物理路径 ==
                 import_storage = self.hs_config.images_path
-                src_file = f"{import_storage}:import/{vm_conf.os_name}"
-                import_cmd = (f"qm importdisk {vm_vmid} {src_file} "
+                # 通过PVE API获取存储配置，拿到真实物理路径 =====================
+                storage_path = None
+                try:
+                    storage_info = client.nodes(self.hs_config.launch_path).storage(import_storage).get()
+                    # API 可能返回 dict 或 list，兼容处理 =======================
+                    if isinstance(storage_info, list):
+                        for item in storage_info:
+                            if item.get('storage') == import_storage or 'path' in item:
+                                storage_path = item.get('path')
+                                break
+                    elif isinstance(storage_info, dict):
+                        storage_path = storage_info.get('path')
+                    # 回退：从全局存储配置中查找 ================================
+                    if not storage_path:
+                        all_storages = client.storage.get()
+                        for st in all_storages:
+                            if st.get('storage') == import_storage:
+                                storage_path = st.get('path')
+                                break
+                except Exception as se:
+                    logger.warning(f"查询存储 {import_storage} 路径失败: {se}")
+                # 默认回退路径（local存储）=====================================
+                if not storage_path:
+                    storage_path = "/var/lib/vz" if import_storage == "local" else f"/mnt/pve/{import_storage}"
+                    logger.warning(f"未从API获取到存储路径，使用默认路径: {storage_path}")
+                # 拼接 import 目录的绝对路径 ===================================
+                src_file_abs = posixpath.join(storage_path, "template", "import", vm_conf.os_name)
+                # 兼容旧目录结构：部分用户直接放 <storage_path>/import/xxx ====
+                src_file_alt = posixpath.join(storage_path, "import", vm_conf.os_name)
+                import_cmd = (f"qm importdisk {vm_vmid} {src_file_abs} "
                               f"{system_storage} --format qcow2")
                 if self.flag_web():
                     # 远程模式：通过SSH执行importdisk ===========================
@@ -536,6 +577,21 @@ class HostServer(BasicServer):
                         self.hs_config.server_addr,
                         username=self.hs_config.server_user,
                         password=self.hs_config.server_pass)
+                    # 检查主路径是否存在，不存在则尝试备用路径 =================
+                    stdin, stdout, stderr = ssh.exec_command(
+                        f"test -f {src_file_abs} && echo 'exists' || echo 'not_exists'")
+                    if stdout.read().decode().strip() != 'exists':
+                        stdin, stdout, stderr = ssh.exec_command(
+                            f"test -f {src_file_alt} && echo 'exists' || echo 'not_exists'")
+                        if stdout.read().decode().strip() == 'exists':
+                            src_file_abs = src_file_alt
+                            import_cmd = (f"qm importdisk {vm_vmid} {src_file_abs} "
+                                          f"{system_storage} --format qcow2")
+                        else:
+                            ssh.close()
+                            return ZMessage(
+                                success=False, action="VInstall",
+                                message=f"镜像文件不存在: {src_file_abs} 或 {src_file_alt}")
                     stdin, stdout, stderr = ssh.exec_command(import_cmd)
                     exit_status = stdout.channel.recv_exit_status()
                     if exit_status != 0:
@@ -545,18 +601,29 @@ class HostServer(BasicServer):
                             success=False, action="VInstall",
                             message=f"importdisk失败: {error_msg}")
                     ssh.close()
-                    logger.info(f"通过SSH importdisk: {src_file} -> {system_storage}")
+                    logger.info(f"通过SSH importdisk: {src_file_abs} -> {system_storage}")
                 else:
                     # 本地模式：直接执行importdisk ==============================
+                    if not os.path.exists(src_file_abs):
+                        if os.path.exists(src_file_alt):
+                            src_file_abs = src_file_alt
+                            import_cmd = (f"qm importdisk {vm_vmid} {src_file_abs} "
+                                          f"{system_storage} --format qcow2")
+                        else:
+                            return ZMessage(
+                                success=False, action="VInstall",
+                                message=f"镜像文件不存在: {src_file_abs} 或 {src_file_alt}")
                     exit_status = os.system(import_cmd)
                     if exit_status != 0:
                         return ZMessage(
                             success=False, action="VInstall",
                             message="importdisk失败")
-                    logger.info(f"本地importdisk: {src_file} -> {system_storage}")
+                    logger.info(f"本地importdisk: {src_file_abs} -> {system_storage}")
                 # importdisk后磁盘进入unused状态，需挂载 ========================
                 vm_conn = client.nodes(self.hs_config.launch_path).qemu(vm_vmid)
                 vm_conn.config.put(sata0=f"{system_storage}:{vm_vmid}/{disk_name}")
+                # 根据 hdd_num(MB) 扩容系统盘到目标大小 ==========================
+                self._resize_system_disk(vm_conn, 'sata0', vm_conf.hdd_num)
             else:
                 # 复制模式：images_path为物理路径，直接cp复制 ===================
                 if self.flag_web():
@@ -602,6 +669,8 @@ class HostServer(BasicServer):
                 # 分配磁盘 ======================================================
                 vm_conn = client.nodes(self.hs_config.launch_path).qemu(vm_vmid)
                 vm_conn.config.put(sata0=f"{system_storage}:{vm_vmid}/{disk_name}")
+                # 根据 hdd_num(MB) 扩容系统盘到目标大小 ==========================
+                self._resize_system_disk(vm_conn, 'sata0', vm_conf.hdd_num)
             logger.info(f"虚拟机 {vm_conf.vm_uuid} 系统安装完成")
             return ZMessage(success=True, action="VInstall", message="安装成功")
         # 处理异常 ==============================================================
@@ -910,26 +979,74 @@ class HostServer(BasicServer):
 
     # 设置虚拟机密码 ###########################################################
     def VMPasswd(self, vm_name: str, os_pass: str) -> ZMessage:
-        """设置虚拟机密码"""
+        """设置虚拟机密码（同时修改数据库和通过GuestAgent修改虚拟机内部密码）"""
         try:
-            # 获取虚拟机连接 ===================================================
-            vm_conn, vm_vmid, vm_conf, result = self._get_vm_connection(vm_name)
-            if not result.success:
-                return result
-            
-            # 通过QEMU Guest Agent设置密码 =====================================
-            # 注意：需要虚拟机安装并运行qemu-guest-agent
-            try:
-                vm_conn.agent.post('exec', command=f"echo 'root:{os_pass}' | chpasswd")
-                logger.info(f"虚拟机 {vm_name} 密码已设置")
-                return ZMessage(success=True, action="Password")
-            except Exception as agent_error:
-                logger.warning(f"通过agent设置密码失败: {str(agent_error)}")
-                traceback.print_exc()
+            # 查找本地配置 =====================================================
+            vm_config: VMConfig | None = self.vm_saving.get(vm_name)
+            if vm_config is None:
                 return ZMessage(
                     success=False, action="Password",
-                    message=f"设置密码失败，请确保虚拟机已安装qemu-guest-agent: {str(agent_error)}")
-        
+                    message=f"虚拟机 {vm_name} 不存在")
+
+            # 通过QEMU Guest Agent修改虚拟机内部密码 ===========================
+            ga_success = False
+            ga_message = ""
+            try:
+                client, result = self.api_conn()
+                if result.success and client:
+                    vmid = self.get_vmid(vm_config)
+                    if vmid is not None:
+                        vm_conn = client.nodes(
+                            self.hs_config.launch_path).qemu(vmid)
+                        # 检查虚拟机是否运行中 ================================
+                        status = vm_conn.status.current.get()
+                        if status.get('status') == 'running':
+                            # 使用PVE API通过Guest Agent设置密码 ===============
+                            # 默认使用root用户
+                            os_user = "root"
+                            try:
+                                vm_conn.agent('set-user-password').post(
+                                    username=os_user,
+                                    password=os_pass)
+                                ga_success = True
+                                logger.info(
+                                    f"虚拟机 {vm_name} 通过GuestAgent"
+                                    f"修改{os_user}密码成功")
+                            except Exception as ga_err:
+                                ga_message = str(ga_err)
+                                logger.warning(
+                                    f"虚拟机 {vm_name} GuestAgent修改密码失败"
+                                    f"（可能未安装qemu-guest-agent）: {ga_err}")
+                        else:
+                            ga_message = "虚拟机未运行，无法通过GuestAgent修改密码"
+                            logger.warning(
+                                f"虚拟机 {vm_name} 未运行，"
+                                f"跳过GuestAgent修改密码")
+                    else:
+                        ga_message = "VMID未找到"
+                else:
+                    ga_message = "Proxmox连接失败"
+            except Exception as conn_err:
+                ga_message = str(conn_err)
+                logger.warning(
+                    f"虚拟机 {vm_name} GuestAgent修改密码异常: {conn_err}")
+
+            # 更新数据库密码（无论GuestAgent是否成功都要更新）===================
+            vm_config.os_pass = os_pass
+            self.data_set()
+            logger.info(f"虚拟机 {vm_name} 数据库密码已更新")
+
+            # 返回结果 =========================================================
+            if ga_success:
+                return ZMessage(
+                    success=True, action="Password",
+                    message="密码修改成功（数据库+虚拟机内部）")
+            else:
+                return ZMessage(
+                    success=True, action="Password",
+                    message=f"数据库密码已更新，但虚拟机内部密码修改失败: "
+                            f"{ga_message}")
+
         except Exception as e:
             logger.error(f"设置密码失败: {str(e)}")
             traceback.print_exc()
@@ -1142,6 +1259,86 @@ class HostServer(BasicServer):
             logger.error(f"查找SCSI设备时出错: {str(e)}")
             traceback.print_exc()
             return None
+
+    # 扩容系统盘 ###############################################################
+    def _resize_system_disk(self, vm_conn, disk_id: str, target_mb: int) -> bool:
+        """根据 target_mb(MB) 扩容指定磁盘到目标大小。
+
+        Proxmox resize 仅支持增大, 不允许缩小; 若目标 <= 当前大小则跳过。
+        优先使用 proxmoxer API, 失败时回退 SSH qm resize 命令。
+        """
+        try:
+            if not target_mb or target_mb <= 0:
+                return True
+            # Proxmox resize size 参数使用 +<N>G / <N>G 语法, 这里用绝对值 ====
+            target_gb = max(1, int(target_mb) // 1024)
+            size_str = f"{target_gb}G"
+            # 先检查当前磁盘大小, 避免"shrink not allowed" ===================
+            try:
+                cur_cfg = vm_conn.config.get() or {}
+                cur_val = cur_cfg.get(disk_id, '')
+                # 形如 "local:100/vm-100-disk-0.qcow2,size=10G"
+                if isinstance(cur_val, str) and 'size=' in cur_val:
+                    cur_size = cur_val.split('size=')[-1].strip()
+                    # 统一转为 GB 做比较 (支持 G / M / T)
+                    def _to_mb(s: str) -> int:
+                        s = s.strip()
+                        if s.endswith('T'):
+                            return int(float(s[:-1]) * 1024 * 1024)
+                        if s.endswith('G'):
+                            return int(float(s[:-1]) * 1024)
+                        if s.endswith('M'):
+                            return int(float(s[:-1]))
+                        return int(float(s))
+                    cur_mb = _to_mb(cur_size)
+                    if cur_mb >= target_mb:
+                        logger.info(f"磁盘 {disk_id} 当前 {cur_size} 已 >= 目标 {size_str}, 跳过扩容")
+                        return True
+            except Exception as ce:
+                logger.warning(f"读取 {disk_id} 当前大小失败, 继续尝试扩容: {ce}")
+            # 通过 proxmoxer API 扩容 =======================================
+            try:
+                vm_conn.resize.put(disk=disk_id, size=size_str)
+                logger.info(f"通过API扩容磁盘 {disk_id} 到 {size_str}")
+                return True
+            except Exception as ae:
+                logger.warning(f"API扩容失败, 尝试SSH: {ae}")
+            # SSH 回退 ======================================================
+            vmid = getattr(vm_conn, '_store', {}).get('vmid') if hasattr(vm_conn, '_store') else None
+            if not vmid:
+                # 兼容不同 proxmoxer 版本, 从 URL 解析 vmid
+                try:
+                    vmid = int(str(vm_conn).rstrip('/').split('/')[-1])
+                except Exception:
+                    vmid = None
+            if not vmid:
+                logger.error(f"扩容 {disk_id} 失败: 无法解析 vmid")
+                return False
+            cmd = f"qm resize {vmid} {disk_id} {size_str}"
+            if self.flag_web():
+                ssh = paramiko.SSHClient()
+                ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+                ssh.connect(
+                    self.hs_config.server_addr,
+                    username=self.hs_config.server_user,
+                    password=self.hs_config.server_pass)
+                stdin, stdout, stderr = ssh.exec_command(cmd)
+                exit_status = stdout.channel.recv_exit_status()
+                err = stderr.read().decode()
+                ssh.close()
+                if exit_status != 0:
+                    logger.error(f"SSH扩容失败: {err}")
+                    return False
+            else:
+                if os.system(cmd) != 0:
+                    logger.error(f"本地扩容命令失败: {cmd}")
+                    return False
+            logger.info(f"通过命令扩容磁盘 {disk_id} 到 {size_str}")
+            return True
+        except Exception as e:
+            logger.error(f"扩容磁盘 {disk_id} 异常: {e}")
+            traceback.print_exc()
+            return False
 
     # 创建QCOW2磁盘文件 ########################################################
     def hdd_init(self, vm_vmid: int, disk_name: str, disk_size: str) -> ZMessage:
@@ -1646,12 +1843,98 @@ class HostServer(BasicServer):
                 success=False, action="RMMounts",
                 message=f"删除硬盘失败: {str(e)}")
 
+    # PPM(P6) 转 PNG 辅助方法（纯Python，不依赖PIL） ##########################
+    @staticmethod
+    def _ppm_to_png_base64(ppm_data: bytes) -> str:
+        """将PPM(P6)二进制数据转换为PNG的base64字符串
+        
+        使用纯Python标准库实现，不依赖PIL/Pillow。
+        仅支持P6(二进制RGB)格式，maxval=255。
+        """
+        import struct
+        import zlib
+        import base64
+
+        try:
+            # 解析PPM头部：P6\n<width> <height>\n<maxval>\n<pixel_data>
+            # 跳过注释行（以#开头）
+            idx = 0
+            # 读取magic
+            if not ppm_data[:2] == b'P6':
+                logger.warning("PPM格式不是P6，无法转换")
+                return ""
+            idx = 2
+            # 跳过空白
+            tokens = []
+            while len(tokens) < 3:
+                # 跳过空白和注释
+                while idx < len(ppm_data):
+                    if ppm_data[idx:idx + 1] in (b' ', b'\t', b'\r', b'\n'):
+                        idx += 1
+                    elif ppm_data[idx:idx + 1] == b'#':
+                        # 跳过注释行
+                        while idx < len(ppm_data) and ppm_data[idx:idx + 1] != b'\n':
+                            idx += 1
+                        idx += 1  # 跳过换行
+                    else:
+                        break
+                # 读取token
+                token_start = idx
+                while idx < len(ppm_data) and ppm_data[idx:idx + 1] not in (
+                        b' ', b'\t', b'\r', b'\n'):
+                    idx += 1
+                if idx > token_start:
+                    tokens.append(ppm_data[token_start:idx].decode('ascii'))
+            # tokens = [width, height, maxval]
+            width = int(tokens[0])
+            height = int(tokens[1])
+            # maxval = int(tokens[2])  # 通常为255
+            # 跳过header后的一个空白字符
+            idx += 1
+            pixel_data = ppm_data[idx:]
+
+            # 构建PNG
+            # PNG由: signature + IHDR + IDAT + IEND 组成
+            def _png_chunk(chunk_type: bytes, data: bytes) -> bytes:
+                chunk = chunk_type + data
+                crc = struct.pack('>I', zlib.crc32(chunk) & 0xFFFFFFFF)
+                return struct.pack('>I', len(data)) + chunk + crc
+
+            png_signature = b'\x89PNG\r\n\x1a\n'
+
+            # IHDR: width(4) + height(4) + bit_depth(1) + color_type(1)
+            #       + compression(1) + filter(1) + interlace(1)
+            ihdr_data = struct.pack('>IIBBBBB', width, height,
+                                    8, 2, 0, 0, 0)  # 8bit, RGB, deflate
+            ihdr = _png_chunk(b'IHDR', ihdr_data)
+
+            # IDAT: 每行前加filter byte(0=None)，然后zlib压缩
+            raw_rows = bytearray()
+            row_bytes = width * 3
+            for y in range(height):
+                raw_rows.append(0)  # filter type: None
+                row_start = y * row_bytes
+                raw_rows.extend(pixel_data[row_start:row_start + row_bytes])
+
+            compressed = zlib.compress(bytes(raw_rows), 6)
+            idat = _png_chunk(b'IDAT', compressed)
+
+            # IEND
+            iend = _png_chunk(b'IEND', b'')
+
+            png_bytes = png_signature + ihdr + idat + iend
+            return base64.b64encode(png_bytes).decode('utf-8')
+
+        except Exception as e:
+            logger.warning(f"PPM转PNG失败: {e}")
+            return ""
+
     # 虚拟机截图 ###############################################################
     def VMScreen(self, vm_name: str = "") -> str:
         """获取虚拟机截图
         
         :param vm_name: 虚拟机名称
-        :return: base64编码的截图字符串，失败则返回空字符串
+        :return: base64编码的截图字符串（纯base64，不含data:前缀），失败则返回空字符串
         """
         try:
             logger.info(f"[{self.hs_config.server_name}] 开始获取虚拟机 {vm_name} 截图")
@@ -1669,6 +1952,9 @@ class HostServer(BasicServer):
             
             vm_conn = result.results[0]
             vmid = self.get_vmid(self.vm_saving[vm_name])
+            if vmid is None:
+                logger.error(f"[{self.hs_config.server_name}] 虚拟机 {vm_name} VMID未找到")
+                return ""
             
             # 3. 检查虚拟机是否正在运行
             status = vm_conn.status.current.get()
@@ -1676,12 +1962,13 @@ class HostServer(BasicServer):
                 logger.warning(f"[{self.hs_config.server_name}] 虚拟机 {vm_name} 未运行，无法获取截图")
                 return ""
             
-            # 4. 通过 SSH + qm monitor screendump 获取截图（PPM格式）
+            # 4. 通过 SSH + qm screendump 获取截图（PNG格式）
             import base64
             import io
 
+            ssh = None
             try:
-                remote_ppm = f"/tmp/screen-{vmid}.ppm"
+                remote_png = f"/tmp/screen-{vmid}.png"
                 ssh = paramiko.SSHClient()
                 ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
                 ssh.connect(
@@ -1690,39 +1977,87 @@ class HostServer(BasicServer):
                     password=self.hs_config.server_pass,
                     timeout=10)
 
-                # 5. 通过 qm monitor 发送 screendump 命令
-                cmd = f"echo 'screendump {remote_ppm}' | qm monitor {vmid}"
+                # 5. 先清理旧文件，避免读到过期截图
+                ssh.exec_command(f"rm -f {remote_png}")
+                time.sleep(0.3)
+
+                # 6. 使用 pvesh 调用 PVE API 获取截图（输出PNG到文件）
+                #    pvesh create /nodes/{node}/qemu/{vmid}/monitor 
+                #    --command 'screendump {file}'
+                #    或直接使用 qm screendump 命令（PVE 8.x+）
+                #    回退方案：qm monitor + screendump
+                screenshot_ok = False
+
+                # 方案1: 尝试 qm guest screendump（需要 qemu-guest-agent）
+                # 方案2: 使用 qm monitor screendump（通用方案）
+                remote_ppm = f"/tmp/screen-{vmid}.ppm"
+                ssh.exec_command(f"rm -f {remote_ppm}")
+                time.sleep(0.2)
+
+                cmd = (f"echo 'screendump {remote_ppm}' "
+                       f"| qm monitor {vmid}")
                 stdin, stdout, stderr = ssh.exec_command(cmd)
                 stdout.channel.recv_exit_status()
 
-                # 6. 读取 PPM 文件内容
-                sftp = ssh.open_sftp()
-                buf = io.BytesIO()
-                sftp.getfo(remote_ppm, buf)
-                sftp.close()
-                ssh.exec_command(f"rm -f {remote_ppm}")
-                ssh.close()
+                # 等待文件生成（screendump是异步的，需要等待）
+                time.sleep(1.5)
 
-                ppm_data = buf.getvalue()
-                if not ppm_data:
-                    logger.error(f"[{self.hs_config.server_name}] screendump 返回空数据")
+                # 检查PPM文件是否存在且非空
+                check_cmd = (f"test -s {remote_ppm} "
+                             f"&& echo 'ok' || echo 'fail'")
+                stdin, stdout, stderr = ssh.exec_command(check_cmd)
+                check_result = stdout.read().decode().strip()
+
+                if check_result == 'ok':
+                    # 7. 先通过SFTP读取PPM文件到内存（避免后续操作破坏源文件）
+                    sftp = ssh.open_sftp()
+                    buf = io.BytesIO()
+                    sftp.getfo(remote_ppm, buf)
+                    sftp.close()
+                    ppm_data = buf.getvalue()
+
+                    if ppm_data:
+                        # 8. PPM转PNG：优先PIL，回退纯Python实现
+                        try:
+                            from PIL import Image
+                            img = Image.open(io.BytesIO(ppm_data))
+                            out = io.BytesIO()
+                            img.save(out, format='PNG')
+                            screenshot_base64 = base64.b64encode(
+                                out.getvalue()).decode('utf-8')
+                        except (ImportError, Exception):
+                            # PIL不可用或转换异常，使用纯Python转PNG
+                            screenshot_base64 = self._ppm_to_png_base64(
+                                ppm_data)
+                        screenshot_ok = bool(screenshot_base64)
+
+                # 8. 清理临时文件
+                ssh.exec_command(
+                    f"rm -f {remote_ppm} {remote_png}")
+                ssh.close()
+                ssh = None
+
+                if screenshot_ok:
+                    logger.info(
+                        f"[{self.hs_config.server_name}] "
+                        f"成功获取虚拟机 {vm_name} 截图")
+                    return screenshot_base64
+                else:
+                    logger.error(
+                        f"[{self.hs_config.server_name}] "
+                        f"screendump未生成有效文件")
                     return ""
 
-                # 7. PPM 转 PNG（有 PIL 则转，否则直接返回 PPM 的 base64）
-                try:
-                    from PIL import Image
-                    img = Image.open(io.BytesIO(ppm_data))
-                    out = io.BytesIO()
-                    img.save(out, format='PNG')
-                    screenshot_base64 = base64.b64encode(out.getvalue()).decode('utf-8')
-                except ImportError:
-                    screenshot_base64 = base64.b64encode(ppm_data).decode('utf-8')
-
-                logger.info(f"[{self.hs_config.server_name}] 成功获取虚拟机 {vm_name} 截图")
-                return screenshot_base64
-
             except Exception as e:
-                logger.error(f"[{self.hs_config.server_name}] 获取截图失败: {str(e)}")
+                logger.error(
+                    f"[{self.hs_config.server_name}] "
+                    f"获取截图失败: {str(e)}")
+                traceback.print_exc()
+                if ssh:
+                    try:
+                        ssh.close()
+                    except Exception:
+                        pass
                 return ""
                 
         except Exception as e:

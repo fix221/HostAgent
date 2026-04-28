@@ -1255,6 +1255,12 @@ def api_vm_password(hs_name, vm_uuid):
     """修改虚拟机密码"""
     return rest_manager.vm_password(hs_name, vm_uuid)
 
+@app.route('/api/client/reset/<hs_name>/<vm_uuid>', methods=['POST'])
+@require_auth
+def api_vm_reset_password(hs_name, vm_uuid):
+    """修改虚拟机密码（兼容旧路由）"""
+    return rest_manager.vm_password(hs_name, vm_uuid)
+
 
 # 虚拟机状态 ########################################################################
 @app.route('/api/client/status/<hs_name>/<vm_uuid>', methods=['GET'])

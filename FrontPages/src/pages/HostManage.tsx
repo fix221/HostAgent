@@ -38,6 +38,15 @@ import api from '@/utils/apis.ts'
 import PageHeader from '@/components/PageHeader'
 
 // 主机配置接口
+// OS镜像配置项（system_maps/images_maps通用结构）
+interface OSConfigItem {
+    sys_name: string   // 显示名称
+    sys_file: string   // 文件存储名称
+    sys_size: string   // 最低磁盘大小(GB)
+    sys_type: string   // WinNT/Linux/macOS
+    sys_flag?: boolean // 是否启用此镜像
+}
+
 interface HostConfig {
     server_type?: string
     server_addr?: string
@@ -60,13 +69,17 @@ interface HostConfig {
     ports_close?: number
     remote_port?: number
     limits_nums?: number
-    system_maps?: Record<string, [string, string]>
-    images_maps?: Record<string, string>
+    system_maps?: OSConfigItem[]
+    images_maps?: OSConfigItem[]
     ipaddr_maps?: Record<string, any>
     ipaddr_ddns?: string[]
     public_addr?: string[]
     extend_data?: any
     server_area?: string
+    n_cpu_price?: number
+    n_mem_price?: number
+    n_hdd_price?: number
+    n_net_price?: number
     server_plan?: Record<string, any>
 }
 
@@ -75,13 +88,23 @@ interface ServerPlanRow {
     id: string
     planName: string
     cpu_num: number
+    cpu_per: number
+    gpu_mem: number
     mem_num: number
     hdd_num: number
+    hdd_iop: number
+    bak_num: number
+    iso_num: number
+    pci_num: number
+    usb_num: number
+    dat_num: number
+    dat_all: number
     speed_u: number
     speed_d: number
     nat_num: number
     web_num: number
     flu_num: number
+    flu_rst: number[]
 }
 
 // 主机数据接口
@@ -122,19 +145,24 @@ interface EngineTypeConfig {
     options?: Record<string, string>
 }
 
-// 系统映射行接口
+// 系统镜像行接口
 interface SystemMapRow {
     id: string
-    systemName: string
-    systemFile: string
-    minSize: string
+    sys_name: string
+    sys_file: string
+    sys_size: string
+    sys_type: string
+    sys_flag: boolean
 }
 
-// 镜像映射行接口
+// 光盘镜像行接口
 interface ImageMapRow {
     id: string
-    displayName: string
-    fileName: string
+    sys_name: string
+    sys_file: string
+    sys_size: string
+    sys_type: string
+    sys_flag: boolean
 }
 
 // IP地址池配置行接口
@@ -293,8 +321,8 @@ function HostManage() {
         setCurrentHost('')
         setSelectedHostType('')
         form.resetFields()
-        setSystemMaps([{id: Date.now().toString(), systemName: '', systemFile: '', minSize: ''}])
-        setImageMaps([{id: Date.now().toString(), displayName: '', fileName: ''}])
+        setSystemMaps([{id: Date.now().toString(), sys_name: '', sys_file: '', sys_size: '', sys_type: '', sys_flag: true}])
+        setImageMaps([{id: Date.now().toString(), sys_name: '', sys_file: '', sys_size: '', sys_type: '', sys_flag: true}])
         setIpaddrMaps([{
             id: Date.now().toString(),
             setName: '',
@@ -351,43 +379,60 @@ function HostManage() {
                     ipaddr_ddns: (config.ipaddr_ddns || []).join(', '),
                     public_addr: (config.public_addr || []).join(', '),
                     extend_data: config.extend_data ? JSON.stringify(config.extend_data, null, 2) : '',
-                    server_area: config.server_area || ''
+                    // server_area 存储为 "代码,名称"（如 "CN,成都"），回显时拆为两个字段
+                    area_code: ((config.server_area || '').split(',', 2)[0] || '').trim(),
+                    area_name: ((config.server_area || '').split(',', 2)[1] || '').trim(),
+                    // 售价配置
+                    n_cpu_price: config.n_cpu_price ?? 0,
+                    n_mem_price: config.n_mem_price ?? 0,
+                    n_hdd_price: config.n_hdd_price ?? 0,
+                    n_net_price: config.n_net_price ?? 0
                 })
 
-                // 加载系统映射
+                // 加载系统镜像列表
                 const systemMapsData: SystemMapRow[] = []
-                if (config.system_maps) {
-                    Object.entries(config.system_maps).forEach(([systemName, [systemFile, minSize]]) => {
+                if (Array.isArray(config.system_maps)) {
+                    config.system_maps.forEach((item: OSConfigItem) => {
                         systemMapsData.push({
                             id: Date.now().toString() + Math.random(),
-                            systemName,
-                            systemFile,
-                            minSize
+                                sys_name: item.sys_name || '',
+                                sys_file: item.sys_file || '',
+                                sys_size: item.sys_size || '',
+                                sys_type: item.sys_type || '',
+                                sys_flag: item.sys_flag !== false
+                            })
                         })
-                    })
-                }
-                setSystemMaps(systemMapsData.length > 0 ? systemMapsData : [{
-                    id: Date.now().toString(),
-                    systemName: '',
-                    systemFile: '',
-                    minSize: ''
+                    }
+                    setSystemMaps(systemMapsData.length > 0 ? systemMapsData : [{
+                        id: Date.now().toString(),
+                        sys_name: '',
+                        sys_file: '',
+                        sys_size: '',
+                        sys_type: '',
+                        sys_flag: true
                 }])
 
-                // 加载镜像映射
+                // 加载光盘镜像列表
                 const imageMapsData: ImageMapRow[] = []
-                if (config.images_maps) {
-                    Object.entries(config.images_maps).forEach(([displayName, fileName]) => {
+                if (Array.isArray(config.images_maps)) {
+                    config.images_maps.forEach((item: OSConfigItem) => {
                         imageMapsData.push({
                             id: Date.now().toString() + Math.random(),
-                            displayName,
-                            fileName: fileName as string
+                                sys_name: item.sys_name || '',
+                                sys_file: item.sys_file || '',
+                                sys_size: item.sys_size || '',
+                                sys_type: item.sys_type || '',
+                                sys_flag: item.sys_flag !== false
+                            })
                         })
-                    })
-                }
-                setImageMaps(imageMapsData.length > 0 ? imageMapsData : [{
-                    id: Date.now().toString(),
-                    displayName: '',
-                    fileName: ''
+                    }
+                    setImageMaps(imageMapsData.length > 0 ? imageMapsData : [{
+                        id: Date.now().toString(),
+                        sys_name: '',
+                        sys_file: '',
+                        sys_size: '',
+                        sys_type: '',
+                        sys_flag: true
                 }])
 
                 // 加载IP地址池配置
@@ -425,13 +470,23 @@ function HostManage() {
                             id: Date.now().toString() + Math.random(),
                             planName,
                             cpu_num: planCfg.cpu_num ?? 2,
+                            cpu_per: planCfg.cpu_per ?? 0,
+                            gpu_mem: planCfg.gpu_mem ?? 0,
                             mem_num: planCfg.mem_num ?? 2048,
                             hdd_num: planCfg.hdd_num ?? 8192,
+                            hdd_iop: planCfg.hdd_iop ?? 1000,
+                            bak_num: planCfg.bak_num ?? 1,
+                            iso_num: planCfg.iso_num ?? 1,
+                            pci_num: planCfg.pci_num ?? 0,
+                            usb_num: planCfg.usb_num ?? 0,
+                            dat_num: planCfg.dat_num ?? 1,
+                            dat_all: planCfg.dat_all ?? 0,
                             speed_u: planCfg.speed_u ?? 100,
                             speed_d: planCfg.speed_d ?? 100,
                             nat_num: planCfg.nat_num ?? 100,
                             web_num: planCfg.web_num ?? 100,
                             flu_num: planCfg.flu_num ?? 102400,
+                            flu_rst: Array.isArray(planCfg.flu_rst) ? planCfg.flu_rst : [31, 10, 10],
                         })
                     })
                 }
@@ -440,26 +495,39 @@ function HostManage() {
                 setModalVisible(true)
             }
         } catch (error) {
-            message.error('加载主机信息失败')
+            console.error('加载主机信息失败:', error)
+            message.error('加载主机信息失败:', error)
         }
     }
 
     // 提交表单
     const handleSubmit = async (values: any) => {
         try {
-            // 构建系统映射
-            const system_maps: Record<string, [string, string]> = {}
+            // 构建系统镜像列表
+            const system_maps: OSConfigItem[] = []
             systemMaps.forEach(row => {
-                if (row.systemName && row.systemFile) {
-                    system_maps[row.systemName] = [row.systemFile, row.minSize || '0']
+                if (row.sys_name && row.sys_file) {
+                    system_maps.push({
+                        sys_name: row.sys_name,
+                        sys_file: row.sys_file,
+                        sys_size: row.sys_size || '0',
+                        sys_type: row.sys_type || '',
+                        sys_flag: row.sys_flag !== false
+                    })
                 }
             })
 
-            // 构建镜像映射
-            const images_maps: Record<string, string> = {}
+            // 构建光盘镜像列表
+            const images_maps: OSConfigItem[] = []
             imageMaps.forEach(row => {
-                if (row.displayName && row.fileName) {
-                    images_maps[row.displayName] = row.fileName
+                if (row.sys_name && row.sys_file) {
+                    images_maps.push({
+                        sys_name: row.sys_name,
+                        sys_file: row.sys_file,
+                        sys_size: row.sys_size || '0',
+                        sys_type: row.sys_type || '',
+                        sys_flag: row.sys_flag !== false
+                    })
                 }
             })
 
@@ -495,13 +563,23 @@ function HostManage() {
                 if (row.planName) {
                     server_plan[row.planName] = {
                         cpu_num: row.cpu_num,
+                        cpu_per: row.cpu_per,
+                        gpu_mem: row.gpu_mem,
                         mem_num: row.mem_num,
                         hdd_num: row.hdd_num,
+                        hdd_iop: row.hdd_iop,
+                        bak_num: row.bak_num,
+                        iso_num: row.iso_num,
+                        pci_num: row.pci_num,
+                        usb_num: row.usb_num,
+                        dat_num: row.dat_num,
+                        dat_all: row.dat_all,
                         speed_u: row.speed_u,
                         speed_d: row.speed_d,
                         nat_num: row.nat_num,
                         web_num: row.web_num,
                         flu_num: row.flu_num,
+                        flu_rst: Array.isArray(row.flu_rst) && row.flu_rst.length === 3 ? row.flu_rst : [31, 10, 10],
                     }
                 }
             })
@@ -534,7 +612,17 @@ function HostManage() {
                 ipaddr_ddns: values.ipaddr_ddns ? values.ipaddr_ddns.split(',').map((s: string) => s.trim()).filter((s: string) => s) : [],
                 public_addr: values.public_addr ? values.public_addr.split(',').map((s: string) => s.trim()).filter((s: string) => s) : [],
                 extend_data,
-                server_area: values.server_area || '',
+                // 将 area_code + area_name 合并为 "代码,名称" 格式；只有一个时只传一个；都空则为空串
+                server_area: (() => {
+                    const code = (values.area_code || '').trim()
+                    const name = (values.area_name || '').trim()
+                    if (code && name) return `${code},${name}`
+                    return code || name || ''
+                })(),
+                n_cpu_price: Number(values.n_cpu_price) || 0,
+                n_mem_price: Number(values.n_mem_price) || 0,
+                n_hdd_price: Number(values.n_hdd_price) || 0,
+                n_net_price: Number(values.n_net_price) || 0,
                 server_plan,
             }
 
@@ -807,7 +895,7 @@ function HostManage() {
                             <div className="flex justify-between items-center">
                                 <span style={{ color: 'var(--text-secondary)' }}>模板数:</span>
                                 <span className=""
-                                >系统盘 {host.config?.system_maps && Object.keys(host.config.system_maps).length > 0 ? Object.keys(host.config.system_maps).length : 0} / 光盘 {host.config?.images_maps && Object.keys(host.config.images_maps).length > 0 ? Object.keys(host.config.images_maps).length : 0} 个</span>
+                                >系统盘 {Array.isArray(host.config?.system_maps) ? host.config.system_maps.length : 0} / 光盘 {Array.isArray(host.config?.images_maps) ? host.config.images_maps.length : 0} 个</span>
                             </div>
 
                         </div>
@@ -1117,9 +1205,14 @@ function HostManage() {
                                         </Row>
 
                                         <Row gutter={16}>
-                                            <Col span={24}>
-                                                <Form.Item name="server_area" label="服务器区域" extra="格式：区域代码,区域名称，例如：CN,华南区">
-                                                    <Input placeholder="例如: CN,华南区"/>
+                                            <Col span={8}>
+                                                <Form.Item name="area_code" label="区域代码" extra="例如：CN、US、HK">
+                                                    <Input placeholder="例如: CN"/>
+                                                </Form.Item>
+                                            </Col>
+                                            <Col span={16}>
+                                                <Form.Item name="area_name" label="区域名称" extra="例如：成都、华南区">
+                                                    <Input placeholder="例如: 成都"/>
                                                 </Form.Item>
                                             </Col>
                                         </Row>
@@ -1235,18 +1328,45 @@ function HostManage() {
                                 label: <span><DatabaseOutlined/> 高级配置</span>,
                                 children: (
                                     <div className="max-h-[500px] overflow-y-auto pr-2">
-                                        <h4 className="font-medium mb-3">系统映射配置</h4>
+                                        <h4 className="font-medium mb-3">售价配置</h4>
+                                        <Row gutter={8} className="mb-4">
+                                            <Col span={6}>
+                                                <div className="text-xs text-gray-500 mb-1">处理器核心单价</div>
+                                                <Form.Item name="n_cpu_price" noStyle>
+                                                    <InputNumber min={0} step={0.01} className="w-full" placeholder="0.00"/>
+                                                </Form.Item>
+                                            </Col>
+                                            <Col span={6}>
+                                                <div className="text-xs text-gray-500 mb-1">虚拟机内存单价</div>
+                                                <Form.Item name="n_mem_price" noStyle>
+                                                    <InputNumber min={0} step={0.01} className="w-full" placeholder="0.00"/>
+                                                </Form.Item>
+                                            </Col>
+                                            <Col span={6}>
+                                                <div className="text-xs text-gray-500 mb-1">虚拟机硬盘单价</div>
+                                                <Form.Item name="n_hdd_price" noStyle>
+                                                    <InputNumber min={0} step={0.01} className="w-full" placeholder="0.00"/>
+                                                </Form.Item>
+                                            </Col>
+                                            <Col span={6}>
+                                                <div className="text-xs text-gray-500 mb-1">虚拟机带宽单价</div>
+                                                <Form.Item name="n_net_price" noStyle>
+                                                    <InputNumber min={0} step={0.01} className="w-full" placeholder="0.00"/>
+                                                </Form.Item>
+                                            </Col>
+                                        </Row>
+                                        <h4 className="font-medium mb-3">系统镜像配置</h4>
                                         <div className="space-y-2 mb-4">
                                             {systemMaps.map((row, index) => (
                                                 <div key={row.id} className="p-3 rounded-lg">
                                                     <Row gutter={8}>
-                                                        <Col span={8}>
+                                                        <Col span={6}>
                                                             <Input
                                                                 placeholder="系统名称"
-                                                                value={row.systemName}
+                                                                value={row.sys_name}
                                                                 onChange={(e) => {
                                                                     const newMaps = [...systemMaps]
-                                                                    newMaps[index].systemName = e.target.value
+                                                                    newMaps[index].sys_name = e.target.value
                                                                     setSystemMaps(newMaps)
                                                                 }}
                                                             />
@@ -1254,24 +1374,55 @@ function HostManage() {
                                                         <Col span={8}>
                                                             <Input
                                                                 placeholder="镜像文件"
-                                                                value={row.systemFile}
+                                                                value={row.sys_file}
                                                                 onChange={(e) => {
                                                                     const newMaps = [...systemMaps]
-                                                                    newMaps[index].systemFile = e.target.value
+                                                                    newMaps[index].sys_file = e.target.value
                                                                     setSystemMaps(newMaps)
                                                                 }}
                                                             />
                                                         </Col>
-                                                        <Col span={6}>
+                                                        <Col span={2}>
                                                             <Input
                                                                 placeholder="最低大小(GB)"
-                                                                value={row.minSize}
+                                                                value={row.sys_size}
                                                                 onChange={(e) => {
                                                                     const newMaps = [...systemMaps]
-                                                                    newMaps[index].minSize = e.target.value
+                                                                    newMaps[index].sys_size = e.target.value
                                                                     setSystemMaps(newMaps)
                                                                 }}
                                                             />
+                                                        </Col>
+                                                        <Col span={3}>
+                                                            <Select
+                                                                placeholder="类型"
+                                                                value={row.sys_type || undefined}
+                                                                onChange={(value) => {
+                                                                    const newMaps = [...systemMaps]
+                                                                    newMaps[index].sys_type = value
+                                                                    setSystemMaps(newMaps)
+                                                                }}
+                                                                style={{width: '100%'}}
+                                                                allowClear
+                                                            >
+                                                                <Select.Option value="WinNT">WinNT</Select.Option>
+                                                                <Select.Option value="Linux">Linux</Select.Option>
+                                                                <Select.Option value="macOS">macOS</Select.Option>
+                                                            </Select>
+                                                        </Col>
+                                                        <Col span={3}>
+                                                            <Select
+                                                                value={row.sys_flag ? 1 : 0}
+                                                                onChange={(value) => {
+                                                                    const newMaps = [...systemMaps]
+                                                                    newMaps[index].sys_flag = value === 1
+                                                                    setSystemMaps(newMaps)
+                                                                }}
+                                                                style={{width: '100%'}}
+                                                            >
+                                                                <Select.Option value={1}>启用</Select.Option>
+                                                                <Select.Option value={0}>禁用</Select.Option>
+                                                            </Select>
                                                         </Col>
                                                         <Col span={2}>
                                                             <Button
@@ -1288,42 +1439,86 @@ function HostManage() {
                                                 icon={<PlusOutlined/>}
                                                 onClick={() => setSystemMaps([...systemMaps, {
                                                     id: Date.now().toString(),
-                                                    systemName: '',
-                                                    systemFile: '',
-                                                    minSize: ''
+                                                    sys_name: '',
+                                                    sys_file: '',
+                                                    sys_size: '',
+                                                    sys_type: '',
+                                                    sys_flag: true
                                                 }])}
                                                 block
                                             >
-                                                添加系统映射
+                                                添加系统镜像
                                             </Button>
                                         </div>
 
-                                        <h4 className="font-medium mb-3 mt-4">ISO镜像映射配置</h4>
+                                        <h4 className="font-medium mb-3 mt-4">光盘镜像配置</h4>
                                         <div className="space-y-2 mb-4">
                                             {imageMaps.map((row, index) => (
                                                 <div key={row.id} className="p-3 rounded-lg">
                                                     <Row gutter={8}>
-                                                        <Col span={11}>
+                                                        <Col span={6}>
                                                             <Input
                                                                 placeholder="显示名称"
-                                                                value={row.displayName}
+                                                                value={row.sys_name}
                                                                 onChange={(e) => {
                                                                     const newMaps = [...imageMaps]
-                                                                    newMaps[index].displayName = e.target.value
+                                                                    newMaps[index].sys_name = e.target.value
                                                                     setImageMaps(newMaps)
                                                                 }}
                                                             />
                                                         </Col>
-                                                        <Col span={11}>
+                                                        <Col span={8}>
                                                             <Input
                                                                 placeholder="ISO文件名"
-                                                                value={row.fileName}
+                                                                value={row.sys_file}
                                                                 onChange={(e) => {
                                                                     const newMaps = [...imageMaps]
-                                                                    newMaps[index].fileName = e.target.value
+                                                                    newMaps[index].sys_file = e.target.value
                                                                     setImageMaps(newMaps)
                                                                 }}
                                                             />
+                                                        </Col>
+                                                        <Col span={2}>
+                                                            <Input
+                                                                placeholder="最低大小(GB)"
+                                                                value={row.sys_size}
+                                                                onChange={(e) => {
+                                                                    const newMaps = [...imageMaps]
+                                                                    newMaps[index].sys_size = e.target.value
+                                                                    setImageMaps(newMaps)
+                                                                }}
+                                                            />
+                                                        </Col>
+                                                        <Col span={3}>
+                                                            <Select
+                                                                placeholder="类型"
+                                                                value={row.sys_type || undefined}
+                                                                onChange={(value) => {
+                                                                    const newMaps = [...imageMaps]
+                                                                    newMaps[index].sys_type = value
+                                                                    setImageMaps(newMaps)
+                                                                }}
+                                                                style={{width: '100%'}}
+                                                                allowClear
+                                                            >
+                                                                <Select.Option value="WinNT">WinNT</Select.Option>
+                                                                <Select.Option value="Linux">Linux</Select.Option>
+                                                                <Select.Option value="macOS">macOS</Select.Option>
+                                                            </Select>
+                                                        </Col>
+                                                        <Col span={3}>
+                                                            <Select
+                                                                value={row.sys_flag ? 1 : 0}
+                                                                onChange={(value) => {
+                                                                    const newMaps = [...imageMaps]
+                                                                    newMaps[index].sys_flag = value === 1
+                                                                    setImageMaps(newMaps)
+                                                                }}
+                                                                style={{width: '100%'}}
+                                                            >
+                                                                <Select.Option value={1}>启用</Select.Option>
+                                                                <Select.Option value={0}>禁用</Select.Option>
+                                                            </Select>
                                                         </Col>
                                                         <Col span={2}>
                                                             <Button
@@ -1340,12 +1535,15 @@ function HostManage() {
                                                 icon={<PlusOutlined/>}
                                                 onClick={() => setImageMaps([...imageMaps, {
                                                     id: Date.now().toString(),
-                                                    displayName: '',
-                                                    fileName: ''
+                                                    sys_name: '',
+                                                    sys_file: '',
+                                                    sys_size: '',
+                                                    sys_type: '',
+                                                    sys_flag: true
                                                 }])}
                                                 block
                                             >
-                                                添加镜像映射
+                                                添加光盘镜像
                                             </Button>
                                         </div>
 
@@ -1617,6 +1815,178 @@ function HostManage() {
                                                             />
                                                         </Col>
                                                     </Row>
+                                                    <Row gutter={8} className="mt-2">
+                                                        <Col span={6}>
+                                                            <div className="text-xs text-gray-500 mb-1">CPU可用比例(%)</div>
+                                                            <InputNumber
+                                                                value={row.cpu_per}
+                                                                min={0}
+                                                                max={100}
+                                                                className="w-full"
+                                                                onChange={(v) => {
+                                                                    const newPlans = [...serverPlans]
+                                                                    newPlans[index].cpu_per = v ?? 0
+                                                                    setServerPlans(newPlans)
+                                                                }}
+                                                            />
+                                                        </Col>
+                                                        <Col span={6}>
+                                                            <div className="text-xs text-gray-500 mb-1">虚拟显存(MB)</div>
+                                                            <InputNumber
+                                                                value={row.gpu_mem}
+                                                                min={0}
+                                                                step={128}
+                                                                className="w-full"
+                                                                onChange={(v) => {
+                                                                    const newPlans = [...serverPlans]
+                                                                    newPlans[index].gpu_mem = v ?? 0
+                                                                    setServerPlans(newPlans)
+                                                                }}
+                                                            />
+                                                        </Col>
+                                                        <Col span={6}>
+                                                            <div className="text-xs text-gray-500 mb-1">硬盘IOPS</div>
+                                                            <InputNumber
+                                                                value={row.hdd_iop}
+                                                                min={0}
+                                                                step={100}
+                                                                className="w-full"
+                                                                onChange={(v) => {
+                                                                    const newPlans = [...serverPlans]
+                                                                    newPlans[index].hdd_iop = v ?? 1000
+                                                                    setServerPlans(newPlans)
+                                                                }}
+                                                            />
+                                                        </Col>
+                                                        <Col span={6}>
+                                                            <div className="text-xs text-gray-500 mb-1">备份数量</div>
+                                                            <InputNumber
+                                                                value={row.bak_num}
+                                                                min={0}
+                                                                className="w-full"
+                                                                onChange={(v) => {
+                                                                    const newPlans = [...serverPlans]
+                                                                    newPlans[index].bak_num = v ?? 1
+                                                                    setServerPlans(newPlans)
+                                                                }}
+                                                            />
+                                                        </Col>
+                                                    </Row>
+                                                    <Row gutter={8} className="mt-2">
+                                                        <Col span={6}>
+                                                            <div className="text-xs text-gray-500 mb-1">光盘数量</div>
+                                                            <InputNumber
+                                                                value={row.iso_num}
+                                                                min={0}
+                                                                className="w-full"
+                                                                onChange={(v) => {
+                                                                    const newPlans = [...serverPlans]
+                                                                    newPlans[index].iso_num = v ?? 1
+                                                                    setServerPlans(newPlans)
+                                                                }}
+                                                            />
+                                                        </Col>
+                                                        <Col span={6}>
+                                                            <div className="text-xs text-gray-500 mb-1">PCIe数量</div>
+                                                            <InputNumber
+                                                                value={row.pci_num}
+                                                                min={0}
+                                                                className="w-full"
+                                                                onChange={(v) => {
+                                                                    const newPlans = [...serverPlans]
+                                                                    newPlans[index].pci_num = v ?? 0
+                                                                    setServerPlans(newPlans)
+                                                                }}
+                                                            />
+                                                        </Col>
+                                                        <Col span={6}>
+                                                            <div className="text-xs text-gray-500 mb-1">USB数量</div>
+                                                            <InputNumber
+                                                                value={row.usb_num}
+                                                                min={0}
+                                                                className="w-full"
+                                                                onChange={(v) => {
+                                                                    const newPlans = [...serverPlans]
+                                                                    newPlans[index].usb_num = v ?? 0
+                                                                    setServerPlans(newPlans)
+                                                                }}
+                                                            />
+                                                        </Col>
+                                                        <Col span={6}>
+                                                            <div className="text-xs text-gray-500 mb-1">数据盘数量</div>
+                                                            <InputNumber
+                                                                value={row.dat_num}
+                                                                min={0}
+                                                                className="w-full"
+                                                                onChange={(v) => {
+                                                                    const newPlans = [...serverPlans]
+                                                                    newPlans[index].dat_num = v ?? 1
+                                                                    setServerPlans(newPlans)
+                                                                }}
+                                                            />
+                                                        </Col>
+                                                    </Row>
+                                                    <Row gutter={8} className="mt-2">
+                                                        <Col span={6}>
+                                                            <div className="text-xs text-gray-500 mb-1">数据盘总容量(MB)</div>
+                                                            <InputNumber
+                                                                value={row.dat_all}
+                                                                min={0}
+                                                                step={1024}
+                                                                className="w-full"
+                                                                onChange={(v) => {
+                                                                    const newPlans = [...serverPlans]
+                                                                    newPlans[index].dat_all = v ?? 0
+                                                                    setServerPlans(newPlans)
+                                                                }}
+                                                            />
+                                                        </Col>
+                                                        <Col span={6}>
+                                                            <div className="text-xs text-gray-500 mb-1">流量重置(天)</div>
+                                                            <InputNumber
+                                                                value={row.flu_rst?.[0] ?? 31}
+                                                                min={1}
+                                                                className="w-full"
+                                                                onChange={(v) => {
+                                                                    const newPlans = [...serverPlans]
+                                                                    const cur = Array.isArray(newPlans[index].flu_rst) ? [...newPlans[index].flu_rst] : [31, 10, 10]
+                                                                    cur[0] = v ?? 31
+                                                                    newPlans[index].flu_rst = [cur[0], cur[1] ?? 10, cur[2] ?? 10]
+                                                                    setServerPlans(newPlans)
+                                                                }}
+                                                            />
+                                                        </Col>
+                                                        <Col span={6}>
+                                                            <div className="text-xs text-gray-500 mb-1">超限阈值(MB)</div>
+                                                            <InputNumber
+                                                                value={row.flu_rst?.[1] ?? 10}
+                                                                min={0}
+                                                                className="w-full"
+                                                                onChange={(v) => {
+                                                                    const newPlans = [...serverPlans]
+                                                                    const cur = Array.isArray(newPlans[index].flu_rst) ? [...newPlans[index].flu_rst] : [31, 10, 10]
+                                                                    cur[1] = v ?? 10
+                                                                    newPlans[index].flu_rst = [cur[0] ?? 31, cur[1], cur[2] ?? 10]
+                                                                    setServerPlans(newPlans)
+                                                                }}
+                                                            />
+                                                        </Col>
+                                                        <Col span={6}>
+                                                            <div className="text-xs text-gray-500 mb-1">上次重置时间戳</div>
+                                                            <InputNumber
+                                                                value={row.flu_rst?.[2] ?? 10}
+                                                                min={0}
+                                                                className="w-full"
+                                                                onChange={(v) => {
+                                                                    const newPlans = [...serverPlans]
+                                                                    const cur = Array.isArray(newPlans[index].flu_rst) ? [...newPlans[index].flu_rst] : [31, 10, 10]
+                                                                    cur[2] = v ?? 10
+                                                                    newPlans[index].flu_rst = [cur[0] ?? 31, cur[1] ?? 10, cur[2]]
+                                                                    setServerPlans(newPlans)
+                                                                }}
+                                                            />
+                                                        </Col>
+                                                    </Row>
                                                 </div>
                                             ))}
                                             <Button
@@ -1626,13 +1996,23 @@ function HostManage() {
                                                     id: Date.now().toString(),
                                                     planName: '',
                                                     cpu_num: 2,
+                                                    cpu_per: 0,
+                                                    gpu_mem: 0,
                                                     mem_num: 2048,
                                                     hdd_num: 8192,
+                                                    hdd_iop: 1000,
+                                                    bak_num: 1,
+                                                    iso_num: 1,
+                                                    pci_num: 0,
+                                                    usb_num: 0,
+                                                    dat_num: 1,
+                                                    dat_all: 0,
                                                     speed_u: 100,
                                                     speed_d: 100,
                                                     nat_num: 100,
                                                     web_num: 100,
                                                     flu_num: 102400,
+                                                    flu_rst: [31, 10, 10],
                                                 }])}
                                                 block
                                             >

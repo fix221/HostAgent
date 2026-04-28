@@ -351,51 +351,39 @@ class RestManager:
 
     def _require_vm_fine_permission(self, hs_name, vm_uuid, action: str):
         """
-        从session获取用户信息，校验细分权限的便捷方法
+        获取当前用户信息，校验细分权限的便捷方法
         适用于没有先调用 _check_host_permission 的API
+        同时支持 Bearer Token 和 Session 两种认证方式
         :return: (是否有权限, 错误响应或None)
         """
-        from flask import session
-        user_id = session.get('user_id')
-        is_admin = session.get('is_admin', False)
-        is_token_login = session.get('is_token_login', False)
-
-        if is_admin or is_token_login:
-            return True, None
-
-        if user_id is None and not session.get('logged_in'):
+        user_data = self._get_current_user()
+        if not user_data:
             return False, self.api_response(401, '未登录')
 
-        username = session.get('username', '')
+        if user_data.get('is_admin') or user_data.get('is_token_login'):
+            return True, None
+
+        username = user_data.get('username', '')
         if not username:
             return False, self.api_response(401, '无法获取用户名')
 
-        user_data = {
-            'username': username,
-            'is_admin': is_admin,
-            'is_token_login': is_token_login,
-            'temp_login': session.get('temp_login', False),
-        }
         return self._check_fine_permission(hs_name, vm_uuid, user_data, action)
 
     def _require_owner_or_admin(self, hs_name, vm_uuid):
         """
         检查当前用户是否为管理员或该虚拟机的主所有者
         用于owners管理相关API（添加/删除用户、编辑权限、移交所有权）
+        同时支持 Bearer Token 和 Session 两种认证方式
         :return: (是否有权限, 错误响应或None)
         """
-        from flask import session
-        user_id = session.get('user_id')
-        is_admin = session.get('is_admin', False)
-        is_token_login = session.get('is_token_login', False)
-
-        if is_admin or is_token_login:
-            return True, None
-
-        if not user_id:
+        user_data = self._get_current_user()
+        if not user_data:
             return False, self.api_response(401, '未登录')
 
-        username = session.get('username', '')
+        if user_data.get('is_admin') or user_data.get('is_token_login'):
+            return True, None
+
+        username = user_data.get('username', '')
         if not username:
             return False, self.api_response(401, '无法获取用户名')
 
@@ -1100,19 +1088,34 @@ class RestManager:
         if not server:
             return self.api_response(404, '主机不存在')
 
-        # 获取system_maps和images_maps
-        system_maps = {}
-        images_maps = {}
+        # 获取system_maps和images_maps（现在是 list[OSConfig]）
+        system_maps = []
+        images_maps = []
         server_type = ''
         ban_init = []
         ban_edit = []
         messages = []
 
+        def _os_list_dump(os_list):
+            result = []
+            for it in (os_list or []):
+                if hasattr(it, '__save__') and callable(getattr(it, '__save__')):
+                    item = it.__save__()
+                elif isinstance(it, dict):
+                    item = it
+                else:
+                    continue
+                # 过滤禁用镜像(sys_flag 显式为 False 时跳过)
+                if item.get('sys_flag') is False:
+                    continue
+                result.append(item)
+            return result
+
         if server.hs_config:
             if hasattr(server.hs_config, 'system_maps'):
-                system_maps = server.hs_config.system_maps or {}
+                system_maps = _os_list_dump(server.hs_config.system_maps)
             if hasattr(server.hs_config, 'images_maps'):
-                images_maps = server.hs_config.images_maps or {}
+                images_maps = _os_list_dump(server.hs_config.images_maps)
             if hasattr(server.hs_config, 'server_type'):
                 server_type = server.hs_config.server_type or ''
 
@@ -1403,6 +1406,9 @@ class RestManager:
         # 构建配置
         config_data = data.get('config', {})
         config_data['server_type'] = hs_type
+        # 前端未显式提交 enable_host 时, 新建主机默认启用, 避免创建后处于禁用状态
+        if 'enable_host' not in config_data:
+            config_data['enable_host'] = True
 
         # 调试日志：打印images_maps
         logger.debug(f"[add_host] 接收到的config_data.images_maps: {config_data.get('images_maps')}")
@@ -1445,11 +1451,27 @@ class RestManager:
         if not config_data:
             return self.api_response(400, '配置不能为空')
 
-        # 保留原有的 enable_host，防止保存时意外禁用主机
-        if 'enable_host' not in config_data:
-            existing = self.hs_manage.get_host(hs_name)
-            if existing and existing.hs_config:
-                config_data['enable_host'] = getattr(existing.hs_config, 'enable_host', True)
+        # 合并原有配置: 前端未提交或提交为 None/空字符串的字段, 从旧配置回填, 避免丢失配置
+        existing = self.hs_manage.get_host(hs_name)
+        if existing and existing.hs_config:
+            old_dump = existing.hs_config.__save__()
+            # 敏感字段: 这些字段只有当前端显式传入且非空/非默认时才覆盖
+            # 其余字段若前端未传 key, 一律使用旧值
+            protected_empty_keys = {
+                'system_maps', 'images_maps', 'ipaddr_maps', 'ipaddr_ddns',
+                'public_addr', 'extend_data', 'server_plan',
+                'server_pass', 'i_kuai_pass',
+            }
+            for k, v in old_dump.items():
+                if k not in config_data:
+                    # 前端压根没提交该字段, 用旧值
+                    config_data[k] = v
+                    continue
+                if k in protected_empty_keys:
+                    new_v = config_data.get(k)
+                    # 前端提交了但为空容器 / None / 空字符串, 视为"未修改", 保留旧值
+                    if new_v in (None, '', {}, [], 0) and v not in (None, '', {}, [], 0):
+                        config_data[k] = v
 
         hs_conf = HSConfig(**config_data)
         result = self.hs_manage.set_host(hs_name, hs_conf)
@@ -1864,31 +1886,37 @@ class RestManager:
 
         # 获取system_maps，确定最小磁盘要求
         min_disk_gb = 10  # 默认10GB
-        system_maps = {}
+        system_maps = []
         if server.hs_config and hasattr(server.hs_config, 'system_maps'):
-            system_maps = server.hs_config.system_maps or {}
+            system_maps = server.hs_config.system_maps or []
+
+        # 将任意OSConfig/dict统一成 dict 以便查询
+        def _os_to_dict(it):
+            if hasattr(it, '__save__') and callable(getattr(it, '__save__')):
+                return it.__save__()
+            if isinstance(it, dict):
+                return it
+            return {}
+
+        system_list = [_os_to_dict(it) for it in system_maps]
 
         # 根据选择的操作系统获取最小磁盘要求
-        # system_maps结构：{"Ubuntu22.04": ["ubuntu-22.04.iso", 20], ...}
-        # [0]是镜像文件名，[1]是最小磁盘GB
+        # system_maps结构：list[{sys_name, sys_file, sys_size, sys_type}]
         os_name = data.get('os_name', '')
         if os_name:
-            # 支持按key匹配，也支持按镜像路径(value[0])反向匹配
-            if os_name not in system_maps:
-                matched_key = next(
-                    (k for k, v in system_maps.items() if isinstance(v, list) and len(v) >= 1 and v[0] == os_name),
-                    None
-                )
-                if matched_key is None:
+            # 支持按 sys_name 匹配，也支持按 sys_file 反向匹配
+            matched = next((it for it in system_list if it.get('sys_name') == os_name), None)
+            if matched is None:
+                matched = next((it for it in system_list if it.get('sys_file') == os_name), None)
+                if matched is None:
                     return self.api_response(400, f'操作系统镜像不存在：{os_name}')
-                os_name = matched_key
+                # 若是按文件名匹配到，将 os_name 校正为显示名称
+                os_name = matched.get('sys_name') or os_name
                 data['os_name'] = os_name
-            system_map = system_maps[os_name]
-            if isinstance(system_map, list) and len(system_map) >= 2:
-                try:
-                    min_disk_gb = int(system_map[1])  # system_map[1]是最小磁盘大小（GB）
-                except (ValueError, TypeError):
-                    min_disk_gb = 10  # 解析失败使用默认值
+            try:
+                min_disk_gb = int(matched.get('sys_size') or 10)
+            except (ValueError, TypeError):
+                min_disk_gb = 10
 
         # 对非管理员用户加锁，防止并发创建VM时配额竞态条件
         _quota_lock_username = user_data.get('username', '') if user_data and not (user_data.get('is_admin') or user_data.get('is_token_login')) else None
@@ -1909,10 +1937,10 @@ class RestManager:
 
             # 映射os_name为实际文件名
             original_os_name = data.get('os_name', '')
-            if original_os_name and original_os_name in system_maps:
-                system_map = system_maps[original_os_name]
-                if isinstance(system_map, list) and len(system_map) >= 1:
-                    data['os_name'] = system_map[0]  # 获取映射的实际文件名
+            if original_os_name:
+                matched = next((it for it in system_list if it.get('sys_name') == original_os_name), None)
+                if matched and matched.get('sys_file'):
+                    data['os_name'] = matched['sys_file']  # 使用映射的实际文件名
 
             # 根据服务器类型过滤被禁用的字段（创建模式 - Ban_Init）
             if server.hs_config and hasattr(server.hs_config, 'server_type'):
@@ -1991,7 +2019,7 @@ class RestManager:
                 # 同时添加虚拟用户（hs_name-vm_uuid），用于财务系统临时凭据访问（掩码35295）
                 virtual_user = f'{hs_name}-{vm_config.vm_uuid}'
                 vm_config.own_all['admin'] = UserMask.full()
-                vm_config.own_all[virtual_user] = UserMask(35295)
+                vm_config.own_all[virtual_user] = UserMask(35287)
 
             vm_config.vc_port = random.randint(10000, 59999)
             if vm_config.vc_pass == '':
@@ -2062,7 +2090,16 @@ class RestManager:
                 username=username
             )
         
-        return self.api_response(200 if result and result.success else 400, result.message)
+        # 成功时把 vm_uuid/hs_name 回传给调用方（财务系统、插件等下游依赖这个字段反查 VM），
+        # 失败时 data=None，行为与历史保持一致
+        response_data = None
+        if result and result.success:
+            response_data = {
+                'hs_name': hs_name,
+                'vm_uuid': vm_config.vm_uuid,
+                'vm_name': vm_config.vm_uuid,  # 兼容字段：HostAgent 内部 vm_uuid 同时承担"名称"语义
+            }
+        return self.api_response(200 if result and result.success else 400, result.message, response_data)
 
     # 修改虚拟机配置 ########################################################################
     # :param hs_name: 主机名称
@@ -2398,6 +2435,38 @@ class RestManager:
                 vm_owners = list(own_all.keys()) if isinstance(own_all, dict) else list(own_all)
 
         result = server.VMDelete(vm_uuid)
+
+        # 兜底处理：底层主机上虚拟机未找到时，仍然清理数据库/配置记录，避免记录残留
+        # 判定条件：底层返回失败，且错误信息包含"不存在"/"未找到"/"not found"/"was not found"
+        if result and not result.success and result.message:
+            msg_lower = str(result.message).lower()
+            vm_missing = (
+                ('不存在' in result.message) or ('未找到' in result.message)
+                or ('not found' in msg_lower) or ('was not found' in msg_lower)
+                or ('does not exist' in msg_lower)
+            )
+            if vm_missing:
+                logger.warning(
+                    f"[删除虚拟机] 主机 {hs_name} 上未找到虚拟机 {vm_uuid}，尝试清理数据库与配置记录: {result.message}"
+                )
+                try:
+                    # 清理内存中的虚拟机配置
+                    if hasattr(server, 'vm_saving') and vm_uuid in server.vm_saving:
+                        del server.vm_saving[vm_uuid]
+                        logger.info(f"[删除虚拟机] 已从主机配置中移除虚拟机: {vm_uuid}")
+                    # 持久化配置到数据库
+                    if hasattr(server, 'data_set'):
+                        try:
+                            server.data_set()
+                        except Exception as save_err:
+                            logger.warning(f"[删除虚拟机] 保存主机配置失败: {save_err}")
+                    # 将本次处理视为成功，以便后续释放配额、清理状态、记录日志等流程正常执行
+                    result.success = True
+                    result.message = f"虚拟机 {vm_uuid} 在主机上未找到，已清理数据库记录"
+                except Exception as cleanup_err:
+                    logger.error(
+                        f"[删除虚拟机] 清理数据库记录失败: {cleanup_err}", exc_info=True
+                    )
 
         # 如果删除成功，从数据库删除虚拟机状态数据
         if result and result.success and server.save_data:
@@ -3008,11 +3077,22 @@ class RestManager:
 
         # 虚拟用户名：hs_name-vm_uuid（不在系统用户表中，仅用于vm own_all关联）
         virtual_user = f'{hs_name}-{vm_uuid}'
-        # 检查虚拟机own_all中是否已有此虚拟用户，没有则添加（掩码35295）
+        # 临时凭据授予的权限掩码：35287 = 35295 - 8(NIC_EDITS)，禁止编辑网卡
+        TEMP_USER_MASK = 35287
+        # 检查虚拟机own_all中是否已有此虚拟用户，没有则添加；已存在则强制剔除NIC_EDITS权限
         owners = getattr(vm_config, 'own_all', {})
+        need_save = False
         if virtual_user not in owners:
-            owners[virtual_user] = UserMask(35295)
+            owners[virtual_user] = UserMask(TEMP_USER_MASK)
             vm_config.own_all = owners
+            need_save = True
+        else:
+            # 已存在的虚拟用户：剔除网卡编辑权限位（防止历史遗留的35295权限继续生效）
+            existing_mask = owners[virtual_user]
+            if getattr(existing_mask, 'nic_edits', False):
+                existing_mask.nic_edits = False
+                need_save = True
+        if need_save:
             # 持久化保存
             try:
                 server.VMSave(vm_config)
@@ -3412,12 +3492,20 @@ window.location.replace({repr(target_url)});
 
         data = request.get_json() or {}
 
-        # 创建PortData对象
+        # 创建PortData对象（兼容 host_port/vm_port 和 lan_port/wan_port 两种字段名）
         port_data = PortData()
-        port_data.lan_port = data.get('lan_port', 0)
-        port_data.wan_port = data.get('wan_port', 0)
+        port_data.lan_port = data.get('vm_port') or data.get('lan_port', 0)
+        port_data.wan_port = data.get('host_port') or data.get('wan_port', 0)
         port_data.lan_addr = data.get('lan_addr', '')
-        port_data.nat_tips = data.get('nat_tips', '')
+        port_data.nat_tips = data.get('description') or data.get('nat_tips', '')
+
+        # 如果未提供 lan_addr，自动从虚拟机网卡配置中获取第一个 IPv4 地址
+        if not port_data.lan_addr and hasattr(vm_config, 'nic_all') and vm_config.nic_all:
+            for nic in vm_config.nic_all.values():
+                ip4 = getattr(nic, 'ip4_addr', '')
+                if ip4:
+                    port_data.lan_addr = ip4
+                    break
 
         # 添加到vm_config
         if not hasattr(vm_config, 'nat_all') or vm_config.nat_all is None:
@@ -5034,7 +5122,12 @@ window.location.replace({repr(target_url)});
             
             if server.hs_config and hasattr(server.hs_config, 'server_plan'):
                 server_plan = server.hs_config.server_plan or {}
-                
+                # 主机级价格配置（xiaoheifs 插件读取）
+                n_cpu_price = float(getattr(server.hs_config, 'n_cpu_price', 0) or 0)
+                n_mem_price = float(getattr(server.hs_config, 'n_mem_price', 0) or 0)
+                n_hdd_price = float(getattr(server.hs_config, 'n_hdd_price', 0) or 0)
+                n_net_price = float(getattr(server.hs_config, 'n_net_price', 0) or 0)
+
                 for plan_name, vm_config in server_plan.items():
                     # 从 VMConfig 提取套餐规格
                     plan_data = {
@@ -5046,6 +5139,11 @@ window.location.replace({repr(target_url)});
                         'gpu_mem_gb': getattr(vm_config, 'gpu_mem', 0) // 1024,  # MB -> GB
                         'bandwidth_mbps': getattr(vm_config, 'speed_d', 0),
                         'traffic_gb': getattr(vm_config, 'flu_num', 0) // 1024,  # MB -> GB
+                        # 价格配置（主机级，所有套餐共用）
+                        'n_cpu_price': n_cpu_price,
+                        'n_mem_price': n_mem_price,
+                        'n_hdd_price': n_hdd_price,
+                        'n_net_price': n_net_price,
                     }
                     plans.append(plan_data)
             

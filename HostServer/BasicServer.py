@@ -48,6 +48,10 @@ class BasicServer:
         self.http_manager = None
         self.port_forward = None
         self.web_terminal = None
+        # GetPower 结果缓存 ============================================
+        # { vm_name: (status, expire_ts) }
+        self._power_cache: dict[str, tuple[str, float]] = {}
+        self._power_cache_ttl: float = 30.0  # 秒
         # 加载数据 =======================================================
         self.__load__(**kwargs)
         # 日志系统配置 ===================================================
@@ -1251,7 +1255,23 @@ class BasicServer:
     def ssh_get_hw_status(self) -> HWStatus:
         """通过 SSH 执行命令采集远程宿主机的 CPU/内存/磁盘/网络状态"""
         from HostModule.SSHDManager import SSHDManager
+        import time as _t
         hw = HWStatus()
+
+        # 失败熔断：连续 N 次失败后进入冷却期，期间直接跳过 SSH 采集 =============
+        # 避免对端 sshd 因高频失败触发 MaxStartups/fail2ban 等防护，
+        # 也避免 paramiko 反复抛出 "Error reading SSH protocol banner" 噪声
+        _FAIL_THRESHOLD = 3       # 连续失败阈值
+        _COOLDOWN_SECONDS = 300   # 冷却时长（秒）
+        fail_count = getattr(self, '_ssh_status_fail_count', 0)
+        cooldown_until = getattr(self, '_ssh_status_cooldown_until', 0)
+        now_ts = int(_t.time())
+        if cooldown_until and now_ts < cooldown_until:
+            logger.debug(
+                f"[{self.hs_config.server_name}] SSH采集处于熔断冷却期"
+                f"（剩余 {cooldown_until - now_ts}s），跳过")
+            return hw
+
         ssh = SSHDManager()
         try:
             addr = self.hs_config.server_addr or ""
@@ -1261,8 +1281,24 @@ class BasicServer:
 
             ok, msg = ssh.connect(addr, user, passwd, port)
             if not ok:
-                logger.warning(f"[{self.hs_config.server_name}] SSH连接失败: {msg}")
+                # 失败计数 +1，达到阈值则进入冷却 =================================
+                fail_count += 1
+                self._ssh_status_fail_count = fail_count
+                if fail_count >= _FAIL_THRESHOLD:
+                    self._ssh_status_cooldown_until = now_ts + _COOLDOWN_SECONDS
+                    logger.warning(
+                        f"[{self.hs_config.server_name}] SSH连接连续失败 "
+                        f"{fail_count} 次，进入 {_COOLDOWN_SECONDS}s 熔断冷却: {msg}")
+                else:
+                    logger.warning(
+                        f"[{self.hs_config.server_name}] SSH连接失败"
+                        f"（{fail_count}/{_FAIL_THRESHOLD}）: {msg}")
                 return hw
+
+            # 连接成功：重置失败计数与熔断冷却 ===================================
+            if fail_count or cooldown_until:
+                self._ssh_status_fail_count = 0
+                self._ssh_status_cooldown_until = 0
 
             # CPU 核心数
             ok, out, _ = ssh.execute_command("nproc")
@@ -1448,10 +1484,10 @@ class BasicServer:
                                           hasattr(vm_status_list[-1], 'vm_status') and
                                           vm_status_list[-1].vm_status in ['未知', 'unknown', '', None]):
                     try:
-                        # 调用子类实现的获取实际状态方法
-                        actual_status = self.GetPower(vm_name)
+                        # 调用子类实现的获取实际状态方法（带缓存，避免频繁调用API）
+                        actual_status = self._get_power_cached(vm_name)
                         if actual_status:
-                            logger.info(f"从API获取虚拟机 {vm_name} 实际状态: {actual_status}")
+                            logger.debug(f"从API获取虚拟机 {vm_name} 实际状态: {actual_status}")
                             # 如果获取到实际状态，返回包含实际状态的列表
                             if vm_status_list:
                                 vm_status_list[-1].vm_status = actual_status
@@ -1475,9 +1511,9 @@ class BasicServer:
                                           hasattr(vm_status_list[-1], 'vm_status') and
                                           vm_status_list[-1].vm_status in ['未知', 'unknown', '', None]):
                     try:
-                        actual_status = self.GetPower(vm_uuid)
+                        actual_status = self._get_power_cached(vm_uuid)
                         if actual_status:
-                            logger.info(f"从API获取虚拟机 {vm_uuid} 实际状态: {actual_status}")
+                            logger.debug(f"从API获取虚拟机 {vm_uuid} 实际状态: {actual_status}")
                             if vm_status_list:
                                 vm_status_list[-1].vm_status = actual_status
                             else:
@@ -1504,6 +1540,35 @@ class BasicServer:
         返回值示例: "运行中", "已关机", "暂停", "未知" 等
         """
         return ""
+
+    # GetPower 带缓存封装 ##########################################################
+    def _get_power_cached(self, vm_name: str) -> str:
+        """
+        带 TTL 缓存地获取虚拟机实际电源状态，避免在高频查询场景下对
+        虚拟化平台 API 造成压力。
+        """
+        import time
+        now = time.time()
+        cached = self._power_cache.get(vm_name)
+        if cached and cached[1] > now:
+            return cached[0]
+        status = self.GetPower(vm_name)
+        if status:
+            self._power_cache[vm_name] = (status, now + self._power_cache_ttl)
+        return status
+
+    # 主动使缓存失效（电源操作后调用）##############################################
+    def invalidate_power_cache(self, vm_name: str = "") -> None:
+        """
+        清除 GetPower 缓存。
+        - vm_name 为空时清除全部缓存；
+        - 否则仅清除指定虚拟机的缓存。
+        电源操作（开机/关机/重启等）完成后应主动调用，保证下次查询拿到最新状态。
+        """
+        if not vm_name:
+            self._power_cache.clear()
+        else:
+            self._power_cache.pop(vm_name, None)
 
     # 删除虚拟机 ####################################################################
     def VMDelete(self, vm_name: str, rm_back=True) -> ZMessage:

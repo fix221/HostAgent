@@ -474,6 +474,15 @@ class VRestAPI:
         #     if vm_conf.os_name.lower().startswith(now_prefix):
         #         hdd_system = hdd_select[now_prefix]
         #         break
+        # 获取系统盘后缀 ==========================================
+        # 根据镜像名称(os_name)的扩展名决定系统盘的后缀
+        # 支持 .vmdk / .vhd / .vhdx；未识别或为空时默认 vmdk
+        sys_ext = "vmdk"
+        if vm_conf.os_name and "." in vm_conf.os_name:
+            ext_raw = vm_conf.os_name.rsplit(".", 1)[-1].lower()
+            if ext_raw in ("vmdk", "vhd", "vhdx"):
+                sys_ext = ext_raw
+        sys_disk_file = f"{vm_conf.vm_uuid}.{sys_ext}"
         # 生成VMX配置 =============================================
         vmx_config = {
             # 编码配置 ============================================
@@ -495,6 +504,8 @@ class VRestAPI:
             "vmci0.present": "TRUE",
             "hpet0.present": "TRUE",
             "sata0.present": "TRUE",
+            "scsi0.virtualDev": "lsisas1068",
+            "scsi0.present": "TRUE",
             "usb.present": "TRUE",
             "ehci.present": "TRUE",
             "usb_xhci.present": "TRUE",
@@ -514,7 +525,7 @@ class VRestAPI:
             },
             # 系统盘配置 ==========================================
             f"{hdd_system}:0": {
-                "fileName": vm_conf.vm_uuid + ".vmdk",
+                "fileName": sys_disk_file,
                 "present": "TRUE"
             },
             # 远程显示配置 ========================================
@@ -575,7 +586,7 @@ class VRestAPI:
         ]
         # 移除vmx_config中已写入的系统盘占位（将按顺序重新写入）
         vmx_config.pop(f"{hdd_system}:0", None)
-        sys_entry = {"fileName": vm_conf.vm_uuid + ".vmdk", "present": "TRUE"}
+        sys_entry = {"fileName": sys_disk_file, "present": "TRUE"}
         slot = 0
         for efi in efi_order:
             if not efi.efi_type and efi.efi_name == vm_conf.vm_uuid:

@@ -186,9 +186,17 @@ interface OwnerInfo {
     permission?: number
 }
 
+interface OSConfigItem {
+    sys_name: string
+    sys_file: string
+    sys_size: string
+    sys_type: string
+    sys_flag?: boolean
+}
+
 interface HostConfig {
-    system_maps: Record<string, [string, number]>
-    images_maps?: Record<string, string>
+    system_maps: OSConfigItem[]
+    images_maps?: OSConfigItem[]
     tab_lock?: string[]
     server_type?: string
     enable_host?: boolean
@@ -414,11 +422,16 @@ const [operationTimeoutId, setOperationTimeoutId] = useState<ReturnType<typeof s
     // 获取操作系统显示名称
     const getOSDisplayName = (osName: string) => {
         if (!hostConfig || !hostConfig.system_maps) return osName;
-        // system_maps Key is Display Name, Value is [filename, min_size] or filename
-        for (const [displayName, val] of Object.entries(hostConfig.system_maps)) {
-            const filename = Array.isArray(val) ? val[0] : val;
-            if (filename === osName) {
-                return displayName;
+        const list: any[] = Array.isArray(hostConfig.system_maps)
+            ? hostConfig.system_maps
+            : Object.entries(hostConfig.system_maps as any).map(([name, val]: [string, any]) => (
+                Array.isArray(val)
+                    ? { sys_name: name, sys_file: val[0] }
+                    : (val && typeof val === 'object' ? { sys_name: name, ...val } : { sys_name: name, sys_file: val })
+            ));
+        for (const it of list) {
+            if (it && it.sys_file === osName) {
+                return it.sys_name || osName;
             }
         }
         return osName;
@@ -3171,10 +3184,9 @@ await api.vmPower(hostName!, uuid!, 'H_CLOSE')
                     <Row gutter={16}>
                         <Col span={12}>
                             <Form.Item label="操作系统" name="os_name" initialValue={config.os_name}>
-                                <Select>{hostConfig?.system_maps && Object.entries(hostConfig.system_maps).map(([name, val]) => {
-                                    const image = Array.isArray(val) ? val[0] : val;
-                                    return image ? <Select.Option key={name} value={image}>{name}</Select.Option> : null
-                                })}</Select>
+                                <Select>{hostConfig?.system_maps && (Array.isArray(hostConfig.system_maps) ? hostConfig.system_maps : Object.entries(hostConfig.system_maps as any).map(([name, val]: [string, any]) => Array.isArray(val) ? { sys_name: name, sys_file: val[0] } : (val && typeof val === 'object' ? { sys_name: name, ...val } : { sys_name: name, sys_file: val }))).filter((it: any) => it && it.sys_flag !== false).map((it: any) => (
+                                    it && it.sys_file ? <Select.Option key={it.sys_name || it.sys_file} value={it.sys_file}>{it.sys_name || it.sys_file}</Select.Option> : null
+                                ))}</Select>
                             </Form.Item>
                         </Col>
                         <Col span={12}><Form.Item label="VNC端口" name="vc_port"
@@ -3479,9 +3491,9 @@ await api.vmPower(hostName!, uuid!, 'H_CLOSE')
                 <Form form={isoForm} onFinish={handleAddISO} layout="vertical">
                     <Form.Item label="ISO镜像" name="iso_file" rules={[{required: true, message: '请选择镜像'}]}
                                help="从服务器可用的ISO镜像中选择"><Select
-                        placeholder="请选择">{hostConfig?.images_maps && Object.entries(hostConfig.images_maps).map(([name, file]) => file ?
-                        <Select.Option key={name}
-                                       value={file}>{name} ({file})</Select.Option> : null)}</Select></Form.Item>
+                        placeholder="请选择">{hostConfig?.images_maps && (Array.isArray(hostConfig.images_maps) ? hostConfig.images_maps : Object.entries(hostConfig.images_maps as any).map(([name, file]: [string, any]) => (file && typeof file === 'object' ? { sys_name: name, ...file } : { sys_name: name, sys_file: file }))).filter((it: any) => it && it.sys_flag !== false).map((it: any) => (
+                        it && it.sys_file ? <Select.Option key={it.sys_name || it.sys_file} value={it.sys_file}>{it.sys_name || it.sys_file} ({it.sys_file})</Select.Option> : null
+                        ))}</Select></Form.Item>
                     <Form.Item label="挂载名称" name="iso_name" rules={[{required: true, message: '请输入名称'}, {
                         pattern: /^[a-zA-Z0-9]+$/,
                         message: '只能包含英文字母和数字'
@@ -3518,10 +3530,9 @@ await api.vmPower(hostName!, uuid!, 'H_CLOSE')
                 <Form form={reinstallForm} onFinish={handleReinstall} layout="vertical">
                     <Form.Item label="操作系统" name="os_name"
                                rules={[{required: true, message: '请选择操作系统'}]}><Select
-                        placeholder="请选择">{hostConfig?.system_maps && Object.entries(hostConfig.system_maps).map(([name, val]) => {
-                        const image = Array.isArray(val) ? val[0] : val;
-                        return image ? <Select.Option key={name} value={image}>{name}</Select.Option> : null
-                    })}</Select></Form.Item>
+                        placeholder="请选择">{hostConfig?.system_maps && (Array.isArray(hostConfig.system_maps) ? hostConfig.system_maps : Object.entries(hostConfig.system_maps as any).map(([name, val]: [string, any]) => Array.isArray(val) ? { sys_name: name, sys_file: val[0] } : (val && typeof val === 'object' ? { sys_name: name, ...val } : { sys_name: name, sys_file: val }))).filter((it: any) => it && it.sys_flag !== false).map((it: any) => (
+                        it && it.sys_file ? <Select.Option key={it.sys_name || it.sys_file} value={it.sys_file}>{it.sys_name || it.sys_file}</Select.Option> : null
+                    ))}</Select></Form.Item>
                     <Form.Item label="系统密码" name="password" rules={[{required: true, message: '请输入新系统密码'}]}><Input.Password/></Form.Item>
                 </Form>
                 <div className="p-3 bg-red-50 border border-red-200 rounded flex items-center mt-4">
