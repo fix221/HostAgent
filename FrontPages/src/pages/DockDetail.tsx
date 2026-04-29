@@ -3162,6 +3162,7 @@ await api.vmPower(hostName!, uuid!, 'H_CLOSE')
                             </div>
                         </div>
                         <Space>
+                            <Button type="primary" style={{background: 'linear-gradient(135deg, #6366f1, #8b5cf6)', border: 'none'}} onClick={() => navigate(`/hosts/${hostName}/vms/${uuid}/v2`)}>新版面板</Button>
                             <Button type="primary" className="bg-blue-600" onClick={handleOpenVNC} disabled={!hostEnabled || operationLocked || !hasPermission(userPermissions, VM_PERMISSION.VNC_EDITS)}>一键远程</Button>
                             <Button onClick={() => setPasswordModalVisible(true)} disabled={!hostEnabled || operationLocked || !hasPermission(userPermissions, VM_PERMISSION.PWD_EDITS)}>设置密码</Button>
                             <Dropdown menu={powerMenuProps}>

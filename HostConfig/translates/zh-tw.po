@@ -2386,10 +2386,10 @@ msgid "也"
 msgstr "也"
 
 msgid "从"
-msgstr "从"
+msgstr "從"
 
 msgid "会"
-msgstr "会"
+msgstr "會"
 
 msgid "只"
 msgstr "只"
@@ -2398,7 +2398,7 @@ msgid "太"
 msgstr "太"
 
 msgid "将"
-msgstr "将"
+msgstr "將"
 
 msgid "就"
 msgstr "就"
@@ -2422,7 +2422,7 @@ msgid "才"
 msgstr "才"
 
 msgid "时"
-msgstr "时"
+msgstr "時"
 
 msgid "更加"
 msgstr "更加"
@@ -2434,19 +2434,19 @@ msgid "未"
 msgstr "未"
 
 msgid "比较"
-msgstr "比较"
+msgstr "比較"
 
 msgid "的"
 msgstr "的"
 
 msgid "相当"
-msgstr "相当"
+msgstr "相當"
 
 msgid "真的"
 msgstr "真的"
 
 msgid "确实"
-msgstr "确实"
+msgstr "確實"
 
 msgid "能"
 msgstr "能"
@@ -2455,16 +2455,16 @@ msgid "至少"
 msgstr "至少"
 
 msgid "请"
-msgstr "请"
+msgstr "請"
 
 msgid "还"
-msgstr "还"
+msgstr "還"
 
 msgid "都"
 msgstr "都"
 
 msgid "都将"
-msgstr "都将"
+msgstr "都將"
 
 msgid "需要"
 msgstr "需要"
@@ -2473,7 +2473,7 @@ msgid "非常"
 msgstr "非常"
 
 msgid "为"
-msgstr "为"
+msgstr "為"
 
 msgid "作为"
 msgstr "作為"
@@ -2482,7 +2482,7 @@ msgid "使用"
 msgstr "使用"
 
 msgid "关于"
-msgstr "关于"
+msgstr "關於"
 
 msgid "到"
 msgstr "到"
@@ -2494,7 +2494,7 @@ msgid "对"
 msgstr "對"
 
 msgid "对于"
-msgstr "对于"
+msgstr "對於"
 
 msgid "按"
 msgstr "按"
@@ -2509,7 +2509,7 @@ msgid "用于"
 msgstr "用於"
 
 msgid "由于"
-msgstr "由于"
+msgstr "由於"
 
 msgid "通过"
 msgstr "通過"
@@ -2524,19 +2524,19 @@ msgid "所有"
 msgstr "所有"
 
 msgid "每个"
-msgstr "每个"
+msgstr "每個"
 
 msgid "自己"
 msgstr "自己"
 
 msgid "这"
-msgstr "这"
+msgstr "這"
 
 msgid "这个"
 msgstr "這個"
 
 msgid "这些"
-msgstr "这些"
+msgstr "這些"
 
 msgid "这封"
 msgstr "這封"
@@ -2548,7 +2548,7 @@ msgid "那"
 msgstr "那"
 
 msgid "那个"
-msgstr "那个"
+msgstr "那個"
 
 msgid "那些"
 msgstr "那些"
@@ -2596,7 +2596,7 @@ msgid "中文"
 msgstr "中文"
 
 msgid "句号"
-msgstr "句号"
+msgstr "句號"
 
 msgid "字母"
 msgstr "字母"
@@ -2635,13 +2635,13 @@ msgid "绿色"
 msgstr "綠色"
 
 msgid "蓝色"
-msgstr "蓝色"
+msgstr "藍色"
 
 msgid "颜色"
 msgstr "顏色"
 
 msgid "黄色"
-msgstr "黄色"
+msgstr "黃色"
 
 msgid "黑色"
 msgstr "黑色"
@@ -2650,7 +2650,7 @@ msgid "(JSON格式)"
 msgstr "(JSON格式)"
 
 msgid "一条"
-msgstr "一条"
+msgstr "一條"
 
 msgid "两次"
 msgstr "兩次"
@@ -2659,7 +2659,7 @@ msgid "主所有者"
 msgstr "主所有者"
 
 msgid "使用情况"
-msgstr "使用情况"
+msgstr "使用情況"
 
 msgid "停止刷新"
 msgstr "停止刷新"
@@ -2734,7 +2734,7 @@ msgid "少于"
 msgstr "少於"
 
 msgid "左侧"
-msgstr "左侧"
+msgstr "左側"
 
 msgid "开放注册"
 msgstr "開放註冊"
@@ -2866,7 +2866,7 @@ msgid "请求"
 msgstr "請求"
 
 msgid "请求头"
-msgstr "请求头"
+msgstr "請求頭"
 
 msgid "谨慎"
 msgstr "謹慎"
@@ -2938,7 +2938,7 @@ msgid "输入"
 msgstr "輸入"
 
 msgid "输出"
-msgstr "输出"
+msgstr "輸出"
 
 msgid "响应"
 msgstr "響應"
