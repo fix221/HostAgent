@@ -1524,7 +1524,7 @@ class HostServer(BasicServer):
             logger.info(f"[{self.hs_config.server_name}] 硬盘{action_name}成功: {vm_imgs.hdd_name}")
             return ZMessage(
                 success=True, action="HDDMount",
-                message=f"硬盘{"挂载" if in_flag else "卸载"}成功")
+                message=f"硬盘{action_name}成功")
         # 捕获所有异常 =========================================================
         except Exception as e:
             logger.error(f"[{self.hs_config.server_name}] 硬盘{action_name}操作失败: {str(e)}")
@@ -1580,7 +1580,7 @@ class HostServer(BasicServer):
             # 返回结果 =========================================================
             return ZMessage(
                 success=True, action="ISOMount",
-                message=f"ISO镜像{"挂载" if in_flag else "卸载"}成功")
+                message=f"ISO镜像{action_name}成功")
             
         except Exception as e:
             logger.error(f"ISO镜像挂载操作失败: {str(e)}")

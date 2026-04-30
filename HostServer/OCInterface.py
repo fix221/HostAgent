@@ -603,6 +603,7 @@ class HostServer(BasicServer):
 
     # 网络动态绑定 #############################################################
     def IPBinder_MAN(self, vm_conf: VMConfig, flag=True) -> ZMessage:
+        action_name = "连接"if flag else "删除"
         # 连接服务 =============================================
         client, result = self.api_conn()
         if not result.success:
@@ -653,11 +654,11 @@ class HostServer(BasicServer):
                 else:
                     nic_apis.disconnect(container, force=True)
                 logger.info(
-                    f"{"连接" if flag else "删除"}容器网络 "
+                    f"{action_name}容器网络 "
                     f"{vm_conf.vm_uuid}-{nic_name}: "
                     f"{nic_conf.ip4_addr}")
             except Exception as e:
-                logger.warning(f"{"连接" if flag else "删除"}"
+                logger.warning(f"{action_name}"
                                f"容器网络失败: {str(e)}")
                 traceback.print_exc()
         # 返回结果 =============================================
