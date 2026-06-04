@@ -48,7 +48,7 @@ if not exist "FrontPages\node_modules" (
 echo.
 
 echo [3/4] 启动Flask后端服务器（端口1880）...
-start "OpenIDCS Backend" cmd /k "python RunHostServer.py"
+start "OpenIDCS Backend" cmd /k "python MainServer.py"
 timeout /t 3 >nul
 echo ✓ 后端服务器已启动
 echo.
