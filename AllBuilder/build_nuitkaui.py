@@ -190,6 +190,9 @@ def build_nuitka_command():
         if os.path.exists(full_path):
             cmd.append(f"--include-data-file={full_path}={data_file}")
     
+    # 指定包搜索路径，确保 Nuitka 能找到 HostModule 等包，同时不把 MainServer.py 当成包成员
+    cmd.append(f"--python-path={PROJECT_ROOT}")
+
     # 主脚本：使用 --main 明确指定入口，防止 Nuitka 将其识别为模块编译为 DLL
     cmd.append(f"--main={MAIN_SCRIPT}")
     
@@ -264,10 +267,8 @@ def main():
             print("取消打包")
             sys.exit(1)
     
-    # 清理旧的构建
-    # response = input("是否清理旧的构建目录? (y/n): ")
-    # if response.lower() == 'y':
-    #     clean_build_dir()
+    # 清理旧的构建缓存（避免旧缓存导致Nuitka误判入口脚本类型）
+    clean_build_dir()
     
     # 构建命令
     cmd = build_nuitka_command()

@@ -677,7 +677,10 @@ class HostServer(BasicServer):
                                 line.split("=")[1].strip().strip('"'))
                         except ValueError:
                             pass
-            host = self.hs_config.server_addr or "localhost"
+            if len(self.hs_config.public_addr) > 0:
+                host = self.hs_config.public_addr[0]
+            else:
+                host = self.hs_config.server_addr or "localhost"
             return ZMessage(
                 success=True, action="VNCGets",
                 message="VNC信息获取成功",

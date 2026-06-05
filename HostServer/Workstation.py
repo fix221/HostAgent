@@ -819,6 +819,11 @@ class HostServer(BasicServer):
                 return result
 
             # 检查VNC端口和密码 ================================================
+            if len(self.hs_config.public_addr) == 0:
+                return ZMessage(
+                    success=False,
+                    action="VMRemote",
+                    message="主机外网IP不存在")
             public_addr = self.hs_config.public_addr[0]
             if len(self.vm_saving[vm_uuid].vc_pass) == 0:
                 public_addr = "127.0.0.1"

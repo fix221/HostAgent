@@ -104,13 +104,11 @@ OPTIONAL_PACKAGES = [
 ]
 
 # 需要排除的包（减小体积）
-# 注意: 不要排除 setuptools 和 distutils，PyInstaller 内部 hook 依赖它们
+# 注意: 不要排除 setuptools、distutils、pip、wheel，PyInstaller 内部 hook 依赖它们
 EXCLUDE_PACKAGES = [
     "tkinter",
     "test",
     "unittest",
-    "pip",
-    "wheel",
     "numpy",
     "pandas",
     "matplotlib",

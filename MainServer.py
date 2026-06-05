@@ -3,11 +3,19 @@
 # 提供主机和虚拟机管理的Web界面和API接口
 ################################################################################
 import sys
+import os
+
+# 打包后修正 sys.path，确保 HostModule 等包可被正确导入
+# Nuitka onefile 模式下，解压目录在临时路径，需将其加入 sys.path
+if getattr(sys, 'frozen', False):
+    _bundle_dir = os.path.dirname(sys.executable)
+    if _bundle_dir not in sys.path:
+        sys.path.insert(0, _bundle_dir)
+
 import warnings
 # 屏蔽 paramiko 使用旧版 TripleDES 路径产生的废弃警告
 warnings.filterwarnings("ignore", category=DeprecationWarning, module="paramiko")
 warnings.filterwarnings("ignore", message=".*TripleDES.*", category=UserWarning)
-import os
 import time
 import secrets
 import threading
