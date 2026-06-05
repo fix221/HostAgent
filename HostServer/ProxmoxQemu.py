@@ -1715,11 +1715,24 @@ class HostServer(BasicServer):
             if public_ip in ["localhost", "127.0.0.1", ""]:
                 public_ip = "127.0.0.1"
             
+            # 申请 VNC Ticket =================================================
+            try:
+                ticket_data = vm_conn.vncproxy.post(websocket=1, generate_password=0)
+                vnc_ticket = ticket_data.get('ticket', '')
+                vnc_port   = ticket_data.get('port', '')
+            except Exception as te:
+                logger.warning(f"申请VNC ticket失败: {te}，将使用无ticket URL")
+                vnc_ticket = ''
+                vnc_port   = ''
+
             # 构造Proxmox VNC URL ==============================================
             pve_port = self.hs_config.remote_port if self.hs_config.remote_port else 8006
             vnc_url = (f"https://{public_ip}:{pve_port}/"
                        f"?console=kvm&novnc=1&vmid={vmid}&node={self.hs_config.launch_path}")
-            
+            if vnc_ticket:
+                import urllib.parse
+                vnc_url += f"&ticket={urllib.parse.quote(vnc_ticket, safe='')}"
+
             logger.info(f"VMRemote for {vm_uuid}: {vnc_url}")
             
             return ZMessage(
