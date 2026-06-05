@@ -199,10 +199,10 @@ class HostServer(BasicServer):
     # #########################################################################
     def _proxmox_boot_order(self, vm_conf: VMConfig) -> str:
         if not vm_conf.efi_all:
-            return 'order=sata0;ide2'
+            return 'order=ide0;ide2'
         # 构建 efi_name -> proxmox设备名 的映射
         device_map = {}
-        device_map[vm_conf.vm_uuid] = 'sata0'  # 系统盘
+        device_map[vm_conf.vm_uuid] = 'ide0'  # 系统盘
         scsi_idx = 1
         for hdd_name, hdd_data in vm_conf.hdd_all.items():
             if hdd_data.hdd_flag == 0:
@@ -227,7 +227,7 @@ class HostServer(BasicServer):
                 ordered.append(dev)
                 seen.add(dev)
         if not ordered:
-            return 'order=sata0;ide2'
+            return 'order=ide0;ide2'
         return 'order=' + ';'.join(ordered)
 
     # 宿主机任务 ###############################################################
@@ -418,17 +418,23 @@ class HostServer(BasicServer):
                 vm_conf.efi_all = self.efi_build(vm_conf)
             # 生成Proxmox启动顺序 ==================================
             boot_order = self._proxmox_boot_order(vm_conf)
+            # 根据镜像名判断操作系统类型
+            os_name_lower = (vm_conf.os_name or '').lower()
+            if any(k in os_name_lower for k in ('win', 'windows')):
+                ostype = 'win11' if 'win11' in os_name_lower or 'win-11' in os_name_lower else 'win10'
+            else:
+                ostype = 'l26'
             config = {
                 'vmid': vm_vmid,
                 'name': vm_conf.vm_uuid,
                 'memory': vm_conf.mem_num,
                 'cores': vm_conf.cpu_num,
                 'sockets': 1,
-                'ostype': 'l26',  # Linux 2.6+
+                'cpu': 'host',  # 使用宿主机CPU特性，兼容性最佳
+                'ostype': ostype,
                 'bios': 'ovmf',  # 使用 UEFI 模式
-                'boot': boot_order,
-                'scsihw': 'virtio-scsi-pci',
-                'efidisk0': 'local:1,efitype=4m,pre-enrolled-keys=1',  # EFI 磁盘
+                'scsihw': 'virtio-scsi-single',
+                'efidisk0': 'local:1,efitype=4m',  # EFI 磁盘，不预置Secure Boot密钥
             }
             # 配置网卡 ------------------------------------------
             config.update(self.net_conf(vm_conf))
@@ -525,6 +531,10 @@ class HostServer(BasicServer):
         # 复制镜像 =============================================================
         try:
             import posixpath
+            # 计算启动顺序（磁盘挂载后设置）====================================
+            if not vm_conf.efi_all:
+                vm_conf.efi_all = self.efi_build(vm_conf)
+            boot_order = self._proxmox_boot_order(vm_conf)
             # 从源文件名中提取扩展名，保持原始格式
             _, src_ext = posixpath.splitext(vm_conf.os_name)
             if not src_ext:
@@ -657,9 +667,11 @@ class HostServer(BasicServer):
                         logger.info(f"本地importdisk: {src_file_abs} -> {system_storage}")
                 # importdisk后磁盘进入unused状态，需挂载 ========================
                 vm_conn = client.nodes(self.hs_config.launch_path).qemu(vm_vmid)
-                vm_conn.config.put(sata0=f"{system_storage}:{vm_vmid}/{disk_name}")
+                vm_conn.config.put(ide0=f"{system_storage}:{vm_vmid}/{disk_name}")
+                # 设置启动项（磁盘挂载后才能生效）================================
+                vm_conn.config.put(boot=boot_order, bootdisk='ide0')
                 # 根据 hdd_num(MB) 扩容系统盘到目标大小 ==========================
-                self._resize_system_disk(vm_conn, 'sata0', vm_conf.hdd_num)
+                self._resize_system_disk(vm_conn, 'ide0', vm_conf.hdd_num)
             else:
                 # 复制模式：images_path为物理路径，直接cp复制 ===================
                 if self.flag_web():
@@ -740,9 +752,11 @@ class HostServer(BasicServer):
                                 message=f"SSH回退执行异常: {str(ssh_err)}")
                 # 分配磁盘 ======================================================
                 vm_conn = client.nodes(self.hs_config.launch_path).qemu(vm_vmid)
-                vm_conn.config.put(sata0=f"{system_storage}:{vm_vmid}/{disk_name}")
+                vm_conn.config.put(ide0=f"{system_storage}:{vm_vmid}/{disk_name}")
+                # 设置启动项（磁盘挂载后才能生效）================================
+                vm_conn.config.put(boot=boot_order, bootdisk='ide0')
                 # 根据 hdd_num(MB) 扩容系统盘到目标大小 ==========================
-                self._resize_system_disk(vm_conn, 'sata0', vm_conf.hdd_num)
+                self._resize_system_disk(vm_conn, 'ide0', vm_conf.hdd_num)
             logger.info(f"虚拟机 {vm_conf.vm_uuid} 系统安装完成")
             return ZMessage(success=True, action="VInstall", message="安装成功")
         # 处理异常 ==============================================================
