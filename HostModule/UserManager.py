@@ -18,6 +18,13 @@ _bearer_token_getter: Callable[[], str] = lambda: ""
 _db_getter: Callable[[], Any] = lambda: None
 
 
+def _auth_error_response(code: int, msg: str, redirect_target: str = 'login'):
+    """统一的认证/权限错误响应（API返回JSON，页面请求重定向）"""
+    if request.is_json or request.path.startswith('/api/'):
+        return jsonify({'code': code, 'msg': msg, 'data': None}), code
+    return redirect(url_for(redirect_target))
+
+
 def init_bearer_validator(getter: Callable[[], str]):
     """初始化Bearer Token验证器，由HostServer.py启动时调用注入"""
     global _bearer_token_getter
@@ -105,6 +112,77 @@ class UserManager:
         """清除session"""
         session.clear()
 
+    @staticmethod
+    def build_user_response(user_data: Dict[str, Any] = None, **overrides) -> Dict[str, Any]:
+        """统一构建用户信息响应字典（包含quota/used字段）
+        
+        Args:
+            user_data: 数据库中的用户数据字典（可选）
+            **overrides: 覆盖/额外字段
+        
+        Returns:
+            包含所有必要字段的用户信息字典
+        """
+        # 默认零值模板
+        _ZERO_QUOTA = {
+            'used_cpu': 0, 'used_ram': 0, 'used_ssd': 0, 'used_gpu': 0,
+            'quota_cpu': 0, 'quota_ram': 0, 'quota_ssd': 0, 'quota_gpu': 0,
+            'used_traffic': 0, 'quota_traffic': 0,
+            'used_bandwidth_up': 0, 'quota_bandwidth_up': 0,
+            'used_bandwidth_down': 0, 'quota_bandwidth_down': 0,
+            'used_nat_ports': 0, 'quota_nat_ports': 0,
+            'used_web_proxy': 0, 'quota_web_proxy': 0,
+            'used_nat_ips': 0, 'quota_nat_ips': 0,
+            'used_pub_ips': 0, 'quota_pub_ips': 0,
+        }
+        result = {
+            'id': 0,
+            'username': '',
+            'is_admin': False,
+            'is_token_login': False,
+            'assigned_hosts': [],
+            **_ZERO_QUOTA,
+        }
+        if user_data:
+            # 从数据库用户数据中提取（移除敏感字段）
+            safe_data = {k: v for k, v in user_data.items()
+                         if k not in ('password', 'verify_token', 'reset_token')}
+            result.update(safe_data)
+            # 处理assigned_hosts JSON字符串
+            if isinstance(result.get('assigned_hosts'), str):
+                try:
+                    result['assigned_hosts'] = json.loads(result['assigned_hosts'])
+                except Exception:
+                    result['assigned_hosts'] = []
+        # 应用覆盖值
+        result.update(overrides)
+        return result
+
+    @staticmethod
+    def build_admin_response(assigned_hosts: list = None) -> Dict[str, Any]:
+        """构建管理员Token登录的用户信息响应"""
+        _MAX_QUOTA = 999999
+        return UserManager.build_user_response(
+            id=0, username='admin', is_admin=True, is_token_login=True,
+            quota_cpu=_MAX_QUOTA, quota_ram=_MAX_QUOTA,
+            quota_ssd=_MAX_QUOTA, quota_gpu=_MAX_QUOTA,
+            quota_traffic=_MAX_QUOTA,
+            quota_bandwidth_up=_MAX_QUOTA, quota_bandwidth_down=_MAX_QUOTA,
+            quota_nat_ports=_MAX_QUOTA, quota_web_proxy=_MAX_QUOTA,
+            quota_nat_ips=_MAX_QUOTA, quota_pub_ips=_MAX_QUOTA,
+            assigned_hosts=assigned_hosts or [],
+        )
+
+    @staticmethod
+    def build_temp_user_response(username: str = '', hs_name: str = '',
+                                  vm_uuid: str = '') -> Dict[str, Any]:
+        """构建临时登录用户的信息响应"""
+        return UserManager.build_user_response(
+            id=0, username=username, is_admin=False, is_token_login=False,
+            temp_login=True, temp_hs_name=hs_name, temp_vm_uuid=vm_uuid,
+            assigned_hosts=[hs_name] if hs_name else [],
+        )
+
 
 def require_login(f):
     """需要登录的装饰器（用户登录或Token登录）"""
@@ -117,8 +195,19 @@ def require_login(f):
             return f(*args, **kwargs)
         # 临时token（财务系统插件跳转）：格式为 temp:<sha256>
         if auth_header.startswith('Bearer temp:'):
-            # 只要格式正确就放行，具体权限由各接口内部检查
-            return f(*args, **kwargs)
+            # 必须验证临时token有效性，不能仅凭格式放行
+            from flask import g
+            temp_key = auth_header[12:]  # 去掉 "Bearer temp:" 前缀
+            if temp_key and hasattr(g, '_temp_token_validator') and g._temp_token_validator:
+                user_data = g._temp_token_validator(temp_key)
+                if user_data:
+                    g.current_user = user_data
+                    return f(*args, **kwargs)
+            # 尝试从session验证（临时登录后session中有标记）
+            if session.get('logged_in') and session.get('temp_login'):
+                return f(*args, **kwargs)
+            # 临时token无效
+            return _auth_error_response(401, '临时凭据无效或已过期')
         
         # 检查Session登录
         if session.get('logged_in'):
@@ -126,9 +215,7 @@ def require_login(f):
         
         # 未登录
         logger.warning(f"[UserManager] 未授权访问: {request.path}")
-        if request.is_json or request.path.startswith('/api/'):
-            return jsonify({'code': 401, 'msg': '未授权访问', 'data': None}), 401
-        return redirect(url_for('login'))
+        return _auth_error_response(401, '未授权访问')
     
     return decorated
 
@@ -149,9 +236,7 @@ def require_admin(f):
         
         # 无权限
         logger.warning(f"[UserManager] 权限不足，需要管理员权限: {request.path}, 用户: {session.get('username', '未知')}")
-        if request.is_json or request.path.startswith('/api/'):
-            return jsonify({'code': 403, 'msg': '需要管理员权限', 'data': None}), 403
-        return redirect(url_for('dashboard'))
+        return _auth_error_response(403, '需要管理员权限', 'dashboard')
     
     return decorated
 
@@ -172,9 +257,7 @@ def require_permission(permission: str):
             current_user = UserManager.get_current_user_from_session()
             if not current_user:
                 logger.warning(f"[UserManager] 未登录访问需要权限 {permission} 的接口: {request.path}")
-                if request.is_json or request.path.startswith('/api/'):
-                    return jsonify({'code': 401, 'msg': '未授权访问', 'data': None}), 401
-                return redirect(url_for('login'))
+                return _auth_error_response(401, '未授权访问')
 
             # 管理员拥有所有权限
             if current_user.get('is_admin') or current_user.get('is_token_login'):
@@ -184,23 +267,17 @@ def require_permission(permission: str):
             db = _db_getter()
             if db is None:
                 logger.error(f"[UserManager] 数据库未注入，无法检查权限 {permission}")
-                if request.is_json or request.path.startswith('/api/'):
-                    return jsonify({'code': 500, 'msg': '权限服务不可用', 'data': None}), 500
-                return redirect(url_for('dashboard'))
+                return _auth_error_response(500, '权限服务不可用', 'dashboard')
 
             user_id = current_user.get('id')
             full_user = db.get_user_by_id(user_id)
             if not full_user:
                 logger.warning(f"[UserManager] 用户 {user_id} 不存在，拒绝权限 {permission}")
-                if request.is_json or request.path.startswith('/api/'):
-                    return jsonify({'code': 403, 'msg': f'需要{permission}权限', 'data': None}), 403
-                return redirect(url_for('dashboard'))
+                return _auth_error_response(403, f'需要{permission}权限', 'dashboard')
 
             if not full_user.get(permission):
                 logger.warning(f"[UserManager] 用户 {full_user.get('username')} 缺少权限 {permission}: {request.path}")
-                if request.is_json or request.path.startswith('/api/'):
-                    return jsonify({'code': 403, 'msg': f'需要{permission}权限', 'data': None}), 403
-                return redirect(url_for('dashboard'))
+                return _auth_error_response(403, f'需要{permission}权限', 'dashboard')
 
             return f(*args, **kwargs)
 

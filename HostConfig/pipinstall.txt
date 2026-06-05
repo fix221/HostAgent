@@ -5,6 +5,7 @@ setuptools
 pythonnet
 requests
 flask==2.3.3
+watchdog
 requests
 websockify
 py7zr

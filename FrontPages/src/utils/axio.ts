@@ -16,6 +16,7 @@ const axio: AxiosInstance = axios.create({
   withCredentials: true, // 允许跨域请求携带Cookie（Session认证必须）
   headers: {
     'Content-Type': 'application/json',
+    'X-Requested-With': 'XMLHttpRequest', // CSRF防护：标识为AJAX请求
   },
 });
 

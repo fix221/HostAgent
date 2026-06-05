@@ -3,11 +3,17 @@
 # 提供主机和虚拟机管理的Web界面和API接口
 ################################################################################
 import sys
+import warnings
+# 屏蔽 paramiko 使用旧版 TripleDES 路径产生的废弃警告
+warnings.filterwarnings("ignore", category=DeprecationWarning, module="paramiko")
+warnings.filterwarnings("ignore", message=".*TripleDES.*", category=UserWarning)
 import os
+import time
 import secrets
 import threading
 import traceback
 import json
+import ipaddress
 import mimetypes
 from functools import wraps
 from flask import Flask, request, jsonify, session, redirect, url_for, g, send_from_directory
@@ -46,16 +52,77 @@ static_folder = os.path.join(project_root, 'static')
 app = Flask(__name__, template_folder=template_folder, static_folder=None, static_url_path='')
 app.config['MAX_CONTENT_LENGTH'] = 100 * 1024 * 1024  # 请求体大小限制100MB，防止大请求DoS攻击
 
+# CSRF防护配置 ################################################################
+# 对所有状态变更请求（POST/PUT/DELETE）验证自定义头部 X-Requested-With
+# 浏览器跨域请求无法携带自定义头部（除非CORS允许），从而防止CSRF攻击
+# 前端React应用在请求拦截器中统一添加此头部
+_CSRF_EXEMPT_PATHS = ('/api/login', '/api/register', '/api/verify-email',
+                      '/api/reset-password', '/api/forgot-password',
+                      '/api/temp-login')  # 公开接口免CSRF检查
+
+@app.before_request
+def csrf_protection():
+    """CSRF防护：对状态变更请求验证X-Requested-With头部"""
+    if request.method in ('GET', 'HEAD', 'OPTIONS'):
+        return None
+    # Bearer Token认证的请求免CSRF（API客户端）
+    auth_header = request.headers.get('Authorization', '')
+    if auth_header.startswith('Bearer '):
+        return None
+    # 免检路径
+    if request.path in _CSRF_EXEMPT_PATHS:
+        return None
+    # 检查自定义头部（前端React统一添加）
+    if not request.headers.get('X-Requested-With'):
+        # 允许Content-Type为application/json的请求（fetch/axios默认行为，表单无法伪造）
+        content_type = request.content_type or ''
+        if 'application/json' in content_type:
+            return None
+        return jsonify({'code': 403, 'msg': 'CSRF验证失败，缺少X-Requested-With头部', 'data': None}), 403
+    return None
+
 # 登录速率限制 ################################################################
-# 记录每个IP的登录失败次数和锁定时间
+# 使用内存+数据库双层存储：内存用于快速查询，数据库用于持久化（重启不丢失）
 _login_fail_records: dict = {}  # {ip: {'count': int, 'lock_until': float}}
 _LOGIN_MAX_FAILS = 5       # 最大失败次数
 _LOGIN_LOCK_SECONDS = 300  # 锁定时长（秒）
 _login_lock = threading.Lock()
 
+
+def _get_real_client_ip() -> str:
+    """安全获取客户端真实IP，防止X-Forwarded-For伪造
+    
+    策略：仅信任最后一个代理添加的IP（即X-Forwarded-For的最右侧非私有IP），
+    如果所有IP都是私有地址或无X-Forwarded-For，则使用remote_addr
+    """
+    
+    xff = request.headers.get('X-Forwarded-For', '')
+    if not xff:
+        return request.remote_addr or '127.0.0.1'
+    
+    # X-Forwarded-For格式: client, proxy1, proxy2
+    # 从右向左找第一个非私有IP（最右侧是最近的可信代理添加的）
+    ips = [ip.strip() for ip in xff.split(',') if ip.strip()]
+    
+    # 如果只有一个IP（单层代理），直接使用
+    if len(ips) == 1:
+        return ips[0]
+    
+    # 多层代理：从右向左找第一个公网IP
+    for ip in reversed(ips):
+        try:
+            addr = ipaddress.ip_address(ip)
+            if not addr.is_private and not addr.is_loopback:
+                return ip
+        except ValueError:
+            continue
+    
+    # 所有IP都是私有的，使用最左侧（原始客户端）
+    return ips[0]
+
+
 def _check_login_rate_limit(ip: str) -> tuple:
     """检查登录速率限制，返回 (是否允许, 剩余锁定秒数)"""
-    import time
     with _login_lock:
         record = _login_fail_records.get(ip)
         if not record:
@@ -68,26 +135,68 @@ def _check_login_rate_limit(ip: str) -> tuple:
             _login_fail_records.pop(ip, None)
         return True, 0
 
+
 def _record_login_fail(ip: str):
-    """记录登录失败，超过阈值则锁定"""
-    import time
+    """记录登录失败，超过阈值则锁定（同时持久化到数据库）"""
     with _login_lock:
         record = _login_fail_records.setdefault(ip, {'count': 0, 'lock_until': 0})
         record['count'] += 1
         if record['count'] >= _LOGIN_MAX_FAILS:
             record['lock_until'] = time.time() + _LOGIN_LOCK_SECONDS
             logger.warning(f"[安全] IP {ip} 登录失败 {record['count']} 次，锁定 {_LOGIN_LOCK_SECONDS} 秒")
+            # 持久化锁定记录到数据库
+            try:
+                conn = db.get_db_sqlite()
+                conn.execute(
+                    "INSERT OR REPLACE INTO hs_global (id, data) VALUES (?, ?)",
+                    (f"ip_lock:{ip}", json.dumps({'lock_until': record['lock_until'], 'count': record['count']}))
+                )
+                conn.commit()
+                conn.close()
+            except Exception as e:
+                logger.debug(f"持久化IP锁定记录失败: {e}")
+
 
 def _clear_login_fail(ip: str):
     """登录成功后清除失败记录"""
     with _login_lock:
         _login_fail_records.pop(ip, None)
+    # 清除数据库中的锁定记录
+    try:
+        conn = db.get_db_sqlite()
+        conn.execute("DELETE FROM hs_global WHERE id = ?", (f"ip_lock:{ip}",))
+        conn.commit()
+        conn.close()
+    except Exception:
+        pass
 
-# 全局主机管理实例
-hs_manage = HostManage()
 
-# 数据库实例
-db = DataManager()
+def _load_login_fail_records():
+    """启动时从数据库加载未过期的IP锁定记录"""
+    try:
+        conn = db.get_db_sqlite()
+        cursor = conn.execute("SELECT id, data FROM hs_global WHERE id LIKE 'ip_lock:%'")
+        now = time.time()
+        for row in cursor.fetchall():
+            ip = row['id'].replace('ip_lock:', '')
+            data = json.loads(row['data'])
+            if data.get('lock_until', 0) > now:
+                _login_fail_records[ip] = data
+            else:
+                # 已过期，清除
+                conn.execute("DELETE FROM hs_global WHERE id = ?", (row['id'],))
+        conn.commit()
+        conn.close()
+        if _login_fail_records:
+            logger.info(f"[安全] 从数据库恢复 {len(_login_fail_records)} 条IP锁定记录")
+    except Exception as e:
+        logger.debug(f"加载IP锁定记录失败: {e}")
+
+# 全局主机管理实例（延迟初始化，在init_app()中创建，避免Nuitka将主脚本编译为DLL）
+hs_manage = None
+
+# 数据库实例（延迟初始化）
+db = None
 
 # 持久化Flask secret_key：从数据库读取，避免重启后所有Session失效
 def _init_secret_key():
@@ -111,14 +220,8 @@ def _init_secret_key():
             conn.close()
     return secret_key
 
-app.secret_key = _init_secret_key()
-
-# 全局REST管理器实例
-rest_manager = RestManager(hs_manage, db)
-
-# 注入Bearer Token验证器（让UserManager的装饰器能验证Token值）
-init_bearer_validator(lambda: hs_manage.bearer)
-init_db_getter(lambda: db)
+# 全局REST管理器实例（延迟初始化）
+rest_manager = None
 
 # 认证装饰器（保持向后兼容）###################################################
 # 需要登录或Bearer Token认证的装饰器
@@ -159,9 +262,12 @@ def require_auth(f):
 
 
 def get_current_user():
-    """获取当前用户信息，优先从请求上下文(Bearer Token)取，再从Session取"""
+    """获取当前用户信息，优先从请求上下文(Bearer Token)取，再从Session取
+    注意：此函数与RestManager._get_current_user逻辑一致，统一使用UserManager
+    """
     if hasattr(g, 'current_user') and g.current_user:
         return g.current_user
+    return UserManager.get_current_user_from_session()
     return UserManager.get_current_user_from_session()
 
 
@@ -246,8 +352,8 @@ cd AllBuilder
 @app.route('/api/login', methods=['POST'])
 def login():
     try:
-        # 速率限制检查
-        client_ip = request.headers.get('X-Forwarded-For', request.remote_addr or '').split(',')[0].strip()
+        # 速率限制检查（使用安全的IP获取方式，防止X-Forwarded-For伪造）
+        client_ip = _get_real_client_ip()
         allowed, remaining = _check_login_rate_limit(client_ip)
         if not allowed:
             return api_response_wrapper(429, f'登录失败次数过多，请 {remaining} 秒后再试')
@@ -354,7 +460,7 @@ def login():
             return api_response_wrapper(401, 'Token错误')
     except Exception as e:
         logger.error(f"登录失败: {e}")
-        return api_response_wrapper(500, f'登录失败: {str(e)}')
+        return api_response_wrapper(500, '登录失败，请稍后重试')
 
 
 # 退出登录API ################################################################
@@ -1601,60 +1707,22 @@ def api_get_current_user():
             if token.startswith('temp:'):
                 user_data = rest_manager.get_temp_user_data(token[5:])
                 if user_data:
-                    return api_response_wrapper(200, '获取成功', {
-                        **user_data,
-                        'used_cpu': 0, 'used_ram': 0, 'used_ssd': 0, 'used_gpu': 0,
-                        'quota_cpu': 0, 'quota_ram': 0, 'quota_ssd': 0, 'quota_gpu': 0,
-                        'used_traffic': 0, 'quota_traffic': 0,
-                        'used_bandwidth_up': 0, 'quota_bandwidth_up': 0,
-                        'used_bandwidth_down': 0, 'quota_bandwidth_down': 0,
-                        'used_nat_ports': 0, 'quota_nat_ports': 0,
-                        'used_web_proxy': 0, 'quota_web_proxy': 0,
-                        'used_nat_ips': 0, 'quota_nat_ips': 0,
-                        'used_pub_ips': 0, 'quota_pub_ips': 0,
-                    })
+                    return api_response_wrapper(200, '获取成功', UserManager.build_user_response(user_data))
                 return api_response_wrapper(401, '临时凭据无效或已过期')
             if token == hs_manage.bearer:
-                return api_response_wrapper(200, '获取成功', {
-                    'id': 0,
-                    'username': 'admin',
-                    'is_admin': True,
-                    'is_token_login': True,
-                    'used_cpu': 0, 'used_ram': 0, 'used_ssd': 0, 'used_gpu': 0,
-                    'quota_cpu': 999999, 'quota_ram': 999999, 'quota_ssd': 999999, 'quota_gpu': 999999,
-                    'used_traffic': 0, 'quota_traffic': 999999,
-                    'used_bandwidth_up': 0, 'quota_bandwidth_up': 999999,
-                    'used_bandwidth_down': 0, 'quota_bandwidth_down': 999999,
-                    'used_nat_ports': 0, 'quota_nat_ports': 999999,
-                'used_web_proxy': 0, 'quota_web_proxy': 999999,
-                'used_nat_ips': 0, 'quota_nat_ips': 999999,
-                'used_pub_ips': 0, 'quota_pub_ips': 999999,
-                'assigned_hosts': list(hs_manage.engine.keys())
-            })
+                return api_response_wrapper(200, '获取成功',
+                    UserManager.build_admin_response(assigned_hosts=list(hs_manage.engine.keys())))
 
         # 检查Session登录
         if session.get('logged_in'):
             # 临时Token登录（财务系统插件跳转），返回虚拟用户信息（受限权限）
             if session.get('temp_login'):
-                return api_response_wrapper(200, '获取成功', {
-                    'id': 0,
-                    'username': session.get('username', ''),
-                    'is_admin': False,
-                    'is_token_login': False,
-                    'temp_login': True,
-                    'temp_hs_name': session.get('temp_hs_name', ''),
-                    'temp_vm_uuid': session.get('temp_vm_uuid', ''),
-                    'used_cpu': 0, 'used_ram': 0, 'used_ssd': 0, 'used_gpu': 0,
-                    'quota_cpu': 0, 'quota_ram': 0, 'quota_ssd': 0, 'quota_gpu': 0,
-                    'used_traffic': 0, 'quota_traffic': 0,
-                    'used_bandwidth_up': 0, 'quota_bandwidth_up': 0,
-                    'used_bandwidth_down': 0, 'quota_bandwidth_down': 0,
-                    'used_nat_ports': 0, 'quota_nat_ports': 0,
-                    'used_web_proxy': 0, 'quota_web_proxy': 0,
-                    'used_nat_ips': 0, 'quota_nat_ips': 0,
-                    'used_pub_ips': 0, 'quota_pub_ips': 0,
-                    'assigned_hosts': [session.get('temp_hs_name', '')]
-                })
+                return api_response_wrapper(200, '获取成功',
+                    UserManager.build_temp_user_response(
+                        username=session.get('username', ''),
+                        hs_name=session.get('temp_hs_name', ''),
+                        vm_uuid=session.get('temp_vm_uuid', '')
+                    ))
             user_id = session.get('user_id')
             user_data = db.get_user_by_id(user_id)
             if user_data:
@@ -1796,7 +1864,7 @@ def api_create_user():
         
     except Exception as e:
         logger.error(f"创建用户失败: {e}")
-        return api_response_wrapper(500, f'创建失败: {str(e)}')
+        return api_response_wrapper(500, '创建失败，请稍后重试')
 
 
 @app.route('/api/users/<int:user_id>', methods=['GET'])
@@ -2059,6 +2127,26 @@ def start_cron_scheduler():
 # ============================================================================
 def init_app():
     """初始化应用"""
+    global hs_manage, db, rest_manager
+
+    # 初始化核心对象（必须在此处创建，避免模块级代码导致Nuitka将主脚本编译为DLL）
+    logger.info("正在初始化核心对象...")
+    hs_manage = HostManage()
+    db = DataManager()
+
+    # 初始化Flask secret_key
+    app.secret_key = _init_secret_key()
+
+    # 从数据库恢复IP锁定记录
+    _load_login_fail_records()
+
+    # 初始化REST管理器
+    rest_manager = RestManager(hs_manage, db)
+
+    # 注入Bearer Token验证器
+    init_bearer_validator(lambda: hs_manage.bearer)
+    init_db_getter(lambda: db)
+
     # 加载已保存的配置
     try:
         logger.info("正在加载系统配置...")
@@ -2149,7 +2237,7 @@ if __name__ == '__main__':
         logger.remove()
         
         # 确保日志目录存在
-        log_dir = os.path.join(project_root, 'DataSaving')
+        log_dir = os.path.join(project_root, 'DataSaving', 'logs')
         os.makedirs(log_dir, exist_ok=True)
         
         # 添加控制台输出（始终显示）
@@ -2159,7 +2247,7 @@ if __name__ == '__main__':
             level="INFO"
         )
         
-        # 添加文件输出
+        # 添加总日志文件输出（所有日志汇总）
         log_file = os.path.join(log_dir, "log-kernel.log")
         logger.add(
             log_file,
@@ -2168,6 +2256,31 @@ if __name__ == '__main__':
             compression="zip",
             encoding="utf-8",
             level="DEBUG"
+        )
+        
+        # 添加平台日志（排除主机模块和Flask请求日志）
+        logger.add(
+            os.path.join(log_dir, "log-platform.log"),
+            rotation="10 MB",
+            retention="7 days",
+            compression="zip",
+            encoding="utf-8",
+            level="INFO",
+            filter=lambda record: (
+                record["name"] in ("__main__", "HostModule.HostManager", "HostModule.DataManager", "HostModule.UserManager")
+                or record["name"].startswith("HostModule.")
+            ) and "HostServer." not in record["name"]
+        )
+        
+        # 添加Flask/Werkzeug请求日志
+        logger.add(
+            os.path.join(log_dir, "log-flask.log"),
+            rotation="10 MB",
+            retention="7 days",
+            compression="zip",
+            encoding="utf-8",
+            level="DEBUG",
+            filter=lambda record: record["name"] in ("werkzeug", "flask", "flask.app")
         )
         
         logger.info("=" * 60)
@@ -2182,22 +2295,20 @@ if __name__ == '__main__':
         logger.info("正在初始化应用...")
         if is_frozen or os.environ.get("WERKZEUG_RUN_MAIN") == "true":
             init_app()
+            logger.info(f"\n{'=' * 60}")
+            logger.info(f"OpenIDCS Server 启动中...")
+            logger.info(f"运行模式: {'打包模式' if is_frozen else '开发模式'}")
+            logger.info(f"访问地址: http://127.0.0.1:1880")
+            # Token脱敏：只显示前6位和后4位，中间用*替代
+            _token = hs_manage.bearer
+            if _token and len(_token) > 10:
+                _masked_token = _token[:6] + '*' * (len(_token) - 10) + _token[-4:]
+            else:
+                _masked_token = _token
+            logger.info(f"访问Token: {_token}")
+            logger.info(f"{'=' * 60}\n")
         else:
             logger.info("检测到调试重载父进程，跳过初始化，等待子进程启动")
-
-        
-        logger.info(f"\n{'=' * 60}")
-        logger.info(f"OpenIDCS Server 启动中...")
-        logger.info(f"运行模式: {'打包模式' if is_frozen else '开发模式'}")
-        logger.info(f"访问地址: http://127.0.0.1:1880")
-        # Token脱敏：只显示前6位和后4位，中间用*替代
-        _token = hs_manage.bearer
-        if _token and len(_token) > 10:
-            _masked_token = _token[:6] + '*' * (len(_token) - 10) + _token[-4:]
-        else:
-            _masked_token = _token
-        logger.info(f"访问Token: {_token}")
-        logger.info(f"{'=' * 60}\n")
         
         # 打包后禁用调试模式，避免 Nuitka 兼容性问题
         if is_frozen:
@@ -2205,10 +2316,17 @@ if __name__ == '__main__':
             app.run(host='0.0.0.0', port=1880, debug=False, use_reloader=False)
         else:
             # 开发环境可以使用调试模式和自动重载
+            # 使用 watchdog reloader 避免 Windows 上 stat reloader 的 WinError 10038 问题
             logger.info("使用调试模式启动 Flask 服务器（已启用自动重载）...")
-            app.run(host='0.0.0.0', port=1880, debug=True, use_reloader=True)
+            app.run(host='0.0.0.0', port=1880, debug=True, use_reloader=True, reloader_type='watchdog')
     except KeyboardInterrupt:
         logger.info("\n程序被用户中断")
+    except OSError as e:
+        if e.winerror == 10038:
+            # Windows 上 reloader 重启时 socket 已关闭，忽略此错误
+            pass
+        else:
+            raise
         sys.exit(0)
     except Exception as e:
         logger.error(f"\n程序启动失败: {e}")

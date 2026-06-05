@@ -96,39 +96,9 @@ class RestManager:
             return g.current_user
         return UserManager.get_current_user_from_session()
 
-    @staticmethod
-    # 认证装饰器，检查Bearer Token或Session登录 ########################################
-    # :param f: 被装饰的函数
-    # :return: 装饰后的函数
-    ####################################################################################
-    def require_auth(self, f):
-
-        @wraps(f)
-        def decorated(*args, **kwargs):
-            # 检查Bearer Token
-            auth_header = request.headers.get('Authorization', '')
-            if auth_header.startswith('Bearer '):
-                token = auth_header[7:]
-                if token and token == self.hs_manage.bearer:
-                    # Token登录，注入管理员用户信息到请求上下文
-                    g.current_user = {
-                        'id': 1,
-                        'username': 'admin',
-                        'is_admin': True,
-                        'is_token_login': True,
-                        'assigned_hosts': []
-                    }
-                    return f(*args, **kwargs)
-            # 检查Session登录
-            if session.get('logged_in'):
-                return f(*args, **kwargs)
-            # API请求返回JSON错误
-            if request.is_json or request.path.startswith('/api/'):
-                return jsonify({'code': 401, 'msg': '未授权访问', 'data': None}), 401
-            # 页面请求重定向到登录页
-            return redirect(url_for('login'))
-
-        return decorated
+    # 注意：认证装饰器已统一到 MainServer.py 的 require_auth 和
+    # UserManager.py 的 require_login/require_admin/require_permission
+    # 此处不再重复定义（原 require_auth 存在 @staticmethod + self 参数矛盾且未被使用）
 
     # 统一API响应格式 ####################################################################
     # :param code: 响应状态码，默认为200
@@ -895,8 +865,14 @@ class RestManager:
         for server in self.hs_manage.engine.values():
             total_vms += len(server.vm_saving)
 
+            # 构建虚拟机实际电源状态字典
+            vm_power_states = {}
+            for vm_uuid, vm_conf in server.vm_saving.items():
+                if vm_conf.vm_flag:
+                    vm_power_states[vm_uuid] = vm_conf.vm_flag.name if hasattr(vm_conf.vm_flag, 'name') else str(vm_conf.vm_flag)
+
             # 获取所有虚拟机状态
-            all_vm_status = server.save_data.get_vm_status(server.hs_config.server_name)
+            all_vm_status = server.save_data.get_vm_status(server.hs_config.server_name, vm_power_states=vm_power_states)
 
             # 统计运行中的虚拟机数量
             for vm_uuid in server.vm_saving.keys():
@@ -1778,7 +1754,12 @@ class RestManager:
             # 从 DataManage 获取状态（直接从数据库读取）=================
             status = None
             if server.save_data and server.hs_config.server_name:
-                all_vm_status = server.save_data.get_vm_status(server.hs_config.server_name)
+                # 构建虚拟机实际电源状态字典，供离线判断时参考
+                vm_power_states = {}
+                for _uuid, _conf in server.vm_saving.items():
+                    if _conf.vm_flag:
+                        vm_power_states[_uuid] = _conf.vm_flag.name if hasattr(_conf.vm_flag, 'name') else str(_conf.vm_flag)
+                all_vm_status = server.save_data.get_vm_status(server.hs_config.server_name, vm_power_states=vm_power_states)
                 status = all_vm_status.get(vm_uuid, [])
                 # 只取最新的一条状态
                 if status and len(status) > 0:

@@ -78,14 +78,17 @@ class BasicServer:
         try:
             if self.hs_config.server_name:
                 # 为每个主机创建独立的日志文件
-                log_file = f"./DataSaving/log-{self.hs_config.server_name}.log"
+                os.makedirs("./DataSaving/logs", exist_ok=True)
+                log_file = f"./DataSaving/logs/log-{self.hs_config.server_name}.log"
+                server_name = self.hs_config.server_name
                 logger.add(
                     log_file,
                     rotation="10 MB",
                     retention="7 days",
                     compression="zip",
                     format="{time:YYYY-MM-DD HH:mm:ss} | {level} | {message}",
-                    level="INFO"
+                    level="INFO",
+                    filter=lambda record, sn=server_name: f"[{sn}]" in record["message"]
                 )
                 logger.info(
                     f"[{self.hs_config.server_name}] 日志系统已初始化"
@@ -826,6 +829,75 @@ class BasicServer:
             self.port_forward = PortForward.PortForward(self.hs_config)
         return True
 
+    # TTY终端连接公共逻辑（R5: 合并VMRemote重复代码）################################
+    def _vmremote_tty(self, vm_uuid: str, vm_type: str = "") -> ZMessage:
+        """
+        VMRemote的公共TTY终端连接逻辑，子类可直接调用。
+        流程：检查VM存在 -> 获取SSH端口 -> 获取公网IP -> 初始化TTY -> 创建代理 -> 返回URL
+        
+        Args:
+            vm_uuid: 虚拟机UUID
+            vm_type: 虚拟机类型标识（传给open_tty）
+        Returns:
+            ZMessage 包含终端URL
+        """
+        if vm_uuid not in self.vm_saving:
+            return ZMessage(success=False, action="VCRemote", message="虚拟机不存在")
+
+        vm_conf = self.vm_saving[vm_uuid]
+
+        # 获取SSH WAN端口
+        wan_port = None
+        try:
+            for p in (vm_conf.nat_all or []):
+                if int(p.lan_port) == 22:
+                    wan_port = int(p.wan_port)
+                    break
+        except Exception:
+            wan_port = None
+
+        if not wan_port and self.hs_config.server_pass == "":
+            return ZMessage(
+                success=False, action="VCRemote",
+                message="当未设置主机密码时，必须添加一个端口映射到22端口<br/>"
+                        "未找到当前虚拟机22端口对应端口映射信息，无法继续")
+
+        # 获取主机外网IP
+        if not self.hs_config.public_addr:
+            return ZMessage(success=False, action="VCRemote", message="主机外网IP不存在")
+        public_ip = self.hs_config.public_addr[0]
+        if public_ip in ["localhost", "127.0.0.1", ""]:
+            public_ip = "127.0.0.1"
+
+        # 确保TTY组件就绪
+        self.VMLoader_TTY()
+
+        # 打开TTY会话
+        tty_port, token = self.web_terminal.open_tty(
+            self.hs_config, wan_port, vm_uuid, vm_type=vm_type)
+        if tty_port <= 0:
+            return ZMessage(success=False, action="VCRemote", message="启动tty会话失败")
+
+        # 添加SSH代理
+        try:
+            ok = self.http_manager.create_vnc(token, "127.0.0.1", tty_port)
+            if not ok:
+                self.web_terminal.stop_tty(tty_port)
+                return ZMessage(success=False, action="VCRemote", message="添加SSH代理失败")
+        except Exception as e:
+            logger.error(f"SSH代理配置失败: {e}")
+            self.web_terminal.stop_tty(tty_port)
+            return ZMessage(success=False, action="VCRemote", message=f"SSH代理配置失败: {e}")
+
+        # 构造返回URL
+        vnc_port = self.hs_config.remote_port
+        url = f"http://{public_ip}:{vnc_port}/{token}"
+        logger.info(f"VMRemote for {vm_uuid}: {url}")
+        return ZMessage(
+            success=True, action="VCRemote", message=url,
+            results={"tty_port": tty_port, "token": token,
+                     "vnc_port": vnc_port, "url": url, "ssh_port": wan_port})
+
     # 网络动态绑定 ##################################################################
     def IPBinder(self, vm_conf: VMConfig, flag=True) -> ZMessage:
         if self.hs_config.server_type in BasicServer.vnc_type:
@@ -1173,6 +1245,12 @@ class BasicServer:
                 # 调用子类实现的GetPower方法获取实际状态
                 actual_status = self.GetPower(vm_name)
 
+                # 如果API调用失败（返回空字符串），保留之前的状态不变
+                if not actual_status:
+                    logger.debug(
+                        f"[{self.hs_config.server_name}] 虚拟机 {vm_name} API查询无结果，保留当前状态: {vm_conf.vm_flag}")
+                    continue
+
                 # 将API返回的中文状态映射为VMPowers枚举
                 status_map = {
                     '运行中': VMPowers.STARTED,
@@ -1180,20 +1258,18 @@ class BasicServer:
                     '已停止': VMPowers.STOPPED,
                     '已暂停': VMPowers.SUSPEND,
                     '未知': VMPowers.UNKNOWN,
-                    '': VMPowers.UNKNOWN
                 }
 
                 new_power_status = status_map.get(actual_status, VMPowers.UNKNOWN)
 
                 # 更新VMConfig.vm_flag
                 if vm_conf.vm_flag != new_power_status:
-                    logger.debug(
+                    logger.info(
                         f"[{self.hs_config.server_name}] 虚拟机 {vm_name} 状态变更: {vm_conf.vm_flag} -> {new_power_status}")
                     vm_conf.vm_flag = new_power_status
 
             except Exception as e:
                 logger.warning(f"[{self.hs_config.server_name}] 获取虚拟机 {vm_name} 状态失败: {str(e)}")
-                vm_conf.vm_flag = VMPowers.UNKNOWN
 
         # 保存更新后的配置
         self.data_set()
@@ -1471,9 +1547,15 @@ class BasicServer:
                  s_t: int = None,
                  e_t: int = None) -> dict[str, list[HWStatus]]:
         if self.save_data and self.hs_config.server_name:
+            # 构建虚拟机实际电源状态字典，供DataManager离线判断时参考
+            vm_power_states = {}
+            for vm_uuid, vm_conf in self.vm_saving.items():
+                if vm_conf.vm_flag:
+                    vm_power_states[vm_uuid] = vm_conf.vm_flag.name if hasattr(vm_conf.vm_flag, 'name') else str(vm_conf.vm_flag)
+            
             all_status = self.save_data.get_vm_status(
                 self.hs_config.server_name, start_timestamp=s_t,
-                end_timestamp=e_t)
+                end_timestamp=e_t, vm_power_states=vm_power_states)
 
             # 如果指定了vm_name，检查是否需要从API获取实际状态
             if vm_name:

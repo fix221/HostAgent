@@ -248,10 +248,13 @@ function CoreConfig() {
   const sendTestEmail = async (values: any) => {
     try {
       setLoading(true)
+      const emailValues = emailForm.getFieldsValue()
       const data = {
-        recipient: values.test_email,
+        test_email: values.test_email,
         subject: values.subject,
         body: values.body,
+        resend_email: emailValues.resend_email,
+        resend_apikey: emailValues.resend_apikey,
       }
       const res = await api.sendTestEmail(data)
       if (res.code === 200) {

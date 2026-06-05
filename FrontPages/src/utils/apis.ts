@@ -667,13 +667,13 @@ export const loadSystemConfig = (): Promise<ApiResponse> => {
  * 更新系统设置
  */
 export const updateSystemSettings = (data: any): Promise<ApiResponse> => {
-  return http.put('/api/system/settings', data);
+  return http.post('/api/system/settings', data);
 };
 
 /**
  * 发送测试邮件
  */
-export const sendTestEmail = (data: { recipient: string; subject?: string; body?: string }): Promise<ApiResponse> => {
+export const sendTestEmail = (data: { test_email: string; subject?: string; body?: string; resend_email?: string; resend_apikey?: string }): Promise<ApiResponse> => {
   return http.post('/api/system/test-email', data);
 };
 

@@ -7,6 +7,7 @@ import re
 import shutil
 import subprocess
 from loguru import logger
+from HostModule.CommandSafe import HostExecutor
 
 
 class KVMDetector:
@@ -26,7 +27,7 @@ class KVMDetector:
     # 初始化 ####################################################################
     def __init__(self, hs_config):
         self.hs_config = hs_config
-        self._ssh = None
+        self._executor = None
 
     # 判断是否为远程 ############################################################
     def is_remote(self) -> bool:
@@ -36,44 +37,18 @@ class KVMDetector:
 
     # 统一执行命令（本地/SSH）##################################################
     def _exec(self, cmd: str) -> tuple[bool, str, str]:
-        if self.is_remote():
-            # 使用 SSHDManager 执行远端命令 =====================================
-            try:
-                from HostModule.SSHDManager import SSHDManager
-            except Exception as e:
-                return False, "", f"SSH 模块不可用: {e}"
-            if self._ssh is None:
-                self._ssh = SSHDManager()
-                addr = (self.hs_config.server_addr or "").replace("ssh://", "")
-                ok, msg = self._ssh.connect(
-                    hostname=addr,
-                    username=self.hs_config.server_user,
-                    password=self.hs_config.server_pass,
-                    port=self.hs_config.server_port or 22)
-                if not ok:
-                    self._ssh = None
-                    return False, "", f"SSH 连接失败: {msg}"
-            try:
-                ok, out, err = self._ssh.execute_command(cmd)
-                return ok, out or "", err or ""
-            except Exception as e:
-                return False, "", str(e)
-        else:
-            try:
-                r = subprocess.run(cmd, shell=True,
-                                   capture_output=True, text=True, timeout=10)
-                return r.returncode == 0, r.stdout or "", r.stderr or ""
-            except Exception as e:
-                return False, "", str(e)
+        if self._executor is None:
+            self._executor = HostExecutor(self.hs_config, reuse_ssh=True)
+        return self._executor.exec(cmd, timeout=10, allow_pipe=True)
 
     # 关闭 SSH ##################################################################
     def close(self):
-        if self._ssh is not None:
+        if self._executor is not None:
             try:
-                self._ssh.close()
+                self._executor.close()
             except Exception:
                 pass
-            self._ssh = None
+            self._executor = None
 
     # 检查 /dev/kvm ############################################################
     def check_kvm(self) -> bool:

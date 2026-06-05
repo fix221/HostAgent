@@ -686,7 +686,7 @@ class HostManage:
                             continue
                     
                     # 执行主机的定时任务 ==========================================
-                    logger.debug(f'[Cron] 执行主机 {server_name} 的定时任务')
+                    logger.info(f'[Cron] 执行主机 {server_name} 的定时任务')
                     server.Crontabs()
                     
                 except Exception as e:
@@ -701,6 +701,13 @@ class HostManage:
                 logger.error(f'[Cron] 清理已删除虚拟机状态数据失败: {e}')
                 traceback.print_exc()
             
+            # 清理过多的vm_status历史记录（每个虚拟机保留最近43200条）==============
+            try:
+                self._cleanup_vm_status_history()
+            except Exception as e:
+                logger.error(f'[Cron] 清理vm_status历史记录失败: {e}')
+                traceback.print_exc()
+            
             # 重新计算所有用户的资源配额 ==========================================
             try:
                 self._recalculate_user_quotas()
@@ -708,7 +715,7 @@ class HostManage:
                 logger.error(f'[Cron] 重新计算用户资源配额失败: {e}')
                 traceback.print_exc()
             
-            logger.debug('[Cron] 定时任务执行完成')
+            logger.info('[Cron] 定时任务执行完成')
             
         except Exception as e:
             # 捕获整个定时任务的异常 ============================================
@@ -847,6 +854,48 @@ class HostManage:
                 
         except Exception as e:
             logger.error(f'[Cron] 清理已删除虚拟机状态数据失败: {e}')
+            import traceback
+            traceback.print_exc()
+
+    def _cleanup_vm_status_history(self):
+        """
+        定时清理vm_status历史记录，每个虚拟机保留最近43200条
+        替代之前每次写入时的DELETE子查询，提升写入性能
+        """
+        try:
+            conn = self.saving.get_db_sqlite()
+            try:
+                # 获取所有有状态记录的虚拟机
+                cursor = conn.execute(
+                    "SELECT hs_name, vm_uuid, COUNT(*) as cnt FROM vm_status GROUP BY hs_name, vm_uuid HAVING cnt > 43200")
+                vms_to_clean = cursor.fetchall()
+                
+                if not vms_to_clean:
+                    logger.debug('[Cron] vm_status历史记录无需清理')
+                    return
+                
+                total_deleted = 0
+                for row in vms_to_clean:
+                    hs_name = row['hs_name']
+                    vm_uuid = row['vm_uuid']
+                    overflow = row['cnt'] - 43200
+                    # 删除最旧的超出记录
+                    conn.execute("""
+                        DELETE FROM vm_status WHERE id IN (
+                            SELECT id FROM vm_status 
+                            WHERE hs_name = ? AND vm_uuid = ?
+                            ORDER BY id ASC LIMIT ?
+                        )
+                    """, (hs_name, vm_uuid, overflow))
+                    total_deleted += overflow
+                
+                conn.commit()
+                if total_deleted > 0:
+                    logger.info(f'[Cron] vm_status历史清理完成，共删除 {total_deleted} 条过期记录')
+            finally:
+                conn.close()
+        except Exception as e:
+            logger.error(f'[Cron] 清理vm_status历史记录失败: {e}')
             import traceback
             traceback.print_exc()
 

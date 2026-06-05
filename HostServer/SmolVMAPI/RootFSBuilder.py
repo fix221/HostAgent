@@ -8,6 +8,7 @@ import uuid
 import shutil
 import subprocess
 from loguru import logger
+from HostModule.CommandSafe import HostExecutor
 
 
 # 最小化 init 脚本（busybox 镜像无 /sbin/init 时使用）==========================
@@ -69,38 +70,12 @@ class RootFSBuilder:
     # 统一执行命令（本地/远程）##################################################
     def _exec(self, cmd: str, check: bool = False,
               timeout: int = 600) -> tuple[bool, str, str]:
-        if self.is_remote():
-            try:
-                from HostModule.SSHDManager import SSHDManager
-            except Exception as e:
-                return False, "", f"SSH 模块不可用: {e}"
-            ssh = SSHDManager()
-            addr = (self.hs_config.server_addr or "").replace("ssh://", "")
-            ok, msg = ssh.connect(
-                hostname=addr,
-                username=self.hs_config.server_user,
-                password=self.hs_config.server_pass,
-                port=self.hs_config.server_port or 22)
-            if not ok:
-                return False, "", f"SSH 连接失败: {msg}"
-            try:
-                ok, out, err = ssh.execute_command(cmd)
-                return ok, out or "", err or ""
-            finally:
-                try:
-                    ssh.close()
-                except Exception:
-                    pass
-        else:
-            try:
-                r = subprocess.run(cmd, shell=True,
-                                   capture_output=True, text=True,
-                                   timeout=timeout)
-                if check and r.returncode != 0:
-                    raise RuntimeError(f"{cmd} failed: {r.stderr}")
-                return r.returncode == 0, r.stdout or "", r.stderr or ""
-            except Exception as e:
-                return False, "", str(e)
+        if not hasattr(self, '_executor') or self._executor is None:
+            self._executor = HostExecutor(self.hs_config, reuse_ssh=True)
+        ok, out, err = self._executor.exec(cmd, timeout=timeout, allow_pipe=True)
+        if check and not ok:
+            raise RuntimeError(f"{cmd} failed: {err}")
+        return ok, out, err
 
     # 拉取 docker 镜像 ##########################################################
     def ensure_docker_image(self, image: str) -> tuple[bool, str]:

@@ -143,8 +143,8 @@ class HttpManager:
                         </head>
                         <body>
                         <link rel="stylesheet" type="text/css" href="/static/css/wmks-all.css" />
-                        <script type="text/javascript" src="https://code.jquery.com/jquery-1.8.3.min.js"></script>
-                        <script type="text/javascript" src="https://code.jquery.com/ui/1.8.16/jquery-ui.min.js"></script>
+        <script type="text/javascript" src="/static/js/jquery-1.8.3.min.js"></script>
+                        <script type="text/javascript" src="/static/js/jquery-ui-1.8.16.min.js"></script>
                         <script type="text/javascript" src="/static/wmks.min.js"></script>
                         <div id="wmksContainer" style="position:absolute;width:100%;height:100%"></div>
                         <script>
@@ -226,12 +226,6 @@ class HttpManager:
             # 重新生成配置文件
             self.config_all()
 
-            # 保存到数据库（只有persistent为True时才写入）
-            # if persistent:
-            #     self.global_set(domain, self.proxys_list[domain])
-            # else:
-            #     print(f"代理 {domain} 为临时代理，不写入数据库")
-
             # 重载Caddy配置
             return self.reload_web()
 
@@ -261,9 +255,6 @@ class HttpManager:
             # 重新生成配置文件
             self.config_all()
 
-            # 从数据库删除（不写入JSON文件）
-            # self.global_del(domain)
-
             # 重载Caddy配置
             result = self.reload_web()
 
@@ -271,7 +262,6 @@ class HttpManager:
                 # 回滚
                 self.proxys_list[domain] = backup
                 self.config_all()
-                # self.global_set(domain, backup)
 
             return result
 
@@ -286,11 +276,22 @@ class HttpManager:
             cmd = [self.binary_path, "run", "--config", str(self.config_file), "--adapter", "caddyfile"]
 
             logger.info(f"[HttpManager] 启动Caddy命令: {' '.join(cmd)}")
-            self.binary_proc = subprocess.Popen(cmd, shell=True)
+
+            # 将Caddy的stdout/stderr重定向到独立日志文件
+            caddy_log_dir = Path("DataSaving/logs")
+            caddy_log_dir.mkdir(parents=True, exist_ok=True)
+            caddy_log_path = caddy_log_dir / "log-caddy.log"
+            self._caddy_log_file = open(caddy_log_path, "a", encoding="utf-8")
+            self.binary_proc = subprocess.Popen(
+                cmd, shell=True,
+                stdout=self._caddy_log_file,
+                stderr=self._caddy_log_file
+            )
             time.sleep(2)  # 等待进程启动
 
             if self.binary_proc.poll() is None:
                 logger.info(f"[HttpManager] Caddy进程已启动，PID: {self.binary_proc.pid}")
+                logger.info(f"[HttpManager] Caddy日志输出到: {caddy_log_path}")
                 return True
 
             return False
@@ -316,6 +317,10 @@ class HttpManager:
                     self.binary_proc.wait()
                 self.binary_proc = None
                 logger.info("[HttpManager] Caddy进程已停止")
+            # 关闭Caddy日志文件句柄
+            if hasattr(self, '_caddy_log_file') and self._caddy_log_file:
+                self._caddy_log_file.close()
+                self._caddy_log_file = None
             # 再按进程名强制杀掉所有残留的 Caddy 进程（防止 binary_proc 引用丢失）
             binary_name = os.path.basename(self.binary_path)
             if os.name == 'nt':
@@ -368,31 +373,6 @@ class HttpManager:
         except Exception as e:
             logger.error(f"[HttpManager] 重载Caddy配置时发生错误: {str(e)}")
             return False
-
-    # # 加载代理配置 ###############################################################################
-    # def global_get(self):
-    #     """从虚拟机配置加载代理配置（已废弃，由HostManager.all_load统一管理）"""
-    #     # 此函数已废弃，代理配置现在从虚拟机配置中加载
-    #     # 在HostManager.all_load中会遍历所有虚拟机的web_all并调用create_web
-    #     print("global_get已废弃，代理配置由HostManager统一管理")
-    #     return True
-    #
-    # # 保存代理配置 ###############################################################################
-    # def global_set(self, domain, proxy_info):
-    #     """将代理配置保存到虚拟机配置（已废弃，由虚拟机配置统一管理）"""
-    #     # 此函数已废弃，代理配置现在保存在虚拟机的web_all列表中
-    #     # 通过admin_add_proxy或用户的add_proxy接口添加
-    #     print(f"global_set已废弃，代理 {domain} 应通过虚拟机配置管理")
-    #     return True
-    #
-    # # 删除代理配置 ###############################################################################
-    # def global_del(self, domain):
-    #     """从虚拟机配置删除代理配置（已废弃，由虚拟机配置统一管理）"""
-    #     # 此函数已废弃，代理配置现在从虚拟机的web_all列表中删除
-    #     # 通过admin_delete_proxy或用户的delete_proxy接口删除
-    #     print(f"global_del已废弃，代理 {domain} 应通过虚拟机配置管理")
-    #     return True
-
 
 # 使用示例
 if __name__ == "__main__":

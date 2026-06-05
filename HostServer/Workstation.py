@@ -758,7 +758,8 @@ class HostServer(BasicServer):
 
     # 获取虚拟机实际状态（从API）==============================================
     def GetPower(self, vm_name: str) -> str:
-        """从VMWare Workstation API获取虚拟机实际状态"""
+        """从VMWare Workstation API获取虚拟机实际状态，API失败时使用vmrun命令行"""
+        # 方式1：通过vmrest API获取
         try:
             result = self.vmrest_api.powers_get(vm_name)
             if result.success and result.results:
@@ -770,8 +771,43 @@ class HostServer(BasicServer):
                     'suspended': '已暂停'
                 }
                 return state_map.get(power_state, '未知')
+            else:
+                logger.debug(f"[{self.hs_config.server_name}] vmrest API获取 {vm_name} 状态失败: {result.message}，尝试vmrun")
         except Exception as e:
-            logger.warning(f"从API获取虚拟机 {vm_name} 状态失败: {str(e)}")
+            logger.debug(f"[{self.hs_config.server_name}] vmrest API异常: {str(e)}，尝试vmrun")
+
+        # 方式2：通过vmrun list命令行获取（fallback，仅本地主机可用）
+        addr = self.hs_config.server_addr.split(":")[0] if self.hs_config.server_addr else ""
+        is_local = addr in ("", "localhost", "127.0.0.1", "0.0.0.0") or addr.startswith("192.168.") or addr == "::1"
+        if not is_local:
+            logger.debug(f"[{self.hs_config.server_name}] 非本地主机({addr})，跳过vmrun fallback")
+            return ""
+        try:
+            vmrun_path = "vmrun"
+            # 如果配置了launch_path（VMware安装目录），使用完整路径
+            if self.hs_config.launch_path:
+                vmrun_full = os.path.join(self.hs_config.launch_path, "vmrun.exe")
+                if os.path.exists(vmrun_full):
+                    vmrun_path = vmrun_full
+
+            result = subprocess.run(
+                [vmrun_path, "list"],
+                capture_output=True, text=True, timeout=10
+            )
+            if result.returncode == 0:
+                running_vms = result.stdout.lower()
+                # 检查该虚拟机的vmx路径是否在运行列表中
+                vmx_file = self._get_vm_file(vm_name).lower()
+                if vm_name.lower() in running_vms or vmx_file in running_vms:
+                    return '运行中'
+                else:
+                    return '已关机'
+        except FileNotFoundError:
+            logger.warning(f"[{self.hs_config.server_name}] vmrun命令未找到，无法获取虚拟机状态")
+        except subprocess.TimeoutExpired:
+            logger.warning(f"[{self.hs_config.server_name}] vmrun命令超时")
+        except Exception as e:
+            logger.warning(f"[{self.hs_config.server_name}] vmrun获取虚拟机 {vm_name} 状态失败: {str(e)}")
         return ""
 
     # 虚拟机控制台 =============================================================

@@ -29,6 +29,7 @@ from HostServer.OCInterfaceAPI.PortForward import PortForward
 from HostServer.SmolVMAPI.FCClient import FCClient
 from HostServer.SmolVMAPI.KVMDetector import KVMDetector
 from HostServer.SmolVMAPI.RootFSBuilder import RootFSBuilder
+from HostModule.CommandSafe import HostExecutor, safe_shell_exec
 
 
 # 默认内核启动参数（ttyS0 控制台、禁用 PCI/ACPI 加速启动）====================
@@ -85,36 +86,9 @@ class HostServer(BasicServer):
     # 执行宿主机命令（本地或远程 SSH）##########################################
     def _host_exec(self, cmd: str,
                    timeout: int = 30) -> tuple[bool, str, str]:
-        if self._is_remote():
-            try:
-                from HostModule.SSHDManager import SSHDManager
-            except Exception as e:
-                return False, "", f"SSH 模块不可用: {e}"
-            ssh = SSHDManager()
-            addr = (self.hs_config.server_addr or "").replace("ssh://", "")
-            ok, msg = ssh.connect(
-                hostname=addr,
-                username=self.hs_config.server_user,
-                password=self.hs_config.server_pass,
-                port=self.hs_config.server_port or 22)
-            if not ok:
-                return False, "", f"SSH 连接失败: {msg}"
-            try:
-                ok, out, err = ssh.execute_command(cmd)
-                return ok, out or "", err or ""
-            finally:
-                try:
-                    ssh.close()
-                except Exception:
-                    pass
-        else:
-            try:
-                r = subprocess.run(cmd, shell=True,
-                                   capture_output=True, text=True,
-                                   timeout=timeout)
-                return r.returncode == 0, r.stdout or "", r.stderr or ""
-            except Exception as e:
-                return False, "", str(e)
+        if not hasattr(self, '_executor') or self._executor is None:
+            self._executor = HostExecutor(self.hs_config, reuse_ssh=True)
+        return self._executor.exec(cmd, timeout=timeout, allow_pipe=True)
 
     # 确保目录存在 ##############################################################
     def _ensure_dirs(self):

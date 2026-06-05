@@ -694,17 +694,6 @@ class DataManager:
             """
             conn.execute(sql, (hs_name, vm_uuid, status_data, ac_status, on_update, flu_usage))
             
-            # 限制状态历史记录数量（保留最近43200条）
-            # 使用子查询删除旧记录，性能更好
-            conn.execute("""
-                DELETE FROM vm_status 
-                WHERE hs_name = ? AND vm_uuid = ? AND id NOT IN (
-                    SELECT id FROM vm_status 
-                    WHERE hs_name = ? AND vm_uuid = ? 
-                    ORDER BY id DESC LIMIT 43200
-                )
-            """, (hs_name, vm_uuid, hs_name, vm_uuid))
-            
             conn.commit()
             logger.debug(f"[DataManage] 虚拟机 {vm_uuid} 状态保存成功")
             return True
@@ -764,13 +753,16 @@ class DataManager:
         finally:
             conn.close()
 
-    def get_vm_status(self, hs_name: str, start_timestamp: int = None, end_timestamp: int = None) -> Dict[str, List[Any]]:
+    def get_vm_status(self, hs_name: str, start_timestamp: int = None, end_timestamp: int = None, vm_power_states: Dict[str, str] = None) -> Dict[str, List[Any]]:
         """获取虚拟机状态 - 优化版：从多行记录读取
         
         Args:
             hs_name: 主机名称
             start_timestamp: 开始时间戳（秒），None表示不限制
             end_timestamp: 结束时间戳（秒），None表示不限制
+            vm_power_states: 虚拟机实际电源状态字典（vm_uuid -> 状态枚举名称），
+                            由Crontabs定期通过虚拟化接口查询并缓存。
+                            当虚拟机超时未上报但实际电源状态为运行中时，不标记为离线。
         
         Returns:
             Dict[str, List[Any]]: 虚拟机UUID到状态列表的映射
@@ -827,8 +819,20 @@ class DataManager:
                     # 计算时间差
                     time_diff = (current_time - recorded_at_local).total_seconds()
                     
-                    # 如果超过10分钟（600秒）没有上报，标记为离线
+                    # 如果超过10分钟（600秒）没有上报，检查实际电源状态
                     if time_diff > 600:
+                        # 优先参考通过虚拟化接口查询到的实际电源状态（由Crontabs定期更新）
+                        # 如果实际电源状态显示虚拟机是运行中，则不标记为离线
+                        # （可能是网关不在线导致上报失败，但虚拟机实际仍在运行）
+                        actual_power = None
+                        if vm_power_states:
+                            actual_power = vm_power_states.get(vm_uuid)
+                        
+                        # STARTED 表示虚拟机实际正在运行，不应标记为离线
+                        if actual_power and actual_power in ('STARTED', 'SUSPEND', 'ON_OPEN', 'ON_STOP', 'ON_SAVE', 'ON_WAKE'):
+                            logger.debug(f"[DataManage] 虚拟机 {vm_uuid} 超时未上报（距今{int(time_diff)}秒），但实际电源状态为 {actual_power}，不标记为离线")
+                            continue
+                        
                         logger.debug(f"[DataManage] 虚拟机 {vm_uuid} 已离线，最后上报时间(UTC): {recorded_at_str}, 本地时间: {recorded_at_local.strftime('%Y-%m-%d %H:%M:%S')}, 距今: {int(time_diff)}秒")
                         # 将所有状态记录的ac_status设置为STOPPED
                         for status in result.get(vm_uuid, []):

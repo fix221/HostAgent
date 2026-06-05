@@ -7,6 +7,7 @@ from typing import Optional
 from MainObject.Config.HSConfig import HSConfig
 from MainObject.Public.ZMessage import ZMessage
 from HostModule.SSHDManager import SSHDManager
+from HostModule.CommandSafe import safe_shell_exec, validate_shell_cmd
 
 
 class PortConfig:
@@ -35,7 +36,7 @@ class PortForward:
     # 执行命令 #################################################################
     def execute_command(self, cmd: str, is_remote: bool = False) -> tuple[bool, str, str]:
         """
-        执行命令
+        执行命令（带安全检查）
         :param cmd: 命令字符串
         :param is_remote: 是否为远程执行
         :return: (是否成功, stdout, stderr)
@@ -48,11 +49,8 @@ class PortForward:
                 success, stdout, stderr = self.ssh_forward.execute_command(cmd)
                 return success, stdout, stderr
             else:
-                # 本地执行
-                result = subprocess.run(
-                    cmd, shell=True, capture_output=True, text=True, timeout=10
-                )
-                return result.returncode == 0, result.stdout, result.stderr
+                # 本地执行（带安全检查）
+                return safe_shell_exec(cmd, timeout=10, allow_pipe=True)
         except subprocess.TimeoutExpired:
             return False, "", "命令执行超时"
         except Exception as e:

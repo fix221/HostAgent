@@ -1136,24 +1136,31 @@ html:not([data-rounded="true"]) html {
 /* ==================== 暗黑模式 Card/Table/Form 适配 ==================== */
 /* 暗黑模式 Card */
 html:not([data-transparent="true"])[data-theme="dark"] .ant-card {
-    background: rgba(22, 26, 36, 0.98) !important;
+    background: transparent !important;
     border-color: rgba(255, 255, 255, 0.08) !important;
 }
+[data-theme="dark"] .glass-card,
+[data-theme="dark"] .glass-card-enhanced,
+[data-theme="dark"] .glass-card-transparent {
+    background: transparent !important;
+}
 html:not([data-transparent="true"])[data-theme="dark"] .ant-card-head {
-    background: rgba(17, 21, 30, 0.98) !important;
+    background: transparent !important;
     border-bottom-color: rgba(255, 255, 255, 0.08) !important;
     color: rgba(255, 255, 255, 0.88) !important;
 }
 html:not([data-transparent="true"])[data-theme="dark"] .ant-card-body {
-    background: rgba(22, 26, 36, 0.98) !important;
+    background: transparent !important;
 }
 
 /* 暗黑模式 Table - 不设置背景色，让 Antd token 控制，避免色块 */
-html:not([data-transparent="true"])[data-theme="dark"] .ant-table {
+html:not([data-transparent="true"])[data-theme="dark"] .ant-table,
+html:not([data-transparent="true"])[data-theme="dark"] .ant-table-thead,
+html:not([data-transparent="true"])[data-theme="dark"] .ant-table-thead > tr {
     background: transparent !important;
 }
 html:not([data-transparent="true"])[data-theme="dark"] .ant-table-thead > tr > th {
-    background: rgba(17, 21, 30, 0.95) !important;
+    background: transparent !important;
     color: rgba(255, 255, 255, 0.75) !important;
     border-bottom-color: rgba(255, 255, 255, 0.08) !important;
 }
@@ -1171,9 +1178,19 @@ html:not([data-transparent="true"])[data-theme="dark"] .ant-input:not(.header-se
 html:not([data-transparent="true"])[data-theme="dark"] .ant-input-affix-wrapper:not(.header-search),
 html:not([data-transparent="true"])[data-theme="dark"] .ant-select-selector,
 html:not([data-transparent="true"])[data-theme="dark"] .ant-picker {
-    background: rgba(20, 25, 38, 0.9) !important;
+    background: transparent !important;
     border-color: rgba(255, 255, 255, 0.12) !important;
     color: rgba(255, 255, 255, 0.88) !important;
+}
+[data-theme="dark"] .ant-input:not(.header-search .ant-input),
+[data-theme="dark"] .ant-input-affix-wrapper:not(.header-search),
+[data-theme="dark"] .ant-input-number,
+[data-theme="dark"] .ant-input-number-input {
+    background: transparent !important;
+    background-color: transparent !important;
+}
+[data-theme="dark"] .ant-table-cell {
+    background: transparent !important;
 }
 
 /* 暗黑模式 Descriptions/Statistic */
@@ -1205,29 +1222,36 @@ html:not([data-transparent="true"])[data-theme="dark"] .ant-statistic-content {
 [data-transparent="true"][data-theme="dark"] .ant-input-affix-wrapper:not(.header-search),
 [data-transparent="true"][data-theme="dark"] .ant-select-selector,
 [data-transparent="true"][data-theme="dark"] .ant-picker {
-    background: rgba(20, 25, 38, 0.65) !important;
-    border: 1px solid rgba(255, 255, 255, 0.2) !important;
+    background: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
     color: rgba(255, 255, 255, 0.9) !important;
     backdrop-filter: blur(20px) !important;
 }
 
 /* 透明模式 Card 暗黑适配 */
 [data-transparent="true"][data-theme="dark"] .ant-card {
-    background: rgba(20, 25, 38, 0.45) !important;
+    background: rgba(0, 0, 0, 0.45) !important;
     border-color: rgba(255, 255, 255, 0.1) !important;
+    backdrop-filter: blur(20px) !important;
 }
 [data-transparent="true"][data-theme="dark"] .ant-card-head {
-    background: rgba(15, 20, 32, 0.4) !important;
+    background: transparent !important;
     border-bottom-color: rgba(255, 255, 255, 0.08) !important;
     color: rgba(255, 255, 255, 0.88) !important;
 }
 [data-transparent="true"][data-theme="dark"] .ant-card-body {
-    background: rgba(20, 25, 38, 0.35) !important;
+    background: transparent !important;
 }
 
 /* 透明模式 Table 暗黑适配 */
+[data-transparent="true"][data-theme="dark"] .ant-table,
+[data-transparent="true"][data-theme="dark"] .ant-table-thead,
+[data-transparent="true"][data-theme="dark"] .ant-table-thead > tr {
+    background: transparent !important;
+}
 [data-transparent="true"][data-theme="dark"] .ant-table-thead > tr > th {
-    background: rgba(15, 20, 32, 0.5) !important;
+    background: transparent !important;
     color: rgba(255, 255, 255, 0.75) !important;
 }
 [data-transparent="true"][data-theme="dark"] .ant-table-tbody > tr > td {
@@ -1816,7 +1840,7 @@ html[data-transparent="true"][data-theme="light"] .ant-layout-header .header-sea
     box-shadow: var(--lg-shadow-light) !important;
 }
 [data-liquid="true"][data-theme="dark"] .ant-card {
-    background: var(--lg-bg-dark) !important;
+    background: transparent !important;
     border: var(--lg-border-dark) !important;
     box-shadow: var(--lg-shadow-dark) !important;
 }
@@ -2164,8 +2188,13 @@ html[data-transparent="true"][data-theme="light"] .ant-layout-header .header-sea
 }
 
 [data-anime-theme][data-transparent][data-theme="dark"] .ant-card {
-    background: rgba(30, 30, 50, 0.35) !important;
+    background: rgba(0, 0, 0, 0.45) !important;
     border: 1px solid rgba(255, 255, 255, 0.08) !important;
+    backdrop-filter: blur(20px) !important;
+    -webkit-backdrop-filter: blur(20px) !important;
+}
+[data-anime-theme][data-transparent][data-theme="dark"] .ant-card .ant-card-body {
+    background: transparent !important;
 }
 
 /* 二次元主题 + 透明模式下表格样式 */
@@ -2297,7 +2326,7 @@ html[data-transparent="true"][data-theme="light"] .ant-layout-header .header-sea
         background: rgba(255, 255, 255, 0.7) !important;
     }
     [data-anime-theme][data-transparent][data-theme="dark"] .ant-card {
-        background: rgba(30, 30, 50, 0.7) !important;
+        background: transparent !important;
     }
     [data-wallpaper] .main-sider {
         background: rgba(15, 17, 21, 0.8) !important;

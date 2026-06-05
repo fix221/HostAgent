@@ -56,6 +56,9 @@ class SSHDManager:
         with self._lock:
             try:
                 self.ssh_client = paramiko.SSHClient()
+                # 安全说明：使用AutoAddPolicy自动接受主机密钥。
+                # 本平台场景为管理端与受管PVE/Docker宿主机之间的内网通信，
+                # 已假定网络环境安全（内网/VPN），无需手动验证主机指纹。
                 self.ssh_client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
                 self.ssh_client.connect(
                     hostname=hostname,
