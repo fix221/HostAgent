@@ -258,9 +258,20 @@ jobs:
     - name: Prepare release files
       run: |
         mkdir -p release
-        cp OpenIDCS-Client-pyinstaller-Windows/OpenIDCS-Client.exe release/OpenIDCS-Client-Windows.exe
-        cp OpenIDCS-Client-pyinstaller-Linux/OpenIDCS-Client release/OpenIDCS-Client-Linux
-        cp OpenIDCS-Client-pyinstaller-macOS/OpenIDCS-Client release/OpenIDCS-Client-macOS
+        # Windows: 打包为 zip
+        cd OpenIDCS-Client-pyinstaller-Windows
+        zip ../release/OpenIDCS-Client-pyinstaller-Windows.zip OpenIDCS-Client.exe
+        cd ..
+        # Linux: 打包为 tar.gz
+        cd OpenIDCS-Client-pyinstaller-Linux
+        chmod +x OpenIDCS-Client
+        tar -czf ../release/OpenIDCS-Client-pyinstaller-Linux.tar.gz OpenIDCS-Client
+        cd ..
+        # macOS: 打包为 tar.gz
+        cd OpenIDCS-Client-pyinstaller-macOS
+        chmod +x OpenIDCS-Client
+        tar -czf ../release/OpenIDCS-Client-pyinstaller-macOS.tar.gz OpenIDCS-Client
+        cd ..
 
     - name: Create Release
       uses: softprops/action-gh-release@v1
@@ -268,9 +279,9 @@ jobs:
         tag_name: ${{ inputs.version == 'alpha' && 'alpha' || (inputs.version != '' && format('v{0}', inputs.version) || 'beta') }}
         name: ${{ inputs.version == 'alpha' && 'Alpha Release' || (inputs.version != '' && format('Release v{0}', inputs.version) || 'Beta Release') }}
         files: |
-          release/OpenIDCS-Client-Windows.exe
-          release/OpenIDCS-Client-Linux
-          release/OpenIDCS-Client-macOS
+          release/OpenIDCS-Client-pyinstaller-Windows.zip
+          release/OpenIDCS-Client-pyinstaller-Linux.tar.gz
+          release/OpenIDCS-Client-pyinstaller-macOS.tar.gz
         draft: false
         prerelease: ${{ inputs.version == '' || inputs.version == 'alpha' }}
       env:

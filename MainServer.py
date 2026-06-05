@@ -45,8 +45,12 @@ from HostModule.DataManager import DataManager
 
 # 获取项目根目录，兼容开发环境和打包后的环境
 if getattr(sys, 'frozen', False):
-    # 打包后的环境：从可执行文件所在目录查找
-    project_root = os.path.dirname(sys.executable)
+    # PyInstaller onefile 模式：资源解压在 _MEIPASS 临时目录
+    # cx_Freeze / Nuitka 等目录模式：资源在可执行文件所在目录
+    if hasattr(sys, '_MEIPASS'):
+        project_root = sys._MEIPASS
+    else:
+        project_root = os.path.dirname(sys.executable)
 else:
     # 开发环境：从当前文件所在目录查找
     project_root = os.path.dirname(os.path.abspath(__file__))
@@ -345,11 +349,10 @@ cd ..
 mkdir -p static
 cp -r FrontPages/dist/* static/
                 </pre>
-                <p>或使用一键打包脚本：</p>
+                <p>或使用打包脚本：</p>
                 <pre style="background: #f5f5f5; padding: 20px; border-radius: 5px; display: inline-block; text-align: left;">
 cd AllBuilder
-./build_cxfreeze_full.bat  # Windows
-./build_cxfreeze_full.sh   # Linux/Mac
+python build_pyinstaller.py  # 所有平台
                 </pre>
             </body>
         </html>

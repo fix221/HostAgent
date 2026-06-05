@@ -190,9 +190,6 @@ def build_nuitka_command():
         if os.path.exists(full_path):
             cmd.append(f"--include-data-file={full_path}={data_file}")
     
-    # 指定包搜索路径，确保 Nuitka 能找到 HostModule 等包，同时不把 MainServer.py 当成包成员
-    cmd.append(f"--python-path={PROJECT_ROOT}")
-
     # 主脚本：使用 --main 明确指定入口，防止 Nuitka 将其识别为模块编译为 DLL
     cmd.append(f"--main={MAIN_SCRIPT}")
     
@@ -234,10 +231,13 @@ def install_nuitka():
 
 
 def clean_build_dir():
-    """清理构建目录"""
+    """清理构建目录（使用系统命令避免Windows特殊文件权限问题）"""
     if os.path.exists(OUTPUT_DIR):
         print(f"清理构建目录: {OUTPUT_DIR}")
-        shutil.rmtree(OUTPUT_DIR)
+        if sys.platform == "win32":
+            subprocess.run(["cmd", "/c", "rmdir", "/s", "/q", OUTPUT_DIR], check=False)
+        else:
+            shutil.rmtree(OUTPUT_DIR)
 
 
 def main():
