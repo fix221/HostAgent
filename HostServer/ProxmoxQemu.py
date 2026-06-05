@@ -1715,23 +1715,26 @@ class HostServer(BasicServer):
             if public_ip in ["localhost", "127.0.0.1", ""]:
                 public_ip = "127.0.0.1"
             
-            # 申请 VNC Ticket =================================================
-            try:
-                ticket_data = vm_conn.vncproxy.post(websocket=1, generate_password=0)
-                vnc_ticket = ticket_data.get('ticket', '')
-                vnc_port   = ticket_data.get('port', '')
-            except Exception as te:
-                logger.warning(f"申请VNC ticket失败: {te}，将使用无ticket URL")
-                vnc_ticket = ''
-                vnc_port   = ''
+            # 通过 Caddy 代理 remote_port -> PVE:8006 ========================
+            pve_port = self.hs_config.remote_port if self.hs_config.remote_port else 8006
+            pve_host = self.hs_config.server_addr
+            proxy_domain = f"*:{pve_port}"
+            # 初始化 HttpManager 并注册代理（幂等：已存在则跳过）
+            if not self.http_manager:
+                hostname = getattr(self.hs_config, 'server_name', 'pve')
+                self.http_manager = HttpManager(f"vnc-{hostname}.txt")
+                self.http_manager.launch_web()
+            if proxy_domain not in self.http_manager.proxys_list:
+                self.http_manager.create_web(
+                    (8006, pve_host),
+                    proxy_domain,
+                    is_https=True,
+                    listen_port=pve_port
+                )
 
             # 构造Proxmox VNC URL ==============================================
-            pve_port = self.hs_config.remote_port if self.hs_config.remote_port else 8006
             vnc_url = (f"https://{public_ip}:{pve_port}/"
                        f"?console=kvm&novnc=1&vmid={vmid}&node={self.hs_config.launch_path}")
-            if vnc_ticket:
-                import urllib.parse
-                vnc_url += f"&ticket={urllib.parse.quote(vnc_ticket, safe='')}"
 
             logger.info(f"VMRemote for {vm_uuid}: {vnc_url}")
             

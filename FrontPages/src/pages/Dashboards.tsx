@@ -29,6 +29,7 @@ import PageHeader from '@/components/PageHeader'
 import { useNavigate } from 'react-router-dom'
 import api from '@/utils/apis.ts'
 import { useUserStore } from '@/utils/data.ts'
+import { openVNCConsole } from '@/utils/vncHelper'
 
 /**
  * 系统统计数据接口
@@ -514,7 +515,7 @@ function Dashboards() {
     try {
       const result = await api.get(`/api/client/remote/${vm.host}/${vm.uuid}`)
       if (result.code === 200 && result.data) {
-        window.open(result.data, `vnc_${vm.uuid}`, 'width=1024,height=768')
+        openVNCConsole(result.data, `vnc_${vm.uuid}`)
       } else {
         message.error('无法获取VNC控制台地址')
       }

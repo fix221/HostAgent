@@ -22,6 +22,7 @@ import DockCard from '@/components/dock/DockCard'
 import DockCreateModal from '@/components/dock/DockCreateModal'
 import DockPowerModal from '@/components/dock/DockPowerModal'
 import PageHeader from '@/components/PageHeader'
+import { openVNCConsole } from '@/utils/vncHelper'
 
 function DockManage() {
     const navigate = useNavigate()
@@ -272,7 +273,7 @@ function DockManage() {
             const result = await api.getVMConsole(targetHost, uuid)
             hide()
             if (result.code === 200 && result.data) {
-                window.open(result.data.console_url || (result.data as any), `vnc_${uuid}`, 'width=1024,height=768')
+                openVNCConsole(result.data, `vnc_${uuid}`)
             } else {
                 message.error('无法获取VNC地址')
             }
