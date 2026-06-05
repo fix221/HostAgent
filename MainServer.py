@@ -2196,14 +2196,16 @@ def init_app():
                 can_delete_vm=True,
                 # 设置默认配额（管理员不受限制）
                 quota_cpu=9999,
-                quota_ram=999999,
-                quota_ssd=999999,
+                quota_ram=9999,
+                quota_ssd=9999,
                 quota_gpu=9999,
                 quota_nat_ports=9999,
                 quota_web_proxy=9999,
+                quota_nat_ips=9999,
+                quota_pub_ips=9999,
                 quota_bandwidth_up=9999,
                 quota_bandwidth_down=9999,
-                quota_traffic=999999,
+                quota_traffic=9999,
                 assigned_hosts=[]
             )
             if user_id:

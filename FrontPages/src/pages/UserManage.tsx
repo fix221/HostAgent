@@ -403,7 +403,7 @@ function UserManage() {
               <Form.Item
                 name="email"
                 label="邮箱"
-                rules={[
+                rules={editingUser ? [] : [
                   { required: true, message: '请输入邮箱' },
                   { type: 'email', message: '请输入有效的邮箱地址' },
                 ]}

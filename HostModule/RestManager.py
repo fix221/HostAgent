@@ -1401,6 +1401,22 @@ class RestManager:
 
         if result.success:
             self.hs_manage.all_save()
+            # 自动将新主机添加到所有管理员的assigned_hosts
+            try:
+                all_users = self.db.get_all_users()
+                for u in all_users:
+                    if u.get('is_admin'):
+                        hosts = u.get('assigned_hosts', [])
+                        if isinstance(hosts, str):
+                            try:
+                                hosts = json.loads(hosts)
+                            except:
+                                hosts = []
+                        if hs_name not in hosts:
+                            hosts.append(hs_name)
+                            self.db.update_user(u['id'], assigned_hosts=hosts)
+            except Exception as e:
+                logger.warning(f"[add_host] 自动分配主机到管理员失败: {e}")
             # 记录操作日志
             user_data = self._get_current_user()
             username = user_data.get('username', '') if user_data else ''
