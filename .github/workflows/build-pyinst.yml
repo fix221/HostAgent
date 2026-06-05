@@ -1,4 +1,4 @@
-name: Build with Freeze
+name: Build with PyInstaller
 
 on:
   workflow_dispatch:
@@ -77,7 +77,7 @@ jobs:
         retention-days: 1
 
   # ============================================================
-  # Windows 后端构建
+  # Windows 构建
   # ============================================================
   build-windows:
     needs: build-frontend
@@ -102,11 +102,11 @@ jobs:
         python -m pip install --upgrade pip
         pip install -r HostConfig/pipinstall.txt
         pip install pywin32 pythonnet
-        pip install cx_Freeze
+        pip install pyinstaller
 
-    - name: Build with cx-Freeze
+    - name: Build with PyInstaller
       run: |
-        python AllBuilder\build_cxfreeze.py build
+        python AllBuilder\build_pyinstaller.py
       env:
         SKIP_FRONTEND_BUILD: "1"
 
@@ -143,24 +143,24 @@ jobs:
       continue-on-error: true
 
     # ── 签名：对构建产物签名 ──────────────────────────────────────────
-    - name: Sign Windows binaries
+    - name: Sign Windows binary
       if: inputs.version != 'alpha'
       shell: pwsh
       env:
         CERTUM_CERTIFICATE_SHA1: ${{ secrets.CERTUM_CERTIFICATE_SHA1 }}
       run: |
         Start-Sleep -Seconds 10
-        powershell -ExecutionPolicy Bypass -File "./.github/scripts/sign-windows.ps1" -TargetDirectory "BuildCache/cxfreeze" -SkipCatGeneration
+        powershell -ExecutionPolicy Bypass -File "./.github/scripts/sign-windows.ps1" -TargetDirectory "BuildCache/pyinstaller" -SkipCatGeneration
 
     - name: Upload artifact
       uses: actions/upload-artifact@v4
       with:
-        name: OpenIDCS-Client-cxfreeze-Windows
-        path: BuildCache/OpenIDCS-Client-Windows.zip
+        name: OpenIDCS-Client-pyinstaller-Windows
+        path: BuildCache/pyinstaller/OpenIDCS-Client.exe
         retention-days: 30
 
   # ============================================================
-  # Linux 后端构建
+  # Linux 构建
   # ============================================================
   build-linux:
     needs: build-frontend
@@ -189,23 +189,23 @@ jobs:
       run: |
         python -m pip install --upgrade pip
         pip install -r HostConfig/pipinstall.txt
-        pip install cx_Freeze
+        pip install pyinstaller
 
-    - name: Build with cx-Freeze
+    - name: Build with PyInstaller
       run: |
-        python ./AllBuilder/build_cxfreeze.py build
+        python ./AllBuilder/build_pyinstaller.py
       env:
         SKIP_FRONTEND_BUILD: "1"
 
     - name: Upload artifact
       uses: actions/upload-artifact@v4
       with:
-        name: OpenIDCS-Client-cxfreeze-Linux
-        path: BuildCache/OpenIDCS-Client-Linux.tar.gz
+        name: OpenIDCS-Client-pyinstaller-Linux
+        path: BuildCache/pyinstaller/OpenIDCS-Client
         retention-days: 30
 
   # ============================================================
-  # macOS 后端构建
+  # macOS 构建
   # ============================================================
   build-macos:
     needs: build-frontend
@@ -229,19 +229,19 @@ jobs:
       run: |
         python -m pip install --upgrade pip
         pip install -r HostConfig/pipinstall.txt
-        pip install cx_Freeze
+        pip install pyinstaller
 
-    - name: Build with cx-Freeze
+    - name: Build with PyInstaller
       run: |
-        python ./AllBuilder/build_cxfreeze.py build
+        python ./AllBuilder/build_pyinstaller.py
       env:
         SKIP_FRONTEND_BUILD: "1"
 
     - name: Upload artifact
       uses: actions/upload-artifact@v4
       with:
-        name: OpenIDCS-Client-cxfreeze-macOS
-        path: BuildCache/OpenIDCS-Client-macOS.tar.gz
+        name: OpenIDCS-Client-pyinstaller-macOS
+        path: BuildCache/pyinstaller/OpenIDCS-Client
         retention-days: 30
 
   # ============================================================
@@ -255,15 +255,22 @@ jobs:
     - name: Download all artifacts
       uses: actions/download-artifact@v4
 
+    - name: Prepare release files
+      run: |
+        mkdir -p release
+        cp OpenIDCS-Client-pyinstaller-Windows/OpenIDCS-Client.exe release/OpenIDCS-Client-Windows.exe
+        cp OpenIDCS-Client-pyinstaller-Linux/OpenIDCS-Client release/OpenIDCS-Client-Linux
+        cp OpenIDCS-Client-pyinstaller-macOS/OpenIDCS-Client release/OpenIDCS-Client-macOS
+
     - name: Create Release
       uses: softprops/action-gh-release@v1
       with:
         tag_name: ${{ inputs.version == 'alpha' && 'alpha' || (inputs.version != '' && format('v{0}', inputs.version) || 'beta') }}
         name: ${{ inputs.version == 'alpha' && 'Alpha Release' || (inputs.version != '' && format('Release v{0}', inputs.version) || 'Beta Release') }}
         files: |
-          OpenIDCS-Client-cxfreeze-Windows/OpenIDCS-Client-Windows.zip
-          OpenIDCS-Client-cxfreeze-Linux/OpenIDCS-Client-Linux.tar.gz
-          OpenIDCS-Client-cxfreeze-macOS/OpenIDCS-Client-macOS.tar.gz
+          release/OpenIDCS-Client-Windows.exe
+          release/OpenIDCS-Client-Linux
+          release/OpenIDCS-Client-macOS
         draft: false
         prerelease: ${{ inputs.version == '' || inputs.version == 'alpha' }}
       env:

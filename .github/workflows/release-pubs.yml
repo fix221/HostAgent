@@ -12,9 +12,10 @@ on:
         required: true
         type: choice
         options:
+          - pyinstaller
           - cxfreeze
           - nuitka
-        default: 'cxfreeze'
+        default: 'pyinstaller'
       target_platform:
         description: '目标平台'
         required: true
@@ -41,6 +42,15 @@ jobs:
   release-nuitka:
     if: inputs.build_type == 'nuitka'
     uses: ./.github/workflows/build-nuitka.yml
+    with:
+      version: ${{ inputs.version }}
+      target_platform: ${{ inputs.target_platform }}
+      create_release: 'yes'
+    secrets: inherit
+
+  release-pyinstaller:
+    if: inputs.build_type == 'pyinstaller'
+    uses: ./.github/workflows/build-pyinst.yml
     with:
       version: ${{ inputs.version }}
       target_platform: ${{ inputs.target_platform }}

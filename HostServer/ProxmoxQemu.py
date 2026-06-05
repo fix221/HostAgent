@@ -615,10 +615,46 @@ class HostServer(BasicServer):
                                 message=f"镜像文件不存在: {src_file_abs} 或 {src_file_alt}")
                     exit_status = os.system(import_cmd)
                     if exit_status != 0:
-                        return ZMessage(
-                            success=False, action="VInstall",
-                            message="importdisk失败")
-                    logger.info(f"本地importdisk: {src_file_abs} -> {system_storage}")
+                        # 本地执行失败，回退到SSH方式执行 ========================
+                        logger.warning(f"本地importdisk失败(exit={exit_status})，尝试SSH回退执行...")
+                        try:
+                            ssh = paramiko.SSHClient()
+                            ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+                            ssh.connect(
+                                self.hs_config.server_addr,
+                                username=self.hs_config.server_user,
+                                password=self.hs_config.server_pass)
+                            # SSH检查文件是否存在 ===============================
+                            stdin, stdout, stderr = ssh.exec_command(
+                                f"test -f {src_file_abs} && echo 'exists' || echo 'not_exists'")
+                            if stdout.read().decode().strip() != 'exists':
+                                stdin, stdout, stderr = ssh.exec_command(
+                                    f"test -f {src_file_alt} && echo 'exists' || echo 'not_exists'")
+                                if stdout.read().decode().strip() == 'exists':
+                                    src_file_abs = src_file_alt
+                                    import_cmd = (f"qm importdisk {vm_vmid} {src_file_abs} "
+                                                  f"{system_storage} --format qcow2")
+                                else:
+                                    ssh.close()
+                                    return ZMessage(
+                                        success=False, action="VInstall",
+                                        message=f"SSH回退: 镜像文件不存在: {src_file_abs} 或 {src_file_alt}")
+                            stdin, stdout, stderr = ssh.exec_command(import_cmd)
+                            ssh_exit = stdout.channel.recv_exit_status()
+                            if ssh_exit != 0:
+                                error_msg = stderr.read().decode()
+                                ssh.close()
+                                return ZMessage(
+                                    success=False, action="VInstall",
+                                    message=f"SSH回退importdisk也失败: {error_msg}")
+                            ssh.close()
+                            logger.info(f"SSH回退importdisk成功: {src_file_abs} -> {system_storage}")
+                        except Exception as ssh_err:
+                            return ZMessage(
+                                success=False, action="VInstall",
+                                message=f"SSH回退执行异常: {str(ssh_err)}")
+                    else:
+                        logger.info(f"本地importdisk: {src_file_abs} -> {system_storage}")
                 # importdisk后磁盘进入unused状态，需挂载 ========================
                 vm_conn = client.nodes(self.hs_config.launch_path).qemu(vm_vmid)
                 vm_conn.config.put(sata0=f"{system_storage}:{vm_vmid}/{disk_name}")
@@ -659,13 +695,49 @@ class HostServer(BasicServer):
                 else:
                     # 本地模式：src_file 是 Linux 路径，使用 posixpath.join
                     src_file = posixpath.join(self.hs_config.images_path, vm_conf.os_name)
-                    if not os.path.exists(src_file):
-                        return ZMessage(
-                            success=False, action="VInstall",
-                            message=f"镜像文件不存在: {src_file}")
-                    os.makedirs(vm_disk_dir, exist_ok=True)
-                    shutil.copy2(src_file, dest_image)
-                    logger.info(f"本地复制镜像: {src_file} -> {dest_image}")
+                    local_ok = False
+                    try:
+                        if not os.path.exists(src_file):
+                            raise FileNotFoundError(f"镜像文件不存在: {src_file}")
+                        os.makedirs(vm_disk_dir, exist_ok=True)
+                        shutil.copy2(src_file, dest_image)
+                        local_ok = True
+                        logger.info(f"本地复制镜像: {src_file} -> {dest_image}")
+                    except Exception as local_err:
+                        logger.warning(f"本地复制镜像失败({local_err})，尝试SSH回退执行...")
+                    if not local_ok:
+                        # 本地执行失败，回退到SSH方式执行 ========================
+                        try:
+                            ssh = paramiko.SSHClient()
+                            ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+                            ssh.connect(
+                                self.hs_config.server_addr,
+                                username=self.hs_config.server_user,
+                                password=self.hs_config.server_pass)
+                            # SSH检查文件是否存在 ===============================
+                            stdin, stdout, stderr = ssh.exec_command(
+                                f"test -f {src_file} && echo 'exists' || echo 'not_exists'")
+                            if stdout.read().decode().strip() != 'exists':
+                                ssh.close()
+                                return ZMessage(
+                                    success=False, action="VInstall",
+                                    message=f"SSH回退: 镜像文件不存在: {src_file}")
+                            ssh.exec_command(f"mkdir -p {vm_disk_dir}")
+                            copy_cmd = f"cp {src_file} {dest_image}"
+                            stdin, stdout, stderr = ssh.exec_command(copy_cmd)
+                            ssh_exit = stdout.channel.recv_exit_status()
+                            if ssh_exit != 0:
+                                error_msg = stderr.read().decode()
+                                ssh.close()
+                                return ZMessage(
+                                    success=False, action="VInstall",
+                                    message=f"SSH回退复制镜像也失败: {error_msg}")
+                            ssh.close()
+                            logger.info(f"SSH回退复制镜像成功: {src_file} -> {dest_image}")
+                        except Exception as ssh_err:
+                            return ZMessage(
+                                success=False, action="VInstall",
+                                message=f"SSH回退执行异常: {str(ssh_err)}")
                 # 分配磁盘 ======================================================
                 vm_conn = client.nodes(self.hs_config.launch_path).qemu(vm_vmid)
                 vm_conn.config.put(sata0=f"{system_storage}:{vm_vmid}/{disk_name}")
@@ -1402,11 +1474,32 @@ class HostServer(BasicServer):
                 exit_status = os.system(create_cmd)
 
                 if exit_status != 0:
-                    return ZMessage(
-                        success=False, action="CreateQcow2",
-                        message=f"创建qcow2文件失败")
-
-                logger.info(f"本地创建qcow2文件: {disk_dir}/{disk_name}, 大小: {disk_size}")
+                    # 本地执行失败，回退到SSH方式执行 ========================
+                    logger.warning(f"本地创建qcow2失败(exit={exit_status})，尝试SSH回退执行...")
+                    try:
+                        ssh = paramiko.SSHClient()
+                        ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+                        ssh.connect(
+                            self.hs_config.server_addr,
+                            username=self.hs_config.server_user,
+                            password=self.hs_config.server_pass)
+                        ssh.exec_command(f"mkdir -p {disk_dir}")
+                        stdin, stdout, stderr = ssh.exec_command(create_cmd)
+                        ssh_exit = stdout.channel.recv_exit_status()
+                        if ssh_exit != 0:
+                            error_msg = stderr.read().decode()
+                            ssh.close()
+                            return ZMessage(
+                                success=False, action="CreateQcow2",
+                                message=f"SSH回退创建qcow2也失败: {error_msg}")
+                        ssh.close()
+                        logger.info(f"SSH回退创建qcow2成功: {disk_dir}/{disk_name}, 大小: {disk_size}")
+                    except Exception as ssh_err:
+                        return ZMessage(
+                            success=False, action="CreateQcow2",
+                            message=f"SSH回退执行异常: {str(ssh_err)}")
+                else:
+                    logger.info(f"本地创建qcow2文件: {disk_dir}/{disk_name}, 大小: {disk_size}")
 
             return ZMessage(
                 success=True, action="CreateQcow2",
@@ -1609,7 +1702,7 @@ class HostServer(BasicServer):
                 public_ip = "127.0.0.1"
             
             # 构造Proxmox VNC URL ==============================================
-            vnc_url = (f"https://{self.hs_config.server_addr}:8006/"
+            vnc_url = (f"https://{public_ip}:8006/"
                        f"?console=kvm&novnc=1&vmid={vmid}&node={self.hs_config.launch_path}")
             
             logger.info(f"VMRemote for {vm_uuid}: {vnc_url}")

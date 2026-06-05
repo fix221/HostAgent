@@ -697,7 +697,10 @@ class HostServer(BasicServer):
                     if match:
                         vnc_port = int(match.group(1))
 
-            host = self.hs_config.server_addr or "localhost"
+            if len(self.hs_config.public_addr) > 0:
+                host = self.hs_config.public_addr[0]
+            else:
+                host = self.hs_config.server_addr or "localhost"
             if host in ["", "localhost", "127.0.0.1"]:
                 host = "localhost"
 

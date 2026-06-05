@@ -1729,9 +1729,19 @@ class HostServer(BasicServer):
                 logger.info(f"密码加密原始输出: {encrypt_result.stdout}")
                 logger.info(f"密码哈希: {password_hash}")
 
+                # 获取主机外网IP
+                if len(self.hs_config.public_addr) == 0:
+                    return ZMessage(
+                        success=False,
+                        action="VCRemote",
+                        message="主机外网IP不存在")
+                public_ip = self.hs_config.public_addr[0]
+                if public_ip in ["localhost", "127.0.0.1", ""]:
+                    public_ip = "127.0.0.1"
+
                 # 构建远程连接URL
                 remote_url = (
-                    f"http://localhost:{self.hs_config.remote_port}/Myrtille/?"
+                    f"http://{public_ip}:{self.hs_config.remote_port}/Myrtille/?"
                     f"__EVENTTARGET=&"
                     f"__EVENTARGUMENT=&"
                     f"vmGuid={vm_guid}&"

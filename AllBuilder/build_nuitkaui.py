@@ -190,8 +190,8 @@ def build_nuitka_command():
         if os.path.exists(full_path):
             cmd.append(f"--include-data-file={full_path}={data_file}")
     
-    # 主脚本
-    cmd.append(MAIN_SCRIPT)
+    # 主脚本：使用 --main 明确指定入口，防止 Nuitka 将其识别为模块编译为 DLL
+    cmd.append(f"--main={MAIN_SCRIPT}")
     
     return cmd
 

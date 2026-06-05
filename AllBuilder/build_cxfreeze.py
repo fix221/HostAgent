@@ -364,7 +364,7 @@ setup(
 )
 
 # ============================================================================
-# 后置步骤：确保前端构建产物复制到后端构建输出目录
+# 后置步骤：确保前端构建产物复制到后端构建输出目录，并打包为单文件
 # ============================================================================
 
 if "build" in sys.argv:
@@ -381,4 +381,55 @@ if "build" in sys.argv:
         print(f"[OK] 前端产物已复制到 {target_static}")
     else:
         print("[WARN] 前端构建产物不存在，跳过复制")
+    
+    # ========================================================================
+    # 打包为单文件输出（类似 nuitka --onefile 的效果）
+    # ========================================================================
+    import zipfile
+    import tarfile
+    
+    cxfreeze_dir = os.path.join(PROJECT_BASE_DIR, "BuildCache", "cxfreeze")
+    
+    if os.path.isdir(cxfreeze_dir):
+        print("")
+        print("============================================================")
+        print("开始打包为单文件...")
+        print("============================================================")
+        
+        if sys.platform == "win32":
+            # Windows: 打包为 zip
+            output_file = os.path.join(PROJECT_BASE_DIR, "BuildCache", f"{PROJECT_NAME}-Windows.zip")
+            print(f"[INFO] 打包为 ZIP: {output_file}")
+            with zipfile.ZipFile(output_file, 'w', zipfile.ZIP_DEFLATED) as zf:
+                for root, dirs, files in os.walk(cxfreeze_dir):
+                    for file in files:
+                        file_path = os.path.join(root, file)
+                        arcname = os.path.relpath(file_path, cxfreeze_dir)
+                        zf.write(file_path, arcname)
+        elif sys.platform == "darwin":
+            # macOS: 打包为 tar.gz
+            output_file = os.path.join(PROJECT_BASE_DIR, "BuildCache", f"{PROJECT_NAME}-macOS.tar.gz")
+            print(f"[INFO] 打包为 tar.gz: {output_file}")
+            with tarfile.open(output_file, "w:gz") as tf:
+                for item in os.listdir(cxfreeze_dir):
+                    tf.add(os.path.join(cxfreeze_dir, item), arcname=item)
+        else:
+            # Linux: 打包为 tar.gz
+            output_file = os.path.join(PROJECT_BASE_DIR, "BuildCache", f"{PROJECT_NAME}-Linux.tar.gz")
+            print(f"[INFO] 打包为 tar.gz: {output_file}")
+            with tarfile.open(output_file, "w:gz") as tf:
+                for item in os.listdir(cxfreeze_dir):
+                    tf.add(os.path.join(cxfreeze_dir, item), arcname=item)
+        
+        # 计算文件大小
+        file_size = os.path.getsize(output_file)
+        if file_size > 1024 * 1024:
+            size_str = f"{file_size / 1024 / 1024:.1f} MB"
+        else:
+            size_str = f"{file_size / 1024:.1f} KB"
+        
+        print(f"[OK] 单文件打包完成: {output_file} ({size_str})")
+        print("============================================================")
+    else:
+        print("[ERROR] cx-Freeze 构建目录不存在，无法打包")
 
