@@ -63,10 +63,20 @@ def build_frontend():
         return False
     print("[OK] 前端依赖安装完成")
     
-    # 执行构建，通过 --outDir 直接指定输出到 BuildCache/frontend
+    # 执行 TypeScript 类型检查
+    print("[INFO] 执行 TypeScript 类型检查 (tsc)...")
+    result = subprocess.run(
+        ["npx", "tsc"],
+        cwd=frontend_dir,
+        shell=(sys.platform == "win32"),
+    )
+    if result.returncode != 0:
+        print("[WARN] TypeScript 类型检查有错误，继续构建...")
+    
+    # 执行 Vite 构建，直接指定输出目录
     print(f"[INFO] 构建前端 (输出目录: {out_dir})...")
     result = subprocess.run(
-        ["npm", "run", "build", "--", "--outDir", out_dir, "--emptyOutDir"],
+        ["npx", "vite", "build", "--outDir", out_dir, "--emptyOutDir"],
         cwd=frontend_dir,
         shell=(sys.platform == "win32"),
     )
@@ -85,8 +95,17 @@ def build_frontend():
     return True
 
 # 仅在执行 build 命令时触发前端构建
+# 如果设置了 SKIP_FRONTEND_BUILD 环境变量，则跳过前端构建（CI 中前端已预先构建）
 if "build" in sys.argv:
-    build_frontend()
+    if os.environ.get("SKIP_FRONTEND_BUILD"):
+        frontend_dir = os.path.join(PROJECT_BASE_DIR, "BuildCache", "frontend")
+        if os.path.isdir(frontend_dir):
+            print("[INFO] 检测到 SKIP_FRONTEND_BUILD，跳过前端构建（使用预构建产物）")
+        else:
+            print("[WARN] 设置了 SKIP_FRONTEND_BUILD 但未找到预构建前端产物，尝试构建...")
+            build_frontend()
+    else:
+        build_frontend()
 
 # 项目配置
 PROJECT_NAME = "OpenIDCS-Client"

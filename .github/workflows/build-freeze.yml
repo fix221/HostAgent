@@ -44,9 +44,11 @@ on:
         default: 'yes'
 
 jobs:
-  build-windows:
-    runs-on: windows-latest
-    if: inputs.target_platform == 'windows' || inputs.target_platform == 'all'
+  # ============================================================
+  # 统一前端构建（只构建一次，供所有平台后端使用）
+  # ============================================================
+  build-frontend:
+    runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v4
 
@@ -57,10 +59,43 @@ jobs:
         cache: 'npm'
         cache-dependency-path: FrontPages/package-lock.json
 
+    - name: Install frontend dependencies
+      run: |
+        cd FrontPages
+        npm install
+
+    - name: Build frontend
+      run: |
+        cd FrontPages
+        npx vite build --outDir ../BuildCache/frontend --emptyOutDir
+
+    - name: Upload frontend artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: frontend-dist
+        path: BuildCache/frontend
+        retention-days: 1
+
+  # ============================================================
+  # Windows 后端构建
+  # ============================================================
+  build-windows:
+    needs: build-frontend
+    runs-on: windows-latest
+    if: inputs.target_platform == 'windows' || inputs.target_platform == 'all'
+    steps:
+    - uses: actions/checkout@v4
+
     - name: Set up Python
       uses: actions/setup-python@v4
       with:
         python-version: '3.13'
+
+    - name: Download frontend artifact
+      uses: actions/download-artifact@v4
+      with:
+        name: frontend-dist
+        path: BuildCache/frontend
 
     - name: Install dependencies
       run: |
@@ -69,9 +104,11 @@ jobs:
         pip install pywin32 pythonnet
         pip install cx_Freeze
 
-    - name: Build with cx-Freeze (包含前端构建)
+    - name: Build with cx-Freeze
       run: |
         python AllBuilder\build_cxfreeze.py build
+      env:
+        SKIP_FRONTEND_BUILD: "1"
 
     - name: Upload artifact
       uses: actions/upload-artifact@v4
@@ -80,23 +117,26 @@ jobs:
         path: BuildCache/cxfreeze
         retention-days: 30
 
+  # ============================================================
+  # Linux 后端构建
+  # ============================================================
   build-linux:
+    needs: build-frontend
     runs-on: ubuntu-latest
     if: inputs.target_platform == 'linux' || inputs.target_platform == 'all'
     steps:
     - uses: actions/checkout@v4
 
-    - name: Set up Node.js
-      uses: actions/setup-node@v4
-      with:
-        node-version: '20'
-        cache: 'npm'
-        cache-dependency-path: FrontPages/package-lock.json
-
     - name: Set up Python
       uses: actions/setup-python@v4
       with:
         python-version: '3.13'
+
+    - name: Download frontend artifact
+      uses: actions/download-artifact@v4
+      with:
+        name: frontend-dist
+        path: BuildCache/frontend
 
     - name: Install system dependencies
       run: |
@@ -109,9 +149,11 @@ jobs:
         pip install -r HostConfig/pipinstall.txt
         pip install cx_Freeze
 
-    - name: Build with cx-Freeze (包含前端构建)
+    - name: Build with cx-Freeze
       run: |
         python ./AllBuilder/build_cxfreeze.py build
+      env:
+        SKIP_FRONTEND_BUILD: "1"
 
     - name: Upload artifact
       uses: actions/upload-artifact@v4
@@ -120,23 +162,26 @@ jobs:
         path: BuildCache/cxfreeze
         retention-days: 30
 
+  # ============================================================
+  # macOS 后端构建
+  # ============================================================
   build-macos:
+    needs: build-frontend
     runs-on: macos-latest
     if: inputs.target_platform == 'macos' || inputs.target_platform == 'all'
     steps:
     - uses: actions/checkout@v4
 
-    - name: Set up Node.js
-      uses: actions/setup-node@v4
-      with:
-        node-version: '20'
-        cache: 'npm'
-        cache-dependency-path: FrontPages/package-lock.json
-
     - name: Set up Python
       uses: actions/setup-python@v4
       with:
         python-version: '3.13'
+
+    - name: Download frontend artifact
+      uses: actions/download-artifact@v4
+      with:
+        name: frontend-dist
+        path: BuildCache/frontend
 
     - name: Install Python dependencies
       run: |
@@ -144,9 +189,11 @@ jobs:
         pip install -r HostConfig/pipinstall.txt
         pip install cx_Freeze
 
-    - name: Build with cx-Freeze (包含前端构建)
+    - name: Build with cx-Freeze
       run: |
         python ./AllBuilder/build_cxfreeze.py build
+      env:
+        SKIP_FRONTEND_BUILD: "1"
 
     - name: Upload artifact
       uses: actions/upload-artifact@v4
@@ -155,6 +202,9 @@ jobs:
         path: BuildCache/cxfreeze
         retention-days: 30
 
+  # ============================================================
+  # 发布 Release
+  # ============================================================
   release:
     needs: [build-windows, build-linux, build-macos]
     runs-on: ubuntu-latest

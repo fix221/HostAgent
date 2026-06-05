@@ -26,10 +26,13 @@ ICON_FILE = os.path.join(PROJECT_ROOT, "HostConfig/HostManage.ico")
 
 # 需要包含的数据目录
 DATA_DIRS = [
-    "WebDesigns",
     "VNCConsole/Sources",
     "HostConfig",
 ]
+
+# 前端构建产物目录（BuildCache/frontend -> static）
+FRONTEND_DIR = os.path.join(PROJECT_ROOT, "BuildCache", "frontend")
+
 
 # 需要包含的数据文件
 DATA_FILES = [
@@ -173,6 +176,13 @@ def build_nuitka_command():
         full_path = os.path.join(PROJECT_ROOT, data_dir)
         if os.path.exists(full_path):
             cmd.append(f"--include-data-dir={full_path}={data_dir}")
+    
+    # 添加前端构建产物（BuildCache/frontend -> static）
+    if os.path.isdir(FRONTEND_DIR):
+        cmd.append(f"--include-data-dir={FRONTEND_DIR}=static")
+        print(f"[OK] 包含前端产物: {FRONTEND_DIR} -> static")
+    else:
+        print("[WARN] 前端构建产物不存在，打包将不包含前端")
     
     # 添加数据文件
     for data_file in DATA_FILES:
