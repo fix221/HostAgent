@@ -1716,7 +1716,8 @@ class HostServer(BasicServer):
                 public_ip = "127.0.0.1"
             
             # 构造Proxmox VNC URL ==============================================
-            vnc_url = (f"https://{public_ip}:8006/"
+            pve_port = self.hs_config.remote_port if self.hs_config.remote_port else 8006
+            vnc_url = (f"https://{public_ip}:{pve_port}/"
                        f"?console=kvm&novnc=1&vmid={vmid}&node={self.hs_config.launch_path}")
             
             logger.info(f"VMRemote for {vm_uuid}: {vnc_url}")
