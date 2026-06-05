@@ -75,7 +75,15 @@ HIDDEN_IMPORTS = [
     # 远程连接
     "proxmoxer",
     "proxmoxer.backends",
+    "proxmoxer.backends.https",
+    "proxmoxer.backends.ssh_paramiko",
+    "proxmoxer.backends.openssh",
+    "proxmoxer.backends.local",
+    "proxmoxer.backends.command_base",
     "paramiko",
+    
+    # 认证加密
+    "bcrypt",
     
     # 编码支持
     "encodings",
@@ -86,6 +94,7 @@ HIDDEN_IMPORTS = [
     
     # 项目模块
     "HostModule",
+    "HostModule.CommandSafe",
     "HostModule.DataManager",
     "HostModule.EmailManager",
     "HostModule.HostManager",
@@ -100,13 +109,29 @@ HIDDEN_IMPORTS = [
     "HostServer.ProxmoxQemu",
     "HostServer.LXContainer",
     "HostServer.OCInterface",
+    "HostServer.OCInterfaceAPI",
+    "HostServer.OCInterfaceAPI.OCIConnects",
+    "HostServer.OCInterfaceAPI.PortForward",
+    "HostServer.OCInterfaceAPI.IPTablesAPI",
+    "HostServer.OCInterfaceAPI.SSHTerminal",
     "HostServer.Workstation",
+    "HostServer.WorkstationAPI",
+    "HostServer.WorkstationAPI.VMWRestAPI",
     "HostServer.vSphereESXi",
+    "HostServer.vSphereESXiAPI",
+    "HostServer.vSphereESXiAPI.vSphereAPI",
     "HostServer.Win64HyperV",
+    "HostServer.Win64HyperVAPI",
+    "HostServer.Win64HyperVAPI.HyperVAPI",
     "HostServer.QEMUService",
     "HostServer.VirtualBoxs",
     "HostServer.MemuAndroid",
     "HostServer.QingzhouYun",
+    "HostServer.SmolVM",
+    "HostServer.SmolVMAPI",
+    "HostServer.SmolVMAPI.FCClient",
+    "HostServer.SmolVMAPI.KVMDetector",
+    "HostServer.SmolVMAPI.RootFSBuilder",
     "HostServer.VPCTemplate",
     "MainObject",
     "VNCConsole",
@@ -118,8 +143,10 @@ HIDDEN_IMPORTS = [
 OPTIONAL_PACKAGES = [
     "pythonnet",  # Windows .NET 支持
     "pyvmomi",    # VMware vSphere 支持
+    "pyVim",      # VMware vSphere 连接支持
     "pylxd",      # LXD 容器支持
     "docker",     # Docker 容器支持
+    "winrm",      # Windows WinRM 远程管理
 ]
 
 # 需要排除的包（减小体积）

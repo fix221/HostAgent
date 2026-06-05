@@ -59,23 +59,70 @@ CORE_PACKAGES = [
     "markupsafe",
     "proxmoxer",
     "proxmoxer.backends",
+    "proxmoxer.backends.https",
+    "proxmoxer.backends.ssh_paramiko",
+    "proxmoxer.backends.openssh",
+    "proxmoxer.backends.local",
+    "proxmoxer.backends.command_base",
     "paramiko",
+    "bcrypt",
 ]
 
 # 可选包（如果已安装则包含）
 OPTIONAL_PACKAGES = [
     "pythonnet",  # Windows .NET 支持
     "pyvmomi",    # VMware vSphere 支持
+    "pyVim",      # VMware vSphere 连接支持
     "pylxd",      # LXD 容器支持
     "docker",     # Docker 容器支持
+    "winrm",      # Windows WinRM 远程管理
 ]
 
 # 需要包含的模块
 INCLUDE_MODULES = [
     "HostModule",
+    "HostModule.CommandSafe",
+    "HostModule.DataManager",
+    "HostModule.EmailManager",
+    "HostModule.HostManager",
+    "HostModule.RestManager",
+    "HostModule.UserManager",
+    "HostModule.HttpManager",
+    "HostModule.NetsManager",
+    "HostModule.SSHDManager",
+    "HostModule.Translation",
     "HostServer",
+    "HostServer.BasicServer",
+    "HostServer.ProxmoxQemu",
+    "HostServer.LXContainer",
+    "HostServer.OCInterface",
+    "HostServer.OCInterfaceAPI",
+    "HostServer.OCInterfaceAPI.OCIConnects",
+    "HostServer.OCInterfaceAPI.PortForward",
+    "HostServer.OCInterfaceAPI.IPTablesAPI",
+    "HostServer.OCInterfaceAPI.SSHTerminal",
+    "HostServer.Workstation",
+    "HostServer.WorkstationAPI",
+    "HostServer.WorkstationAPI.VMWRestAPI",
+    "HostServer.vSphereESXi",
+    "HostServer.vSphereESXiAPI",
+    "HostServer.vSphereESXiAPI.vSphereAPI",
+    "HostServer.Win64HyperV",
+    "HostServer.Win64HyperVAPI",
+    "HostServer.Win64HyperVAPI.HyperVAPI",
+    "HostServer.QEMUService",
+    "HostServer.VirtualBoxs",
+    "HostServer.MemuAndroid",
+    "HostServer.QingzhouYun",
+    "HostServer.SmolVM",
+    "HostServer.SmolVMAPI",
+    "HostServer.SmolVMAPI.FCClient",
+    "HostServer.SmolVMAPI.KVMDetector",
+    "HostServer.SmolVMAPI.RootFSBuilder",
+    "HostServer.VPCTemplate",
     "MainObject",
     "VNCConsole",
+    "VNCConsole.VNCSManager",
     "Websockify",
 ]
 

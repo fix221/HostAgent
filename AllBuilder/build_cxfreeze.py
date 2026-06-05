@@ -173,9 +173,17 @@ PACKAGES = [
     "email",
     "smtplib",
 
+    # 认证加密
+    "bcrypt",
+
     # 远程连接
     "proxmoxer",
     "proxmoxer.backends",
+    "proxmoxer.backends.https",
+    "proxmoxer.backends.ssh_paramiko",
+    "proxmoxer.backends.openssh",
+    "proxmoxer.backends.local",
+    "proxmoxer.backends.command_base",
     "paramiko",
     
     # 标准库（这些通常会自动包含，但显式列出以确保）
@@ -208,7 +216,14 @@ PACKAGES = [
     
     # 项目模块
     "HostModule",
+    "HostModule.CommandSafe",
     "HostServer",
+    "HostServer.OCInterfaceAPI",
+    "HostServer.Win64HyperVAPI",
+    "HostServer.WorkstationAPI",
+    "HostServer.vSphereESXiAPI",
+    "HostServer.SmolVM",
+    "HostServer.SmolVMAPI",
     "MainObject",
     "VNCConsole",
     "Websockify",
@@ -217,8 +232,10 @@ PACKAGES = [
 # 可选包（如果已安装则包含，基于 requirements.txt）
 OPTIONAL_PACKAGES = [
     "pyvmomi",    # VMware vSphere 支持
+    "pyVim",      # VMware vSphere 连接支持
     "pylxd",      # LXD 容器支持
     "docker",     # Docker 容器支持
+    "winrm",      # Windows WinRM 支持（Hyper-V）
     "pywin32",    # Windows API（仅Windows）
     "pythonnet",  # Windows .NET 支持（仅Windows）
 ]
