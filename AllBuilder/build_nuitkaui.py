@@ -57,6 +57,9 @@ CORE_PACKAGES = [
     "click",
     "itsdangerous",
     "markupsafe",
+    "proxmoxer",
+    "proxmoxer.backends",
+    "paramiko",
 ]
 
 # 可选包（如果已安装则包含）
@@ -249,8 +252,10 @@ def main():
     print(f"项目根目录: {PROJECT_ROOT}")
     print()
     
-    # 切换到项目根目录
-    os.chdir(PROJECT_ROOT)
+    # 切换到输出目录（而非项目根目录），避免 Nuitka 把 HostAgent/ 当成包搜索路径
+    # 若切换到 PROJECT_ROOT，Nuitka 会扫描该目录并把 MainServer.py 误识别为模块（编译为 DLL）
+    os.makedirs(OUTPUT_DIR, exist_ok=True)
+    os.chdir(OUTPUT_DIR)
     
     # 检查主脚本是否存在
     if not os.path.exists(MAIN_SCRIPT):

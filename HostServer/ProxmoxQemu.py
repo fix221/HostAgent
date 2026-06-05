@@ -199,10 +199,10 @@ class HostServer(BasicServer):
     # #########################################################################
     def _proxmox_boot_order(self, vm_conf: VMConfig) -> str:
         if not vm_conf.efi_all:
-            return 'order=scsi0;ide2'
+            return 'order=sata0;ide2'
         # 构建 efi_name -> proxmox设备名 的映射
         device_map = {}
-        device_map[vm_conf.vm_uuid] = 'scsi0'  # 系统盘
+        device_map[vm_conf.vm_uuid] = 'sata0'  # 系统盘
         scsi_idx = 1
         for hdd_name, hdd_data in vm_conf.hdd_all.items():
             if hdd_data.hdd_flag == 0:
@@ -227,7 +227,7 @@ class HostServer(BasicServer):
                 ordered.append(dev)
                 seen.add(dev)
         if not ordered:
-            return 'order=scsi0;ide2'
+            return 'order=sata0;ide2'
         return 'order=' + ';'.join(ordered)
 
     # 宿主机任务 ###############################################################

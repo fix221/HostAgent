@@ -74,6 +74,7 @@ HIDDEN_IMPORTS = [
     
     # 远程连接
     "proxmoxer",
+    "proxmoxer.backends",
     "paramiko",
     
     # 编码支持
@@ -88,10 +89,28 @@ HIDDEN_IMPORTS = [
     "HostModule.DataManager",
     "HostModule.EmailManager",
     "HostModule.HostManager",
+    "HostModule.RestManager",
+    "HostModule.UserManager",
+    "HostModule.HttpManager",
+    "HostModule.NetsManager",
+    "HostModule.SSHDManager",
+    "HostModule.Translation",
     "HostServer",
+    "HostServer.BasicServer",
     "HostServer.ProxmoxQemu",
+    "HostServer.LXContainer",
+    "HostServer.OCInterface",
+    "HostServer.Workstation",
+    "HostServer.vSphereESXi",
+    "HostServer.Win64HyperV",
+    "HostServer.QEMUService",
+    "HostServer.VirtualBoxs",
+    "HostServer.MemuAndroid",
+    "HostServer.QingzhouYun",
+    "HostServer.VPCTemplate",
     "MainObject",
     "VNCConsole",
+    "VNCConsole.VNCSManager",
     "Websockify",
 ]
 

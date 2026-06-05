@@ -175,6 +175,7 @@ PACKAGES = [
 
     # 远程连接
     "proxmoxer",
+    "proxmoxer.backends",
     "paramiko",
     
     # 标准库（这些通常会自动包含，但显式列出以确保）
