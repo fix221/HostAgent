@@ -290,12 +290,15 @@ class HostServer(BasicServer):
 
             scanned_count = len(vms_list)
             added_count = 0
+            scanned_names = set()
 
             # 处理每个虚拟机 ===================================================
             for vm_info in vms_list:
                 vm_name = vm_info.get("name", "")
                 if not vm_name:
                     continue
+
+                scanned_names.add(vm_name)
 
                 # 检查是否已存在 ===============================================
                 if vm_name in self.vm_saving:
@@ -328,22 +331,27 @@ class HostServer(BasicServer):
             # 断开连接 =========================================================
             self.esxi_api.disconnect()
 
+            # 标记消失/恢复的虚拟机 ============================================
+            marked_count, recovered_count = self._mark_missing_vms(scanned_names)
+
             # 保存到数据库 =====================================================
-            if added_count > 0:
+            if added_count > 0 or marked_count > 0 or recovered_count > 0:
                 success = self.data_set()
                 if not success:
                     return ZMessage(
                         success=False, action="VScanner",
-                        message="Failed to save scanned DockManage to database")
+                        message="保存扫描的虚拟机到数据库失败")
 
             # 返回成功消息 =====================================================
             return ZMessage(
                 success=True,
                 action="VScanner",
-                message=f"扫描完成。共扫描到{scanned_count}台虚拟机，新增{added_count}台虚拟机配置。",
+                message=f"扫描完成。共扫描到{scanned_count}台虚拟机，新增{added_count}台，标记删除{marked_count}台，恢复{recovered_count}台。",
                 results={
                     "scanned": scanned_count,
                     "added": added_count,
+                    "marked_deleted": marked_count,
+                    "recovered": recovered_count,
                     "prefix_filter": filter_prefix
                 }
             )

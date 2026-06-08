@@ -419,7 +419,8 @@ class RestManager:
         """
         计算当前用户对虚拟机的最终权限掩码
         最终权限 = 用户权限(WebUser.user_permission) AND 虚拟机权限(own_all[user])
-        所有者(dict第一个key) / admin / 特权用户 → 全权限
+        admin / 特权用户 → 全权限（不受user_permission约束）
+        所有者(dict第一个key) → 虚拟机级别全权限，但仍受user_permission约束
         :return: 掩码数字
         """
         from MainObject.Config.UserMask import UserMask, FULL_MASK
@@ -431,17 +432,19 @@ class RestManager:
         if not owners:
             return 0
 
-        # 所有者（dict第一个key）永远全权限
-        if next(iter(owners), None) == username:
-            return FULL_MASK
+        # 所有者（dict第一个key）：虚拟机级别全权限，但仍受user_permission约束
+        is_primary_owner = (next(iter(owners), None) == username)
 
-        if username not in owners:
+        if not is_primary_owner and username not in owners:
             return 0
 
-        # 获取虚拟机级别的权限
-        vm_mask = owners[username]
-        if not isinstance(vm_mask, UserMask):
-            vm_mask = UserMask(vm_mask) if isinstance(vm_mask, int) else UserMask.full()
+        # 获取虚拟机级别的权限（主所有者为全权限）
+        if is_primary_owner:
+            vm_mask = UserMask.full()
+        else:
+            vm_mask = owners[username]
+            if not isinstance(vm_mask, UserMask):
+                vm_mask = UserMask(vm_mask) if isinstance(vm_mask, int) else UserMask.full()
 
         # 获取用户级别的权限
         user_data = self.db.get_user_by_username(username) if self.db else None
@@ -1783,6 +1786,11 @@ class RestManager:
                 # 只取最新的一条状态
                 if status and len(status) > 0:
                     status = [status[-1]]
+            
+            # 当数据库没有状态记录时，使用vm_config.vm_flag作为备选电源状态
+            if not status:
+                power_status = vm_config.vm_flag.name if hasattr(vm_config.vm_flag, 'name') else str(vm_config.vm_flag) if vm_config.vm_flag else 'UNKNOWN'
+                status = [{'ac_status': power_status}]
             # 根据用户权限屏蔽敏感字段
             user_perm = self._calc_user_vm_permission(vm_config, current_username, is_admin or is_token_login)
             config_serialized = serialize_obj(vm_config)

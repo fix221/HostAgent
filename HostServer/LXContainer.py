@@ -314,6 +314,7 @@ class HostServer(BasicServer):
 
             scanned_count = 0
             added_count = 0
+            scanned_names = set()
 
             for container in containers:
                 container_name = container.name
@@ -326,6 +327,7 @@ class HostServer(BasicServer):
 
                 # 规范化容器名（将下划线转换为连字符）
                 normalized_name = self.set_uuid(container_name, flag=True)
+                scanned_names.add(normalized_name)
 
                 # 检查是否已存在（使用规范化后的名称）
                 if normalized_name in self.vm_saving:
@@ -348,21 +350,26 @@ class HostServer(BasicServer):
                 )
                 self.push_log(log_msg)
 
+            # 标记消失/恢复的虚拟机 ============================================
+            marked_count, recovered_count = self._mark_missing_vms(scanned_names)
+
             # 保存到数据库
-            if added_count > 0:
+            if added_count > 0 or marked_count > 0 or recovered_count > 0:
                 success = self.data_set()
                 if not success:
                     return ZMessage(
                         success=False, action="VScanner",
-                        message="Failed to save scanned containers to database")
+                        message="保存扫描的容器到数据库失败")
 
             return ZMessage(
                 success=True,
                 action="VScanner",
-                message=f"扫描完成。共扫描到{scanned_count}个容器，新增{added_count}个容器配置。",
+                message=f"扫描完成。共扫描到{scanned_count}个容器，新增{added_count}个，标记删除{marked_count}个，恢复{recovered_count}个。",
                 results={
                     "scanned": scanned_count,
                     "added": added_count,
+                    "marked_deleted": marked_count,
+                    "recovered": recovered_count,
                     "prefix_filter": filter_prefix
                 }
             )

@@ -33,7 +33,6 @@ function UserPostin() {
   const [turnstileEnabled, setTurnstileEnabled] = useState(false)
   const [turnstileSiteKey, setTurnstileSiteKey] = useState('')
   const [turnstileToken, setTurnstileToken] = useState('')
-  const turnstileRef = useRef<HTMLDivElement>(null)
   const turnstileWidgetId = useRef<string | null>(null)
 
   // 加载Turnstile配置
@@ -52,8 +51,8 @@ function UserPostin() {
     loadTurnstileConfig()
   }, [])
 
-  // 加载Turnstile脚本并渲染组件
-  const renderTurnstile = useCallback((container: HTMLDivElement | null) => {
+  // 加载Turnstile脚本并渲染组件（使用callback ref解决竞态条件）
+  const turnstileRef = useCallback((container: HTMLDivElement | null) => {
     if (!container || !turnstileEnabled || !turnstileSiteKey) return
     const existingScript = document.querySelector('script[src*="turnstile"]')
     const doRender = () => {
@@ -63,6 +62,7 @@ function UserPostin() {
         }
         turnstileWidgetId.current = (window as any).turnstile.render(container, {
           sitekey: turnstileSiteKey,
+          size: 'flexible',
           callback: (token: string) => setTurnstileToken(token),
           'expired-callback': () => setTurnstileToken(''),
           'error-callback': () => setTurnstileToken(''),
@@ -83,18 +83,6 @@ function UserPostin() {
       }
     }
   }, [turnstileEnabled, turnstileSiteKey])
-
-  useEffect(() => {
-    if (turnstileEnabled && turnstileSiteKey && turnstileRef.current) {
-      renderTurnstile(turnstileRef.current)
-    }
-    return () => {
-      if (turnstileWidgetId.current && (window as any).turnstile) {
-        try { (window as any).turnstile.remove(turnstileWidgetId.current) } catch (_) {}
-        turnstileWidgetId.current = null
-      }
-    }
-  }, [turnstileEnabled, turnstileSiteKey, renderTurnstile])
 
   const resetTurnstile = () => {
     setTurnstileToken('')
@@ -409,8 +397,8 @@ function UserPostin() {
 
           {/* Turnstile验证码 */}
           {turnstileEnabled && turnstileSiteKey && (
-            <div style={{ marginBottom: 16, display: 'flex', justifyContent: 'center' }}>
-              <div ref={turnstileRef} />
+            <div className="turnstile-container" style={{ marginBottom: 16, width: '100%' }}>
+              <div ref={turnstileRef} style={{ width: '100%' }} />
             </div>
           )}
 

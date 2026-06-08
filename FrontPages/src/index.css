@@ -2332,3 +2332,96 @@ html[data-transparent="true"][data-theme="light"] .ant-layout-header .header-sea
         background: rgba(15, 17, 21, 0.8) !important;
     }
 }
+
+/* ==================== 透明模式 - 登录/注册页面专用样式 ==================== */
+[data-transparent="true"] .login-page-container .login-card .ant-input,
+[data-transparent="true"] .login-page-container .login-card .ant-input-affix-wrapper,
+[data-transparent="true"] .register-page-container .register-card .ant-input,
+[data-transparent="true"] .register-page-container .register-card .ant-input-affix-wrapper {
+    background: transparent !important;
+    border: 1px solid rgba(255, 255, 255, 0.35) !important;
+    backdrop-filter: blur(8px) !important;
+    -webkit-backdrop-filter: blur(8px) !important;
+}
+
+/* 密码框内部input去除额外背景和边框 */
+[data-transparent="true"] .login-page-container .login-card .ant-input-affix-wrapper .ant-input,
+[data-transparent="true"] .register-page-container .register-card .ant-input-affix-wrapper .ant-input {
+    background: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+}
+
+[data-transparent="true"][data-theme="light"] .login-page-container .login-card .ant-input,
+[data-transparent="true"][data-theme="light"] .login-page-container .login-card .ant-input-affix-wrapper,
+[data-transparent="true"][data-theme="light"] .register-page-container .register-card .ant-input,
+[data-transparent="true"][data-theme="light"] .register-page-container .register-card .ant-input-affix-wrapper {
+    background: rgba(255, 255, 255, 0.15) !important;
+    border-color: rgba(0, 0, 0, 0.1) !important;
+    color: rgba(0, 0, 0, 0.85) !important;
+}
+
+[data-transparent="true"][data-theme="light"] .login-page-container .login-card .ant-input-affix-wrapper .ant-input,
+[data-transparent="true"][data-theme="light"] .register-page-container .register-card .ant-input-affix-wrapper .ant-input {
+    background: transparent !important;
+    border: none !important;
+    color: rgba(0, 0, 0, 0.85) !important;
+}
+
+[data-transparent="true"][data-theme="light"] .login-page-container .login-card .ant-input::placeholder,
+[data-transparent="true"][data-theme="light"] .register-page-container .register-card .ant-input::placeholder {
+    color: rgba(0, 0, 0, 0.35) !important;
+}
+
+[data-transparent="true"][data-theme="dark"] .login-page-container .login-card .ant-input,
+[data-transparent="true"][data-theme="dark"] .login-page-container .login-card .ant-input-affix-wrapper,
+[data-transparent="true"][data-theme="dark"] .register-page-container .register-card .ant-input,
+[data-transparent="true"][data-theme="dark"] .register-page-container .register-card .ant-input-affix-wrapper {
+    border-color: rgba(255, 255, 255, 0.2) !important;
+    color: rgba(255, 255, 255, 0.9) !important;
+}
+
+[data-transparent="true"][data-theme="dark"] .login-page-container .login-card .ant-input-affix-wrapper .ant-input,
+[data-transparent="true"][data-theme="dark"] .register-page-container .register-card .ant-input-affix-wrapper .ant-input {
+    background: transparent !important;
+    border: none !important;
+    color: rgba(255, 255, 255, 0.9) !important;
+}
+
+[data-transparent="true"][data-theme="dark"] .login-page-container .login-card .ant-input::placeholder,
+[data-transparent="true"][data-theme="dark"] .register-page-container .register-card .ant-input::placeholder {
+    color: rgba(255, 255, 255, 0.4) !important;
+}
+
+/* Turnstile 验证框宽度与输入框对齐（全局生效） */
+.turnstile-container {
+    width: 100% !important;
+}
+
+.turnstile-container > div {
+    width: 100% !important;
+    background: transparent !important;
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+/* 强制覆盖 Cloudflare Turnstile 动态生成容器的内联宽度 */
+.turnstile-container > div > div {
+    width: 100% !important;
+    max-width: 100% !important;
+}
+
+.turnstile-container iframe {
+    width: 100% !important;
+    max-width: 100% !important;
+    border-radius: 8px !important;
+}
+
+/* 透明模式 - Form.Item 去除多余背景 */
+[data-transparent="true"] .login-page-container .ant-form-item,
+[data-transparent="true"] .register-page-container .ant-form-item {
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+}

@@ -25,6 +25,7 @@ class VMConfig:
         # 机器配置 ===========================
         self.vm_uuid = ""  # 设置虚拟机名-UUID
         self.vm_flag = VMPowers.UNKNOWN  # PWR
+        self.vm_deleted = False  # 扫描时未找到标记
         self.os_name = ""  # 设置SYS操作系统名
         self.os_pass = ""  # 设置SYS系统的密码
         # 远程连接 ===========================
@@ -218,6 +219,7 @@ class VMConfig:
     def __save__(self):
         return {
             "vm_uuid": self.vm_uuid,
+            "vm_deleted": self.vm_deleted,
             "os_name": self.os_name,
             "os_pass": self.os_pass,
             "vm_flag": str(self.vm_flag),

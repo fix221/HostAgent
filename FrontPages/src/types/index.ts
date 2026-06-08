@@ -22,6 +22,7 @@ export interface User {
   can_create_vm: boolean;
   can_modify_vm: boolean;
   can_delete_vm: boolean;
+  user_permission?: number;
   // 配额信息
   quota_cpu: number;
   quota_ram: number;
@@ -224,7 +225,7 @@ export const VM_PERMISSION_LABELS: Record<string, string> = {
   efi_edits: '启动顺序',
   vm_modify: '修改配置',
   vm_delete: '删除实例',
-  firewalls: '编辑防火墙',
+  firewalls: '编辑网关',
 };
 
 // 权限字段到掩码位的映射
@@ -265,11 +266,48 @@ export const TAB_PERMISSION_MAP: Record<string, number> = {
   efi: VM_PERMISSION.EFI_EDITS,
 };
 
-// 权限不足时直接隐藏的Tab（平台不支持此功能）
-export const HIDDEN_TABS: Set<string> = new Set(['usb', 'pci', 'efi', 'owners']);
+// 权限不足时直接隐藏的Tab（用户不具有对应权限时隐藏该切页）
+export const HIDDEN_TABS: Set<string> = new Set(['ip', 'hdd', 'iso', 'nat', 'proxy', 'pci', 'usb', 'backup', 'efi', 'owners']);
 
-// 权限不足时仅只读的Tab（可查看但禁止操作）
-export const READONLY_TABS: Set<string> = new Set(['ip', 'hdd', 'iso', 'nat', 'proxy', 'backup']);
+// 权限不足时仅只读的Tab（可查看但禁止操作）- 保留定义以兼容其他引用
+export const READONLY_TABS: Set<string> = new Set([]);
 
 // owners tab 仅管理员/主所有者可见（不受普通权限控制）
 export const OWNER_ONLY_TABS: Set<string> = new Set(['owners']);
+
+// Tab key 到配额字段的映射（配额为0时隐藏对应Tab）
+export const TAB_QUOTA_MAP: Record<string, string> = {
+  ip: 'nic_all',       // 网卡管理 - 通过nic_all对象的key数量判断（特殊处理）
+  hdd: 'dat_num',      // 数据磁盘 - 数据盘配额
+  iso: 'iso_num',      // 光盘镜像 - 光盘配额
+  nat: 'nat_num',      // 端口映射 - NAT端口配额
+  proxy: 'web_num',    // 反向代理 - Web代理配额
+  pci: 'pci_num',      // PCI设备 - PCI配额
+  usb: 'usb_num',      // USB设备 - USB配额
+  backup: 'bak_num',   // 备份管理 - 备份配额
+  efi: 'efi_edits',    // 启动顺序 - 无配额限制，仅权限控制
+  owners: 'owners',    // 用户权限 - 无配额限制，仅权限控制
+};
+
+/**
+ * 获取Tab对应的配额值（配额为0时应隐藏该Tab）
+ * @param config 虚拟机配置对象
+ * @param tabKey Tab的key
+ * @returns 配额数值，-1表示无配额限制
+ */
+export function getTabQuota(config: any, tabKey: string): number {
+  if (!config) return -1;
+  const field = TAB_QUOTA_MAP[tabKey];
+  if (!field) return -1;
+  // 特殊处理：网卡管理通过nic_all判断（无网卡配置时隐藏）
+  if (field === 'nic_all') {
+    const nicAll = config.nic_all;
+    if (!nicAll || typeof nicAll !== 'object' || Object.keys(nicAll).length === 0) return 0;
+    return Object.keys(nicAll).length;
+  }
+  // 无配额限制的Tab
+  if (field === 'efi_edits' || field === 'owners') return -1;
+  const val = config[field];
+  if (val === undefined || val === null) return -1;
+  return Number(val) || 0;
+}

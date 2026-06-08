@@ -598,6 +598,7 @@ def register():
             'can_create_vm': settings.get('default_can_create_vm', '1') == '1',
             'can_modify_vm': settings.get('default_can_modify_vm', '1') == '1',
             'can_delete_vm': settings.get('default_can_delete_vm', '1') == '1',
+            'user_permission': int(settings.get('default_user_permission', 56791)),
             'is_admin': 0,  # 新用户默认不是管理员
             'is_active': 1,  # 新用户默认启用
             'assigned_hosts': '[]'  # 默认无分配主机

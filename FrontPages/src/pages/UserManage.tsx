@@ -1,10 +1,11 @@
 import { useEffect, useState } from 'react'
-import { Table, Button, Space, Tag, Modal, Form, Input, Checkbox, InputNumber, message, Popconfirm, Divider, Row, Col } from 'antd'
-import { PlusOutlined, EditOutlined, DeleteOutlined, UserOutlined } from '@ant-design/icons'
+import { Table, Button, Space, Tag, Modal, Form, Input, Checkbox, InputNumber, message, Popconfirm, Divider, Row, Col, Tooltip } from 'antd'
+import { PlusOutlined, EditOutlined, DeleteOutlined, UserOutlined, QuestionCircleOutlined } from '@ant-design/icons'
 import PageHeader from '@/components/PageHeader'
 import api from '@/utils/apis.ts'
 import type { ColumnsType } from 'antd/es/table'
 import type { User } from '@/types'
+import { VM_PERMISSION_LABELS, PERMISSION_FIELD_MASK, hasPermission } from '@/types'
 
 /**
  * 主机数据接口
@@ -466,6 +467,33 @@ function UserManage() {
               </Form.Item>
             </Col>
           </Row>
+
+          {/* 用户权限掩码 */}
+          <Divider orientation="left">用户权限掩码 <Tooltip title="控制用户可访问的虚拟机功能Tab，与虚拟机级别权限做AND运算"><QuestionCircleOutlined /></Tooltip></Divider>
+          <Form.Item name="user_permission" label="权限掩码值">
+            <InputNumber min={0} max={65535} style={{ width: '100%' }} placeholder="65535 = 全权限" />
+          </Form.Item>
+          <Form.Item shouldUpdate={(prev, cur) => prev.user_permission !== cur.user_permission} noStyle>
+            {() => {
+              const currentMask = form.getFieldValue('user_permission') ?? 65535
+              return (
+                <div style={{display: 'grid', gridTemplateColumns: '1fr 1fr 1fr 1fr', gap: '4px 12px', marginBottom: 16}}>
+                  {Object.entries(PERMISSION_FIELD_MASK).map(([field, bit]) => (
+                    <Checkbox key={field} checked={hasPermission(currentMask, bit)} onChange={(e) => {
+                      const newMask = e.target.checked ? (currentMask | bit) : (currentMask & ~bit)
+                      form.setFieldsValue({ user_permission: newMask })
+                    }}>{VM_PERMISSION_LABELS[field]}</Checkbox>
+                  ))}
+                  <div style={{gridColumn: 'span 4', marginTop: 4}}>
+                    <Space size="small">
+                      <Button size="small" onClick={() => form.setFieldsValue({ user_permission: 65535 })}>全选</Button>
+                      <Button size="small" onClick={() => form.setFieldsValue({ user_permission: 0 })}>全不选</Button>
+                    </Space>
+                  </div>
+                </div>
+              )
+            }}
+          </Form.Item>
 
           {/* 资源配额 */}
           <Divider orientation="left">资源配额</Divider>

@@ -661,6 +661,7 @@ class HostServer(BasicServer):
                             results={"scanned": 0, "added": 0})
 
         scanned, added = 0, 0
+        scanned_names = set()
         for name in (out or "").splitlines():
             name = name.strip()
             if not name:
@@ -668,6 +669,7 @@ class HostServer(BasicServer):
             if filter_prefix and not name.startswith(filter_prefix):
                 continue
             scanned += 1
+            scanned_names.add(name)
             if name in self.vm_saving:
                 continue
             # 检查是否存在 rootfs ==============================================
@@ -688,13 +690,17 @@ class HostServer(BasicServer):
             self.vm_saving[name] = vm_cfg
             added += 1
 
-        if added > 0:
+        # 标记消失/恢复的虚拟机 ================================================
+        marked_count, recovered_count = self._mark_missing_vms(scanned_names)
+
+        if added > 0 or marked_count > 0 or recovered_count > 0:
             self.data_set()
 
         return ZMessage(
             success=True, action="VScanner",
-            message=f"扫描完成：共 {scanned} 个，新增 {added} 个",
+            message=f"扫描完成：共 {scanned} 个，新增 {added} 个，标记删除 {marked_count} 个，恢复 {recovered_count} 个",
             results={"scanned": scanned, "added": added,
+                     "marked_deleted": marked_count, "recovered": recovered_count,
                      "prefix_filter": filter_prefix})
 
     # ==========================================================================

@@ -1144,7 +1144,7 @@ quota_bandwidth_up = 9999, quota_bandwidth_down = 9999, quota_traffic = 9999
             all_fields = [
                 'username', 'password', 'email', 'is_admin', 'is_active', 'email_verified',
                 'verify_token', 'reset_token',
-                'can_create_vm', 'can_delete_vm', 'can_modify_vm',
+                'can_create_vm', 'can_delete_vm', 'can_modify_vm', 'user_permission',
                 'quota_cpu', 'quota_ram', 'quota_ssd', 'quota_gpu', 'quota_nat_ports',
                 'quota_web_proxy', 'quota_nat_ips', 'quota_pub_ips', 'quota_bandwidth_up', 
                 'quota_bandwidth_down', 'quota_traffic',

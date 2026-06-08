@@ -558,12 +558,14 @@ class HostServer(BasicServer):
             filter_prefix = self.hs_config.filter_name if self.hs_config else ""
             scanned_count = 0
             added_count = 0
+            scanned_names = set()
             for container in containers:
                 container_name = container.name
                 # 前缀过滤
                 if filter_prefix and not container_name.startswith(filter_prefix):
                     continue
                 scanned_count += 1
+                scanned_names.add(container_name)
                 # 检查是否已存在
                 if container_name in self.vm_saving:
                     continue
@@ -573,22 +575,26 @@ class HostServer(BasicServer):
                 # 添加到服务器的虚拟机配置中
                 self.vm_saving[container_name] = default_vm_config
                 added_count += 1
+            # 标记消失/恢复的虚拟机 ============================================
+            marked_count, recovered_count = self._mark_missing_vms(scanned_names)
             # 保存到数据库
-            if added_count > 0:
+            if added_count > 0 or marked_count > 0 or recovered_count > 0:
                 success = self.data_set()
                 if not success:
                     logger.error(f"[{self.hs_config.server_name}] 保存扫描结果到数据库失败")
                     return ZMessage(
                         success=False, action="VScanner",
-                        message="Failed to save scanned containers to database")
-            logger.info(f"[{self.hs_config.server_name}] 容器扫描完成: 扫描{scanned_count}个，新增{added_count}个")
+                        message="保存扫描的容器到数据库失败")
+            logger.info(f"[{self.hs_config.server_name}] 容器扫描完成: 扫描{scanned_count}个，新增{added_count}个，标记删除{marked_count}个，恢复{recovered_count}个")
             return ZMessage(
                 success=True,
                 action="VScanner",
-                message=f"扫描完成。共扫描到{scanned_count}个容器，新增{added_count}个容器配置。",
+                message=f"扫描完成。共扫描到{scanned_count}个容器，新增{added_count}个，标记删除{marked_count}个，恢复{recovered_count}个。",
                 results={
                     "scanned": scanned_count,
                     "added": added_count,
+                    "marked_deleted": marked_count,
+                    "recovered": recovered_count,
                     "prefix_filter": filter_prefix
                 }
             )

@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
-import { Card, Form, Input, Button, Switch, message, InputNumber, Checkbox, Alert } from 'antd'
-import { EyeOutlined, EyeInvisibleOutlined, CopyOutlined, ReloadOutlined, SaveOutlined, FolderOpenOutlined, MailOutlined, SettingOutlined, SafetyCertificateOutlined } from '@ant-design/icons'
+import { Card, Form, Input, Button, Switch, message, InputNumber, Checkbox, Alert, Tooltip } from 'antd'
+import { EyeOutlined, EyeInvisibleOutlined, CopyOutlined, ReloadOutlined, SaveOutlined, FolderOpenOutlined, MailOutlined, SettingOutlined, SafetyCertificateOutlined, QuestionCircleOutlined } from '@ant-design/icons'
+import { VM_PERMISSION, VM_PERMISSION_LABELS, PERMISSION_FIELD_MASK, hasPermission } from '@/types'
 import api from '@/utils/apis.ts'
 import { SystemStats } from '@/types'
 import PageHeader from '@/components/PageHeader'
@@ -71,6 +72,7 @@ function CoreConfig() {
           registration_enabled: settings.registration_enabled === '1',
           email_verification_enabled: settings.email_verification_enabled === '1',
           default_allowed_hosts: settings.default_allowed_hosts || '',
+          default_user_permission: parseInt(settings.default_user_permission) || 56791,
           default_free_config: settings.default_free_config !== '0',
           default_quota_cpu: parseInt(settings.default_quota_cpu) || 2,
           default_quota_ram: parseInt(settings.default_quota_ram) || 4,
@@ -217,6 +219,7 @@ function CoreConfig() {
         registration_enabled: values.registration_enabled ? '1' : '0',
         email_verification_enabled: values.email_verification_enabled ? '1' : '0',
         default_allowed_hosts: values.default_allowed_hosts || '',
+        default_user_permission: (values.default_user_permission || 56791).toString(),
         default_free_config: values.default_free_config ? '1' : '0',
         default_quota_cpu: values.default_quota_cpu.toString(),
         default_quota_ram: values.default_quota_ram.toString(),
@@ -488,9 +491,28 @@ function CoreConfig() {
 
               <div className="border-t pt-4">
 <h4 className="text-sm font-medium mb-3">新用户默认配置</h4>
-                <Form.Item name="default_allowed_hosts" label="默认可访问主机" className="mb-3" extra="多个主机用英文逗号分隔，留空表示不限制">
-                  <Input placeholder="host1,host2 或留空表示全部" className="w-full" />
-                </Form.Item>
+                <div className="grid grid-cols-2 gap-3">
+                  <Form.Item name="default_allowed_hosts" label="默认可访问主机" className="mb-3" extra="多个主机用英文逗号分隔，留空表示不限制">
+                    <Input placeholder="host1,host2 或留空表示全部" className="w-full" />
+                  </Form.Item>
+                  <Form.Item name="default_user_permission" label={<span>用户默认权限 <Tooltip title="权限掩码值，控制用户可访问的虚拟机功能Tab。此权限与虚拟机级别权限做AND运算，优先级更高。"><QuestionCircleOutlined style={{color: 'var(--text-secondary)'}}/></Tooltip></span>} className="mb-3" extra="int掩码值，各权限位按位OR组合">
+                    <InputNumber min={0} max={65535} className="w-full" placeholder="56791" />
+                  </Form.Item>
+                </div>
+                <div className="mb-3 p-2 rounded text-xs" style={{background: 'var(--bg-card)', border: '1px solid var(--border-hover)'}}>
+                  <p className="font-medium mb-1">权限位说明（当前掩码包含的权限）：</p>
+                  <div className="grid grid-cols-4 gap-1">
+                    {Object.entries(PERMISSION_FIELD_MASK).map(([field, bit]) => (
+                      <label key={field} className="flex items-center gap-1 cursor-pointer" onClick={() => {
+                        const current = registrationForm.getFieldValue('default_user_permission') || 56791
+                        registrationForm.setFieldsValue({ default_user_permission: current ^ bit })
+                      }}>
+                        <input type="checkbox" readOnly checked={hasPermission(registrationForm.getFieldValue('default_user_permission') || 56791, bit)} className="pointer-events-none" />
+                        <span>{VM_PERMISSION_LABELS[field]}</span>
+                      </label>
+                    ))}
+                  </div>
+                </div>
                 <div className="flex items-center justify-between mb-3">
                   <div>
                     <p className="text-sm font-medium">允许自由配置</p>

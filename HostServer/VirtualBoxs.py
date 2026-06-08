@@ -173,6 +173,7 @@ class HostServer(BasicServer):
 
             scanned_count = 0
             added_count = 0
+            scanned_names = set()
             # 格式: "VMName" {uuid}
             for line in stdout.splitlines():
                 line = line.strip()
@@ -185,6 +186,7 @@ class HostServer(BasicServer):
                 if filter_prefix and not vm_name.startswith(filter_prefix):
                     continue
                 scanned_count += 1
+                scanned_names.add(vm_name)
                 if vm_name in self.vm_saving:
                     continue
                 self.vm_saving[vm_name] = VMConfig()
@@ -193,13 +195,17 @@ class HostServer(BasicServer):
                     success=True, action="VMDetect",
                     message=f"发现并添加虚拟机: {vm_name}"))
 
-            if added_count > 0:
+            # 标记消失/恢复的虚拟机 ============================================
+            marked_count, recovered_count = self._mark_missing_vms(scanned_names)
+
+            if added_count > 0 or marked_count > 0 or recovered_count > 0:
                 self.data_set()
 
             return ZMessage(
                 success=True, action="VMDetect",
-                message=f"扫描完成，共{scanned_count}台，新增{added_count}台",
-                results={"scanned": scanned_count, "added": added_count})
+                message=f"扫描完成，共{scanned_count}台，新增{added_count}台，标记删除{marked_count}台，恢复{recovered_count}台",
+                results={"scanned": scanned_count, "added": added_count,
+                         "marked_deleted": marked_count, "recovered": recovered_count})
         except Exception as e:
             logger.error(f"[VirtualBox] 扫描虚拟机失败: {e}")
             traceback.print_exc()

@@ -186,6 +186,7 @@ class HostServer(BasicServer):
             vms = self._parse_listvms(stdout)
             scanned_count = len(vms)
             added_count = 0
+            scanned_names = set()
 
             for vm in vms:
                 title = vm["title"]
@@ -194,6 +195,7 @@ class HostServer(BasicServer):
                 vm_key = f"memu_{index}"
                 if filter_prefix and not title.startswith(filter_prefix):
                     continue
+                scanned_names.add(vm_key)
                 if vm_key in self.vm_saving:
                     continue
                 new_conf = VMConfig()
@@ -205,13 +207,17 @@ class HostServer(BasicServer):
                     success=True, action="VMDetect",
                     message=f"发现模拟器: {title} (索引:{index})"))
 
-            if added_count > 0:
+            # 标记消失/恢复的虚拟机 ============================================
+            marked_count, recovered_count = self._mark_missing_vms(scanned_names)
+
+            if added_count > 0 or marked_count > 0 or recovered_count > 0:
                 self.data_set()
 
             return ZMessage(
                 success=True, action="VMDetect",
-                message=f"扫描完成，共{scanned_count}台，新增{added_count}台",
-                results={"scanned": scanned_count, "added": added_count})
+                message=f"扫描完成，共{scanned_count}台，新增{added_count}台，标记删除{marked_count}台，恢复{recovered_count}台",
+                results={"scanned": scanned_count, "added": added_count,
+                         "marked_deleted": marked_count, "recovered": recovered_count})
         except Exception as e:
             logger.error(f"[MEmu] 扫描模拟器失败: {e}")
             traceback.print_exc()

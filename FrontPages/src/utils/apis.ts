@@ -713,6 +713,7 @@ export default {
   login,
   logout,
   getCurrentUser,
+  getTurnstileConfig,
   forgotPassword,
   resetPassword,
   

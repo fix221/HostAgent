@@ -58,7 +58,7 @@ import {
 } from '@ant-design/icons'
 import ReactECharts from 'echarts-for-react'
 import api from '@/utils/apis.ts'
-import {VM_PERMISSION, hasPermission, TAB_PERMISSION_MAP, VM_PERMISSION_LABELS, PERMISSION_FIELD_MASK, HIDDEN_TABS, OWNER_ONLY_TABS} from '@/types'
+import {VM_PERMISSION, hasPermission, TAB_PERMISSION_MAP, VM_PERMISSION_LABELS, PERMISSION_FIELD_MASK, HIDDEN_TABS, OWNER_ONLY_TABS, getTabQuota} from '@/types'
 
 interface VGConfig {
     gpu_uuid: string
@@ -320,6 +320,8 @@ function VMDetail() {
     const [efiLoading, setEfiLoading] = useState(false)
     const [efiActionLoading, setEfiActionLoading] = useState(false)
 
+    // 当前用户是否为管理员（跳过权限和配额检查）
+    const [isAdminUser, setIsAdminUser] = useState(false)
     // 当前用户是否为主所有者或管理员（用于控制owners tab可见性）
     const [isOwnerOrAdmin, setIsOwnerOrAdmin] = useState(false)
 
@@ -575,6 +577,7 @@ const [operationTimeoutId, setOperationTimeoutId] = useState<ReturnType<typeof s
                 const currentUsername = (detailRes.data as any)?.current_user || ''
                 const ownerNames = Object.keys(ownerList)
                 const isFirst = ownerNames.length > 0 && ownerNames[0] === currentUsername
+                setIsAdminUser(isAdmin)
                 setIsOwnerOrAdmin(isAdmin || isFirst)
             }
         } catch (error: any) {
@@ -2200,6 +2203,9 @@ await api.vmPower(hostName!, uuid!, 'H_CLOSE')
                                             <span>{getOSDisplayName(config.os_name || '')}</span>
                                         </Space>
                                     </Descriptions.Item>
+                                    {vm.config?.nic_all && Object.values(vm.config.nic_all).some((nic: any) => nic.nic_type !== 'pub') && hostConfig?.public_addr?.length ? (
+                                        <Descriptions.Item label="公网IP">{hostConfig.public_addr[0]}</Descriptions.Item>
+                                    ) : null}
                                     <Descriptions.Item label="端口数量">{config.nat_num || 0} 个</Descriptions.Item>
                                     <Descriptions.Item
                                         label="IPv4地址">{vm.ipv4_address || '未分配'}</Descriptions.Item>
@@ -2556,7 +2562,7 @@ await api.vmPower(hostName!, uuid!, 'H_CLOSE')
             key: 'ip',
             label: '网卡管理',
             children: <Card title="网卡列表" extra={<Button type="primary" icon={<PlusOutlined/>}
-                                                            disabled={!hasPermission(userPermissions, VM_PERMISSION.NIC_EDITS)}
+                                                            disabled={!hasPermission(userPermissions, VM_PERMISSION.NIC_EDITS) || (config.nic_num !== undefined && config.nic_all && Object.keys(config.nic_all).length >= (config.nic_num || 0))}
                                                             onClick={() => setIpModalVisible(true)}>添加网卡</Button>}
                             variant="borderless">
                 {vm && vm.config && vm.config.nic_all && Object.keys(vm.config.nic_all).length > 0 ? (
@@ -2602,7 +2608,7 @@ await api.vmPower(hostName!, uuid!, 'H_CLOSE')
             key: 'hdd',
             label: '数据磁盘',
             children: <Card title="数据盘管理" extra={<Button type="primary" icon={<PlusOutlined/>}
-                                                              disabled={!hasPermission(userPermissions, VM_PERMISSION.HDD_EDITS)}
+                                                              disabled={!hasPermission(userPermissions, VM_PERMISSION.HDD_EDITS) || (config.dat_num > 0 && hdds.length >= config.dat_num)}
                                                               onClick={() => setHddModalVisible(true)}>挂载数据盘</Button>}
                             variant="borderless">
                 {hdds && hdds.length > 0 ? (
@@ -2676,7 +2682,7 @@ await api.vmPower(hostName!, uuid!, 'H_CLOSE')
             key: 'iso',
             label: '光盘镜像',
             children: <Card title="ISO镜像管理" extra={<Button type="primary" icon={<PlusOutlined/>}
-                                                               disabled={!hasPermission(userPermissions, VM_PERMISSION.ISO_EDITS)}
+                                                               disabled={!hasPermission(userPermissions, VM_PERMISSION.ISO_EDITS) || (config.iso_num > 0 && isos.length >= config.iso_num)}
                                                                onClick={() => setIsoModalVisible(true)}>挂载ISO</Button>}
                             variant="borderless">
                 {isos && isos.length > 0 ? (
@@ -2737,7 +2743,7 @@ await api.vmPower(hostName!, uuid!, 'H_CLOSE')
                                     ]}
                                     size="small"
                                 />
-                                <Button type="primary" icon={<PlusOutlined/>} disabled={!hasPermission(userPermissions, VM_PERMISSION.NET_EDITS)} onClick={() => {
+                                <Button type="primary" icon={<PlusOutlined/>} disabled={!hasPermission(userPermissions, VM_PERMISSION.NET_EDITS) || (config.nat_num > 0 && natRules.length >= config.nat_num)} onClick={() => {
                                     setNatModalVisible(true);
                                     form.setFieldsValue({lan_addr: availableIPs[0]})
                                 }}>添加规则</Button>
@@ -2843,7 +2849,7 @@ await api.vmPower(hostName!, uuid!, 'H_CLOSE')
         {
             key: 'proxy',
             label: '反向代理',
-            children: <Card title="反向代理配置" extra={<Button type="primary" icon={<PlusOutlined/>} disabled={!hasPermission(userPermissions, VM_PERMISSION.WEB_EDITS)} onClick={() => {
+            children: <Card title="反向代理配置" extra={<Button type="primary" icon={<PlusOutlined/>} disabled={!hasPermission(userPermissions, VM_PERMISSION.WEB_EDITS) || (config.web_num > 0 && proxyRules.length >= config.web_num)} onClick={() => {
                 setProxyModalVisible(true);
                 proxyForm.setFieldsValue({backend_ip: availableIPs[0]})
             }}>添加代理</Button>} variant="borderless">
@@ -2890,6 +2896,7 @@ await api.vmPower(hostName!, uuid!, 'H_CLOSE')
             key: 'pci',
             label: 'PCI设备',
             children: <Card title="PCI设备直通" extra={<Button type="primary" icon={<PlusOutlined/>}
+                                                            disabled={config.pci_num > 0 && vm && vm.config && vm.config.pci_all && Object.keys(vm.config.pci_all).length >= config.pci_num}
                                                             onClick={handleOpenPciModal}>添加PCI设备</Button>}
                             variant="borderless">
                 {vm && vm.config && vm.config.pci_all && Object.keys(vm.config.pci_all).length > 0 ? (
@@ -2924,7 +2931,7 @@ await api.vmPower(hostName!, uuid!, 'H_CLOSE')
         {
             key: 'usb',
             label: 'USB设备',
-            children: <Card title="USB设备管理" extra={<Button type="primary" icon={<PlusOutlined/>} onClick={handleOpenUsbModal}>添加USB设备</Button>} variant="borderless">
+            children: <Card title="USB设备管理" extra={<Button type="primary" icon={<PlusOutlined/>} disabled={config.usb_num > 0 && usbList.length >= config.usb_num} onClick={handleOpenUsbModal}>添加USB设备</Button>} variant="borderless">
                 {usbList && usbList.length > 0 ? (
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                         {usbList.map((usb, index) => (
@@ -2961,7 +2968,7 @@ await api.vmPower(hostName!, uuid!, 'H_CLOSE')
             key: 'backup',
             label: '备份管理',
             children: <Card title="备份管理" extra={<Button type="primary" icon={<PlusOutlined/>}
-                                                            disabled={!hasPermission(userPermissions, VM_PERMISSION.VM_BACKUP)}
+                                                            disabled={!hasPermission(userPermissions, VM_PERMISSION.VM_BACKUP) || (config.bak_num > 0 && backups.length >= config.bak_num)}
                                                             onClick={() => setBackupModalVisible(true)}>创建备份</Button>}
                             variant="borderless">
                 {backups && backups.length > 0 ? (
@@ -3222,6 +3229,9 @@ await api.vmPower(hostName!, uuid!, 'H_CLOSE')
                                     <span>主机名称: {hostName}</span>
                                     <span>主机类型: {hostConfig?.server_type || vm.config?.virt_type || 'Hyper-V'}</span>
                                     <span>系统: {getOSDisplayName(config.os_name || '')}</span>
+                                    {vm.config?.nic_all && Object.values(vm.config.nic_all).some((nic: any) => nic.nic_type !== 'pub') && hostConfig?.public_addr?.length ? (
+                                        <span>公网IP: {hostConfig.public_addr[0]}</span>
+                                    ) : null}
                                 </div>
                             </div>
                         </div>
@@ -3250,9 +3260,13 @@ await api.vmPower(hostName!, uuid!, 'H_CLOSE')
                               // owners tab 仅管理员/主所有者可见
                               if (OWNER_ONLY_TABS.has(i.key)) return isOwnerOrAdmin;
                               if (!requiredPerm) return true; // overview等无需权限的Tab始终显示
-                              // HIDDEN_TABS：权限不足时直接隐藏（平台不支持此功能）
+                              // 仅管理员跳过配额和权限限制（主所有者仍受user_permission约束）
+                              if (isAdminUser) return true;
+                              // 配额为0时直接隐藏Tab（该虚拟机不支持此功能）
+                              const quota = getTabQuota(config, i.key);
+                              if (quota === 0) return false;
+                              // HIDDEN_TABS：权限不足时直接隐藏
                               if (HIDDEN_TABS.has(i.key)) return hasPermission(userPermissions, requiredPerm);
-                              // READONLY_TABS：权限不足时仍显示（可查看但不可操作）
                               return true;
                           }).map(i => ({key: i.key, label: i.label}))} tabBarStyle={{marginBottom: 0}}/>
                 </div>
@@ -3263,6 +3277,11 @@ await api.vmPower(hostName!, uuid!, 'H_CLOSE')
                     // owners tab 仅管理员/主所有者可见
                     if (OWNER_ONLY_TABS.has(i.key)) return isOwnerOrAdmin;
                     if (!requiredPerm) return true;
+                    // 仅管理员跳过配额和权限限制
+                    if (isAdminUser) return true;
+                    // 配额为0时直接隐藏Tab
+                    const quota = getTabQuota(config, i.key);
+                    if (quota === 0) return false;
                     if (HIDDEN_TABS.has(i.key)) return hasPermission(userPermissions, requiredPerm);
                     return true;
                 }).find(i => i.key === activeTab)?.children}
@@ -3680,12 +3699,12 @@ await api.vmPower(hostName!, uuid!, 'H_CLOSE')
                    onOk={() => ownerForm.submit()} confirmLoading={ownerActionLoading}>
                 <Form form={ownerForm} onFinish={handleAddOwner} layout="vertical">
                     <Form.Item label="用户名" name="username" rules={[{required: true, message: '请输入用户名'}]}
-                               help="添加后该用户将共享此虚拟机的访问权限，但不会占用该用户的资源配额"><Input
+                               help="添加后该用户将共享此虚拟机的访问权限，但不会占用资源配额"><Input
                         placeholder="请输入用户名"/></Form.Item>
                 </Form>
                 <div className="flex items-start space-x-2 mt-2 text-sm text-orange-600">
                     <SafetyCertificateOutlined className="mt-1"/>
-                    <p>新的共享者必须拥有<strong>对应主机的访问权限</strong>才能看到该虚拟机</p>
+                    <p>新的共享者必须拥有<strong>对应主机的访问权限</strong>才能看到该虚拟机!</p>
                 </div>
             </Modal>
 

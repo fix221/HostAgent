@@ -321,6 +321,36 @@ class BasicServer:
                 return False
         return False
 
+    # 扫描后标记消失/恢复的虚拟机 ####################################################
+    def _mark_missing_vms(self, scanned_names: set) -> tuple:
+        """
+        扫描完成后，对比vm_saving中已有的虚拟机和实际扫描到的列表：
+        - 未扫描到的标记为 vm_deleted = True（软删除）
+        - 重新扫描到的恢复为 vm_deleted = False
+        :param scanned_names: 本次扫描到的虚拟机名称集合
+        :return: (标记删除数, 恢复数)
+        """
+        marked_count = 0
+        recovered_count = 0
+        for vm_name, vm_conf in self.vm_saving.items():
+            if vm_name in scanned_names:
+                # 扫描到了，如果之前被标记为删除则恢复
+                if getattr(vm_conf, 'vm_deleted', False):
+                    vm_conf.vm_deleted = False
+                    recovered_count += 1
+                    self.push_log(ZMessage(
+                        success=True, action="VScanner",
+                        message=f"虚拟机已恢复（重新发现）: {vm_name}"))
+            else:
+                # 未扫描到，标记为删除
+                if not getattr(vm_conf, 'vm_deleted', False):
+                    vm_conf.vm_deleted = True
+                    marked_count += 1
+                    self.push_log(ZMessage(
+                        success=True, action="VScanner",
+                        message=f"虚拟机未找到，标记为已删除: {vm_name}"))
+        return marked_count, recovered_count
+
     # 判断是否为远程宿主机 ##########################################################
     def flag_web(self) -> bool:
         """判断是否为远程主机"""

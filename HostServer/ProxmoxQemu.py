@@ -325,6 +325,7 @@ class HostServer(BasicServer):
 
             scanned_count = 0
             added_count = 0
+            scanned_names = set()
 
             # 遍历虚拟机列表 ===================================================
             for vm in vms:
@@ -336,6 +337,7 @@ class HostServer(BasicServer):
                     continue
 
                 scanned_count += 1
+                scanned_names.add(vm_name)
 
                 # 检查是否已存在 ===============================================
                 if vm_name in self.vm_saving:
@@ -361,21 +363,26 @@ class HostServer(BasicServer):
                 )
                 self.push_log(log_msg)
 
+            # 标记消失/恢复的虚拟机 ============================================
+            marked_count, recovered_count = self._mark_missing_vms(scanned_names)
+
             # 保存到数据库 =====================================================
-            if added_count > 0:
+            if added_count > 0 or marked_count > 0 or recovered_count > 0:
                 success = self.data_set()
                 if not success:
                     return ZMessage(
                         success=False, action="VScanner",
-                        message="Failed to save scanned DockManage to database")
+                        message="保存扫描的虚拟机到数据库失败")
 
             return ZMessage(
                 success=True,
                 action="VScanner",
-                message=f"扫描完成。共扫描到{scanned_count}个虚拟机，新增{added_count}个虚拟机配置。",
+                message=f"扫描完成。共扫描到{scanned_count}个虚拟机，新增{added_count}个，标记删除{marked_count}个，恢复{recovered_count}个。",
                 results={
                     "scanned": scanned_count,
                     "added": added_count,
+                    "marked_deleted": marked_count,
+                    "recovered": recovered_count,
                     "prefix_filter": filter_prefix
                 }
             )
@@ -541,9 +548,12 @@ class HostServer(BasicServer):
             if not src_ext:
                 src_ext = '.qcow2'  # 默认格式
             vm_disk_dir = f"/var/lib/vz/images/{vm_vmid}"
-            disk_name = f"vm-{vm_vmid}-disk-0{src_ext}"
-            dest_image = f"{vm_disk_dir}/{disk_name}"
             system_storage = self.hs_config.system_path or "local"
+            # 查询当前虚拟机已有磁盘编号，计算下一个可用编号 ==================
+            # （EFI磁盘会占用disk-0，系统盘需要用disk-1）
+            next_disk_idx = self._get_next_disk_index(client, vm_vmid)
+            disk_name = f"vm-{vm_vmid}-disk-{next_disk_idx}{src_ext}"
+            dest_image = f"{vm_disk_dir}/{disk_name}"
             # 判断是否为PVE存储名（不含/则视为存储名，走import流程）=============
             images_is_storage = '/' not in self.hs_config.images_path
             if images_is_storage:
@@ -670,7 +680,11 @@ class HostServer(BasicServer):
                 # 刷新存储，确保PVE识别到新磁盘文件 ============================
                 self._refresh_storage(client, system_storage)
                 vm_conn = client.nodes(self.hs_config.launch_path).qemu(vm_vmid)
-                vm_conn.config.put(ide0=f"{system_storage}:{vm_vmid}/{disk_name}")
+                # 查询实际的unused磁盘路径（importdisk自动分配编号）============
+                actual_disk = self._find_unused_disk(vm_conn, system_storage, vm_vmid)
+                if not actual_disk:
+                    actual_disk = f"{system_storage}:{vm_vmid}/{disk_name}"
+                vm_conn.config.put(ide0=actual_disk)
                 # 设置启动项（磁盘挂载后才能生效）================================
                 vm_conn.config.put(boot=boot_order, bootdisk='ide0')
                 # 根据 hdd_num(MB) 扩容系统盘到目标大小 ==========================
@@ -757,7 +771,11 @@ class HostServer(BasicServer):
                 # 刷新存储，确保PVE识别到新复制的磁盘文件 ======================
                 self._refresh_storage(client, system_storage)
                 vm_conn = client.nodes(self.hs_config.launch_path).qemu(vm_vmid)
-                vm_conn.config.put(ide0=f"{system_storage}:{vm_vmid}/{disk_name}")
+                # 查询实际的unused磁盘路径（cp后PVE可能分配不同编号）==========
+                actual_disk = self._find_unused_disk(vm_conn, system_storage, vm_vmid)
+                if not actual_disk:
+                    actual_disk = f"{system_storage}:{vm_vmid}/{disk_name}"
+                vm_conn.config.put(ide0=actual_disk)
                 # 设置启动项（磁盘挂载后才能生效）================================
                 vm_conn.config.put(boot=boot_order, bootdisk='ide0')
                 # 根据 hdd_num(MB) 扩容系统盘到目标大小 ==========================
@@ -1361,6 +1379,70 @@ class HostServer(BasicServer):
             logger.error(f"查找SCSI设备时出错: {str(e)}")
             traceback.print_exc()
             return None
+
+    # 获取下一个可用磁盘编号 ###################################################
+    def _get_next_disk_index(self, client, vm_vmid: int) -> int:
+        """查询虚拟机当前已有的磁盘，计算下一个可用的磁盘编号。
+        
+        EFI磁盘会占用disk-0，所以系统盘需要用更高的编号。
+        """
+        import re
+        try:
+            vm_conn = client.nodes(self.hs_config.launch_path).qemu(vm_vmid)
+            config = vm_conn.config.get()
+            # 扫描所有已存在的磁盘编号（从配置值中提取 vm-XXX-disk-N 的编号）
+            used_indices = set()
+            disk_pattern = re.compile(rf'vm-{vm_vmid}-disk-(\d+)')
+            for key, value in config.items():
+                if isinstance(value, str):
+                    match = disk_pattern.search(value)
+                    if match:
+                        used_indices.add(int(match.group(1)))
+            # 同时检查unused磁盘 ===============================================
+            for key in config:
+                if key.startswith('unused'):
+                    value = config[key]
+                    if isinstance(value, str):
+                        match = disk_pattern.search(value)
+                        if match:
+                            used_indices.add(int(match.group(1)))
+            # 找到下一个可用编号 ===============================================
+            next_idx = 0
+            while next_idx in used_indices:
+                next_idx += 1
+            logger.info(f"虚拟机 {vm_vmid} 已用磁盘编号: {used_indices}, 下一个可用: {next_idx}")
+            return next_idx
+        except Exception as e:
+            logger.warning(f"查询磁盘编号失败({e})，默认使用1（跳过EFI的disk-0）")
+            return 1
+
+    # 查找unused磁盘 ###########################################################
+    def _find_unused_disk(self, vm_conn, storage_name: str, vm_vmid: int) -> str:
+        """查询虚拟机配置中的unused磁盘，返回实际的磁盘路径。
+        
+        importdisk/cp后磁盘会以unused状态出现在配置中，
+        通过此方法获取实际的磁盘路径用于挂载。
+        """
+        try:
+            config = vm_conn.config.get()
+            # 查找所有unused磁盘，优先匹配目标存储 =============================
+            unused_disks = []
+            for key, value in config.items():
+                if key.startswith('unused') and isinstance(value, str):
+                    # unused磁盘格式: "local:200/vm-200-disk-1.qcow2"
+                    if str(vm_vmid) in value:
+                        unused_disks.append(value)
+            if unused_disks:
+                # 如果有多个unused磁盘，选择最新的（编号最大的）
+                unused_disks.sort()
+                selected = unused_disks[-1]
+                logger.info(f"找到unused磁盘: {selected}")
+                return selected
+            logger.warning(f"未找到虚拟机 {vm_vmid} 的unused磁盘")
+            return ""
+        except Exception as e:
+            logger.warning(f"查询unused磁盘失败: {e}")
+            return ""
 
     # 刷新PVE存储 #############################################################
     def _refresh_storage(self, client, storage_name: str):

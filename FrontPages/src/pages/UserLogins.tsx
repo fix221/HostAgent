@@ -51,7 +51,7 @@ function UserLogins() {
   const [turnstileEnabled, setTurnstileEnabled] = useState(false)
   const [turnstileSiteKey, setTurnstileSiteKey] = useState('')
   const [turnstileToken, setTurnstileToken] = useState('')
-  const turnstileRef = useRef<HTMLDivElement>(null)
+  const turnstileContainerRef = useRef<HTMLDivElement | null>(null)
   const turnstileWidgetId = useRef<string | null>(null)
 
   // 加载Turnstile配置
@@ -79,10 +79,11 @@ function UserLogins() {
       if ((window as any).turnstile && container) {
         // 清除旧的widget
         if (turnstileWidgetId.current) {
-          try { (window as any).turnstile.remove(turnstileWidgetId.current) } catch (_) {}
+          try { (window as any).turnstile.remove(turnstileWidgetId.current) } catch (_) { /* 忽略 */ }
         }
         turnstileWidgetId.current = (window as any).turnstile.render(container, {
           sitekey: turnstileSiteKey,
+          size: 'flexible',
           callback: (token: string) => setTurnstileToken(token),
           'expired-callback': () => setTurnstileToken(''),
           'error-callback': () => setTurnstileToken(''),
@@ -105,16 +106,24 @@ function UserLogins() {
     }
   }, [turnstileEnabled, turnstileSiteKey])
 
-  // 当Turnstile配置加载完成后渲染
+  // 当Turnstile配置加载完成后渲染（也处理已挂载容器的情况）
   useEffect(() => {
-    if (turnstileEnabled && turnstileSiteKey && turnstileRef.current) {
-      renderTurnstile(turnstileRef.current)
+    if (turnstileEnabled && turnstileSiteKey && turnstileContainerRef.current) {
+      renderTurnstile(turnstileContainerRef.current)
     }
     return () => {
       if (turnstileWidgetId.current && (window as any).turnstile) {
-        try { (window as any).turnstile.remove(turnstileWidgetId.current) } catch (_) {}
+        try { (window as any).turnstile.remove(turnstileWidgetId.current) } catch (_) { /* 忽略 */ }
         turnstileWidgetId.current = null
       }
+    }
+  }, [turnstileEnabled, turnstileSiteKey, renderTurnstile])
+
+  // callback ref: 当DOM元素挂载时自动触发渲染（解决条件渲染导致的竞态问题）
+  const turnstileRef = useCallback((node: HTMLDivElement | null) => {
+    turnstileContainerRef.current = node
+    if (node && turnstileEnabled && turnstileSiteKey) {
+      renderTurnstile(node)
     }
   }, [turnstileEnabled, turnstileSiteKey, renderTurnstile])
 
@@ -122,7 +131,7 @@ function UserLogins() {
   const resetTurnstile = () => {
     setTurnstileToken('')
     if (turnstileWidgetId.current && (window as any).turnstile) {
-      try { (window as any).turnstile.reset(turnstileWidgetId.current) } catch (_) {}
+      try { (window as any).turnstile.reset(turnstileWidgetId.current) } catch (_) { /* 忽略 */ }
     }
   }
 
@@ -451,7 +460,7 @@ function UserLogins() {
           </h1>
           <p style={{ color: 'var(--text-secondary)', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8 }}>
             <LockOutlined style={{ fontSize: 16 }} />
-            虚拟化管理平台
+            开源 & 多平台虚拟化管理平台
           </p>
         </div>
 
@@ -533,6 +542,7 @@ function UserLogins() {
                 style={{
                   borderRadius: '8px',
                   boxShadow: '0 1px 2px 0 rgba(0, 0, 0, 0.05)',
+                  ...(transparentMode ? { background: 'transparent', borderColor: 'rgba(255,255,255,0.3)' } : {}),
                 }}
               />
             </Form.Item>
@@ -555,6 +565,7 @@ function UserLogins() {
                 style={{
                   borderRadius: '8px',
                   boxShadow: '0 1px 2px 0 rgba(0, 0, 0, 0.05)',
+                  ...(transparentMode ? { background: 'transparent', borderColor: 'rgba(255,255,255,0.3)' } : {}),
                 }}
               />
             </Form.Item>
@@ -567,6 +578,13 @@ function UserLogins() {
                 showIcon
                 style={{ marginBottom: 16, borderRadius: '8px' }}
               />
+            )}
+
+            {/* Turnstile验证码 */}
+            {turnstileEnabled && turnstileSiteKey && (
+              <div className="turnstile-container" style={{ marginBottom: 16, width: '100%' }}>
+                <div ref={turnstileRef} style={{ width: '100%' }} />
+              </div>
             )}
 
             {/* 登录按钮 */}
@@ -629,6 +647,7 @@ function UserLogins() {
                 style={{
                   borderRadius: '8px',
                   boxShadow: '0 1px 2px 0 rgba(0, 0, 0, 0.05)',
+                  ...(transparentMode ? { background: 'transparent', borderColor: 'rgba(255,255,255,0.3)' } : {}),
                 }}
               />
             </Form.Item>
@@ -641,6 +660,13 @@ function UserLogins() {
                 showIcon
                 style={{ marginBottom: 16, borderRadius: '8px' }}
               />
+            )}
+
+            {/* Turnstile验证码 */}
+            {turnstileEnabled && turnstileSiteKey && (
+              <div className="turnstile-container" style={{ marginBottom: 16, width: '100%' }}>
+                <div ref={turnstileRef} style={{ width: '100%' }} />
+              </div>
             )}
 
             {/* 登录按钮 */}
@@ -665,43 +691,21 @@ function UserLogins() {
               </Button>
             </Form.Item>
 
-            {/* Token提示信息 */}
+            {/* 提示信息 */}
             <div
-              style={{
-                marginTop: 24,
+                className="glass-card"
+                style={{
+                marginTop: 10,
                 textAlign: 'center',
                 fontSize: '14px',
                 color: 'var(--text-secondary)',
               }}
             >
-              <div
-                className="glass-card"
-                style={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  gap: 4,
-                  background: 'var(--bg-secondary)',
-                  backdropFilter: 'blur(10px)',
-                  WebkitBackdropFilter: 'blur(10px)',
-                  padding: '12px 16px',
-                  borderRadius: '8px',
-                  border: '1px solid var(--border-primary)',
-                  color: 'var(--text-primary)',
-                }}
-              >
-                <InfoCircleOutlined style={{ color: 'var(--accent-primary)' }} />
-                <span style={{ color: 'var(--text-primary)' }}>启动服务时会在控制台显示访问Token</span>
-              </div>
+              <span style={{ color: 'var(--text-primary)' }}>启动服务时会在控制台显示访问Token</span>
             </div>
           </Form>
         )}
-        {/* Turnstile验证码（两种登录方式共用） */}
-        {turnstileEnabled && turnstileSiteKey && (
-          <div style={{ marginBottom: 16, marginTop: 8, display: 'flex', justifyContent: 'center' }}>
-            <div ref={turnstileRef} />
-          </div>
-        )}
+
       </div>
 
       {/* 找回密码模态框 */}
@@ -746,14 +750,22 @@ function UserLogins() {
               { required: true, message: '请输入邮箱地址' },
               { type: 'email', message: '请输入有效的邮箱地址' },
             ]}
-            extra="我们将向此邮箱发送密码重置链接"
+            extra=""
           >
             <Input
               size="large"
               placeholder="请输入注册时使用的邮箱"
               style={{ borderRadius: '8px' }}
             />
+              <span>我们将向此邮箱发送密码重置链接</span>
           </Form.Item>
+
+          {/* Turnstile验证码 */}
+          {turnstileEnabled && turnstileSiteKey && (
+            <div style={{ marginBottom: 16, width: '100%' }}>
+              <div ref={turnstileRef} style={{ width: '100%' }} />
+            </div>
+          )}
 
           {/* 按钮组 */}
           <Form.Item style={{ marginBottom: 0 }}>
