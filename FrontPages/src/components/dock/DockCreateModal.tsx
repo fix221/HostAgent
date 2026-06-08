@@ -860,14 +860,10 @@ const DockCreateModal: React.FC<DockCreateModalProps> = ({
                                         const remainCpu = (userQuota?.quota_cpu || 0) - (userQuota?.used_cpu || 0)
                                         const remainRam = (userQuota?.quota_ram || 0) - (userQuota?.used_ram || 0)
                                         const remainSsd = (userQuota?.quota_ssd || 0) - (userQuota?.used_ssd || 0)
-                                        const remainBwUp = (userQuota?.quota_upload_bw || 0) - (userQuota?.used_upload_bw || 0)
-                                        const remainBwDn = (userQuota?.quota_download_bw || 0) - (userQuota?.used_download_bw || 0)
                                         const exceedReasons: string[] = []
                                         if (planCfg.cpu_num > remainCpu) exceedReasons.push(`CPU超出${planCfg.cpu_num - remainCpu}核`)
                                         if (planCfg.mem_num > remainRam) exceedReasons.push(`内存超出${planCfg.mem_num - remainRam}MB`)
                                         if (planCfg.hdd_num > remainSsd) exceedReasons.push(`硬盘超出${planCfg.hdd_num - remainSsd}MB`)
-                                        if (planCfg.speed_u > remainBwUp) exceedReasons.push(`上行带宽超出`)
-                                        if (planCfg.speed_d > remainBwDn) exceedReasons.push(`下行带宽超出`)
                                         const isExceeded = exceedReasons.length > 0
 
                                         return (
@@ -910,12 +906,15 @@ const DockCreateModal: React.FC<DockCreateModalProps> = ({
                                             >
                                                 <div style={{ fontWeight: 600, fontSize: 14, marginBottom: 8 }}>{planName}</div>
                                                 <div className="space-y-1 text-xs" style={{ color: isExceeded ? '#999' : '#666' }}>
-                                                    <div>CPU: {planCfg.cpu_num}核</div>
-                                                    <div>内存: {planCfg.mem_num >= 1024 ? `${Math.round(planCfg.mem_num / 1024)}GB` : `${planCfg.mem_num}MB`}</div>
-                                                    <div>硬盘: {planCfg.hdd_num >= 1024 ? `${Math.round(planCfg.hdd_num / 1024)}GB` : `${planCfg.hdd_num}MB`}</div>
+                                                    <div>CPU: {planCfg.cpu_num}核 {planCfg.cpu_per ? `(可用率${planCfg.cpu_per}%)` : ''}</div>
+                                                    <div>RAM: {planCfg.mem_num >= 1024 ? `${Math.round(planCfg.mem_num / 1024)}GB` : `${planCfg.mem_num}MB`} / GPU: {planCfg.gpu_mem ? `${planCfg.gpu_mem}MB` : '无'}</div>
+                                                    <div>HDD: {planCfg.hdd_num >= 1024 ? `${Math.round(planCfg.hdd_num / 1024)}GB` : `${planCfg.hdd_num}MB`} / IOPS: {planCfg.hdd_iop ?? 1000}</div>
                                                     <div>带宽: ↑{planCfg.speed_u}Mbps ↓{planCfg.speed_d}Mbps</div>
-                                                    <div>网卡: {planCfg.nic_min ?? 1}~{planCfg.nic_max ?? 1}张</div>
-                                                    <div>IPv4: 最多{planCfg.ip4_max ?? 1}个 / IPv6: 最多{planCfg.ip6_max ?? 0}个</div>
+                                                    <div>流量: {planCfg.flu_num >= 1024 ? `${Math.round(planCfg.flu_num / 1024)}GB` : `${planCfg.flu_num}MB`} / {planCfg.flu_rst?.[0] ?? 31}天 / 超限{planCfg.flu_rst?.[1] ?? 10}M</div>
+                                                    <div>端口: {planCfg.nat_num ?? 0}个 / Web: {planCfg.web_num ?? 0}个</div>
+                                                    <div>网卡: {planCfg.nic_max ?? 1} / IPv4: {planCfg.ip4_max ?? 1} / IPv6: {planCfg.ip6_max ?? 0}</div>
+                                                    <div>备份数量: {planCfg.bak_num ?? 1} / ISO光盘数: {planCfg.iso_num ?? 1}</div>
+                                                    <div>数据盘: {planCfg.dat_num ?? 1}个 / 可用空间: {planCfg.dat_all ? (planCfg.dat_all >= 1024 ? `${Math.round(planCfg.dat_all / 1024)}GB` : `${planCfg.dat_all}MB`) : '0MB'}</div>
                                                 </div>
                                                 {isExceeded && (
                                                     <div style={{ marginTop: 6, color: '#ff4d4f', fontSize: 11 }}>
