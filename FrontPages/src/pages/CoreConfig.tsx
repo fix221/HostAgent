@@ -69,21 +69,27 @@ function CoreConfig() {
         registrationForm.setFieldsValue({
           registration_enabled: settings.registration_enabled === '1',
           email_verification_enabled: settings.email_verification_enabled === '1',
+          default_allowed_hosts: settings.default_allowed_hosts || '',
+          default_free_config: settings.default_free_config !== '0',
           default_quota_cpu: parseInt(settings.default_quota_cpu) || 2,
           default_quota_ram: parseInt(settings.default_quota_ram) || 4,
+          default_quota_hdd: parseInt(settings.default_quota_hdd) || 50,
           default_quota_ssd: parseInt(settings.default_quota_ssd) || 20,
           default_quota_gpu: parseInt(settings.default_quota_gpu) || 0,
           default_quota_nat_ports: parseInt(settings.default_quota_nat_ports) || 5,
-          default_quota_web_proxy: parseInt(settings.default_quota_web_proxy) || 0,
-          default_quota_bandwidth_up: parseInt(settings.default_quota_bandwidth_up) || 10,
-          default_quota_bandwidth_down: parseInt(settings.default_quota_bandwidth_down) || 10,
-          default_quota_traffic: parseInt(settings.default_quota_traffic) || 100,
+          default_quota_internal_ip: parseInt(settings.default_quota_internal_ip) || 5,
+          default_quota_web_proxy: parseInt(settings.default_quota_web_proxy) || 2,
+          default_quota_public_ip: parseInt(settings.default_quota_public_ip) || 2,
+          default_quota_bandwidth_up: parseInt(settings.default_quota_bandwidth_up) || 100,
+          default_quota_bandwidth_down: parseInt(settings.default_quota_bandwidth_down) || 100,
+          default_quota_traffic: parseInt(settings.default_quota_traffic) || 0,
           default_can_create_vm: settings.default_can_create_vm !== '0',
           default_can_modify_vm: settings.default_can_modify_vm !== '0',
           default_can_delete_vm: settings.default_can_delete_vm !== '0',
         })
         // 设置邮件表单
         emailForm.setFieldsValue({
+          base_url: settings.base_url || '',
           resend_email: settings.resend_email || '',
           resend_domain: settings.resend_domain || '',
           resend_apikey: settings.resend_apikey || '',
@@ -129,25 +135,7 @@ function CoreConfig() {
     }
   }
 
-  /**
-   * 重置Token
-   */
-  const resetToken = async () => {
-    try {
-      setLoading(true)
-      const res = await api.resetToken()
-      if (res.code === 200 && res.data) {
-        setCurrentToken(res.data.token)
-        message.success(`Token已重置: ${res.data.token}`)
-      } else {
-        message.error(res.msg || '重置失败')
-      }
-    } catch (error) {
-      message.error('重置Token失败')
-    } finally {
-      setLoading(false)
-    }
-  }
+
 
   /**
    * 保存配置
@@ -197,12 +185,17 @@ function CoreConfig() {
       const data = {
         registration_enabled: values.registration_enabled ? '1' : '0',
         email_verification_enabled: values.email_verification_enabled ? '1' : '0',
+        default_allowed_hosts: values.default_allowed_hosts || '',
+        default_free_config: values.default_free_config ? '1' : '0',
         default_quota_cpu: values.default_quota_cpu.toString(),
         default_quota_ram: values.default_quota_ram.toString(),
+        default_quota_hdd: values.default_quota_hdd.toString(),
         default_quota_ssd: values.default_quota_ssd.toString(),
         default_quota_gpu: values.default_quota_gpu.toString(),
         default_quota_nat_ports: values.default_quota_nat_ports.toString(),
+        default_quota_internal_ip: values.default_quota_internal_ip.toString(),
         default_quota_web_proxy: values.default_quota_web_proxy.toString(),
+        default_quota_public_ip: values.default_quota_public_ip.toString(),
         default_quota_bandwidth_up: values.default_quota_bandwidth_up.toString(),
         default_quota_bandwidth_down: values.default_quota_bandwidth_down.toString(),
         default_quota_traffic: values.default_quota_traffic.toString(),
@@ -283,7 +276,7 @@ function CoreConfig() {
         <Card title={<span><span className="text-blue-600">🔑</span> 访问Token管理</span>} className="shadow-sm">
           <div className="space-y-4">
             <div>
-                <label className="block text-sm font-medium mb-2">当前Token</label>
+              <label className="block text-sm font-medium mb-2">当前Token</label>
               <div className="flex gap-2">
                 <Input
                   type={tokenVisible ? 'text' : 'password'}
@@ -293,28 +286,18 @@ function CoreConfig() {
                 />
                 <Button icon={tokenVisible ? <EyeInvisibleOutlined /> : <EyeOutlined />} onClick={toggleTokenVisibility} />
                 <Button icon={<CopyOutlined />} onClick={copyToken} />
+                <Button icon={<ReloadOutlined />} loading={loading} onClick={() => {
+                  const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789'
+                  let token = ''
+                  for (let i = 0; i < 16; i++) token += chars.charAt(Math.floor(Math.random() * chars.length))
+                  setNewToken({ newToken: token })
+                }} title="随机生成16位Token" />
               </div>
             </div>
 
-            <div className="border-t pt-4">
-                <label className="block text-sm font-medium mb-2">设置新Token</label>
-              <Form onFinish={setNewToken}>
-                <div className="flex gap-2">
-                  <Form.Item name="newToken" className="flex-1 mb-0">
-                    <Input placeholder="留空则自动生成随机Token" />
-                  </Form.Item>
-                  <Button type="primary" htmlType="submit" loading={loading}>设置</Button>
-                </div>
-              </Form>
-            </div>
-
-            <Button type="default" danger block icon={<ReloadOutlined />} onClick={resetToken} loading={loading}>
-              重置Token
-            </Button>
-
             <Alert
               message="安全提示"
-              description="重置Token后，所有使用旧Token的API调用都将失效。请确保更新所有相关配置。"
+              description="修改Token后，所有使用旧Token的API调用都将失效。请确保更新所有相关配置。"
               type="warning"
               showIcon
             />
@@ -443,24 +426,49 @@ function CoreConfig() {
               </div>
 
               <div className="border-t pt-4">
+<h4 className="text-sm font-medium mb-3">新用户默认配置</h4>
+                <Form.Item name="default_allowed_hosts" label="默认可访问主机" className="mb-3" extra="多个主机用英文逗号分隔，留空表示不限制">
+                  <Input placeholder="host1,host2 或留空表示全部" className="w-full" />
+                </Form.Item>
+                <div className="flex items-center justify-between mb-3">
+                  <div>
+                    <p className="text-sm font-medium">允许自由配置</p>
+                    <p className="text-xs" style={{ color: 'var(--text-secondary)' }}>用户可自行调整虚拟机配置</p>
+                  </div>
+                  <Form.Item name="default_free_config" valuePropName="checked" className="mb-0">
+                    <Switch />
+                  </Form.Item>
+                </div>
+              </div>
+
+              <div className="border-t pt-4">
 <h4 className="text-sm font-medium mb-3">新用户默认资源配额</h4>
                 <div className="grid grid-cols-2 gap-3">
-                  <Form.Item name="default_quota_cpu" label="CPU核心" className="mb-2">
+                  <Form.Item name="default_quota_cpu" label="CPU核心(个)" className="mb-2">
                     <InputNumber min={0} max={32} className="w-full" />
                   </Form.Item>
-                  <Form.Item name="default_quota_ram" label="内存(GB)" className="mb-2">
+                  <Form.Item name="default_quota_ram" label="RAM内存(GB)" className="mb-2">
                     <InputNumber min={0} max={128} className="w-full" />
                   </Form.Item>
-                  <Form.Item name="default_quota_ssd" label="磁盘(GB)" className="mb-2">
+                  <Form.Item name="default_quota_hdd" label="HDD磁盘(GB)" className="mb-2">
+                    <InputNumber min={0} max={10000} className="w-full" />
+                  </Form.Item>
+                  <Form.Item name="default_quota_ssd" label="SSD磁盘(GB)" className="mb-2">
                     <InputNumber min={0} max={1000} className="w-full" />
                   </Form.Item>
-                  <Form.Item name="default_quota_gpu" label="GPU" className="mb-2">
+                  <Form.Item name="default_quota_gpu" label="GPU显存(GB)" className="mb-2">
                     <InputNumber min={0} max={8} className="w-full" />
                   </Form.Item>
-                  <Form.Item name="default_quota_nat_ports" label="NAT端口" className="mb-2">
+                  <Form.Item name="default_quota_nat_ports" label="NAT端口(个)" className="mb-2">
                     <InputNumber min={0} max={100} className="w-full" />
                   </Form.Item>
-                  <Form.Item name="default_quota_web_proxy" label="Web代理" className="mb-2">
+                  <Form.Item name="default_quota_internal_ip" label="内网IP(个)" className="mb-2">
+                    <InputNumber min={0} max={50} className="w-full" />
+                  </Form.Item>
+                  <Form.Item name="default_quota_web_proxy" label="WEB代理(个)" className="mb-2">
+                    <InputNumber min={0} max={10} className="w-full" />
+                  </Form.Item>
+                  <Form.Item name="default_quota_public_ip" label="公网IP(个)" className="mb-2">
                     <InputNumber min={0} max={10} className="w-full" />
                   </Form.Item>
                   <Form.Item name="default_quota_bandwidth_up" label="上行带宽(Mbps)" className="mb-2">
@@ -469,7 +477,7 @@ function CoreConfig() {
                   <Form.Item name="default_quota_bandwidth_down" label="下行带宽(Mbps)" className="mb-2">
                     <InputNumber min={0} max={1000} className="w-full" />
                   </Form.Item>
-                  <Form.Item name="default_quota_traffic" label="每月流量(GB)" className="mb-2 col-span-2">
+                  <Form.Item name="default_quota_traffic" label="月流量(GB)" className="mb-2">
                     <InputNumber min={0} max={10000} className="w-full" />
                   </Form.Item>
                 </div>
@@ -477,7 +485,7 @@ function CoreConfig() {
 
               <div className="border-t pt-4">
 <h4 className="text-sm font-medium mb-3">新用户默认权限</h4>
-                <div className="space-y-2">
+                <div className="flex gap-4">
                   <Form.Item name="default_can_create_vm" valuePropName="checked" className="mb-0">
                     <Checkbox>允许创建虚拟机</Checkbox>
                   </Form.Item>
@@ -514,6 +522,10 @@ function CoreConfig() {
           />
 
           <Form form={emailForm} onFinish={saveEmailSettings} layout="vertical">
+            <Form.Item name="base_url" label="外网URL" extra="用于生成邮件验证链接等回调地址，如：https://example.com">
+              <Input placeholder="https://example.com" />
+            </Form.Item>
+
             <Form.Item name="resend_email" label="发件邮箱">
               <Input placeholder="noreply@yourdomain.com" />
             </Form.Item>
@@ -543,7 +555,7 @@ function CoreConfig() {
               </Form.Item>
 
               <Form.Item name="body" label="邮件正文" initialValue="您好，这是一封来自 OpenIDCS 系统的测试邮件。如果您收到这封邮件，说明邮件服务配置正常。————OpenIDCS 系统">
-                <TextArea rows={4} placeholder="请输入邮件正文内容..." />
+                <TextArea rows={6} placeholder="请输入邮件正文内容..." />
               </Form.Item>
 
               <Button type="primary" htmlType="submit" block loading={loading} icon={<MailOutlined />}>

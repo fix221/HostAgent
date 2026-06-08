@@ -558,7 +558,10 @@ def register():
                 api_key=settings.get('resend_apikey', ''),
                 from_email=settings.get('resend_email', '')
             )
-            verify_url = f"{request.host_url}verify_email?token={verify_token}"
+            base_url = settings.get('base_url', '').rstrip('/')
+            if not base_url:
+                base_url = request.host_url.rstrip('/')
+            verify_url = f"{base_url}/verify_email?token={verify_token}"
             email_service.send_verification_email(email, username, verify_url)
             
             return api_response_wrapper(200, '注册成功！请查收验证邮件')
