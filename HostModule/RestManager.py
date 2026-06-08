@@ -1857,7 +1857,7 @@ class RestManager:
             'uuid': vm_uuid,
             'config': config_data,
             'user_permissions': user_perm,
-            'is_admin': is_admin or is_token_login,
+            'is_admin': bool(is_admin or is_token_login),
             'current_user': current_username
         })
 

@@ -572,7 +572,7 @@ const [operationTimeoutId, setOperationTimeoutId] = useState<ReturnType<typeof s
                 }
 
                 // 判断当前用户是否为主所有者或管理员（用于控制owners tab可见性）
-                const isAdmin = (detailRes.data as any)?.is_admin === true
+                const isAdmin = !!(detailRes.data as any)?.is_admin
                 const ownerList = vmData.config?.own_all || {}
                 const currentUsername = (detailRes.data as any)?.current_user || ''
                 const ownerNames = Object.keys(ownerList)
