@@ -151,7 +151,7 @@
         box-shadow: var(--shadow-glass);
         transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         position: relative;
-        overflow: hidden;
+        overflow: visible;
     }
 
     [data-theme="light"] .glass-card {
