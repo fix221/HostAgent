@@ -155,8 +155,8 @@ jobs:
     - name: Upload artifact
       uses: actions/upload-artifact@v4
       with:
-        name: OpenIDCS-Client-cxfreeze-Windows
-        path: BuildCache/OpenIDCS-Client-Windows.zip
+        name: openidcs-client-freeze-winnt-x64
+        path: BuildCache/openidcs-client-freeze-winnt-x64.zip
         retention-days: 30
 
   # ============================================================
@@ -200,8 +200,8 @@ jobs:
     - name: Upload artifact
       uses: actions/upload-artifact@v4
       with:
-        name: OpenIDCS-Client-cxfreeze-Linux
-        path: BuildCache/OpenIDCS-Client-Linux.tar.gz
+        name: openidcs-client-freeze-linux-x64
+        path: BuildCache/openidcs-client-freeze-linux-x64.tar.gz
         retention-days: 30
 
   # ============================================================
@@ -240,8 +240,8 @@ jobs:
     - name: Upload artifact
       uses: actions/upload-artifact@v4
       with:
-        name: OpenIDCS-Client-cxfreeze-macOS
-        path: BuildCache/OpenIDCS-Client-macOS.tar.gz
+        name: openidcs-client-freeze-macos-a64
+        path: BuildCache/openidcs-client-freeze-macos-a64.tar.gz
         retention-days: 30
 
   # ============================================================
@@ -261,9 +261,9 @@ jobs:
         tag_name: ${{ inputs.version == 'alpha' && 'alpha' || (inputs.version != '' && format('v{0}', inputs.version) || 'beta') }}
         name: ${{ inputs.version == 'alpha' && 'Alpha Release' || (inputs.version != '' && format('Release v{0}', inputs.version) || 'Beta Release') }}
         files: |
-          OpenIDCS-Client-cxfreeze-Windows/OpenIDCS-Client-Windows.zip
-          OpenIDCS-Client-cxfreeze-Linux/OpenIDCS-Client-Linux.tar.gz
-          OpenIDCS-Client-cxfreeze-macOS/OpenIDCS-Client-macOS.tar.gz
+          openidcs-client-freeze-winnt-x64/openidcs-client-freeze-winnt-x64.zip
+          openidcs-client-freeze-linux-x64/openidcs-client-freeze-linux-x64.tar.gz
+          openidcs-client-freeze-macos-a64/openidcs-client-freeze-macos-a64.tar.gz
         draft: false
         prerelease: ${{ inputs.version == '' || inputs.version == 'alpha' }}
       env:

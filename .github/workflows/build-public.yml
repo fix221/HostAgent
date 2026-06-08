@@ -91,7 +91,7 @@ jobs:
     - name: Upload artifact
       uses: actions/upload-artifact@v4
       with:
-        name: OpenIDCS-Client-cxfreeze-Windows
+        name: openidcs-client-freeze-winnt-x64
         path: BuildCache/cxfreeze
         retention-days: 30
 
@@ -136,7 +136,7 @@ jobs:
     - name: Upload artifact
       uses: actions/upload-artifact@v4
       with:
-        name: OpenIDCS-Client-cxfreeze-Linux
+        name: openidcs-client-freeze-linux-x64
         path: BuildCache/cxfreeze
         retention-days: 30
 
@@ -174,7 +174,7 @@ jobs:
     - name: Upload artifact
       uses: actions/upload-artifact@v4
       with:
-        name: OpenIDCS-Client-nuitka-Windows
+        name: openidcs-client-nuitka-winnt-x64
         path: BuildCache/nuitka
         retention-days: 30
 
@@ -217,6 +217,6 @@ jobs:
     - name: Upload artifact
       uses: actions/upload-artifact@v4
       with:
-        name: OpenIDCS-Client-nuitka-Linux
+        name: openidcs-client-nuitka-linux-x64
         path: BuildCache/nuitka
         retention-days: 30

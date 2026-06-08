@@ -444,6 +444,15 @@ class HttpManager:
             return False
 
     # 启动Caddy服务 ##############################################################################
+    def _get_caddy_env(self):
+        """获取Caddy进程所需的环境变量（确保HOME已定义）"""
+        env = os.environ.copy()
+        if 'HOME' not in env:
+            env['HOME'] = os.getcwd()
+        if 'XDG_CONFIG_HOME' not in env:
+            env['XDG_CONFIG_HOME'] = os.path.join(os.getcwd(), '.config')
+        return env
+
     def launch_web(self):
         """启动Caddy服务"""
         try:
@@ -456,12 +465,14 @@ class HttpManager:
             caddy_log_dir.mkdir(parents=True, exist_ok=True)
             caddy_log_path = caddy_log_dir / "log-weball.log"
             self._caddy_log_file = open(caddy_log_path, "a", encoding="utf-8")
+            # Windows上不使用shell=True，避免cmd.exe解析导致参数丢失
             self.binary_proc = subprocess.Popen(
-                cmd, shell=True,
+                cmd,
                 stdout=self._caddy_log_file,
-                stderr=self._caddy_log_file
+                stderr=self._caddy_log_file,
+                env=self._get_caddy_env()
             )
-            time.sleep(2)  # 等待进程启动
+            time.sleep(3)  # 等待进程启动
 
             if self.binary_proc.poll() is None:
                 logger.info(f"[HttpManager] Caddy进程已启动，PID: {self.binary_proc.pid}")
@@ -523,25 +534,46 @@ class HttpManager:
         try:
             # 尝试重载配置（无论binary_proc状态如何）
             if os.name == 'nt':
+                # Windows: 先检查Caddy进程是否存活
+                if not self.binary_proc or self.binary_proc.poll() is not None:
+                    logger.warning("[HttpManager] Caddy进程未运行，尝试重新启动")
+                    return self.launch_web()
                 # 使用实例的管理端口进行重载
                 reload_cmd = [self.binary_path, "reload", "--config",
                               str(self.config_file), "--adapter", "caddyfile",
                               "--address", f"localhost:{self.manage_port}"]
                 logger.debug(f"[HttpManager] 重载服务命令: {' '.join(reload_cmd)}")
-                result = subprocess.run(reload_cmd, capture_output=True, text=True)
+                result = subprocess.run(reload_cmd, capture_output=True, text=True,
+                                        env=self._get_caddy_env())
                 if result.returncode == 0:
                     logger.info(f"[HttpManager] Caddy配置已重载（管理端口: {self.manage_port}）")
                     return True
                 else:
                     logger.warning(f"[HttpManager] Caddy重载失败: {result.stderr}")
-                    return False
+                    # 重载失败时尝试重启Caddy
+                    logger.info("[HttpManager] 尝试重启Caddy服务")
+                    self.closed_web()
+                    return self.launch_web()
             else:
-                # Linux/Mac: 如果有进程引用则发送信号
-                if self.binary_proc and self.binary_proc.poll() is None:
-                    self.binary_proc.send_signal(signal.SIGUSR1)
+                # Linux/Mac: 先检查Caddy进程是否存活
+                if not self.binary_proc or self.binary_proc.poll() is not None:
+                    logger.warning("[HttpManager] Caddy进程未运行，尝试重新启动")
+                    return self.launch_web()
+                # 使用caddy reload命令重载配置
+                reload_cmd = [self.binary_path, "reload", "--config",
+                              str(self.config_file), "--adapter", "caddyfile",
+                              "--address", f"localhost:{self.manage_port}"]
+                logger.debug(f"[HttpManager] 重载服务命令: {' '.join(reload_cmd)}")
+                result = subprocess.run(reload_cmd, capture_output=True, text=True,
+                                        env=self._get_caddy_env())
+                if result.returncode == 0:
                     logger.info(f"[HttpManager] Caddy配置已重载（管理端口: {self.manage_port}）")
                     return True
                 else:
+                    logger.warning(f"[HttpManager] Caddy重载失败: {result.stderr}")
+                    # 重载失败时尝试重启Caddy
+                    logger.info("[HttpManager] 尝试重启Caddy服务")
+                    self.closed_web()
                     return self.launch_web()
         except Exception as e:
             logger.error(f"[HttpManager] 重载Caddy配置时发生错误: {str(e)}")

@@ -111,7 +111,7 @@ jobs:
     - name: Upload artifact
       uses: actions/upload-artifact@v4
       with:
-        name: OpenIDCS-Client-nuitka-Windows
+        name: openidcs-client-nuitka-winnt-x64
         path: BuildCache/nuitka
         retention-days: 30
 
@@ -154,7 +154,7 @@ jobs:
     - name: Upload artifact
       uses: actions/upload-artifact@v4
       with:
-        name: OpenIDCS-Client-nuitka-Linux
+        name: openidcs-client-nuitka-linux-x64
         path: BuildCache/nuitka
         retention-days: 30
 
@@ -192,7 +192,7 @@ jobs:
     - name: Upload artifact
       uses: actions/upload-artifact@v4
       with:
-        name: OpenIDCS-Client-nuitka-macOS
+        name: openidcs-client-nuitka-macos-a64
         path: BuildCache/nuitka
         retention-days: 30
 
@@ -209,9 +209,9 @@ jobs:
 
     - name: Package build folders
       run: |
-        tar -czf OpenIDCS-Client-nuitka-Windows.tar.gz OpenIDCS-Client-nuitka-Windows
-        tar -czf OpenIDCS-Client-nuitka-Linux.tar.gz OpenIDCS-Client-nuitka-Linux
-        tar -czf OpenIDCS-Client-nuitka-macOS.tar.gz OpenIDCS-Client-nuitka-macOS
+        tar -czf openidcs-client-nuitka-winnt-x64.tar.gz openidcs-client-nuitka-winnt-x64
+        tar -czf openidcs-client-nuitka-linux-x64.tar.gz openidcs-client-nuitka-linux-x64
+        tar -czf openidcs-client-nuitka-macos-a64.tar.gz openidcs-client-nuitka-macos-a64
 
     - name: Create Release
       uses: softprops/action-gh-release@v1
@@ -219,9 +219,9 @@ jobs:
         tag_name: ${{ inputs.version != '' && format('v{0}', inputs.version) || 'beta' }}
         name: ${{ inputs.version != '' && format('Release v{0}', inputs.version) || 'Beta Release' }}
         files: |
-          OpenIDCS-Client-nuitka-Windows.tar.gz
-          OpenIDCS-Client-nuitka-Linux.tar.gz
-          OpenIDCS-Client-nuitka-macOS.tar.gz
+          openidcs-client-nuitka-winnt-x64.tar.gz
+          openidcs-client-nuitka-linux-x64.tar.gz
+          openidcs-client-nuitka-macos-a64.tar.gz
         draft: false
         prerelease: ${{ inputs.version == '' }}
       env:
