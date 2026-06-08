@@ -58,6 +58,7 @@ import {
 } from '@ant-design/icons'
 import ReactECharts from 'echarts-for-react'
 import api from '@/utils/apis.ts'
+import { startTaskWithNotification, getTaskList } from '@/utils/taskPoller'
 import {VM_PERMISSION, hasPermission, TAB_PERMISSION_MAP, VM_PERMISSION_LABELS, PERMISSION_FIELD_MASK, HIDDEN_TABS, OWNER_ONLY_TABS, getTabQuota} from '@/types'
 
 interface VGConfig {
@@ -381,6 +382,63 @@ function VMDetail() {
     // 操作锁定状态 - 执行操作时禁用所有按钮
     const [operationLocked, setOperationLocked] = useState<boolean>(false)
 const [operationTimeoutId, setOperationTimeoutId] = useState<ReturnType<typeof setTimeout> | null>(null)
+
+    // 异步任务提交包装：自动锁定操作，任务完成/失败后解锁
+    const submitAsyncTask = (
+        result: { code: number; msg?: string; data?: { task_id?: string } },
+        taskLabel: string,
+        options: { onCompleted?: () => void; onFailed?: () => void } = {}
+    ) => {
+        setOperationLocked(true)
+        startTaskWithNotification(result, taskLabel, {
+            onCompleted: (task) => {
+                setOperationLocked(false)
+                options.onCompleted?.()
+            },
+            onFailed: (task) => {
+                setOperationLocked(false)
+                options.onFailed?.()
+            },
+        })
+    }
+
+    // 页面加载时检查当前虚拟机是否有正在执行的异步任务
+    const checkRunningTasks = async () => {
+        if (!uuid) return
+        try {
+            const taskList = await getTaskList({ vm_uuid: uuid, status: 'running', page: 1, page_size: 1 })
+            if (taskList && taskList.items && taskList.items.length > 0) {
+                const runningTask = taskList.items[0]
+                setOperationLocked(true)
+                // 启动轮询跟踪该任务
+                startTaskWithNotification(
+                    { code: 200, data: { task_id: runningTask.task_id } },
+                    runningTask.task_type ? (runningTask.task_type.replace(/_/g, ' ')) : '异步任务',
+                    {
+                        onCompleted: () => { setOperationLocked(false); loadVMDetail() },
+                        onFailed: () => { setOperationLocked(false); loadVMDetail() },
+                    }
+                )
+            } else {
+                // 再检查pending状态
+                const pendingList = await getTaskList({ vm_uuid: uuid, status: 'pending', page: 1, page_size: 1 })
+                if (pendingList && pendingList.items && pendingList.items.length > 0) {
+                    const pendingTask = pendingList.items[0]
+                    setOperationLocked(true)
+                    startTaskWithNotification(
+                        { code: 200, data: { task_id: pendingTask.task_id } },
+                        pendingTask.task_type ? (pendingTask.task_type.replace(/_/g, ' ')) : '异步任务',
+                        {
+                            onCompleted: () => { setOperationLocked(false); loadVMDetail() },
+                            onFailed: () => { setOperationLocked(false); loadVMDetail() },
+                        }
+                    )
+                }
+            }
+        } catch (e) {
+            // 检查失败不影响页面正常使用
+        }
+    }
 
     // 计算所有可用的IP地址
     const availableIPs = useMemo(() => {
@@ -712,17 +770,19 @@ const [operationTimeoutId, setOperationTimeoutId] = useState<ReturnType<typeof s
                 return
             }
             setUsbActionLoading(true)
-            await api.setupUSB(hostName!, uuid!, {
+            const result = await api.setupUSB(hostName!, uuid!, {
                 usb_key: selectedUsbKey,
                 vid_uuid: device.vid_uuid,
                 pid_uuid: device.pid_uuid,
                 usb_hint: device.usb_hint,
                 action: 'add'
             })
-            message.success('USB设备直通成功')
             setUsbModalVisible(false)
             setSelectedUsbKey('')
-            loadVMDetail()
+            submitAsyncTask(result, '添加USB设备', {
+                onCompleted: () => loadVMDetail(),
+                onFailed: () => loadVMDetail(),
+            })
         } catch (error: any) {
             console.error('添加USB设备失败:', error)
             message.error(error.message || '添加USB设备失败')
@@ -736,15 +796,17 @@ const [operationTimeoutId, setOperationTimeoutId] = useState<ReturnType<typeof s
         const usbConfig = vm?.config?.usb_all?.[usbKey]
         try {
             setUsbActionLoading(true)
-            await api.setupUSB(hostName!, uuid!, {
+            const result = await api.setupUSB(hostName!, uuid!, {
                 usb_key: usbKey,
                 vid_uuid: usbConfig?.vid_uuid || '',
                 pid_uuid: usbConfig?.pid_uuid || '',
                 usb_hint: usbConfig?.usb_hint || '',
                 action: 'remove'
             })
-            message.success('USB设备已移除')
-            loadVMDetail()
+            submitAsyncTask(result, '移除USB设备', {
+                onCompleted: () => loadVMDetail(),
+                onFailed: () => loadVMDetail(),
+            })
         } catch (error: any) {
             console.error('删除USB设备失败:', error)
             message.error(error.message || '删除USB设备失败')
@@ -967,6 +1029,7 @@ const [operationTimeoutId, setOperationTimeoutId] = useState<ReturnType<typeof s
         loadHostInfo();
         loadVMDetail();
         loadMonitorData()
+        checkRunningTasks()
         const interval = setInterval(() => {
             loadVMDetail(true);
             loadMonitorData()
@@ -1382,22 +1445,18 @@ const [operationTimeoutId, setOperationTimeoutId] = useState<ReturnType<typeof s
         setTempStatus('configuring')
         setHddActionLoading(true)
         try {
-            await api.addHDD(hostName!, uuid!, {
+            const result = await api.addHDD(hostName!, uuid!, {
                 hdd_size: _values.hdd_size * 1024,
                 hdd_name: _values.hdd_name,
                 hdd_type: _values.hdd_type
             })
-            message.success('数据盘添加成功')
             setHddModalVisible(false);
             hddForm.resetFields();
-            loadHDDs()
-            // 操作完成后，清除临时状态
-            setTimeout(() => {
-                setTempStatus(null)
-            }, 1500)
+            submitAsyncTask(result, '添加数据盘', {
+                onCompleted: () => loadHDDs(),
+                onFailed: () => loadHDDs(),
+            })
         } catch (error) {
-            // 操作失败，清除临时状态
-            setTempStatus(null)
             message.error('添加失败')
         } finally {
             setHddActionLoading(false)
@@ -1407,29 +1466,20 @@ const [operationTimeoutId, setOperationTimeoutId] = useState<ReturnType<typeof s
     const handleMountHDD = async () => {
         if (!currentMountHdd) return
         if (!hostEnabled) { message.error('该主机已被禁用，无法操作'); return }
-        // 设置临时状态为配置中
-        setTempStatus('configuring')
         setHddActionLoading(true)
-        const hide = message.loading('正在挂载数据盘，请稍候...', 0)
         try {
-            await api.post(`/api/client/hdd/mount/${hostName}/${uuid}`, {
+            const result = await api.post(`/api/client/hdd/mount/${hostName}/${uuid}`, {
                 hdd_name: currentMountHdd.hdd_path,
                 hdd_size: currentMountHdd.hdd_num,
                 hdd_type: currentMountHdd.hdd_type
             })
-            hide()
-            message.success('数据盘挂载成功，请重启虚拟机使其生效')
             setMountHddModalVisible(false);
             setMountHddConfirmChecked(false);
-            loadHDDs()
-            // 操作完成后，清除临时状态
-            setTimeout(() => {
-                setTempStatus(null)
-            }, 1500)
+            submitAsyncTask(result, '挂载数据盘', {
+                onCompleted: () => loadHDDs(),
+                onFailed: () => loadHDDs(),
+            })
         } catch (error) {
-            // 操作失败，清除临时状态
-            setTempStatus(null)
-            hide()
             message.error('挂载失败')
         } finally {
             setHddActionLoading(false)
@@ -1439,25 +1489,16 @@ const [operationTimeoutId, setOperationTimeoutId] = useState<ReturnType<typeof s
     const handleUnmountHDD = async () => {
         if (!currentUnmountHdd) return
         if (!hostEnabled) { message.error('该主机已被禁用，无法操作'); return }
-        // 设置临时状态为配置中
-        setTempStatus('configuring')
         setHddActionLoading(true)
-        const hide = message.loading('正在卸载数据盘，请稍候...', 0)
         try {
-            await api.post(`/api/client/hdd/unmount/${hostName}/${uuid}`, {hdd_name: currentUnmountHdd.hdd_path})
-            hide()
-            message.success('数据盘卸载成功，请重启虚拟机使其生效')
+            const result = await api.post(`/api/client/hdd/unmount/${hostName}/${uuid}`, {hdd_name: currentUnmountHdd.hdd_path})
             setUnmountHddModalVisible(false);
             setUnmountHddConfirmChecked(false);
-            loadHDDs()
-            // 操作完成后，清除临时状态
-            setTimeout(() => {
-                setTempStatus(null)
-            }, 1500)
+            submitAsyncTask(result, '卸载数据盘', {
+                onCompleted: () => loadHDDs(),
+                onFailed: () => loadHDDs(),
+            })
         } catch (error) {
-            // 操作失败，清除临时状态
-            setTempStatus(null)
-            hide()
             message.error('卸载失败')
         } finally {
             setHddActionLoading(false)
@@ -1467,21 +1508,13 @@ const [operationTimeoutId, setOperationTimeoutId] = useState<ReturnType<typeof s
     const handleDeleteHDD = async (hddPath: string) => {
         if (!hostEnabled) { message.error('该主机已被禁用，无法操作'); return }
         showConfirmAction('删除数据盘确认', `确定要删除数据盘 "${hddPath}" 吗？此操作不可恢复！`, async () => {
-            // 设置临时状态为配置中
-            setTempStatus('configuring')
-            const hide = message.loading('正在删除数据盘...', 0)
             try {
-                await api.delete(`/api/client/hdd/delete/${hostName}/${uuid}`, {data: {hdd_name: hddPath}})
-                hide()
-                loadHDDs()
-                // 操作完成后，清除临时状态
-                setTimeout(() => {
-                    setTempStatus(null)
-                }, 1500)
+                const result = await api.delete(`/api/client/hdd/delete/${hostName}/${uuid}`, {data: {hdd_name: hddPath}})
+                submitAsyncTask(result, '删除数据盘', {
+                    onCompleted: () => loadHDDs(),
+                    onFailed: () => loadHDDs(),
+                })
             } catch (error) {
-                // 操作失败，清除临时状态
-                setTempStatus(null)
-                hide()
                 throw error
             }
         }, true)
@@ -1503,35 +1536,29 @@ const [operationTimeoutId, setOperationTimeoutId] = useState<ReturnType<typeof s
     }
 
     const executePciAdd = async (_values: any) => {
-        setTempStatus('configuring')
         setGpuActionLoading(true)
-        const hide = message.loading('正在添加PCI直通设备...', 0)
         try {
             const pciKey = _values.pci_key || selectedPciKey
             const device = pciDeviceList[pciKey]
             if (!device) {
-                hide()
                 message.error('请选择一个PCI设备')
                 setGpuActionLoading(false)
-                setTempStatus(null)
                 return
             }
-            await api.setupPCI(hostName!, uuid!, {
+            const result = await api.setupPCI(hostName!, uuid!, {
                 pci_key: pciKey,
                 gpu_uuid: device.gpu_uuid,
                 gpu_mdev: device.gpu_mdev,
                 gpu_hint: device.gpu_hint,
                 action: 'add'
             })
-            hide()
-            message.success('PCI设备直通成功')
             setGpuModalVisible(false)
             setSelectedPciKey('')
-            loadVMDetail()
-            setTimeout(() => { setTempStatus(null) }, 1500)
+            submitAsyncTask(result, '添加PCI直通设备', {
+                onCompleted: () => loadVMDetail(),
+                onFailed: () => loadVMDetail(),
+            })
         } catch (error: any) {
-            setTempStatus(null)
-            hide()
             message.error(error?.message || 'PCI直通添加失败')
         } finally {
             setGpuActionLoading(false)
@@ -1555,23 +1582,19 @@ const [operationTimeoutId, setOperationTimeoutId] = useState<ReturnType<typeof s
     }
 
     const executePciRemove = async (gpuKey: string, gpuConfig: any) => {
-        setTempStatus('configuring')
-        const hide = message.loading('正在移除PCI直通设备...', 0)
         try {
-            await api.setupPCI(hostName!, uuid!, {
+            const result = await api.setupPCI(hostName!, uuid!, {
                 pci_key: gpuKey,
                 gpu_uuid: gpuConfig?.gpu_uuid || '',
                 gpu_mdev: gpuConfig?.gpu_mdev || '',
                 gpu_hint: gpuConfig?.gpu_hint || '',
                 action: 'remove'
             })
-            hide()
-            message.success('PCI设备已移除')
-            loadVMDetail()
-            setTimeout(() => { setTempStatus(null) }, 1500)
+            submitAsyncTask(result, '移除PCI直通设备', {
+                onCompleted: () => loadVMDetail(),
+                onFailed: () => loadVMDetail(),
+            })
         } catch (error: any) {
-            setTempStatus(null)
-            hide()
             message.error(error?.message || '移除失败')
         }
     }
@@ -1652,30 +1675,21 @@ await api.vmPower(hostName!, uuid!, 'H_CLOSE')
 
     const handleAddISO = async (_values: any) => {
         if (!hostEnabled) { message.error('该主机已被禁用，无法操作'); return }
-        // 设置临时状态为配置中
-        setTempStatus('configuring')
         setIsoActionLoading(true)
-        const hide = message.loading('正在挂载ISO镜像，请稍候...', 0)
         try {
-            await api.addISO(hostName!, uuid!, {
+            const result = await api.addISO(hostName!, uuid!, {
                 iso_name: _values.iso_name,
                 iso_file: _values.iso_file,
                 iso_hint: _values.iso_hint
             })
-            hide()
-            message.success('ISO挂载成功，请重启虚拟机使其生效')
             setIsoModalVisible(false);
             isoForm.resetFields();
             setIsoMountConfirmChecked(false);
-            loadISOs()
-            // 操作完成后，清除临时状态
-            setTimeout(() => {
-                setTempStatus(null)
-            }, 1500)
+            submitAsyncTask(result, '挂载ISO镜像', {
+                onCompleted: () => loadISOs(),
+                onFailed: () => loadISOs(),
+            })
         } catch (error) {
-            // 操作失败，清除临时状态
-            setTempStatus(null)
-            hide()
             message.error('挂载失败')
         } finally {
             setIsoActionLoading(false)
@@ -1685,25 +1699,16 @@ await api.vmPower(hostName!, uuid!, 'H_CLOSE')
     const executeUnmountISO = async () => {
         if (!currentUnmountIso) return
         if (!hostEnabled) { message.error('该主机已被禁用，无法操作'); return }
-        // 设置临时状态为配置中
-        setTempStatus('configuring')
         setIsoActionLoading(true)
-        const hide = message.loading('正在卸载ISO镜像，请稍候...', 0)
         try {
-            await api.deleteISO(hostName!, uuid!, currentUnmountIso)
-            hide()
-            message.success('ISO卸载成功，请重启虚拟机使其生效')
+            const result = await api.deleteISO(hostName!, uuid!, currentUnmountIso)
             setUnmountIsoConfirmVisible(false);
             setUnmountIsoConfirmChecked(false);
-            loadISOs()
-            // 操作完成后，清除临时状态
-            setTimeout(() => {
-                setTempStatus(null)
-            }, 1500)
+            submitAsyncTask(result, '卸载ISO镜像', {
+                onCompleted: () => loadISOs(),
+                onFailed: () => loadISOs(),
+            })
         } catch (error) {
-            // 操作失败，清除临时状态
-            setTempStatus(null)
-            hide()
             message.error('卸载失败')
         } finally {
             setIsoActionLoading(false)
@@ -1712,63 +1717,45 @@ await api.vmPower(hostName!, uuid!, 'H_CLOSE')
 
     const handleCreateBackup = async (_values: any) => {
         if (!hostEnabled) { message.error('该主机已被禁用，无法操作'); return }
-        showConfirmAction('创建备份确认', '确定要创建备份吗？备份可能需要较长时间。', async () => {
-            // 设置临时状态为备份中
-            setTempStatus('ON_BACKUP')
-            setBackupActionLoading(true)
-            setOperationLocked(true)
-            
-            // 备份操作不设置超时（可能需要很长时间）
-            
-            try {
-                await api.createVMBackup(hostName!, uuid!, {vm_tips: _values.backup_name})
-                message.success('备份创建指令已发送，备份可能需要数十分钟')
-                setBackupModalVisible(false);
-                backupForm.resetFields();
-                setBackupCreateConfirmChecked(false);
-                loadBackups()
-                // 操作完成后，清除临时状态
-                setTempStatus(null)
-            } catch (error) {
-                // 操作失败，清除临时状态
-                setTempStatus(null)
-                throw error
-            } finally {
-                setBackupActionLoading(false)
-                setOperationLocked(false)
-            }
-        }, true)
+        setBackupActionLoading(true)
+        setBackupModalVisible(false)
+        backupForm.resetFields()
+        setBackupCreateConfirmChecked(false)
+        try {
+            const result = await api.createVMBackup(hostName!, uuid!, {vm_tips: _values.backup_name})
+            submitAsyncTask(result, '创建备份', {
+                onCompleted: () => loadBackups(),
+                onFailed: () => loadBackups(),
+            })
+        } catch (error) {
+            message.error('创建备份失败')
+        } finally {
+            setBackupActionLoading(false)
+        }
     }
 
     const executeRestoreBackup = async () => {
         if (!currentRestoreBackup) return
         if (!hostEnabled) { message.error('该主机已被禁用，无法操作'); return }
         
-        showConfirmAction('恢复备份确认', '确定要恢复备份吗？此操作将覆盖当前数据！', async () => {
-            // 设置临时状态为还原中
-            setTempStatus('ON_RESTORE')
-            setBackupActionLoading(true)
-            setOperationLocked(true)
-            
-            // 还原操作不设置超时（可能需要很长时间）
-            
-            try {
-                await api.restoreVMBackup(hostName!, uuid!, currentRestoreBackup)
-                message.success('备份恢复指令已发送，页面将自动刷新')
-                setRestoreBackupModalVisible(false);
-                setRestoreConfirmChecked1(false);
-                setRestoreConfirmChecked2(false);
-                // 页面会自动刷新，无需手动清除临时状态
-                setTimeout(() => window.location.reload(), 3000)
-            } catch (error) {
-                // 操作失败，清除临时状态
-                setTempStatus(null)
-                throw error
-            } finally {
-                setBackupActionLoading(false)
-                setOperationLocked(false)
-            }
-        }, true)
+        setBackupActionLoading(true)
+        setRestoreBackupModalVisible(false)
+        setRestoreConfirmChecked1(false)
+        setRestoreConfirmChecked2(false)
+        try {
+            const result = await api.restoreVMBackup(hostName!, uuid!, currentRestoreBackup)
+            submitAsyncTask(result, '还原备份', {
+                onCompleted: () => {
+                    loadBackups()
+                    loadVMDetail()
+                },
+                onFailed: () => loadVMDetail(),
+            })
+        } catch (error) {
+            message.error('还原备份失败')
+        } finally {
+            setBackupActionLoading(false)
+        }
     }
 
     const handleDeleteBackup = async (backupName: string) => {
@@ -1905,15 +1892,6 @@ await api.vmPower(hostName!, uuid!, 'H_CLOSE')
         setTempStatus('ON_CONFIG')
         setOperationLocked(true)
         
-        // 设置10分钟超时
-        const timeoutId = setTimeout(() => {
-            setTempStatus(null)
-            setOperationLocked(false)
-            message.error('操作超时，请检查虚拟机状态')
-            loadVMDetail()
-        }, 10 * 60 * 1000)
-        setOperationTimeoutId(timeoutId)
-        
         try {
             const nicAll: any = {}
             editNicList.forEach(nic => {
@@ -1927,22 +1905,25 @@ await api.vmPower(hostName!, uuid!, 'H_CLOSE')
             }
             delete updateData.speed_up;
             delete updateData.speed_down
-            await api.updateVM(hostName!, uuid!, updateData)
-            message.success('配置更新成功');
+            const result = await api.updateVM(hostName!, uuid!, updateData)
+            
+            // 异步任务模式：收到task_id后启动轮询并锁定操作
             setSaveConfirmModalVisible(false);
             setEditModalVisible(false);
             setPendingEditValues(null);
-            setTempStatus(null)
-            setTimeout(() => window.location.reload(), 1500)
+            submitAsyncTask(result, '修改虚拟机配置', {
+                onCompleted: () => {
+                    setTempStatus(null)
+                    loadVMDetail()
+                },
+                onFailed: () => {
+                    setTempStatus(null)
+                },
+            })
         } catch (error) {
             setTempStatus(null)
-            message.error('配置更新失败')
-        } finally {
             setOperationLocked(false)
-            if (operationTimeoutId) {
-                clearTimeout(operationTimeoutId)
-                setOperationTimeoutId(null)
-            }
+            message.error('配置更新失败')
         }
     }
 

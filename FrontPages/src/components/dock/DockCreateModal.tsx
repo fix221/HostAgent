@@ -26,6 +26,7 @@ import {
 } from '@ant-design/icons'
 import api from '@/utils/apis.ts'
 import { VM_PERMISSION, hasPermission } from '@/types'
+import { startTaskWithNotification } from '@/utils/taskPoller'
 
 // Interfaces
 interface UserQuota {
@@ -572,7 +573,13 @@ const DockCreateModal: React.FC<DockCreateModalProps> = ({
 
             if (isEditMode) {
                 const result = await api.updateVM(targetHost, vmUuid!, vmData)
-                if (result.code === 200) {
+                if (result.code === 200 && result.data?.task_id) {
+                    setSaveConfirmVisible(false)
+                    startTaskWithNotification(result, '修改虚拟机配置', {
+                        onCompleted: () => onSuccess(),
+                        onFailed: () => {},
+                    })
+                } else if (result.code === 200) {
                     message.success('更新成功')
                     setSaveConfirmVisible(false)
                     onSuccess()
@@ -580,52 +587,54 @@ const DockCreateModal: React.FC<DockCreateModalProps> = ({
                     message.error(result.msg || '更新失败')
                 }
             } else {
-                const hide = message.loading('创建中...', 0)
                 try {
                     const result = await api.createVM(targetHost, vmData as any)
-                    hide()
-                    if (result.code === 200) {
-                        message.success('创建成功')
-
-                        // 根据操作系统类型自动添加默认端口映射
-                        const selectedOs = hostImages.find(it => it.sys_file === values.os_name)
-                        if (selectedOs) {
-                            let defaultPort = 0
-                            let portTips = ''
-                            switch (selectedOs.sys_type) {
-                                case 'WinNT':
-                                    defaultPort = 3389
-                                    portTips = 'RDP远程桌面'
-                                    break
-                                case 'Linux':
-                                    defaultPort = 22
-                                    portTips = 'SSH远程连接'
-                                    break
-                                case 'macOS':
-                                    defaultPort = 5900
-                                    portTips = 'VNC远程桌面'
-                                    break
-                            }
-                            if (defaultPort > 0) {
-                                try {
-                                    await api.addNATRule(targetHost, fullUuid, {
-                                        wan_port: 0,
-                                        lan_port: defaultPort,
-                                        lan_addr: '',
-                                        nat_tips: portTips,
-                                    } as any)
-                                } catch (e) {
-                                    console.warn('自动添加默认端口映射失败:', e)
-                                }
-                            }
-                        }
-
+                    if (result.code === 200 && result.data?.task_id) {
+                        // 立即关闭模态框
                         onSuccess()
+                        // 顶部转圈圈强提醒，持续轮询直到完成
+                        startTaskWithNotification(result, '创建虚拟机', {
+                            onCompleted: async () => {
+                                // 根据操作系统类型自动添加默认端口映射
+                                const selectedOs = hostImages.find(it => it.sys_file === values.os_name)
+                                if (selectedOs) {
+                                    let defaultPort = 0
+                                    let portTips = ''
+                                    switch (selectedOs.sys_type) {
+                                        case 'WinNT':
+                                            defaultPort = 3389
+                                            portTips = 'RDP远程桌面'
+                                            break
+                                        case 'Linux':
+                                            defaultPort = 22
+                                            portTips = 'SSH远程连接'
+                                            break
+                                        case 'macOS':
+                                            defaultPort = 5900
+                                            portTips = 'VNC远程桌面'
+                                            break
+                                    }
+                                    if (defaultPort > 0) {
+                                        try {
+                                            await api.addNATRule(targetHost, fullUuid, {
+                                                wan_port: 0,
+                                                lan_port: defaultPort,
+                                                lan_addr: '',
+                                                nat_tips: portTips,
+                                            } as any)
+                                        } catch (e) {
+                                            console.warn('自动添加默认端口映射失败:', e)
+                                        }
+                                    }
+                                }
+                                // 任务完成后刷新列表
+                                onSuccess()
+                            },
+                        })
                     } else {
                         message.error(result.msg || '创建失败')
                     }
                 } catch (error) {
-                    hide()
                     throw error
                 }
             }

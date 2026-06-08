@@ -1289,7 +1289,7 @@ class HostServer(BasicServer):
 
             from MainObject.Config.VMPowers import VMPowers
             vm_config = self.vm_saving[vm_name]
-            if vm_config.vm_flag not in [VMPowers.ON_STOP, VMPowers.UNKNOWN]:
+            if vm_config.vm_flag not in [VMPowers.STOPPED, VMPowers.ON_STOP, VMPowers.UNKNOWN]:
                 return ZMessage(success=False, action="PCISetup", message="PCI直通需要先关闭虚拟机")
 
             connect_result = self.esxi_api.connect()

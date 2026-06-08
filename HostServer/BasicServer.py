@@ -817,7 +817,7 @@ class BasicServer:
     # ###############################################################################
 
     vnc_type = ["VMWareSetup", "vSphereESXi", "HyperVSetup",
-                "VirtualBoxs", "QEMUServer", "MemuAndroid"]
+                "VirtualBoxs", "QEMUServer", "MemuAndroid", "PromoxSetup"]
     tty_type = ["OCInterface", "LxContainer"]
 
     # 远程桌面初始化[禁止重载] ######################################################
@@ -2106,7 +2106,7 @@ class BasicServer:
 
         # 检查虚拟机是否已关机（PCI直通必须关机）
         vm_config = self.vm_saving[vm_name]
-        if vm_config.vm_flag not in [VMPowers.ON_STOP, VMPowers.UNKNOWN]:
+        if vm_config.vm_flag not in [VMPowers.STOPPED, VMPowers.ON_STOP, VMPowers.UNKNOWN]:
             return ZMessage(success=False, action="PCISetup", message="PCI直通需要先关闭虚拟机")
 
         old_conf = deepcopy(self.vm_saving[vm_name])

@@ -1175,7 +1175,7 @@ class HostServer(BasicServer):
                 message=f"设置密码失败: {str(e)}")
 
     # 备份虚拟机 ###############################################################
-    def VMBackup(self, vm_name: str, vm_tips: str) -> ZMessage:
+    def VMBackup(self, vm_name: str, vm_tips: str, cancel_event=None) -> ZMessage:
         logger.info(f"[{self.hs_config.server_name}] 开始备份虚拟机: {vm_name}")
         logger.info(f"  - 备份说明: {vm_tips}")
         
@@ -1230,6 +1230,24 @@ class HostServer(BasicServer):
             check_interval = 5  # 检查间隔（秒）
             all_time = 0
             while all_time < max_wait_time:
+                # 检查是否被取消 ------------------------------------------------
+                if cancel_event and cancel_event.is_set():
+                    logger.info(f"[{self.hs_config.server_name}] 备份任务被取消，正在停止PVE端任务...")
+                    try:
+                        client.nodes(self.hs_config.launch_path).tasks(task_id).delete()
+                        logger.info(f"[{self.hs_config.server_name}] PVE备份任务已停止: {task_id}")
+                    except Exception as stop_err:
+                        logger.warning(f"[{self.hs_config.server_name}] 停止PVE备份任务失败: {stop_err}")
+                    # 如果之前停止了虚拟机，重新启动
+                    if is_running:
+                        try:
+                            vm.status.start.post()
+                            logger.info(f"[{self.hs_config.server_name}] 虚拟机 {vm_name} 已重新启动")
+                        except Exception as start_err:
+                            logger.warning(f"[{self.hs_config.server_name}] 重启虚拟机失败: {start_err}")
+                    return ZMessage(
+                        success=False, action="VMBackup",
+                        message="备份任务已被用户取消")
                 # 查询任务状态 ----------------------------------------------
                 task_status = client.nodes(
                     self.hs_config.launch_path
@@ -1560,6 +1578,52 @@ class HostServer(BasicServer):
             traceback.print_exc()
             return False
 
+    # 获取存储池实际路径 ########################################################
+    def _get_storage_path(self, storage_name: str, vm_vmid: int) -> str:
+        """通过pvesm命令获取存储池的实际文件系统路径。
+
+        Args:
+            storage_name: Proxmox存储池名称（如'nvme1', 'local'）
+            vm_vmid: 虚拟机VMID
+
+        Returns:
+            存储池中该虚拟机的images目录路径
+        """
+        # 默认回退路径
+        fallback_dir = f"/var/lib/vz/images/{vm_vmid}"
+        if not storage_name:
+            return fallback_dir
+        try:
+            # 通过pvesm path解析存储池路径 =====================================
+            # pvesm path <storage>:<vmid>/test.qcow2 会返回完整文件路径
+            probe_cmd = f"pvesm path {storage_name}:{vm_vmid}/probe.qcow2"
+            if self.flag_web():
+                ssh = paramiko.SSHClient()
+                ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+                ssh.connect(
+                    self.hs_config.server_addr,
+                    username=self.hs_config.server_user,
+                    password=self.hs_config.server_pass)
+                stdin, stdout, stderr = ssh.exec_command(probe_cmd)
+                stdout.channel.recv_exit_status()
+                result = stdout.read().decode().strip()
+                ssh.close()
+            else:
+                import subprocess
+                proc = subprocess.run(
+                    probe_cmd, shell=True,
+                    capture_output=True, text=True)
+                result = proc.stdout.strip()
+            # 结果形如: /mnt/nvme1/images/202/probe.qcow2
+            if result and '/' in result:
+                # 取目录部分（去掉文件名）
+                disk_dir = result.rsplit('/', 1)[0]
+                logger.info(f"存储池 {storage_name} 实际路径: {disk_dir}")
+                return disk_dir
+        except Exception as e:
+            logger.warning(f"获取存储池路径失败({e})，使用默认路径: {fallback_dir}")
+        return fallback_dir
+
     # 创建QCOW2磁盘文件 ########################################################
     def hdd_init(self, vm_vmid: int, disk_name: str, disk_size: str) -> ZMessage:
         """创建QCOW2格式的磁盘文件
@@ -1573,7 +1637,9 @@ class HostServer(BasicServer):
             ZMessage对象，包含操作结果
         """
         try:
-            disk_dir = f"/var/lib/vz/images/{vm_vmid}"
+            # 通过pvesm获取存储池的实际文件系统路径 =============================
+            storage_name = self.hs_config.extern_path
+            disk_dir = self._get_storage_path(storage_name, vm_vmid)
 
             # 远程模式 =========================================================
             if self.flag_web():
@@ -1637,6 +1703,14 @@ class HostServer(BasicServer):
                             message=f"SSH回退执行异常: {str(ssh_err)}")
                 else:
                     logger.info(f"本地创建qcow2文件: {disk_dir}/{disk_name}, 大小: {disk_size}")
+
+            # 刷新存储，确保PVE识别新创建的磁盘文件 ============================
+            try:
+                client, _ = self.api_conn()
+                if client:
+                    self._refresh_storage(client, storage_name)
+            except Exception as ref_err:
+                logger.warning(f"创建磁盘后刷新存储失败: {ref_err}")
 
             return ZMessage(
                 success=True, action="CreateQcow2",
@@ -2439,7 +2513,7 @@ class HostServer(BasicServer):
 
             from MainObject.Config.VMPowers import VMPowers
             vm_config = self.vm_saving[vm_name]
-            if vm_config.vm_flag not in [VMPowers.ON_STOP, VMPowers.UNKNOWN]:
+            if vm_config.vm_flag not in [VMPowers.STOPPED, VMPowers.ON_STOP, VMPowers.UNKNOWN]:
                 return ZMessage(success=False, action="PCISetup", message="PCI直通需要先关闭虚拟机")
 
             client, result = self.api_conn()

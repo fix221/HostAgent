@@ -1358,7 +1358,7 @@ class HostServer(BasicServer):
             vm_config = self.vm_saving[vm_name]
             # 检查关机状态
             from MainObject.Config.VMPowers import VMPowers
-            if vm_config.vm_flag not in [VMPowers.STOPPED]:
+            if vm_config.vm_flag not in [VMPowers.STOPPED, VMPowers.ON_STOP, VMPowers.UNKNOWN]:
                 return ZMessage(success=False, action="PCISetup", message="PCI直通需要先关闭虚拟机")
 
             connect_result = self.hyperv_api.connect()

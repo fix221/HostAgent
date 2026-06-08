@@ -92,13 +92,22 @@ CREATE TABLE IF NOT EXISTS vm_status
     -- 注意: 不再引用 vm_saving(vm_uuid)，因为 vm_uuid 不是单列唯一键
 );
 
--- 虚拟机任务表 (vm_tasker)
+-- 虚拟机异步任务表 (vm_tasker)
 CREATE TABLE IF NOT EXISTS vm_tasker
 (
-    id         INTEGER PRIMARY KEY AUTOINCREMENT, -- 主键
-    hs_name    TEXT NOT NULL,                     -- 主机名称
-    task_data  TEXT NOT NULL,                     -- JSON格式存储HSTasker数据
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    id            INTEGER PRIMARY KEY AUTOINCREMENT, -- 主键
+    task_id       TEXT NOT NULL UNIQUE,              -- 任务唯一标识(UUID)
+    hs_name       TEXT NOT NULL,                     -- 主机名称
+    vm_uuid       TEXT DEFAULT '',                   -- 虚拟机UUID
+    task_type     TEXT NOT NULL,                     -- 任务类型(create_vm/delete_vm/update_vm/add_nic/...)
+    status        TEXT NOT NULL DEFAULT 'pending',   -- 状态(pending/running/completed/failed/stopped)
+    params        TEXT DEFAULT '{}',                 -- 执行参数JSON
+    result        TEXT DEFAULT '{}',                 -- 执行结果JSON
+    error_message TEXT DEFAULT '',                   -- 错误信息
+    username      TEXT DEFAULT '',                   -- 操作人
+    created_at    TIMESTAMP DEFAULT CURRENT_TIMESTAMP, -- 创建时间
+    started_at    TIMESTAMP DEFAULT NULL,            -- 开始执行时间
+    finished_at   TIMESTAMP DEFAULT NULL,            -- 完成时间
     FOREIGN KEY (hs_name) REFERENCES hs_config (hs_name) ON DELETE CASCADE
 );
 
@@ -191,6 +200,10 @@ CREATE INDEX IF NOT EXISTS idx_vm_status_name_uuid ON vm_status (hs_name, vm_uui
 CREATE INDEX IF NOT EXISTS idx_vm_status_timestamp ON vm_status (on_update);
 CREATE INDEX IF NOT EXISTS idx_vm_status_recorded ON vm_status (recorded_at);
 CREATE INDEX IF NOT EXISTS idx_vm_tasker_name ON vm_tasker (hs_name);
+CREATE INDEX IF NOT EXISTS idx_vm_tasker_task_id ON vm_tasker (task_id);
+CREATE INDEX IF NOT EXISTS idx_vm_tasker_status ON vm_tasker (status);
+CREATE INDEX IF NOT EXISTS idx_vm_tasker_vm_uuid ON vm_tasker (vm_uuid);
+CREATE INDEX IF NOT EXISTS idx_vm_tasker_type ON vm_tasker (task_type);
 CREATE INDEX IF NOT EXISTS idx_hs_logger_name ON hs_logger (hs_name);
 CREATE INDEX IF NOT EXISTS idx_hs_logger_time ON hs_logger (created_at);
 CREATE INDEX IF NOT EXISTS idx_web_users_username ON web_users (username);
@@ -203,3 +216,13 @@ ALTER TABLE hs_config ADD COLUMN n_hdd_price REAL DEFAULT 0;    -- 虚拟机硬�
 ALTER TABLE hs_config ADD COLUMN n_net_price REAL DEFAULT 0;    -- 虚拟机带宽单价
 ALTER TABLE web_users ADD COLUMN can_free_config INTEGER DEFAULT 0; -- 允许自由配置虚拟机
 ALTER TABLE web_users ADD COLUMN user_permission INTEGER DEFAULT 65535; -- 用户权限掩码
+ALTER TABLE vm_tasker ADD COLUMN task_id TEXT DEFAULT '';
+ALTER TABLE vm_tasker ADD COLUMN vm_uuid TEXT DEFAULT '';
+ALTER TABLE vm_tasker ADD COLUMN task_type TEXT DEFAULT '';
+ALTER TABLE vm_tasker ADD COLUMN status TEXT DEFAULT 'pending';
+ALTER TABLE vm_tasker ADD COLUMN params TEXT DEFAULT '{}';
+ALTER TABLE vm_tasker ADD COLUMN result TEXT DEFAULT '{}';
+ALTER TABLE vm_tasker ADD COLUMN error_message TEXT DEFAULT '';
+ALTER TABLE vm_tasker ADD COLUMN username TEXT DEFAULT '';
+ALTER TABLE vm_tasker ADD COLUMN started_at TIMESTAMP DEFAULT NULL;
+ALTER TABLE vm_tasker ADD COLUMN finished_at TIMESTAMP DEFAULT NULL;

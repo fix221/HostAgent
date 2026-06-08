@@ -48,6 +48,545 @@ class RestManager:
         self._temp_tokens: dict = {}
         self._temp_tokens_lock = threading.Lock()
 
+        # 注册异步任务处理器
+        self._register_task_handlers()
+
+    def _register_task_handlers(self):
+        """注册所有异步任务处理器到TaskEngine"""
+        te = self.hs_manage.task_engine
+        te.register_handler('create_vm', self._task_create_vm)
+        te.register_handler('delete_vm', self._task_delete_vm)
+        te.register_handler('update_vm', self._task_update_vm)
+        te.register_handler('add_pcie', self._task_add_pcie)
+        te.register_handler('delete_pcie', self._task_delete_pcie)
+        te.register_handler('mount_usb', self._task_mount_usb)
+        te.register_handler('unmount_usb', self._task_unmount_usb)
+        te.register_handler('add_hdd', self._task_add_hdd)
+        te.register_handler('unmount_hdd', self._task_unmount_hdd)
+        te.register_handler('delete_hdd', self._task_delete_hdd)
+        te.register_handler('mount_iso', self._task_mount_iso)
+        te.register_handler('unmount_iso', self._task_unmount_iso)
+        te.register_handler('create_backup', self._task_create_backup)
+        te.register_handler('restore_backup', self._task_restore_backup)
+        te.register_handler('add_nic', self._task_add_nic)
+        te.register_handler('delete_nic', self._task_delete_nic)
+        te.register_handler('update_nic', self._task_update_nic)
+
+    # --- 异步任务处理器实现 ---
+
+    def _task_create_vm(self, params: dict, cancel_event):
+        """异步任务处理器：创建虚拟机"""
+        hs_name = params['hs_name']
+        vm_config_data = params.get('vm_config_data', {})
+
+        server = self.hs_manage.get_host(hs_name)
+        if not server:
+            raise Exception(f'主机不存在: {hs_name}')
+
+        from MainObject.Config.VMConfig import VMConfig
+        vm_config = VMConfig(**vm_config_data)
+        result = server.VMCreate(vm_config)
+
+        if not result or not result.success:
+            raise Exception(result.message if result else '创建虚拟机失败')
+
+        # 创建成功后扣减用户配额
+        if self.db:
+            own_all = getattr(vm_config, 'own_all', {})
+            vm_owners = list(own_all.keys()) if isinstance(own_all, dict) else list(own_all)
+            first_owner = vm_owners[0] if vm_owners else None
+            if first_owner and first_owner != 'admin':
+                try:
+                    owner_user = self.db.get_user_by_username(first_owner)
+                    if owner_user:
+                        cpu_needed = getattr(vm_config, 'cpu_num', 0)
+                        ram_needed = getattr(vm_config, 'mem_num', 0)
+                        ssd_needed = getattr(vm_config, 'hdd_num', 0)
+                        gpu_needed = getattr(vm_config, 'gpu_mem', 0)
+                        traffic_needed = getattr(vm_config, 'flu_num', 0)
+                        nat_ports_needed = getattr(vm_config, 'nat_num', 0)
+                        web_proxy_needed = getattr(vm_config, 'web_num', 0)
+                        bandwidth_up_needed = getattr(vm_config, 'speed_u', 0)
+                        bandwidth_down_needed = getattr(vm_config, 'speed_d', 0)
+
+                        self.db.update_user_resource_usage(
+                            owner_user['id'],
+                            used_cpu=owner_user.get('used_cpu', 0) + cpu_needed,
+                            used_ram=owner_user.get('used_ram', 0) + ram_needed,
+                            used_ssd=owner_user.get('used_ssd', 0) + ssd_needed,
+                            used_gpu=owner_user.get('used_gpu', 0) + gpu_needed,
+                            used_traffic=owner_user.get('used_traffic', 0) + traffic_needed,
+                            used_nat_ports=owner_user.get('used_nat_ports', 0) + nat_ports_needed,
+                            used_web_proxy=owner_user.get('used_web_proxy', 0) + web_proxy_needed,
+                            used_bandwidth_up=owner_user.get('used_bandwidth_up', 0) + bandwidth_up_needed,
+                            used_bandwidth_down=owner_user.get('used_bandwidth_down', 0) + bandwidth_down_needed,
+                        )
+                        logger.info(f"[创建虚拟机] 已扣减用户 {first_owner} 的配额")
+                except Exception as e:
+                    logger.error(f"[创建虚拟机] 扣减用户配额失败: {e}")
+
+        self.hs_manage.all_save()
+        return {'hs_name': hs_name, 'vm_uuid': vm_config.vm_uuid, 'message': result.message}
+
+    def _task_delete_vm(self, params: dict, cancel_event):
+        """异步任务处理器：删除虚拟机"""
+        hs_name = params['hs_name']
+        vm_uuid = params['vm_uuid']
+
+        server = self.hs_manage.get_host(hs_name)
+        if not server:
+            raise Exception(f'主机不存在: {hs_name}')
+
+        result = server.VMDelete(vm_uuid)
+
+        # 兜底处理：底层主机上虚拟机未找到时，仍然清理数据库/配置记录
+        if result and not result.success and result.message:
+            msg_lower = str(result.message).lower()
+            vm_missing = (
+                ('不存在' in result.message) or ('未找到' in result.message)
+                or ('not found' in msg_lower) or ('was not found' in msg_lower)
+                or ('does not exist' in msg_lower)
+            )
+            if vm_missing:
+                logger.warning(f"[删除虚拟机] 主机 {hs_name} 上未找到虚拟机 {vm_uuid}，清理记录")
+                if hasattr(server, 'vm_saving') and vm_uuid in server.vm_saving:
+                    del server.vm_saving[vm_uuid]
+                if hasattr(server, 'data_set'):
+                    try:
+                        server.data_set()
+                    except Exception:
+                        pass
+                result.success = True
+                result.message = f"虚拟机 {vm_uuid} 在主机上未找到，已清理数据库记录"
+
+        if not result or not result.success:
+            raise Exception(result.message if result else '删除虚拟机失败')
+
+        # 删除成功后清理状态数据
+        if server.save_data and hasattr(server.save_data, 'delete_vm_status'):
+            server.save_data.delete_vm_status(hs_name, vm_uuid)
+
+        # 释放用户配额
+        vm_resource_usage = params.get('vm_resource_usage', {})
+        vm_owners = params.get('vm_owners', [])
+        if vm_owners and vm_resource_usage and self.db:
+            first_owner = vm_owners[0] if vm_owners else None
+            if first_owner and first_owner != 'admin':
+                try:
+                    owner_user = self.db.get_user_by_username(first_owner)
+                    if owner_user:
+                        self.db.update_user_resource_usage(
+                            owner_user['id'],
+                            used_cpu=max(0, owner_user.get('used_cpu', 0) - vm_resource_usage.get('cpu', 0)),
+                            used_ram=max(0, owner_user.get('used_ram', 0) - vm_resource_usage.get('ram', 0)),
+                            used_ssd=max(0, owner_user.get('used_ssd', 0) - vm_resource_usage.get('ssd', 0)),
+                            used_gpu=max(0, owner_user.get('used_gpu', 0) - vm_resource_usage.get('gpu', 0)),
+                            used_traffic=max(0, owner_user.get('used_traffic', 0) - vm_resource_usage.get('traffic', 0)),
+                            used_nat_ports=max(0, owner_user.get('used_nat_ports', 0) - vm_resource_usage.get('nat_ports', 0)),
+                            used_web_proxy=max(0, owner_user.get('used_web_proxy', 0) - vm_resource_usage.get('web_proxy', 0)),
+                            used_bandwidth_up=max(0, owner_user.get('used_bandwidth_up', 0) - vm_resource_usage.get('bandwidth_up', 0)),
+                            used_bandwidth_down=max(0, owner_user.get('used_bandwidth_down', 0) - vm_resource_usage.get('bandwidth_down', 0)),
+                        )
+                        logger.info(f"[删除虚拟机] 已释放用户 {first_owner} 的配额")
+                except Exception as e:
+                    logger.error(f"[删除虚拟机] 释放用户配额失败: {e}")
+
+        self.hs_manage.all_save()
+        return {'hs_name': hs_name, 'vm_uuid': vm_uuid, 'message': result.message}
+
+    def _task_update_vm(self, params: dict, cancel_event):
+        """异步任务处理器：修改虚拟机配置"""
+        hs_name = params['hs_name']
+        vm_uuid = params['vm_uuid']
+        server = self.hs_manage.get_host(hs_name)
+        if not server:
+            raise Exception(f'主机不存在: {hs_name}')
+
+        vm_config_data = params.get('vm_config_data', {})
+        old_vm_config_data = params.get('old_vm_config_data', {})
+
+        vm_config = VMConfig(**vm_config_data)
+        old_vm_config = VMConfig(**old_vm_config_data)
+
+        result = server.VMUpdate(vm_config, old_vm_config)
+        if not result or not result.success:
+            raise Exception(result.message if result else '修改虚拟机失败')
+
+        # 更新配额
+        old_resource_usage = params.get('old_resource_usage', {})
+        vm_owners = params.get('vm_owners', [])
+        if vm_owners:
+            first_owner = vm_owners[0] if vm_owners else None
+            if first_owner and first_owner != 'admin' and self.db:
+                owner_user = self.db.get_user_by_username(first_owner)
+                if owner_user:
+                    cpu_change = vm_config.cpu_num - old_resource_usage.get('cpu', 0)
+                    ram_change = vm_config.mem_num - old_resource_usage.get('ram', 0)
+                    ssd_change = vm_config.hdd_num - old_resource_usage.get('ssd', 0)
+                    gpu_change = vm_config.gpu_mem - old_resource_usage.get('gpu', 0)
+                    traffic_change = vm_config.flu_num - old_resource_usage.get('traffic', 0)
+                    self.db.update_user_resource_usage(
+                        owner_user['id'],
+                        used_cpu=owner_user.get('used_cpu', 0) + cpu_change,
+                        used_ram=owner_user.get('used_ram', 0) + ram_change,
+                        used_ssd=owner_user.get('used_ssd', 0) + ssd_change,
+                        used_gpu=owner_user.get('used_gpu', 0) + gpu_change,
+                        used_traffic=owner_user.get('used_traffic', 0) + traffic_change,
+                    )
+
+        self.hs_manage.all_save()
+        return {'message': result.message}
+
+    def _task_add_pcie(self, params: dict, cancel_event):
+        """异步任务处理器：添加PCI直通设备"""
+        hs_name = params['hs_name']
+        vm_uuid = params['vm_uuid']
+        server = self.hs_manage.get_host(hs_name)
+        if not server:
+            raise Exception(f'主机不存在: {hs_name}')
+
+        from MainObject.Config.VFConfig import VFConfig
+        gpu_id = params.get('gpu_id', '')
+        config = VFConfig(gpu_uuid=gpu_id, gpu_mdev=params.get('gpu_mdev', ''), gpu_hint=params.get('gpu_hint', ''))
+        result = server.PCISetup(vm_uuid, config, gpu_id, in_flag=True)
+        if not result or not result.success:
+            raise Exception(result.message if result else '添加PCI设备失败')
+        self.hs_manage.all_save()
+        return {'message': result.message}
+
+    def _task_delete_pcie(self, params: dict, cancel_event):
+        """异步任务处理器：删除PCI直通设备"""
+        hs_name = params['hs_name']
+        vm_uuid = params['vm_uuid']
+        server = self.hs_manage.get_host(hs_name)
+        if not server:
+            raise Exception(f'主机不存在: {hs_name}')
+
+        from MainObject.Config.VFConfig import VFConfig
+        gpu_id = params.get('gpu_id', '')
+        config = VFConfig(gpu_uuid=gpu_id, gpu_mdev=params.get('gpu_mdev', ''), gpu_hint=params.get('gpu_hint', ''))
+        result = server.PCISetup(vm_uuid, config, gpu_id, in_flag=False)
+        if not result or not result.success:
+            raise Exception(result.message if result else '删除PCI设备失败')
+        self.hs_manage.all_save()
+        return {'message': result.message}
+
+    def _task_mount_usb(self, params: dict, cancel_event):
+        """异步任务处理器：挂载USB设备"""
+        hs_name = params['hs_name']
+        vm_uuid = params['vm_uuid']
+        server = self.hs_manage.get_host(hs_name)
+        if not server:
+            raise Exception(f'主机不存在: {hs_name}')
+
+        from MainObject.Config.USBInfos import USBInfos
+        usb_key = params.get('usb_key', '')
+        usb_info = USBInfos(vid_uuid=params.get('usb_vid', ''), pid_uuid=params.get('usb_pid', ''), usb_hint=params.get('usb_hint', ''))
+        result = server.USBSetup(vm_uuid, usb_info, usb_key, in_flag=True)
+        if not result or not result.success:
+            raise Exception(result.message if result else '挂载USB设备失败')
+        self.hs_manage.all_save()
+        return {'message': result.message}
+
+    def _task_unmount_usb(self, params: dict, cancel_event):
+        """异步任务处理器：卸载USB设备"""
+        hs_name = params['hs_name']
+        vm_uuid = params['vm_uuid']
+        server = self.hs_manage.get_host(hs_name)
+        if not server:
+            raise Exception(f'主机不存在: {hs_name}')
+
+        from MainObject.Config.USBInfos import USBInfos
+        usb_key = params.get('usb_key', '')
+        usb_info = USBInfos(vid_uuid=params.get('usb_vid', ''), pid_uuid=params.get('usb_pid', ''), usb_hint=params.get('usb_hint', ''))
+        result = server.USBSetup(vm_uuid, usb_info, usb_key, in_flag=False)
+        if not result or not result.success:
+            raise Exception(result.message if result else '卸载USB设备失败')
+        self.hs_manage.all_save()
+        return {'message': result.message}
+
+    def _task_add_hdd(self, params: dict, cancel_event):
+        """异步任务处理器：新增/挂载数据盘"""
+        hs_name = params['hs_name']
+        vm_uuid = params['vm_uuid']
+        disk_config = params.get('disk_config', {})
+        server = self.hs_manage.get_host(hs_name)
+        if not server:
+            raise Exception(f'主机不存在: {hs_name}')
+
+        vm_config = server.vm_saving.get(vm_uuid)
+        if not vm_config:
+            raise Exception(f'虚拟机不存在: {vm_uuid}')
+
+        hdd_name = disk_config.get('hdd_name', '')
+        hdd_size = disk_config.get('hdd_size', 0)
+        hdd_type = disk_config.get('hdd_type', 0)
+
+        from MainObject.Config.SDConfig import SDConfig
+        if hdd_name in vm_config.hdd_all:
+            hdd_obj = vm_config.hdd_all[hdd_name]
+        else:
+            hdd_obj = SDConfig(hdd_name=hdd_name, hdd_size=hdd_size, hdd_type=hdd_type)
+
+        result = server.HDDMount(vm_uuid, hdd_obj, in_flag=True)
+        if not result or not result.success:
+            raise Exception(result.message if result else '挂载数据盘失败')
+
+        if hdd_name not in vm_config.hdd_all:
+            vm_config.hdd_all[hdd_name] = hdd_obj
+        self.hs_manage.all_save()
+        return {'message': result.message}
+
+    def _task_unmount_hdd(self, params: dict, cancel_event):
+        """异步任务处理器：卸载数据盘"""
+        hs_name = params['hs_name']
+        vm_uuid = params['vm_uuid']
+        disk_name = params.get('disk_name', '')
+        server = self.hs_manage.get_host(hs_name)
+        if not server:
+            raise Exception(f'主机不存在: {hs_name}')
+
+        vm_config = server.vm_saving.get(vm_uuid)
+        if not vm_config:
+            raise Exception(f'虚拟机不存在: {vm_uuid}')
+        if disk_name not in vm_config.hdd_all:
+            raise Exception(f'数据盘不存在: {disk_name}')
+
+        hdd_config = vm_config.hdd_all[disk_name]
+        result = server.HDDMount(vm_uuid, hdd_config, in_flag=False)
+        if not result or not result.success:
+            raise Exception(result.message if result else '卸载数据盘失败')
+        self.hs_manage.all_save()
+        return {'message': result.message}
+
+    def _task_delete_hdd(self, params: dict, cancel_event):
+        """异步任务处理器：删除数据盘"""
+        hs_name = params['hs_name']
+        vm_uuid = params['vm_uuid']
+        disk_name = params.get('disk_name', '')
+        server = self.hs_manage.get_host(hs_name)
+        if not server:
+            raise Exception(f'主机不存在: {hs_name}')
+
+        result = server.RMMounts(vm_uuid, disk_name)
+        if not result or not result.success:
+            raise Exception(result.message if result else '删除数据盘失败')
+        self.hs_manage.all_save()
+        return {'message': result.message}
+
+    def _task_mount_iso(self, params: dict, cancel_event):
+        """异步任务处理器：挂载ISO"""
+        hs_name = params['hs_name']
+        vm_uuid = params['vm_uuid']
+        server = self.hs_manage.get_host(hs_name)
+        if not server:
+            raise Exception(f'主机不存在: {hs_name}')
+
+        from MainObject.Config.IMConfig import IMConfig
+        iso_config = IMConfig(
+            iso_name=params.get('iso_name', ''),
+            iso_file=params.get('iso_file', ''),
+            iso_hint=params.get('iso_hint', '')
+        )
+        result = server.ISOMount(vm_uuid, iso_config, in_flag=True)
+        if not result or not result.success:
+            raise Exception(result.message if result else '挂载ISO失败')
+        self.hs_manage.all_save()
+        return {'message': result.message}
+
+    def _task_unmount_iso(self, params: dict, cancel_event):
+        """异步任务处理器：卸载ISO"""
+        hs_name = params['hs_name']
+        vm_uuid = params['vm_uuid']
+        iso_name = params.get('iso_name', '')
+        server = self.hs_manage.get_host(hs_name)
+        if not server:
+            raise Exception(f'主机不存在: {hs_name}')
+
+        vm_config = server.vm_saving.get(vm_uuid)
+        if not vm_config:
+            raise Exception(f'虚拟机不存在: {vm_uuid}')
+        if not hasattr(vm_config, 'iso_all') or iso_name not in vm_config.iso_all:
+            raise Exception(f'ISO不存在: {iso_name}')
+
+        iso_config = vm_config.iso_all[iso_name]
+        result = server.ISOMount(vm_uuid, iso_config, in_flag=False)
+        if not result or not result.success:
+            raise Exception(result.message if result else '卸载ISO失败')
+        self.hs_manage.all_save()
+        return {'message': result.message}
+
+    def _task_create_backup(self, params: dict, cancel_event):
+        """异步任务处理器：创建备份"""
+        hs_name = params['hs_name']
+        vm_uuid = params['vm_uuid']
+        vm_tips = params.get('vm_tips', '')
+        server = self.hs_manage.get_host(hs_name)
+        if not server:
+            raise Exception(f'主机不存在: {hs_name}')
+
+        # 传递cancel_event给VMBackup，支持取消时停止PVE端任务
+        if hasattr(server.VMBackup, '__code__') and 'cancel_event' in server.VMBackup.__code__.co_varnames:
+            result = server.VMBackup(vm_uuid, vm_tips, cancel_event=cancel_event)
+        else:
+            result = server.VMBackup(vm_uuid, vm_tips)
+
+        # 如果被取消，不抛异常（TaskEngine会处理）
+        if cancel_event and cancel_event.is_set():
+            return {'message': '备份任务已取消'}
+
+        if not result or not result.success:
+            raise Exception(result.message if result else '创建备份失败')
+        self.hs_manage.all_save()
+        return {'message': result.message}
+
+    def _task_restore_backup(self, params: dict, cancel_event):
+        """异步任务处理器：还原备份"""
+        hs_name = params['hs_name']
+        vm_uuid = params['vm_uuid']
+        vm_back = params.get('vm_back', '')
+        server = self.hs_manage.get_host(hs_name)
+        if not server:
+            raise Exception(f'主机不存在: {hs_name}')
+
+        result = server.Restores(vm_uuid, vm_back)
+        if not result or not result.success:
+            raise Exception(result.message if result else '还原备份失败')
+        self.hs_manage.all_save()
+        return {'message': result.message}
+
+    def _task_add_nic(self, params: dict, cancel_event):
+        """异步任务处理器：添加网卡"""
+        hs_name = params['hs_name']
+        vm_uuid = params['vm_uuid']
+        server = self.hs_manage.get_host(hs_name)
+        if not server:
+            raise Exception(f'主机不存在: {hs_name}')
+
+        vm_config = VMConfig(**params.get('vm_config_data', {}))
+        old_vm_config = VMConfig(**params.get('old_vm_config_data', {}))
+
+        # 执行IPBinder绑定静态IP
+        nc_result = server.IPBinder(vm_config, True)
+        if not nc_result.success:
+            raise Exception(f'绑定静态IP失败: {nc_result.message}')
+
+        result = server.VMUpdate(vm_config, old_vm_config)
+        if not result or not result.success:
+            raise Exception(result.message if result else '添加网卡失败')
+        self.hs_manage.all_save()
+        return {'message': result.message}
+
+    def _task_delete_nic(self, params: dict, cancel_event):
+        """异步任务处理器：删除网卡"""
+        hs_name = params['hs_name']
+        vm_uuid = params['vm_uuid']
+        server = self.hs_manage.get_host(hs_name)
+        if not server:
+            raise Exception(f'主机不存在: {hs_name}')
+
+        vm_config = VMConfig(**params.get('vm_config_data', {}))
+        old_vm_config = VMConfig(**params.get('old_vm_config_data', {}))
+
+        result = server.VMUpdate(vm_config, old_vm_config)
+        if not result or not result.success:
+            raise Exception(result.message if result else '删除网卡失败')
+        self.hs_manage.all_save()
+        return {'message': result.message}
+
+    def _task_update_nic(self, params: dict, cancel_event):
+        """异步任务处理器：修改网卡"""
+        hs_name = params['hs_name']
+        vm_uuid = params['vm_uuid']
+        server = self.hs_manage.get_host(hs_name)
+        if not server:
+            raise Exception(f'主机不存在: {hs_name}')
+
+        vm_config = VMConfig(**params.get('vm_config_data', {}))
+        old_vm_config = VMConfig(**params.get('old_vm_config_data', {}))
+
+        result = server.VMUpdate(vm_config, old_vm_config)
+        if not result or not result.success:
+            raise Exception(result.message if result else '修改网卡失败')
+        self.hs_manage.all_save()
+        return {'message': result.message}
+
+    # ========================================================================
+    # 异步任务管理API
+    # ========================================================================
+
+    def get_async_task_list(self):
+        """获取异步任务列表（支持过滤和分页）"""
+        hs_name = request.args.get('hs_name', '')
+        status = request.args.get('status', '')
+        task_type = request.args.get('task_type', '')
+        vm_uuid = request.args.get('vm_uuid', '')
+        try:
+            page = int(request.args.get('page', 1))
+            page_size = int(request.args.get('page_size', 20))
+        except (ValueError, TypeError):
+            page = 1
+            page_size = 20
+        # 限制page_size范围，防止恶意请求
+        page_size = max(1, min(page_size, 100))
+        page = max(1, page)
+
+        result = self.hs_manage.task_engine.get_task_list(
+            hs_name=hs_name or None,
+            status=status or None,
+            task_type=task_type or None,
+            vm_uuid=vm_uuid or None,
+            page=page,
+            page_size=page_size
+        )
+        return self.api_response(200, 'success', result)
+
+    def get_async_task_stats(self):
+        """获取异步任务统计信息"""
+        result = self.hs_manage.task_engine.get_task_stats()
+        return self.api_response(200, 'success', result)
+
+    def get_async_task(self, task_id):
+        """查询单个异步任务状态"""
+        task = self.hs_manage.task_engine.get_task_status(task_id)
+        if not task:
+            return self.api_response(404, '任务不存在')
+        return self.api_response(200, 'success', task)
+
+    def stop_async_task(self, task_id):
+        """强行结束异步任务"""
+        result = self.hs_manage.task_engine.stop_task(task_id)
+        if result['success']:
+            return self.api_response(200, result['message'])
+        else:
+            return self.api_response(400, result['message'])
+
+    def retry_async_task(self, task_id):
+        """重新运行已停止的异步任务"""
+        result = self.hs_manage.task_engine.retry_task(task_id)
+        if result['success']:
+            return self.api_response(200, result['message'], {'task_id': result['task_id']})
+        else:
+            return self.api_response(400, result['message'])
+
+    def _submit_async(self, hs_name: str, vm_uuid: str, task_type: str,
+                      params: dict, username: str = ''):
+        """
+        提交异步任务的统一辅助方法
+        :return: Flask API响应（包含task_id或错误信息）
+        """
+        result = self.hs_manage.task_engine.submit_task(
+            hs_name=hs_name,
+            vm_uuid=vm_uuid,
+            task_type=task_type,
+            params=params,
+            username=username
+        )
+        if result['success']:
+            return self.api_response(200, '任务已提交', {'task_id': result['task_id']})
+        else:
+            return self.api_response(400, result['message'])
+
     # ========================================================================
     # 认证装饰器和响应函数
     # ========================================================================
@@ -1195,29 +1734,25 @@ class RestManager:
 
         in_flag = (action == 'add')
 
-        try:
-            result = server.PCISetup(vm_uuid, config, pci_key, in_flag)
-            if not result.success:
-                return self.api_response(500, result.message)
+        # 异步提交PCI操作任务
+        task_type = 'add_pcie' if in_flag else 'delete_pcie'
+        task_params = {
+            'hs_name': hs_name,
+            'vm_uuid': vm_uuid,
+            'gpu_id': pci_key,
+            'gpu_mdev': gpu_mdev,
+            'gpu_hint': gpu_hint,
+        }
+        current_user = self._get_current_user()
+        username = current_user.get('username', '') if current_user else ''
 
-            self.hs_manage.all_save()
-
-            # 记录操作日志
-            user_data = self._get_current_user()
-            username = user_data.get('username', '') if user_data else ''
-            action_text = '添加' if in_flag else '移除'
-            self.hs_manage.saving.add_operation_log(
-                hs_name=hs_name,
-                operation=f"PCI{action_text}",
-                target="虚拟机",
-                details=f"虚拟机: {vm_uuid}, 设备: {gpu_hint}({gpu_uuid})",
-                level="INFO",
-                username=username
-            )
-            return self.api_response(200, result.message)
-        except Exception as e:
-            logger.error(f"PCI直通操作失败: {str(e)}")
-            return self.api_response(500, f'PCI直通操作失败: {str(e)}')
+        return self._submit_async(
+            hs_name=hs_name,
+            vm_uuid=vm_uuid,
+            task_type=task_type,
+            params=task_params,
+            username=username
+        )
 
     def get_usb_list(self, hs_name):
         """获取主机可用USB设备列表"""
@@ -1274,29 +1809,26 @@ class RestManager:
 
         in_flag = (action == 'add')
 
-        try:
-            result = server.USBSetup(vm_uuid, usb_info, usb_key, in_flag)
-            if not result.success:
-                return self.api_response(500, result.message)
+        # 异步提交USB操作任务
+        task_type = 'mount_usb' if in_flag else 'unmount_usb'
+        task_params = {
+            'hs_name': hs_name,
+            'vm_uuid': vm_uuid,
+            'usb_key': usb_key,
+            'usb_vid': vid_uuid,
+            'usb_pid': pid_uuid,
+            'usb_hint': usb_hint,
+        }
+        current_user = self._get_current_user()
+        username = current_user.get('username', '') if current_user else ''
 
-            self.hs_manage.all_save()
-
-            # 记录操作日志
-            user_data = self._get_current_user()
-            username = user_data.get('username', '') if user_data else ''
-            action_text = '添加' if in_flag else '移除'
-            self.hs_manage.saving.add_operation_log(
-                hs_name=hs_name,
-                operation=f"USB{action_text}",
-                target="虚拟机",
-                details=f"虚拟机: {vm_uuid}, USB: {usb_hint}({vid_uuid}:{pid_uuid})",
-                level="INFO",
-                username=username
-            )
-            return self.api_response(200, result.message)
-        except Exception as e:
-            logger.error(f"USB直通操作失败: {str(e)}")
-            return self.api_response(500, f'USB直通操作失败: {str(e)}')
+        return self._submit_async(
+            hs_name=hs_name,
+            vm_uuid=vm_uuid,
+            task_type=task_type,
+            params=task_params,
+            username=username
+        )
 
     def get_efi_list(self, hs_name, vm_uuid):
         """获取虚拟机启动项列表"""
@@ -2094,80 +2626,24 @@ class RestManager:
                 vm_config.vc_pass = ''.join(
                     random.sample(string.ascii_letters + string.digits, 8))
 
-            result = server.VMCreate(vm_config)
+            # 异步提交创建虚拟机任务
+            task_params = {
+                'hs_name': hs_name,
+                'vm_config_data': vm_config.__save__(),
+            }
+            current_user = self._get_current_user()
+            username = current_user.get('username', '') if current_user else ''
 
-            # 如果创建成功，更新虚拟机第一个所有者的资源使用量
-            if result and result.success:
-                # 获取虚拟机的第一个所有者
-                first_owner = next(iter(vm_config.own_all), None) if vm_config.own_all else None
-
-                # 计算资源使用量（使用vm_config的实际值，而不是data）
-                cpu_needed = vm_config.cpu_num
-                ram_needed = vm_config.mem_num
-                ssd_needed = vm_config.hdd_num
-                gpu_needed = vm_config.gpu_mem
-                traffic_needed = vm_config.flu_num
-                nat_ports_needed = vm_config.nat_num
-                web_proxy_needed = vm_config.web_num
-                bandwidth_up_needed = vm_config.speed_u
-                bandwidth_down_needed = vm_config.speed_d
-
-                # 计算IP数量（使用vm_config的nic_all）
-                nat_ips_count = 0
-                pub_ips_count = 0
-                for nic_name, nic_conf in vm_config.nic_all.items():
-                    nic_type = getattr(nic_conf, 'nic_type', 'nat')
-                    if nic_type == 'nat':
-                        nat_ips_count += 1
-                    elif nic_type == 'pub':
-                        pub_ips_count += 1
-
-                # 只有第一个所有者才占用配额（跳过admin用户）
-                if first_owner and first_owner != 'admin':
-                    owner_user = self.db.get_user_by_username(first_owner)
-                    if owner_user:
-                        self.db.update_user_resource_usage(
-                            owner_user['id'],
-                            used_cpu=owner_user.get('used_cpu', 0) + cpu_needed,
-                            used_ram=owner_user.get('used_ram', 0) + ram_needed,
-                            used_ssd=owner_user.get('used_ssd', 0) + ssd_needed,
-                            used_gpu=owner_user.get('used_gpu', 0) + gpu_needed,
-                            used_traffic=owner_user.get('used_traffic', 0) + traffic_needed,
-                            used_nat_ports=owner_user.get('used_nat_ports', 0) + nat_ports_needed,
-                            used_web_proxy=owner_user.get('used_web_proxy', 0) + web_proxy_needed,
-                            used_bandwidth_up=owner_user.get('used_bandwidth_up', 0) + bandwidth_up_needed,
-                            used_bandwidth_down=owner_user.get('used_bandwidth_down', 0) + bandwidth_down_needed
-                            # 注意：IP使用量通过_calculate_user_ip_usage函数实时计算，无需在数据库中维护
-                        )
-
-            self.hs_manage.all_save()
+            return self._submit_async(
+                hs_name=hs_name,
+                vm_uuid=vm_config.vm_uuid,
+                task_type='create_vm',
+                params=task_params,
+                username=username
+            )
         finally:
             if _quota_lock:
                 _quota_lock.release()
-        
-        # 记录操作日志
-        if result and result.success:
-            user_data = self._get_current_user()
-            username = user_data.get('username', '') if user_data else ''
-            self.hs_manage.saving.add_operation_log(
-                hs_name=hs_name,
-                operation="创建",
-                target="虚拟机",
-                details=f"虚拟机名称: {vm_config.vm_uuid}, CPU: {vm_config.cpu_num}核, 内存: {vm_config.mem_num}GB, 硬盘: {vm_config.hdd_num}GB",
-                level="INFO",
-                username=username
-            )
-        
-        # 成功时把 vm_uuid/hs_name 回传给调用方（财务系统、插件等下游依赖这个字段反查 VM），
-        # 失败时 data=None，行为与历史保持一致
-        response_data = None
-        if result and result.success:
-            response_data = {
-                'hs_name': hs_name,
-                'vm_uuid': vm_config.vm_uuid,
-                'vm_name': vm_config.vm_uuid,  # 兼容字段：HostAgent 内部 vm_uuid 同时承担"名称"语义
-            }
-        return self.api_response(200 if result and result.success else 400, result.message, response_data)
 
     # 修改虚拟机配置 ########################################################################
     # :param hs_name: 主机名称
@@ -2360,75 +2836,28 @@ class RestManager:
                     usb_hint=data.get('usb_remark', '')
                 )
 
-            result = server.VMUpdate(vm_config, old_vm_config)
+            # 异步提交修改虚拟机任务
+            task_params = {
+                'hs_name': hs_name,
+                'vm_uuid': vm_uuid,
+                'vm_config_data': vm_config.__save__(),
+                'old_vm_config_data': old_vm_config.__save__(),
+                'old_resource_usage': old_resource_usage,
+                'vm_owners': vm_owners,
+            }
+            current_user = self._get_current_user()
+            username = current_user.get('username', '') if current_user else ''
 
-            # 如果更新成功，更新第一个所有者（排除admin）的资源使用量
-            if result and result.success and vm_owners:
-                # 使用vm_config的实际值计算资源变化
-                cpu_change = vm_config.cpu_num - old_resource_usage['cpu']
-                ram_change = vm_config.mem_num - old_resource_usage['ram']
-                ssd_change = vm_config.hdd_num - old_resource_usage['ssd']
-                gpu_change = vm_config.gpu_mem - old_resource_usage['gpu']
-                traffic_change = vm_config.flu_num - old_resource_usage['traffic']
-                nat_ports_change = vm_config.nat_num - old_resource_usage.get('nat_ports', 0)
-                web_proxy_change = vm_config.web_num - old_resource_usage.get('web_proxy', 0)
-                bandwidth_up_change = vm_config.speed_u - old_resource_usage.get('bandwidth_up', 0)
-                bandwidth_down_change = vm_config.speed_d - old_resource_usage.get('bandwidth_down', 0)
-
-                # 计算IP数量变化（使用vm_config的nic_all）
-                new_nat_ips = 0
-                new_pub_ips = 0
-                for nic_name, nic_conf in vm_config.nic_all.items():
-                    nic_type = getattr(nic_conf, 'nic_type', 'nat')
-                    if nic_type == 'nat':
-                        new_nat_ips += 1
-                    elif nic_type == 'pub':
-                        new_pub_ips += 1
-
-                nat_ips_change = new_nat_ips - old_resource_usage.get('nat_ips', 0)
-                pub_ips_change = new_pub_ips - old_resource_usage.get('pub_ips', 0)
-
-                # 只更新第一个所有者的配额（跳过admin用户）
-                first_owner = vm_owners[0] if vm_owners else None
-                if first_owner and first_owner != 'admin':
-                    # 根据用户名查询用户信息
-                    owner_user = self.db.get_user_by_username(first_owner)
-                    if owner_user:
-                        self.db.update_user_resource_usage(
-                            owner_user['id'],
-                            used_cpu=owner_user.get('used_cpu', 0) + cpu_change,
-                            used_ram=owner_user.get('used_ram', 0) + ram_change,
-                            used_ssd=owner_user.get('used_ssd', 0) + ssd_change,
-                            used_gpu=owner_user.get('used_gpu', 0) + gpu_change,
-                            used_traffic=owner_user.get('used_traffic', 0) + traffic_change,
-                            used_nat_ports=owner_user.get('used_nat_ports', 0) + nat_ports_change,
-                            used_web_proxy=owner_user.get('used_web_proxy', 0) + web_proxy_change,
-                            used_bandwidth_up=owner_user.get('used_bandwidth_up', 0) + bandwidth_up_change,
-                            used_bandwidth_down=owner_user.get('used_bandwidth_down', 0) + bandwidth_down_change
-                            # 注意：IP使用量通过_calculate_user_ip_usage函数实时计算，无需在数据库中维护
-                        )
-
-            if result and result.success:
-                self.hs_manage.all_save()
+            return self._submit_async(
+                hs_name=hs_name,
+                vm_uuid=vm_uuid,
+                task_type='update_vm',
+                params=task_params,
+                username=username
+            )
         finally:
             if _quota_lock:
                 _quota_lock.release()
-
-        if result and result.success:
-            # 记录操作日志
-            user_data = self._get_current_user()
-            username = user_data.get('username', '') if user_data else ''
-            self.hs_manage.saving.add_operation_log(
-                hs_name=hs_name,
-                operation="修改",
-                target="虚拟机",
-                details=f"虚拟机名称: {vm_uuid}",
-                level="INFO",
-                username=username
-            )
-            return self.api_response(200, result.message if result.message else '虚拟机更新成功')
-
-        return self.api_response(400, result.message if result else '更新失败')
 
     # 删除虚拟机 ########################################################################
     # :param hs_name: 主机名称
@@ -2502,90 +2931,23 @@ class RestManager:
                 own_all = getattr(vm_config, 'own_all', {})
                 vm_owners = list(own_all.keys()) if isinstance(own_all, dict) else list(own_all)
 
-        result = server.VMDelete(vm_uuid)
+        # 异步提交删除虚拟机任务（携带配额信息，以便任务完成后释放）
+        task_params = {
+            'hs_name': hs_name,
+            'vm_uuid': vm_uuid,
+            'vm_resource_usage': vm_resource_usage,
+            'vm_owners': vm_owners,
+        }
+        current_user = self._get_current_user()
+        username = current_user.get('username', '') if current_user else ''
 
-        # 兜底处理：底层主机上虚拟机未找到时，仍然清理数据库/配置记录，避免记录残留
-        # 判定条件：底层返回失败，且错误信息包含"不存在"/"未找到"/"not found"/"was not found"
-        if result and not result.success and result.message:
-            msg_lower = str(result.message).lower()
-            vm_missing = (
-                ('不存在' in result.message) or ('未找到' in result.message)
-                or ('not found' in msg_lower) or ('was not found' in msg_lower)
-                or ('does not exist' in msg_lower)
-            )
-            if vm_missing:
-                logger.warning(
-                    f"[删除虚拟机] 主机 {hs_name} 上未找到虚拟机 {vm_uuid}，尝试清理数据库与配置记录: {result.message}"
-                )
-                try:
-                    # 清理内存中的虚拟机配置
-                    if hasattr(server, 'vm_saving') and vm_uuid in server.vm_saving:
-                        del server.vm_saving[vm_uuid]
-                        logger.info(f"[删除虚拟机] 已从主机配置中移除虚拟机: {vm_uuid}")
-                    # 持久化配置到数据库
-                    if hasattr(server, 'data_set'):
-                        try:
-                            server.data_set()
-                        except Exception as save_err:
-                            logger.warning(f"[删除虚拟机] 保存主机配置失败: {save_err}")
-                    # 将本次处理视为成功，以便后续释放配额、清理状态、记录日志等流程正常执行
-                    result.success = True
-                    result.message = f"虚拟机 {vm_uuid} 在主机上未找到，已清理数据库记录"
-                except Exception as cleanup_err:
-                    logger.error(
-                        f"[删除虚拟机] 清理数据库记录失败: {cleanup_err}", exc_info=True
-                    )
-
-        # 如果删除成功，从数据库删除虚拟机状态数据
-        if result and result.success and server.save_data:
-            if hasattr(server.save_data, 'delete_vm_status'):
-                delete_status_result = server.save_data.delete_vm_status(hs_name, vm_uuid)
-                if delete_status_result:
-                    logger.info(f"已从数据库删除虚拟机 {vm_uuid} 的状态数据")
-                else:
-                    logger.warning(f"删除虚拟机 {vm_uuid} 状态数据失败")
-            else:
-                logger.warning("save_data 对象不支持 delete_vm_status 方法")
-
-        # 如果删除成功，释放第一个所有者（排除admin）的资源使用量
-        if result and result.success and vm_owners:
-            # 只释放第一个所有者的配额（跳过admin用户）
-            first_owner = vm_owners[0] if vm_owners else None
-            if first_owner and first_owner != 'admin':
-                # 根据用户名查询用户信息
-                owner_user = self.db.get_user_by_username(first_owner)
-                if owner_user:
-                    self.db.update_user_resource_usage(
-                        owner_user['id'],
-                        used_cpu=owner_user.get('used_cpu', 0) - vm_resource_usage['cpu'],
-                        used_ram=owner_user.get('used_ram', 0) - vm_resource_usage['ram'],
-                        used_ssd=owner_user.get('used_ssd', 0) - vm_resource_usage['ssd'],
-                        used_gpu=owner_user.get('used_gpu', 0) - vm_resource_usage['gpu'],
-                        used_traffic=owner_user.get('used_traffic', 0) - vm_resource_usage['traffic'],
-                        used_nat_ports=owner_user.get('used_nat_ports', 0) - vm_resource_usage['nat_ports'],
-                        used_web_proxy=owner_user.get('used_web_proxy', 0) - vm_resource_usage['web_proxy'],
-                        used_bandwidth_up=owner_user.get('used_bandwidth_up', 0) - vm_resource_usage['bandwidth_up'],
-                        used_bandwidth_down=owner_user.get('used_bandwidth_down', 0) - vm_resource_usage[
-                            'bandwidth_down']
-                        # 注意：IP使用量通过_calculate_user_ip_usage函数实时计算，无需在数据库中维护
-                    )
-
-        if result and result.success:
-            self.hs_manage.all_save()
-            # 记录操作日志
-            user_data = self._get_current_user()
-            username = user_data.get('username', '') if user_data else ''
-            self.hs_manage.saving.add_operation_log(
-                hs_name=hs_name,
-                operation="删除",
-                target="虚拟机",
-                details=f"虚拟机名称: {vm_uuid}",
-                level="WARNING",
-                username=username
-            )
-            return self.api_response(200, result.message if result.message else '虚拟机已删除')
-
-        return self.api_response(400, result.message if result else '操作失败')
+        return self._submit_async(
+            hs_name=hs_name,
+            vm_uuid=vm_uuid,
+            task_type='delete_vm',
+            params=task_params,
+            username=username
+        )
 
     # 获取虚拟机所有者列表 ########################################################################
     # :param hs_name: 主机名称
@@ -3792,37 +4154,24 @@ window.location.replace({repr(target_url)});
             vm_config.nic_all[nic_name] = nic_config
             nic_config.mac_addr = nic_config.send_mac()
 
-        # 执行NCCreate绑定静态IP
-        nc_result = server.IPBinder(vm_config, True)
-        if not nc_result.success:
-            return self.api_response(400, f'绑定静态IP失败: {nc_result.message}')
+        # 异步提交添加网卡任务
+        task_params = {
+            'hs_name': hs_name,
+            'vm_uuid': vm_uuid,
+            'vm_config_data': vm_config.__save__(),
+            'old_vm_config_data': old_vm_config.__save__(),
+            'action': 'add',
+        }
+        current_user = self._get_current_user()
+        username = current_user.get('username', '') if current_user else ''
 
-        # 调用VMUpdate更新
-        result = server.VMUpdate(vm_config, old_vm_config)
-
-        if result and result.success:
-            self.hs_manage.all_save()
-
-            # 更新用户IP使用量 - 由于数据库中没有used_nat_ips和used_pub_ips字段，
-            # IP使用量通过_calculate_user_ip_usage函数实时计算，无需在数据库中维护
-            # 注意：IP配额检查会在操作时通过_calculate_user_ip_usage实时获取准确的使用量
-            logger.info(f"网卡添加成功，IP使用量将通过实时计算更新")
-
-            # 记录操作日志
-            user_data = self._get_current_user()
-            username = user_data.get('username', '') if user_data else ''
-            self.hs_manage.saving.add_operation_log(
-                hs_name=hs_name,
-                operation="添加",
-                target="网卡",
-                details=f"虚拟机: {vm_uuid}, 网卡: {nic_name}, 类型: {nic_type}",
-                level="INFO",
-                username=username
-            )
-
-            return self.api_response(200, f'网卡 {nic_name} 添加成功')
-
-        return self.api_response(400, result.message if result else '添加网卡失败')
+        return self._submit_async(
+            hs_name=hs_name,
+            vm_uuid=vm_uuid,
+            task_type='add_nic',
+            params=task_params,
+            username=username
+        )
 
     # 删除虚拟机IP地址 ########################################################################
     # :param hs_name: 主机名称
@@ -3868,34 +4217,25 @@ window.location.replace({repr(target_url)});
         # 删除网卡
         del vm_config.nic_all[nic_name]
 
-        # 调用VMUpdate更新
-        result = server.VMUpdate(vm_config, old_vm_config)
+        # 异步提交删除网卡任务
+        task_params = {
+            'hs_name': hs_name,
+            'vm_uuid': vm_uuid,
+            'vm_config_data': vm_config.__save__(),
+            'old_vm_config_data': old_vm_config.__save__(),
+            'action': 'delete',
+            'nic_name': nic_name,
+        }
+        current_user = self._get_current_user()
+        username = current_user.get('username', '') if current_user else ''
 
-        if result and result.success:
-            # 确保数据保存成功
-            save_success = self.hs_manage.all_save()
-            if not save_success:
-                logger.warning(f"删除网卡 {nic_name} 后保存数据失败")
-
-            # 更新用户IP使用量 - 由于数据库中没有used_nat_ips和used_pub_ips字段，
-            # IP使用量通过_calculate_user_ip_usage函数实时计算，无需在数据库中维护
-            logger.info(f"网卡删除成功，IP使用量将通过实时计算更新")
-
-            # 记录操作日志
-            user_data = self._get_current_user()
-            username = user_data.get('username', '') if user_data else ''
-            self.hs_manage.saving.add_operation_log(
-                hs_name=hs_name,
-                operation="删除",
-                target="网卡",
-                details=f"虚拟机: {vm_uuid}, 网卡: {nic_name}",
-                level="INFO",
-                username=username
-            )
-
-            return self.api_response(200, f'网卡 {nic_name} 已删除')
-
-        return self.api_response(400, result.message if result else '删除网卡失败')
+        return self._submit_async(
+            hs_name=hs_name,
+            vm_uuid=vm_uuid,
+            task_type='delete_nic',
+            params=task_params,
+            username=username
+        )
 
     # 修改虚拟机网卡配置 ########################################################################
     # :param hs_name: 主机名称
@@ -3957,25 +4297,25 @@ window.location.replace({repr(target_url)});
         if 'ip4_addr' in data or 'ip6_addr' in data:
             nic_config.mac_addr = nic_config.send_mac()
 
-        # 调用VMUpdate更新
-        result = server.VMUpdate(vm_config, old_vm_config)
+        # 异步提交修改网卡任务
+        task_params = {
+            'hs_name': hs_name,
+            'vm_uuid': vm_uuid,
+            'vm_config_data': vm_config.__save__(),
+            'old_vm_config_data': old_vm_config.__save__(),
+            'action': 'update',
+            'nic_name': nic_name,
+        }
+        current_user = self._get_current_user()
+        username = current_user.get('username', '') if current_user else ''
 
-        if result and result.success:
-            self.hs_manage.all_save()
-            # 记录操作日志
-            user_data = self._get_current_user()
-            username = user_data.get('username', '') if user_data else ''
-            self.hs_manage.saving.add_operation_log(
-                hs_name=hs_name,
-                operation="修改",
-                target="网卡",
-                details=f"虚拟机: {vm_uuid}, 网卡: {nic_name}",
-                level="INFO",
-                username=username
-            )
-            return self.api_response(200, f'网卡 {nic_name} 配置已更新')
-
-        return self.api_response(400, result.message if result else '修改网卡失败')
+        return self._submit_async(
+            hs_name=hs_name,
+            vm_uuid=vm_uuid,
+            task_type='update_nic',
+            params=task_params,
+            username=username
+        )
 
     # ========================================================================
     # 虚拟机网络配置API - 反向代理管理
@@ -4476,18 +4816,26 @@ window.location.replace({repr(target_url)});
             hdd_config = SDConfig(hdd_name=hdd_name, hdd_size=hdd_size, hdd_type=hdd_type)
             logger.info(f"创建新磁盘: {hdd_name}, 大小: {hdd_size}MB, 类型: {hdd_type}")
 
-        # 调用HDDMount挂载
-        result = server.HDDMount(vm_uuid, hdd_config, in_flag=True)
-        if not result.success:
-            return self.api_response(500, f'挂载失败: {result.message}')
+        # 异步提交挂载数据盘任务
+        task_params = {
+            'hs_name': hs_name,
+            'vm_uuid': vm_uuid,
+            'disk_config': {
+                'hdd_name': hdd_name,
+                'hdd_size': hdd_size,
+                'hdd_type': hdd_type,
+            },
+        }
+        current_user = self._get_current_user()
+        username = current_user.get('username', '') if current_user else ''
 
-        # 如果是新磁盘，添加到vm_config.hdd_all
-        if hdd_name not in vm_config.hdd_all:
-            vm_config.hdd_all[hdd_name] = hdd_config
-
-        # 保存配置
-        self.hs_manage.all_save()
-        return self.api_response(200, '数据盘挂载成功')
+        return self._submit_async(
+            hs_name=hs_name,
+            vm_uuid=vm_uuid,
+            task_type='add_hdd',
+            params=task_params,
+            username=username
+        )
 
     # 卸载数据盘 ########################################################################
     # :param hs_name: 主机名称
@@ -4512,14 +4860,22 @@ window.location.replace({repr(target_url)});
 
         hdd_config = vm_config.hdd_all[hdd_name]
 
-        # 调用HDDMount卸载
-        result = server.HDDMount(vm_uuid, hdd_config, in_flag=False)
-        if not result.success:
-            return self.api_response(500, f'卸载失败: {result.message}')
+        # 异步提交卸载数据盘任务
+        task_params = {
+            'hs_name': hs_name,
+            'vm_uuid': vm_uuid,
+            'disk_name': hdd_name,
+        }
+        current_user = self._get_current_user()
+        username = current_user.get('username', '') if current_user else ''
 
-        # 保存配置
-        self.hs_manage.all_save()
-        return self.api_response(200, '数据盘已卸载')
+        return self._submit_async(
+            hs_name=hs_name,
+            vm_uuid=vm_uuid,
+            task_type='update_hdd',
+            params=task_params,
+            username=username
+        )
 
     # 移交数据盘所有权 ##################################################################
     # :param hs_name: 主机名称
@@ -4588,25 +4944,22 @@ window.location.replace({repr(target_url)});
 
         hdd_config = vm_config.hdd_all[hdd_name]
 
-        # 调用RMMounts删除磁盘
-        result = server.RMMounts(vm_uuid, hdd_name)
-        if not result.success:
-            return self.api_response(500, f'删除失败: {result.message}')
+        # 异步提交删除数据盘任务
+        task_params = {
+            'hs_name': hs_name,
+            'vm_uuid': vm_uuid,
+            'disk_name': hdd_name,
+        }
+        current_user = self._get_current_user()
+        username = current_user.get('username', '') if current_user else ''
 
-        # 保存配置
-        self.hs_manage.all_save()
-        # 记录操作日志
-        user_data = self._get_current_user()
-        username = user_data.get('username', '') if user_data else ''
-        self.hs_manage.saving.add_operation_log(
+        return self._submit_async(
             hs_name=hs_name,
-            operation="删除",
-            target="数据盘",
-            details=f"虚拟机: {vm_uuid}, 硬盘: {hdd_name}",
-            level="INFO",
+            vm_uuid=vm_uuid,
+            task_type='delete_hdd',
+            params=task_params,
             username=username
         )
-        return self.api_response(200, '数据盘已删除')
 
     # ========================================================================
     # ISO管理API - /api/client/iso/<action>/<hs_name>/<vm_uuid>
@@ -4675,25 +5028,24 @@ window.location.replace({repr(target_url)});
             iso_hint=iso_hint
         )
 
-        # 调用ISOMount挂载
-        result = server.ISOMount(vm_uuid, iso_config, in_flag=True)
-        if not result.success:
-            return self.api_response(500, f'挂载失败: {result.message}')
+        # 异步提交挂载ISO任务
+        task_params = {
+            'hs_name': hs_name,
+            'vm_uuid': vm_uuid,
+            'iso_name': iso_name,
+            'iso_file': iso_file,
+            'iso_hint': iso_hint,
+        }
+        current_user = self._get_current_user()
+        username = current_user.get('username', '') if current_user else ''
 
-        # 保存配置
-        self.hs_manage.all_save()
-        # 记录操作日志
-        user_data = self._get_current_user()
-        username = user_data.get('username', '') if user_data else ''
-        self.hs_manage.saving.add_operation_log(
+        return self._submit_async(
             hs_name=hs_name,
-            operation="挂载",
-            target="ISO镜像",
-            details=f"虚拟机: {vm_uuid}, ISO: {iso_file}",
-            level="INFO",
+            vm_uuid=vm_uuid,
+            task_type='mount_iso',
+            params=task_params,
             username=username
         )
-        return self.api_response(200, 'ISO挂载成功')
 
     # 卸载ISO ########################################################################
     # :param hs_name: 主机名称
@@ -4725,25 +5077,22 @@ window.location.replace({repr(target_url)});
 
         iso_config = vm_config.iso_all[iso_name]
 
-        # 调用ISOMount卸载
-        result = server.ISOMount(vm_uuid, iso_config, in_flag=False)
-        if not result.success:
-            return self.api_response(500, f'卸载失败: {result.message}')
+        # 异步提交卸载ISO任务
+        task_params = {
+            'hs_name': hs_name,
+            'vm_uuid': vm_uuid,
+            'iso_name': iso_name,
+        }
+        current_user = self._get_current_user()
+        username = current_user.get('username', '') if current_user else ''
 
-        # 保存配置
-        self.hs_manage.all_save()
-        # 记录操作日志
-        user_data = self._get_current_user()
-        username = user_data.get('username', '') if user_data else ''
-        self.hs_manage.saving.add_operation_log(
+        return self._submit_async(
             hs_name=hs_name,
-            operation="卸载",
-            target="ISO镜像",
-            details=f"虚拟机: {vm_uuid}, ISO: {iso_name}",
-            level="INFO",
+            vm_uuid=vm_uuid,
+            task_type='unmount_iso',
+            params=task_params,
             username=username
         )
-        return self.api_response(200, 'ISO已卸载')
 
     # ========================================================================
     # USB管理API - /api/client/usb/<action>/<hs_name>/<vm_uuid>
@@ -4771,22 +5120,25 @@ window.location.replace({repr(target_url)});
         import uuid
         usb_key = str(uuid.uuid4())
 
-        # 创建USBInfos对象
-        from MainObject.Config.USBInfos import USBInfos
-        usb_info = USBInfos(
-            vid_uuid=usb_vid,
-            pid_uuid=usb_pid,
-            usb_hint=usb_remark
+        # 异步提交USB挂载任务
+        task_params = {
+            'hs_name': hs_name,
+            'vm_uuid': vm_uuid,
+            'usb_key': usb_key,
+            'usb_vid': usb_vid,
+            'usb_pid': usb_pid,
+            'usb_hint': usb_remark,
+        }
+        current_user = self._get_current_user()
+        username = current_user.get('username', '') if current_user else ''
+
+        return self._submit_async(
+            hs_name=hs_name,
+            vm_uuid=vm_uuid,
+            task_type='mount_usb',
+            params=task_params,
+            username=username
         )
-
-        # 调用USBSetup执行直通+写入配置
-        result = server.USBSetup(vm_uuid, usb_info, usb_key, in_flag=True)
-        if not result.success:
-            return self.api_response(500, f'挂载失败: {result.message}')
-
-        # 保存配置
-        self.hs_manage.all_save()
-        return self.api_response(200, 'USB挂载成功')
 
     def unmount_vm_usb(self, hs_name, vm_uuid, usb_key):
         """卸载虚拟机USB设备（兼容旧接口，内部转调USBSetup）"""
@@ -4806,14 +5158,25 @@ window.location.replace({repr(target_url)});
 
         usb_info = vm_config.usb_all[usb_key]
 
-        # 调用USBSetup执行移除+更新配置
-        result = server.USBSetup(vm_uuid, usb_info, usb_key, in_flag=False)
-        if not result.success:
-            return self.api_response(500, f'卸载失败: {result.message}')
+        # 异步提交USB卸载任务
+        task_params = {
+            'hs_name': hs_name,
+            'vm_uuid': vm_uuid,
+            'usb_key': usb_key,
+            'usb_vid': getattr(usb_info, 'vid_uuid', ''),
+            'usb_pid': getattr(usb_info, 'pid_uuid', ''),
+            'usb_hint': getattr(usb_info, 'usb_hint', ''),
+        }
+        current_user = self._get_current_user()
+        username = current_user.get('username', '') if current_user else ''
 
-        # 保存配置
-        self.hs_manage.all_save()
-        return self.api_response(200, 'USB已卸载')
+        return self._submit_async(
+            hs_name=hs_name,
+            vm_uuid=vm_uuid,
+            task_type='unmount_usb',
+            params=task_params,
+            username=username
+        )
 
     # ========================================================================
     # 备份管理API - /api/client/backup/<action>/<hs_name>/<vm_uuid>
@@ -4877,25 +5240,22 @@ window.location.replace({repr(target_url)});
         if not vm_tips:
             return self.api_response(400, '备份说明不能为空')
 
-        # 调用VMBackup创建备份
-        result = server.VMBackup(vm_uuid, vm_tips)
-        if not result.success:
-            return self.api_response(500, f'备份失败: {result.message}')
+        # 异步提交创建备份任务
+        task_params = {
+            'hs_name': hs_name,
+            'vm_uuid': vm_uuid,
+            'vm_tips': vm_tips,
+        }
+        current_user = self._get_current_user()
+        username = current_user.get('username', '') if current_user else ''
 
-        # 保存配置
-        self.hs_manage.all_save()
-        # 记录操作日志
-        user_data = self._get_current_user()
-        username = user_data.get('username', '') if user_data else ''
-        self.hs_manage.saving.add_operation_log(
+        return self._submit_async(
             hs_name=hs_name,
-            operation="创建备份",
-            target="虚拟机",
-            details=f"虚拟机: {vm_uuid}, 备注: {vm_tips}",
-            level="INFO",
+            vm_uuid=vm_uuid,
+            task_type='create_backup',
+            params=task_params,
             username=username
         )
-        return self.api_response(200, '备份创建成功')
 
     # 还原备份 ########################################################################
     # :param hs_name: 主机名称
@@ -4923,25 +5283,22 @@ window.location.replace({repr(target_url)});
         if not vm_back:
             return self.api_response(400, '备份名称不能为空')
 
-        # 调用Restores还原备份
-        result = server.Restores(vm_uuid, vm_back)
-        if not result.success:
-            return self.api_response(500, f'还原失败: {result.message}')
+        # 异步提交还原备份任务
+        task_params = {
+            'hs_name': hs_name,
+            'vm_uuid': vm_uuid,
+            'vm_back': vm_back,
+        }
+        current_user = self._get_current_user()
+        username = current_user.get('username', '') if current_user else ''
 
-        # 保存配置
-        self.hs_manage.all_save()
-        # 记录操作日志
-        user_data = self._get_current_user()
-        username = user_data.get('username', '') if user_data else ''
-        self.hs_manage.saving.add_operation_log(
+        return self._submit_async(
             hs_name=hs_name,
-            operation="还原备份",
-            target="虚拟机",
-            details=f"虚拟机: {vm_uuid}, 备份: {vm_back}",
-            level="WARNING",
+            vm_uuid=vm_uuid,
+            task_type='restore_backup',
+            params=task_params,
             username=username
         )
-        return self.api_response(200, '备份还原成功')
 
     # 删除备份 ########################################################################
     # :param hs_name: 主机名称
@@ -4969,10 +5326,16 @@ window.location.replace({repr(target_url)});
         if not vm_back:
             return self.api_response(400, '备份名称不能为空')
 
-        # 调用RMBackup删除备份
+        # 调用RMBackup删除备份（文件不存在时仍继续删除记录）
         result = server.RMBackup(vm_uuid, vm_back)
         if not result.success:
-            return self.api_response(500, f'删除失败: {result.message}')
+            # 判断是否是文件不存在的错误，如果是则继续删除记录
+            msg_lower = (result.message or '').lower()
+            file_missing = ('不存在' in result.message or 'not found' in msg_lower
+                           or 'no such' in msg_lower or '文件不存在' in result.message)
+            if not file_missing:
+                return self.api_response(500, f'删除失败: {result.message}')
+            logger.warning(f"备份文件不存在，仍继续删除备份记录: {vm_back}")
 
         # 从backups中删除
         vm_config.backups = [b for b in vm_config.backups if b.backup_name != vm_back]

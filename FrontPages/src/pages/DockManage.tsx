@@ -17,6 +17,7 @@ import {
     RadarChartOutlined
 } from '@ant-design/icons'
 import api, { getHosts } from '@/utils/apis.ts'
+import { startTaskWithNotification } from '@/utils/taskPoller'
 import { useUserStore } from '@/utils/data.ts'
 import DockCard from '@/components/dock/DockCard'
 import DockCreateModal from '@/components/dock/DockCreateModal'
@@ -203,18 +204,13 @@ function DockManage() {
         }
         
         setDeleteModalOpen(false)
-        const hide = message.loading('正在删除虚拟机...', 0)
         try {
             const result = await api.deleteVM(deleteHostName, deleteVmUuid)
-            hide()
-            if (result.code === 200) {
-                message.success('虚拟机已删除')
-                loadVMs()
-            } else {
-                message.error(result.msg || '删除失败')
-            }
+            startTaskWithNotification(result, '删除虚拟机', {
+                onCompleted: () => loadVMs(),
+                onFailed: () => loadVMs(),
+            })
         } catch (error) {
-            hide()
             message.error('删除失败')
         }
     }

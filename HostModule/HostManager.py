@@ -13,6 +13,7 @@ from MainObject.Config.VMConfig import VMConfig
 from MainObject.Config.WebProxy import WebProxy
 from MainObject.Public.ZMessage import ZMessage
 from HostModule.DataManager import DataManager
+from HostModule.TaskManager import TaskEngine
 
 
 class HostManage:
@@ -23,6 +24,8 @@ class HostManage:
         self.bearer: str = ""  # 先初始化saving变量
         self.saving = DataManager("./DataSaving/hostmanage.db")
         self.proxys: HttpManager | None = None
+        # 初始化异步任务引擎
+        self.task_engine = TaskEngine(self.saving)
         # 删除 self.web_all，不再使用全局代理列表
         self.set_conf()
 
@@ -464,6 +467,9 @@ class HostManage:
                 
                 # 异步初始化虚拟机 ============================================
                 self._async_init_vms()
+                
+                # 启动异步任务引擎（重置未完成任务并开始调度）==================
+                self.task_engine.startup()
                 
             except Exception as e:
                 logger.error(f'[加载配置] 加载主机配置失败: {e}')

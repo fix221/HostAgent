@@ -1046,6 +1046,50 @@ def api_get_tasks():
 
 
 # ============================================================================
+# 异步任务管理API - /api/system/async_task
+# ============================================================================
+
+# 获取异步任务列表 ##################################################################
+@app.route('/api/system/async_task/list', methods=['GET'])
+@require_auth
+def api_get_async_task_list():
+    """获取异步任务列表（支持过滤和分页）"""
+    return rest_manager.get_async_task_list()
+
+
+# 获取异步任务统计 ##################################################################
+@app.route('/api/system/async_task/stats', methods=['GET'])
+@require_auth
+def api_get_async_task_stats():
+    """获取异步任务统计信息"""
+    return rest_manager.get_async_task_stats()
+
+
+# 查询单个异步任务状态 ##############################################################
+@app.route('/api/system/async_task/<task_id>', methods=['GET'])
+@require_auth
+def api_get_async_task(task_id):
+    """查询单个异步任务状态"""
+    return rest_manager.get_async_task(task_id)
+
+
+# 强行结束异步任务 ##################################################################
+@app.route('/api/system/async_task/<task_id>/stop', methods=['POST'])
+@require_auth
+def api_stop_async_task(task_id):
+    """强行结束异步任务"""
+    return rest_manager.stop_async_task(task_id)
+
+
+# 重新运行异步任务 ##################################################################
+@app.route('/api/system/async_task/<task_id>/retry', methods=['POST'])
+@require_auth
+def api_retry_async_task(task_id):
+    """重新运行已停止的异步任务"""
+    return rest_manager.retry_async_task(task_id)
+
+
+# ============================================================================
 # 主机管理API - /api/server/<option>/<key?>
 # ============================================================================
 

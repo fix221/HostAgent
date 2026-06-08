@@ -138,9 +138,15 @@ class DataManager:
                     try:
                         conn.execute(sql)
                     except sqlite3.OperationalError as e:
+                        err_msg = str(e).lower()
                         # 忽略ALTER TABLE的重复字段错误
-                        if "duplicate column name" in str(e).lower():
-                            logger.warning(f"字段已存在，跳过: {e}")
+                        if "duplicate column name" in err_msg:
+                            continue
+                        # 忽略CREATE INDEX引用不存在列的错误（ALTER TABLE会在后续补上）
+                        elif "no such column" in err_msg:
+                            continue
+                        # 忽略表已存在错误
+                        elif "already exists" in err_msg:
                             continue
                         else:
                             raise e
@@ -866,7 +872,7 @@ quota_bandwidth_up = 9999, quota_bandwidth_down = 9999, quota_traffic = 9999
 
     # ==================== 虚拟机任务操作 ====================
     def set_vm_tasker(self, hs_name: str, vm_tasker: List[Any]) -> bool:
-        """保存虚拟机任务"""
+        """保存虚拟机任务（旧接口，保留兼容）"""
         conn = self.get_db_sqlite()
         try:
             # 清除旧任务
@@ -888,7 +894,7 @@ quota_bandwidth_up = 9999, quota_bandwidth_down = 9999, quota_traffic = 9999
             conn.close()
 
     def get_vm_tasker(self, hs_name: str) -> List[Any]:
-        """获取虚拟机任务"""
+        """获取虚拟机任务（旧接口，保留兼容）"""
         conn = self.get_db_sqlite()
         try:
             cursor = conn.execute("SELECT task_data FROM vm_tasker WHERE hs_name = ?", (hs_name,))
@@ -896,6 +902,287 @@ quota_bandwidth_up = 9999, quota_bandwidth_down = 9999, quota_traffic = 9999
             for row in cursor.fetchall():
                 results.append(json.loads(row["task_data"]))
             return results
+        finally:
+            conn.close()
+
+    # ==================== 异步任务管理操作 ====================
+    def create_async_task(self, task_id: str, hs_name: str, vm_uuid: str, task_type: str,
+                          params: dict, username: str = '') -> bool:
+        """
+        创建异步任务
+        :param task_id: 任务唯一标识(UUID)
+        :param hs_name: 主机名称
+        :param vm_uuid: 虚拟机UUID
+        :param task_type: 任务类型
+        :param params: 执行参数字典
+        :param username: 操作人
+        :return: 是否成功
+        """
+        conn = self.get_db_sqlite()
+        try:
+            sql = """
+                INSERT INTO vm_tasker (task_id, hs_name, vm_uuid, task_type, status, params, username, task_data)
+                VALUES (?, ?, ?, ?, 'pending', ?, ?, ?)
+            """
+            params_json = json.dumps(params)
+            conn.execute(sql, (task_id, hs_name, vm_uuid, task_type, params_json, username, params_json))
+            conn.commit()
+            return True
+        except Exception as e:
+            logger.error(f"[TaskManager] 创建异步任务失败: {e}")
+            conn.rollback()
+            return False
+        finally:
+            conn.close()
+
+    def check_and_create_async_task(self, task_id: str, hs_name: str, vm_uuid: str, task_type: str,
+                                     params: dict, username: str = '') -> dict:
+        """
+        原子性地检查VM冲突并创建异步任务（在同一事务中完成，避免竞态条件）
+        :param task_id: 任务唯一标识(UUID)
+        :param hs_name: 主机名称
+        :param vm_uuid: 虚拟机UUID
+        :param task_type: 任务类型
+        :param params: 执行参数字典
+        :param username: 操作人
+        :return: {"success": bool, "message": str}
+        """
+        conn = self.get_db_sqlite()
+        try:
+            # 在同一事务中检查+插入，避免竞态条件
+            if vm_uuid:
+                cursor = conn.execute(
+                    "SELECT COUNT(*) FROM vm_tasker WHERE vm_uuid = ? AND status IN ('running', 'pending') AND task_id != ''",
+                    (vm_uuid,)
+                )
+                if cursor.fetchone()[0] > 0:
+                    return {"success": False, "message": "该虚拟机有正在执行或等待中的任务"}
+
+            sql = """
+                INSERT INTO vm_tasker (task_id, hs_name, vm_uuid, task_type, status, params, username, task_data)
+                VALUES (?, ?, ?, ?, 'pending', ?, ?, ?)
+            """
+            params_json = json.dumps(params)
+            conn.execute(sql, (task_id, hs_name, vm_uuid, task_type, params_json, username, params_json))
+            conn.commit()
+            return {"success": True, "message": "任务已创建"}
+        except Exception as e:
+            logger.error(f"[TaskManager] 原子创建异步任务失败: {e}")
+            conn.rollback()
+            return {"success": False, "message": f"创建任务失败: {e}"}
+        finally:
+            conn.close()
+
+    def update_async_task_status(self, task_id: str, status: str, result: dict = None,
+                                  error_message: str = '') -> bool:
+        """
+        更新异步任务状态
+        :param task_id: 任务ID
+        :param status: 新状态(pending/running/completed/failed/stopped)
+        :param result: 执行结果字典
+        :param error_message: 错误信息
+        :return: 是否成功
+        """
+        conn = self.get_db_sqlite()
+        try:
+            # 安全说明: fields列表中的所有元素均为硬编码常量字符串，不包含任何用户输入，
+            # 因此不存在SQL注入风险。禁止向fields中添加任何用户可控内容。
+            fields = ["status = ?"]
+            values = [status]
+
+            if result is not None:
+                fields.append("result = ?")
+                values.append(json.dumps(result))
+
+            if error_message:
+                fields.append("error_message = ?")
+                values.append(error_message)
+
+            # 状态变为running时记录开始时间
+            if status == 'running':
+                fields.append("started_at = CURRENT_TIMESTAMP")
+
+            # 状态变为completed/failed/stopped时记录完成时间
+            if status in ('completed', 'failed', 'stopped'):
+                fields.append("finished_at = CURRENT_TIMESTAMP")
+
+            values.append(task_id)
+            sql = f"UPDATE vm_tasker SET {', '.join(fields)} WHERE task_id = ?"
+            cursor = conn.execute(sql, values)
+            conn.commit()
+            return cursor.rowcount > 0
+        except Exception as e:
+            logger.error(f"[TaskManager] 更新异步任务状态失败: {e}")
+            conn.rollback()
+            return False
+        finally:
+            conn.close()
+
+    def get_async_task(self, task_id: str) -> Optional[Dict[str, Any]]:
+        """
+        根据task_id获取异步任务详情
+        :param task_id: 任务ID
+        :return: 任务字典或None
+        """
+        conn = self.get_db_sqlite()
+        try:
+            cursor = conn.execute("SELECT * FROM vm_tasker WHERE task_id = ?", (task_id,))
+            row = cursor.fetchone()
+            if row:
+                task = dict(row)
+                # 解析JSON字段
+                task['params'] = json.loads(task.get('params', '{}') or '{}')
+                task['result'] = json.loads(task.get('result', '{}') or '{}')
+                return task
+            return None
+        finally:
+            conn.close()
+
+    def get_async_task_list(self, hs_name: str = None, status: str = None,
+                            task_type: str = None, vm_uuid: str = None,
+                            page: int = 1, page_size: int = 20) -> Dict[str, Any]:
+        """
+        获取异步任务列表（支持过滤和分页）
+        :param hs_name: 按主机名过滤
+        :param status: 按状态过滤
+        :param task_type: 按任务类型过滤
+        :param vm_uuid: 按虚拟机UUID过滤
+        :param page: 页码
+        :param page_size: 每页数量
+        :return: {"total": int, "items": list}
+        """
+        conn = self.get_db_sqlite()
+        try:
+            where_clauses = ["task_id != ''"]
+            params = []
+
+            if hs_name:
+                where_clauses.append("hs_name = ?")
+                params.append(hs_name)
+            if status:
+                where_clauses.append("status = ?")
+                params.append(status)
+            if task_type:
+                where_clauses.append("task_type = ?")
+                params.append(task_type)
+            if vm_uuid:
+                where_clauses.append("vm_uuid = ?")
+                params.append(vm_uuid)
+
+            where_sql = " AND ".join(where_clauses)
+
+            # 查询总数
+            count_sql = f"SELECT COUNT(*) FROM vm_tasker WHERE {where_sql}"
+            cursor = conn.execute(count_sql, params)
+            total = cursor.fetchone()[0]
+
+            # 查询分页数据
+            offset = (page - 1) * page_size
+            data_sql = f"SELECT * FROM vm_tasker WHERE {where_sql} ORDER BY created_at DESC LIMIT ? OFFSET ?"
+            cursor = conn.execute(data_sql, params + [page_size, offset])
+
+            items = []
+            for row in cursor.fetchall():
+                task = dict(row)
+                task['params'] = json.loads(task.get('params', '{}') or '{}')
+                task['result'] = json.loads(task.get('result', '{}') or '{}')
+                items.append(task)
+
+            return {"total": total, "items": items}
+        finally:
+            conn.close()
+
+    def reset_running_tasks_on_startup(self) -> int:
+        """
+        系统启动时将所有running/pending状态的任务置为stopped
+        :return: 受影响的行数
+        """
+        conn = self.get_db_sqlite()
+        try:
+            sql = """
+                UPDATE vm_tasker 
+                SET status = 'stopped', finished_at = CURRENT_TIMESTAMP 
+                WHERE status IN ('running', 'pending') AND task_id != ''
+            """
+            cursor = conn.execute(sql)
+            conn.commit()
+            affected = cursor.rowcount
+            if affected > 0:
+                logger.info(f"[TaskManager] 系统启动：已将 {affected} 个未完成任务置为stopped")
+            return affected
+        except Exception as e:
+            logger.error(f"[TaskManager] 重置任务状态失败: {e}")
+            conn.rollback()
+            return 0
+        finally:
+            conn.close()
+
+    def has_running_task_for_vm(self, vm_uuid: str) -> bool:
+        """
+        检查指定虚拟机是否有正在运行的任务
+        :param vm_uuid: 虚拟机UUID
+        :return: 是否有running状态的任务
+        """
+        conn = self.get_db_sqlite()
+        try:
+            cursor = conn.execute(
+                "SELECT COUNT(*) FROM vm_tasker WHERE vm_uuid = ? AND status = 'running' AND task_id != ''",
+                (vm_uuid,)
+            )
+            return cursor.fetchone()[0] > 0
+        finally:
+            conn.close()
+
+    def count_running_tasks(self) -> int:
+        """
+        获取当前running状态的任务总数
+        :return: running任务数量
+        """
+        conn = self.get_db_sqlite()
+        try:
+            cursor = conn.execute(
+                "SELECT COUNT(*) FROM vm_tasker WHERE status = 'running' AND task_id != ''"
+            )
+            return cursor.fetchone()[0]
+        finally:
+            conn.close()
+
+    def get_pending_tasks(self, limit: int = 10) -> List[Dict[str, Any]]:
+        """
+        获取等待执行的任务列表（按创建时间排序）
+        :param limit: 最大数量
+        :return: 任务列表
+        """
+        conn = self.get_db_sqlite()
+        try:
+            cursor = conn.execute(
+                "SELECT * FROM vm_tasker WHERE status = 'pending' AND task_id != '' ORDER BY created_at ASC LIMIT ?",
+                (limit,)
+            )
+            items = []
+            for row in cursor.fetchall():
+                task = dict(row)
+                task['params'] = json.loads(task.get('params', '{}') or '{}')
+                task['result'] = json.loads(task.get('result', '{}') or '{}')
+                items.append(task)
+            return items
+        finally:
+            conn.close()
+
+    def get_async_task_stats(self) -> Dict[str, int]:
+        """
+        获取任务统计信息（各状态数量）
+        :return: {"pending": n, "running": n, "completed": n, "failed": n, "stopped": n}
+        """
+        conn = self.get_db_sqlite()
+        try:
+            cursor = conn.execute(
+                "SELECT status, COUNT(*) as cnt FROM vm_tasker WHERE task_id != '' GROUP BY status"
+            )
+            stats = {"pending": 0, "running": 0, "completed": 0, "failed": 0, "stopped": 0}
+            for row in cursor.fetchall():
+                stats[row["status"]] = row["cnt"]
+            return stats
         finally:
             conn.close()
 
