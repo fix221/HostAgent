@@ -25,7 +25,9 @@ import {
     MenuProps,
     Radio,
     Tooltip,
-    Divider
+    Divider,
+    Segmented,
+    Table
 } from 'antd'
 import {
     HomeOutlined,
@@ -50,7 +52,9 @@ import {
     PauseCircleOutlined,
     EditOutlined,
     KeyOutlined,
-    DownOutlined
+    DownOutlined,
+    AppstoreOutlined,
+    UnorderedListOutlined
 } from '@ant-design/icons'
 import ReactECharts from 'echarts-for-react'
 import api from '@/utils/apis.ts'
@@ -202,6 +206,7 @@ interface HostConfig {
     enable_host?: boolean
     ipaddr_maps?: Record<string, any>
     ipaddr_ddns?: string[]
+    public_addr?: string[]
 }
 
 function VMDetail() {
@@ -233,6 +238,7 @@ function VMDetail() {
     const [editModalVisible, setEditModalVisible] = useState(false)
     const [passwordModalVisible, setPasswordModalVisible] = useState(false)
     const [natModalVisible, setNatModalVisible] = useState(false)
+    const [natViewMode, setNatViewMode] = useState<'card' | 'table'>('card')
     const [ipModalVisible, setIpModalVisible] = useState(false)
     const [proxyModalVisible, setProxyModalVisible] = useState(false)
     const [gpuModalVisible, setGpuModalVisible] = useState(false)
@@ -2721,11 +2727,23 @@ await api.vmPower(hostName!, uuid!, 'H_CLOSE')
             key: 'nat',
             label: '端口映射',
             children: <Card title="NAT端口转发规则"
-                            extra={<Button type="primary" icon={<PlusOutlined/>} disabled={!hasPermission(userPermissions, VM_PERMISSION.NET_EDITS)} onClick={() => {
-                                setNatModalVisible(true);
-                                form.setFieldsValue({lan_addr: availableIPs[0]})
-                            }}>添加规则</Button>} variant="borderless">
+                            extra={<Space>
+                                <Segmented
+                                    value={natViewMode}
+                                    onChange={(val) => setNatViewMode(val as 'card' | 'table')}
+                                    options={[
+                                        { value: 'card', icon: <AppstoreOutlined /> },
+                                        { value: 'table', icon: <UnorderedListOutlined /> },
+                                    ]}
+                                    size="small"
+                                />
+                                <Button type="primary" icon={<PlusOutlined/>} disabled={!hasPermission(userPermissions, VM_PERMISSION.NET_EDITS)} onClick={() => {
+                                    setNatModalVisible(true);
+                                    form.setFieldsValue({lan_addr: availableIPs[0]})
+                                }}>添加规则</Button>
+                            </Space>} variant="borderless">
                 {natRules && natRules.length > 0 ? (
+                    natViewMode === 'card' ? (
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                         {natRules.map((rule, index) => (
                             <div key={`nat-${index}`}
@@ -2740,26 +2758,24 @@ await api.vmPower(hostName!, uuid!, 'H_CLOSE')
                                             onClick={() => handleDeleteNAT(index)}>删除</Button>
                                 </div>
                                 <div className="space-y-2">
-                                    <div className="flex items-center justify-between text-sm">
-                                        <span style={{ color: 'var(--text-secondary)' }}>外网端口</span>
-                                        <code className="px-2 py-1 font-medium font-mono text-blue-600 dark:text-blue-400  rounded">
-                                            {rule.wan_port || '-'}
-                                        </code>
+                                    {/* 外网信息 */}
+                                    <div className="rounded-lg p-3 bg-blue-50 dark:bg-blue-900/20">
+                                        <p className="text-xs mb-1 font-medium text-blue-600 dark:text-blue-400">外网 (WAN)</p>
+                                        <div className="flex items-center justify-between text-sm">
+                                            <code className="font-mono text-blue-700 dark:text-blue-300">{hostConfig?.public_addr?.[0] || hostName || '-'}</code>
+                                            <span className="font-mono font-medium">:{rule.wan_port || '-'}</span>
+                                        </div>
                                     </div>
                                     <div className="flex items-center justify-center" style={{ color: 'var(--text-tertiary)' }}>
                                         <span className="iconify" data-icon="mdi:arrow-down" style={{width: '20px', height: '20px'}}></span>
                                     </div>
-                                    <div className="flex items-center justify-between text-sm">
-                                        <span style={{ color: 'var(--text-secondary)' }}>内网端口</span>
-                                        <code className="px-2 py-1 font-medium font-mono text-green-600 dark:text-green-400 bg-green-50 dark:bg-green-900/30 rounded">
-                                            {rule.lan_port || '-'}
-                                        </code>
-                                    </div>
-                                    <div className="rounded-lg p-3 mt-2">
-                                        <p className="text-xs mb-1" style={{ color: 'var(--text-secondary)' }}>内网地址</p>
-                                        <code className="text-sm font-mono break-all">
-                                            {rule.lan_addr || '-'}
-                                        </code>
+                                    {/* 内网信息 */}
+                                    <div className="rounded-lg p-3 bg-green-50 dark:bg-green-900/20">
+                                        <p className="text-xs mb-1 font-medium text-green-600 dark:text-green-400">内网 (LAN)</p>
+                                        <div className="flex items-center justify-between text-sm">
+                                            <code className="font-mono text-green-700 dark:text-green-300">{rule.lan_addr || '-'}</code>
+                                            <span className="font-mono font-medium">:{rule.lan_port || '-'}</span>
+                                        </div>
                                     </div>
                                     {rule.nat_tips && (
                                         <div className="bg-yellow-50 dark:bg-yellow-900/30 rounded-lg p-3 mt-2">
@@ -2771,6 +2787,54 @@ await api.vmPower(hostName!, uuid!, 'H_CLOSE')
                             </div>
                         ))}
                     </div>
+                    ) : (
+                    <Table
+                        dataSource={natRules.map((rule, index) => ({ ...rule, _index: index }))}
+                        rowKey={(record) => `nat-${record._index}`}
+                        pagination={false}
+                        size="small"
+                        columns={[
+                            {
+                                title: '外网IP',
+                                key: 'wan_ip',
+                                render: () => <code className="px-1.5 py-0.5 text-xs bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 rounded">{hostConfig?.public_addr?.[0] || hostName || '-'}</code>,
+                            },
+                            {
+                                title: '外网端口',
+                                dataIndex: 'wan_port',
+                                key: 'wan_port',
+                                render: (text: any) => <span className="font-mono">{text || '-'}</span>,
+                            },
+                            {
+                                title: '内网IP',
+                                dataIndex: 'lan_addr',
+                                key: 'lan_addr',
+                                render: (text: string) => <code className="px-1.5 py-0.5 text-xs bg-green-50 dark:bg-green-900/30 text-green-600 dark:text-green-400 rounded">{text || '-'}</code>,
+                            },
+                            {
+                                title: '内网端口',
+                                dataIndex: 'lan_port',
+                                key: 'lan_port',
+                                render: (text: any) => <span className="font-mono">{text || '-'}</span>,
+                            },
+                            {
+                                title: '备注',
+                                dataIndex: 'nat_tips',
+                                key: 'nat_tips',
+                                render: (text: string) => <span>{text || '-'}</span>,
+                            },
+                            {
+                                title: '操作',
+                                key: 'action',
+                                render: (_: any, record: any) => (
+                                    <Button danger size="small" icon={<DeleteOutlined/>}
+                                            disabled={!hasPermission(userPermissions, VM_PERMISSION.NET_EDITS)}
+                                            onClick={() => handleDeleteNAT(record._index)}>删除</Button>
+                                ),
+                            },
+                        ]}
+                    />
+                    )
                 ) : (
                     <div className="text-center  py-8">暂无NAT端口转发规则</div>
                 )}

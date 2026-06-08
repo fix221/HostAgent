@@ -1115,10 +1115,12 @@ class RestManager:
         enable_host = True
         ipaddr_maps = {}
         ipaddr_ddns = []
+        public_addr = []
         if server.hs_config:
             enable_host = getattr(server.hs_config, 'enable_host', True)
             ipaddr_maps = getattr(server.hs_config, 'ipaddr_maps', {}) or {}
             ipaddr_ddns = getattr(server.hs_config, 'ipaddr_ddns', []) or []
+            public_addr = getattr(server.hs_config, 'public_addr', []) or []
 
         return self.api_response(200, 'success', {
             'host_name': hs_name,
@@ -1133,6 +1135,7 @@ class RestManager:
             'enable_host': enable_host,
             'ipaddr_maps': ipaddr_maps,
             'ipaddr_ddns': ipaddr_ddns,
+            'public_addr': public_addr,
         })
 
     def get_gpu_list(self, hs_name):

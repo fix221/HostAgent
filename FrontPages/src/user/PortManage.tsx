@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import { Card, Table, Button, message, Tag, Modal, Form, Input, Select, InputNumber, Space } from 'antd';
-import { ReloadOutlined, PlusOutlined, DeleteOutlined } from '@ant-design/icons';
+import { Card, Table, Button, message, Tag, Modal, Form, Input, Select, InputNumber, Space, Segmented } from 'antd';
+import { ReloadOutlined, PlusOutlined, DeleteOutlined, AppstoreOutlined, UnorderedListOutlined } from '@ant-design/icons';
 import { ArrowsRightLeftIcon } from '@heroicons/react/24/outline';
 import PageHeader from '@/components/PageHeader';
 import api from '@/utils/apis.ts';
@@ -9,7 +9,8 @@ import { NATRule } from '@/types';
 interface UserNATRule extends NATRule {
   hostName: string;
   vmUuid: string;
-  rule_index: number; // 确保包含 rule_index
+  rule_index: number;
+  wan_ip: string; // 外网IP
 }
 
 const PortManage: React.FC = () => {
@@ -17,6 +18,7 @@ const PortManage: React.FC = () => {
   const [rules, setRules] = useState<UserNATRule[]>([]);
   const [modalVisible, setModalVisible] = useState(false);
   const [form] = Form.useForm();
+  const [viewMode, setViewMode] = useState<'table' | 'card'>('table');
   
   // 主机和虚拟机列表，用于添加规则时的选择
   const [hosts, setHosts] = useState<string[]>([]);
@@ -68,12 +70,18 @@ const PortManage: React.FC = () => {
       if (hostsRes.code !== 200 || !hostsRes.data) {
         throw new Error('获取主机列表失败');
       }
-      const hosts = Object.keys(hostsRes.data);
+      const hostsData = hostsRes.data as any;
+      const hostNames = Object.keys(hostsData);
 
       const allRules: UserNATRule[] = [];
 
       // 2. 遍历主机获取VMs
-      for (const hostName of hosts) {
+      for (const hostName of hostNames) {
+        // 获取主机的外网IP
+        const hostConfig = hostsData[hostName]?.config || {};
+        const publicAddrs = hostConfig.public_addr || hostConfig.ipaddr_ddns || [];
+        const wanIp = Array.isArray(publicAddrs) && publicAddrs.length > 0 ? publicAddrs[0] : (hostsData[hostName]?.addr || '-');
+
         try {
           const vmsRes = await api.getVMs(hostName);
           if (vmsRes.code === 200 && vmsRes.data) {
@@ -90,7 +98,8 @@ const PortManage: React.FC = () => {
                                  ...r,
                                  hostName,
                                  vmUuid,
-                                 rule_index: index
+                                 rule_index: index,
+                                 wan_ip: wanIp
                              });
                          });
                      }
@@ -116,7 +125,6 @@ const PortManage: React.FC = () => {
   const handleAdd = () => {
     form.resetFields();
     setModalVisible(true);
-    // 如果已经有规则数据，可以默认选中第一个主机，但为了简单，让用户选择
   };
 
   const handleDelete = async (record: UserNATRule) => {
@@ -146,7 +154,7 @@ const PortManage: React.FC = () => {
         lan_port: values.vm_port,
         wan_port: values.host_port,
         nat_tips: values.description || '',
-        lan_addr: '' // 默认空，由后端处理
+        lan_addr: ''
       };
       
       // @ts-expect-error - API接口类型定义与实际使用的数据结构不完全匹配
@@ -177,22 +185,34 @@ const PortManage: React.FC = () => {
       render: (text: string) => <span className="dark:text-white">{text}</span>,
     },
     {
-      title: '公网端口',
-      dataIndex: 'wan_port', // 后端返回的是 wan_port
-      key: 'wan_port',
-      render: (text: number) => <span className="dark:text-white">{text || '-'}</span>,
+      title: '外网IP',
+      dataIndex: 'wan_ip',
+      key: 'wan_ip',
+      render: (text: string) => <code className="px-1.5 py-0.5 text-xs bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 rounded">{text || '-'}</code>,
     },
     {
-        title: '虚拟机端口',
-        dataIndex: 'lan_port', // 后端返回的是 lan_port
-        key: 'lan_port',
-        render: (text: number) => <span className="dark:text-white">{text || '-'}</span>,
+      title: '外网端口',
+      dataIndex: 'wan_port',
+      key: 'wan_port',
+      render: (text: number) => <span className="font-mono dark:text-white">{text || '-'}</span>,
+    },
+    {
+      title: '内网IP',
+      dataIndex: 'lan_addr',
+      key: 'lan_addr',
+      render: (text: string) => <code className="px-1.5 py-0.5 text-xs bg-green-50 dark:bg-green-900/30 text-green-600 dark:text-green-400 rounded">{text || '-'}</code>,
+    },
+    {
+      title: '内网端口',
+      dataIndex: 'lan_port',
+      key: 'lan_port',
+      render: (text: number) => <span className="font-mono dark:text-white">{text || '-'}</span>,
     },
     {
       title: '备注',
       dataIndex: 'nat_tips',
       key: 'nat_tips',
-      render: (text: string) => <span className="dark:text-white">{text}</span>,
+      render: (text: string) => <span className="dark:text-white">{text || '-'}</span>,
     },
     {
         title: '操作',
@@ -210,6 +230,57 @@ const PortManage: React.FC = () => {
     }
   ];
 
+  // 卡片视图渲染
+  const renderCardView = () => {
+    if (rules.length === 0) {
+      return <div className="text-center py-8" style={{ color: 'var(--text-secondary)' }}>暂无端口转发规则</div>;
+    }
+    return (
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        {rules.map((rule, index) => (
+          <div key={`${rule.hostName}-${rule.vmUuid}-${rule.rule_index}-${index}`}
+               className="glass-card hover:shadow-xl transition-all duration-300 hover:-translate-y-1 hover:border-blue-400 dark:hover:border-blue-500 p-4">
+            <div className="flex items-center justify-between mb-3">
+              <div className="flex items-center gap-2">
+                <Tag color="blue" className="m-0">{rule.hostName}</Tag>
+                <span className="text-xs" style={{ color: 'var(--text-secondary)' }}>{rule.vmUuid}</span>
+              </div>
+              <Button danger size="small" icon={<DeleteOutlined />} onClick={() => handleDelete(rule)}>删除</Button>
+            </div>
+            <div className="space-y-2">
+              {/* 外网信息 */}
+              <div className="rounded-lg p-3 bg-blue-50 dark:bg-blue-900/20">
+                <p className="text-xs mb-1 font-medium text-blue-600 dark:text-blue-400">外网 (WAN)</p>
+                <div className="flex items-center justify-between text-sm">
+                  <code className="font-mono text-blue-700 dark:text-blue-300">{rule.wan_ip || '-'}</code>
+                  <span className="font-mono font-medium">:{rule.wan_port || '-'}</span>
+                </div>
+              </div>
+              {/* 箭头 */}
+              <div className="flex items-center justify-center" style={{ color: 'var(--text-tertiary)' }}>
+                <span className="iconify" data-icon="mdi:arrow-down" style={{width: '20px', height: '20px'}}></span>
+              </div>
+              {/* 内网信息 */}
+              <div className="rounded-lg p-3 bg-green-50 dark:bg-green-900/20">
+                <p className="text-xs mb-1 font-medium text-green-600 dark:text-green-400">内网 (LAN)</p>
+                <div className="flex items-center justify-between text-sm">
+                  <code className="font-mono text-green-700 dark:text-green-300">{rule.lan_addr || '-'}</code>
+                  <span className="font-mono font-medium">:{rule.lan_port || '-'}</span>
+                </div>
+              </div>
+              {/* 备注 */}
+              {rule.nat_tips && (
+                <div className="rounded-lg p-2 bg-yellow-50 dark:bg-yellow-900/20">
+                  <p className="text-xs text-yellow-700 dark:text-yellow-400">{rule.nat_tips}</p>
+                </div>
+              )}
+            </div>
+          </div>
+        ))}
+      </div>
+    );
+  };
+
   return (
     <div className="p-6">
       {/* 页面标题 */}
@@ -219,6 +290,14 @@ const PortManage: React.FC = () => {
         subtitle="管理您的NAT端口转发规则"
         actions={
           <Space>
+            <Segmented
+              value={viewMode}
+              onChange={(val) => setViewMode(val as 'table' | 'card')}
+              options={[
+                { value: 'table', icon: <UnorderedListOutlined /> },
+                { value: 'card', icon: <AppstoreOutlined /> },
+              ]}
+            />
             <Button type="primary" icon={<PlusOutlined />} onClick={handleAdd}>
               添加规则
             </Button>
@@ -230,13 +309,19 @@ const PortManage: React.FC = () => {
       />
 
       <Card className="glass-card">
-        <Table
-          dataSource={rules}
-          columns={columns}
-          rowKey={(record) => `${record.hostName}-${record.vmUuid}-${record.rule_index}`}
-          loading={loading}
-          locale={{ emptyText: '暂无端口转发规则' }}
-        />
+        {viewMode === 'table' ? (
+          <Table
+            dataSource={rules}
+            columns={columns}
+            rowKey={(record) => `${record.hostName}-${record.vmUuid}-${record.rule_index}`}
+            loading={loading}
+            locale={{ emptyText: '暂无端口转发规则' }}
+          />
+        ) : (
+          loading ? (
+            <div className="text-center py-8">加载中...</div>
+          ) : renderCardView()
+        )}
       </Card>
 
       <Modal

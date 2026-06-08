@@ -71,8 +71,8 @@ function UserPostin() {
       setError('')
       setSuccess('')
       
-      // 调用注册API - 对应静态页面的 /register 接口
-      const response = await api.post('/register', {
+      // 调用注册API
+      const response = await api.post('/api/register', {
         username: values.username,
         email: values.email,
         password: values.password,
