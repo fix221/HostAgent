@@ -1,11 +1,14 @@
-name: Release Build Run
+name: Release Build All
 
 on:
+  push:
+    branches:
+      - main
   workflow_dispatch:
     inputs:
       version:
-        description: '发布版本号 (例如 1.2.3)'
-        required: true
+        description: '发布版本号（留空则发布为 Alpha）'
+        required: false
         type: string
       build_type:
         description: '构建方式'
@@ -23,6 +26,7 @@ on:
         options:
           - windows
           - linux
+          - macos
           - all
         default: 'all'
 
@@ -30,8 +34,17 @@ permissions:
   contents: write
 
 jobs:
+  release-pyinstaller:
+    if: github.event_name == 'push' || inputs.build_type == 'pyinstaller'
+    uses: ./.github/workflows/build-pyinst.yml
+    with:
+      version: ${{ github.event_name == 'push' && 'alpha' || inputs.version }}
+      target_platform: ${{ github.event_name == 'push' && 'all' || inputs.target_platform }}
+      create_release: 'yes'
+    secrets: inherit
+
   release-cxfreeze:
-    if: inputs.build_type == 'cxfreeze'
+    if: github.event_name != 'push' && inputs.build_type == 'cxfreeze'
     uses: ./.github/workflows/build-freeze.yml
     with:
       version: ${{ inputs.version }}
@@ -40,17 +53,8 @@ jobs:
     secrets: inherit
 
   release-nuitka:
-    if: inputs.build_type == 'nuitka'
+    if: github.event_name != 'push' && inputs.build_type == 'nuitka'
     uses: ./.github/workflows/build-nuitka.yml
-    with:
-      version: ${{ inputs.version }}
-      target_platform: ${{ inputs.target_platform }}
-      create_release: 'yes'
-    secrets: inherit
-
-  release-pyinstaller:
-    if: inputs.build_type == 'pyinstaller'
-    uses: ./.github/workflows/build-pyinst.yml
     with:
       version: ${{ inputs.version }}
       target_platform: ${{ inputs.target_platform }}

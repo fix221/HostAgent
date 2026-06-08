@@ -47,7 +47,7 @@ jobs:
   # ============================================================
   # 统一前端构建（只构建一次，供所有平台后端使用）
   # ============================================================
-  build-front:
+  build-front-all:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v4
@@ -80,7 +80,7 @@ jobs:
   # Windows x64 后端构建
   # ============================================================
   build-winnt-x64:
-    needs: build-front
+    needs: build-front-all
     runs-on: windows-latest
     if: inputs.target_platform == 'windows' || inputs.target_platform == 'all'
     steps:
@@ -119,7 +119,7 @@ jobs:
   # Linux x64 后端构建
   # ============================================================
   build-linux-x64:
-    needs: build-front
+    needs: build-front-all
     runs-on: ubuntu-latest
     if: inputs.target_platform == 'linux' || inputs.target_platform == 'all'
     steps:
@@ -162,7 +162,7 @@ jobs:
   # Windows x86 后端构建（暂未启用）
   # ============================================================
   # build-winnt-x86:
-  #   needs: build-front
+  #   needs: build-front-all
   #   runs-on: windows-latest
   #   if: inputs.target_platform == 'windows' || inputs.target_platform == 'all'
   #   steps:
@@ -202,7 +202,7 @@ jobs:
   # Linux ARM64 后端构建（暂未启用）
   # ============================================================
   # build-linux-a64:
-  #   needs: build-front
+  #   needs: build-front-all
   #   runs-on: ubuntu-24.04-arm
   #   if: inputs.target_platform == 'linux' || inputs.target_platform == 'all'
   #   steps:
@@ -245,7 +245,7 @@ jobs:
   # macOS a64 后端构建
   # ============================================================
   build-macos-a64:
-    needs: build-front
+    needs: build-front-all
     runs-on: macos-latest
     if: inputs.target_platform == 'macos' || inputs.target_platform == 'all'
     steps:
