@@ -73,8 +73,8 @@ function CoreConfig() {
           default_free_config: settings.default_free_config !== '0',
           default_quota_cpu: parseInt(settings.default_quota_cpu) || 2,
           default_quota_ram: parseInt(settings.default_quota_ram) || 4,
-          default_quota_hdd: parseInt(settings.default_quota_hdd) || 50,
-          default_quota_ssd: parseInt(settings.default_quota_ssd) || 20,
+          default_quota_sys_disk: parseInt(settings.default_quota_sys_disk) || 20,
+          default_quota_data_disk: parseInt(settings.default_quota_data_disk) || 50,
           default_quota_gpu: parseInt(settings.default_quota_gpu) || 0,
           default_quota_nat_ports: parseInt(settings.default_quota_nat_ports) || 5,
           default_quota_internal_ip: parseInt(settings.default_quota_internal_ip) || 5,
@@ -189,8 +189,8 @@ function CoreConfig() {
         default_free_config: values.default_free_config ? '1' : '0',
         default_quota_cpu: values.default_quota_cpu.toString(),
         default_quota_ram: values.default_quota_ram.toString(),
-        default_quota_hdd: values.default_quota_hdd.toString(),
-        default_quota_ssd: values.default_quota_ssd.toString(),
+        default_quota_sys_disk: values.default_quota_sys_disk.toString(),
+        default_quota_data_disk: values.default_quota_data_disk.toString(),
         default_quota_gpu: values.default_quota_gpu.toString(),
         default_quota_nat_ports: values.default_quota_nat_ports.toString(),
         default_quota_internal_ip: values.default_quota_internal_ip.toString(),
@@ -450,11 +450,11 @@ function CoreConfig() {
                   <Form.Item name="default_quota_ram" label="RAM内存(GB)" className="mb-2">
                     <InputNumber min={0} max={128} className="w-full" />
                   </Form.Item>
-                  <Form.Item name="default_quota_hdd" label="HDD磁盘(GB)" className="mb-2">
-                    <InputNumber min={0} max={10000} className="w-full" />
-                  </Form.Item>
-                  <Form.Item name="default_quota_ssd" label="SSD磁盘(GB)" className="mb-2">
+                  <Form.Item name="default_quota_sys_disk" label="系统磁盘(GB)" className="mb-2">
                     <InputNumber min={0} max={1000} className="w-full" />
+                  </Form.Item>
+                  <Form.Item name="default_quota_data_disk" label="数据磁盘(GB)" className="mb-2">
+                    <InputNumber min={0} max={10000} className="w-full" />
                   </Form.Item>
                   <Form.Item name="default_quota_gpu" label="GPU显存(GB)" className="mb-2">
                     <InputNumber min={0} max={8} className="w-full" />
