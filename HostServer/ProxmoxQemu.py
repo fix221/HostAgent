@@ -1264,10 +1264,26 @@ class HostServer(BasicServer):
                 if all_time >= max_wait_time:
                     logger.error(f"[{self.hs_config.server_name}] 备份任务超时，已等待{max_wait_time}秒")
                     raise TimeoutError(f"备份超时，已等待{max_wait_time}秒")
+            # 从PVE存储中查询实际生成的备份文件名 ============================
+            actual_bak_file = bak_file  # 默认使用自定义名称
+            try:
+                storage_content = client.nodes(
+                    self.hs_config.launch_path
+                ).storage('local').content.get(content='backup')
+                # 查找最新的属于该vmid的备份文件
+                vm_backups = [item for item in storage_content if item.get('vmid') == vmid]
+                if vm_backups:
+                    # 按创建时间排序，取最新的
+                    vm_backups.sort(key=lambda x: x.get('ctime', 0), reverse=True)
+                    actual_bak_file = vm_backups[0].get('volid', '').replace('local:backup/', '')
+                    logger.info(f"[{self.hs_config.server_name}] PVE实际备份文件: {actual_bak_file}")
+            except Exception as query_err:
+                logger.warning(f"[{self.hs_config.server_name}] 查询PVE备份文件名失败: {query_err}，使用默认名称")
+
             # 记录备份信息 ==================================================
             vm_conf.backups.append(VMBackup(
                 backup_time=datetime.datetime.now(),
-                backup_name=bak_file,
+                backup_name=actual_bak_file,
                 backup_hint=vm_tips,
                 old_os_name=vm_conf.os_name
             ))
@@ -1329,28 +1345,91 @@ class HostServer(BasicServer):
                     success=False, action="Restores",
                     message=f"虚拟机 {vm_name} 的VMID未找到")
 
-            # 恢复备份
-            # 注意：Proxmox的恢复操作比较复杂，这里简化处理
-            logger.info(f"开始恢复虚拟机 {vm_name}，备份文件: {vm_back}")
+            vm = client.nodes(self.hs_config.launch_path).qemu(vmid)
 
-            # 实际的恢复操作需要调用Proxmox的restore API
-            # 这里只是示例代码
+            # 先停止虚拟机（恢复前必须停止）
+            status = vm.status.current.get()
+            is_running = status['status'] == 'running'
+            if is_running:
+                logger.info(f"[{self.hs_config.server_name}] 虚拟机正在运行，先停止以进行恢复...")
+                vm.status.stop.post()
+                time.sleep(5)  # 等待虚拟机完全停止
+
+            logger.info(f"[{self.hs_config.server_name}] 开始恢复虚拟机 {vm_name}，备份文件: {vm_back}")
+
+            # 从PVE存储中查找匹配的备份volume
+            archive_path = f"local:backup/{vm_back}"
+            try:
+                storage_content = client.nodes(
+                    self.hs_config.launch_path
+                ).storage('local').content.get(content='backup')
+                # 精确匹配volid或文件名
+                matched = None
+                for item in storage_content:
+                    volid = item.get('volid', '')
+                    if volid == archive_path or volid.endswith(f'/{vm_back}'):
+                        matched = volid
+                        break
+                if matched:
+                    archive_path = matched
+                    logger.info(f"[{self.hs_config.server_name}] 找到备份volume: {archive_path}")
+                else:
+                    # 尝试模糊匹配（备份文件可能带.gz后缀）
+                    for item in storage_content:
+                        volid = item.get('volid', '')
+                        if vm_back in volid:
+                            archive_path = volid
+                            logger.info(f"[{self.hs_config.server_name}] 模糊匹配到备份volume: {archive_path}")
+                            break
+            except Exception as query_err:
+                logger.warning(f"[{self.hs_config.server_name}] 查询PVE存储失败: {query_err}，使用默认路径")
+
+            # 调用Proxmox恢复API
             restore_config = {
                 'vmid': vmid,
-                'archive': f"local:backup/{vm_back}",
+                'archive': archive_path,
                 'force': 1,
             }
+            task_id = client.nodes(self.hs_config.launch_path).qemu.post(**restore_config)
+            logger.info(f"[{self.hs_config.server_name}] 恢复任务已创建，任务ID: {task_id}")
 
-            # client.nodes(self.hs_config.launch_path).qemu.post(**restore_config)
+            # 等待恢复完成
+            max_wait_time = 3600  # 最大等待1小时
+            check_interval = 5
+            all_time = 0
+            while all_time < max_wait_time:
+                task_status = client.nodes(
+                    self.hs_config.launch_path
+                ).tasks(task_id).status.get()
+                status_value = task_status.get('status', '')
+                logger.info(f"[{self.hs_config.server_name}] 恢复{status_value}已等待: {all_time}秒")
 
+                if status_value == 'stopped':
+                    logger.info(f"[{self.hs_config.server_name}] 恢复完成，总耗时: {all_time}秒")
+                    break
+
+                time.sleep(check_interval)
+                all_time += check_interval
+
+                if all_time >= max_wait_time:
+                    raise TimeoutError(f"恢复超时，已等待{max_wait_time}秒")
+
+            # 恢复成功，更新配置
             vm_conf.os_name = vb_conf.old_os_name
-            logger.info(f"虚拟机 {vm_name} 恢复成功")
+
+            # 重新启动虚拟机
+            if is_running:
+                logger.info(f"[{self.hs_config.server_name}] 重新启动虚拟机...")
+                vm.status.start.post()
+                logger.info(f"[{self.hs_config.server_name}] 虚拟机 {vm_name} 已重新启动")
+
+            logger.info(f"[{self.hs_config.server_name}] 虚拟机 {vm_name} 恢复成功，耗时: {all_time}秒")
 
             self.vm_saving[vm_name] = vm_conf
             hs_result = ZMessage(
                 success=True, action="Restores",
-                message=f"虚拟机恢复成功: {vm_name}",
-                results={"vm_name": vm_name}
+                message=f"虚拟机恢复成功: {vm_name}，耗时: {all_time}秒",
+                results={"vm_name": vm_name, "elapsed_time": all_time}
             )
             self.logs_set(hs_result)
             self.data_set()

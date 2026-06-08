@@ -1362,7 +1362,9 @@ const [operationTimeoutId, setOperationTimeoutId] = useState<ReturnType<typeof s
 
     const handleAddProxy = async (_values: any) => {
         if (!hostEnabled) { message.error('该主机已被禁用，无法操作'); return }
-        setProxyActionLoading(true);
+        setProxyActionLoading(true)
+        setOperationLocked(true)
+        const hide = message.loading('正在添加反向代理...', 0)
         try {
             const data = {
                 domain: _values.domain,
@@ -1373,35 +1375,44 @@ const [operationTimeoutId, setOperationTimeoutId] = useState<ReturnType<typeof s
             }
             await api.addProxyConfig(hostName!, uuid!, data)
             message.success('反向代理添加成功')
-            setProxyModalVisible(false);
-            proxyForm.resetFields();
+            setProxyModalVisible(false)
+            proxyForm.resetFields()
             loadProxyRules()
         } catch (error: any) {
             message.error(error?.message || '添加失败')
         } finally {
-            setProxyActionLoading(false);
+            hide()
+            setProxyActionLoading(false)
+            setOperationLocked(false)
         }
     }
 
     const handleDeleteProxy = async (proxyId: number) => {
         if (!hostEnabled) { message.error('该主机已被禁用，无法操作'); return }
         showConfirmAction('删除代理确认', '确定要删除这个反向代理吗？', async () => {
-            setProxyActionLoading(true);
+            setProxyActionLoading(true)
+            setOperationLocked(true)
+            const hide = message.loading('正在删除反向代理...', 0)
             try {
                 await api.deleteProxyConfig(hostName!, uuid!, proxyId)
+                message.success('反向代理已删除')
                 loadProxyRules()
+            } catch (error: any) {
+                message.error(error?.message || '删除失败')
             } finally {
-                setProxyActionLoading(false);
+                hide()
+                setProxyActionLoading(false)
+                setOperationLocked(false)
             }
         }, true)
     }
 
     const handleAddNATRule = async (_values: any) => {
         if (!hostEnabled) { message.error('该主机已被禁用，无法操作'); return }
-        setNatActionLoading(true);
+        setNatActionLoading(true)
+        setOperationLocked(true)
+        const hide = message.loading('正在添加NAT规则...', 0)
         try {
-            // 使用老前端的字段名：wan_port, lan_port, lan_addr, nat_tips
-            // 处理wan_port：undefined、null、空字符串、0都转换为0，由后端自动分配
             const data: any = {
                 wan_port: _values.wan_port || '',
                 lan_port: parseInt(_values.lan_port),
@@ -1411,25 +1422,34 @@ const [operationTimeoutId, setOperationTimeoutId] = useState<ReturnType<typeof s
 
             await api.addNATRule(hostName!, uuid!, data)
             message.success('NAT规则添加成功')
-            setNatModalVisible(false);
-            form.resetFields();
+            setNatModalVisible(false)
+            form.resetFields()
             loadNATRules()
         } catch (error: any) {
             message.error(error?.message || '添加失败')
         } finally {
-            setNatActionLoading(false);
+            hide()
+            setNatActionLoading(false)
+            setOperationLocked(false)
         }
     }
 
     const handleDeleteNAT = async (index: number) => {
         if (!hostEnabled) { message.error('该主机已被禁用，无法操作'); return }
         showConfirmAction('删除NAT规则', '确定要删除该规则吗？', async () => {
-            setNatActionLoading(true);
+            setNatActionLoading(true)
+            setOperationLocked(true)
+            const hide = message.loading('正在删除NAT规则...', 0)
             try {
                 await api.deleteNATRule(hostName!, uuid!, index)
+                message.success('NAT规则已删除')
                 loadNATRules()
+            } catch (error: any) {
+                message.error(error?.message || '删除失败')
             } finally {
-                setNatActionLoading(false);
+                hide()
+                setNatActionLoading(false)
+                setOperationLocked(false)
             }
         }, false)
     }
@@ -2311,7 +2331,7 @@ await api.vmPower(hostName!, uuid!, 'H_CLOSE')
                                         className="hidden md:inline">重置</span></Button></Tooltip>
                                     <Tooltip title="编辑配置"><Button size="small" icon={<EditOutlined/>}
                                                                       onClick={() => setEditModalVisible(true)}
-                                                                      disabled={!hasPermission(userPermissions, VM_PERMISSION.VM_MODIFY)}
+                                                                      disabled={operationLocked || !hasPermission(userPermissions, VM_PERMISSION.VM_MODIFY)}
                                                                       block><span
                                         className="hidden md:inline">编辑</span></Button></Tooltip>
 
@@ -2543,7 +2563,7 @@ await api.vmPower(hostName!, uuid!, 'H_CLOSE')
             key: 'ip',
             label: '网卡管理',
             children: <Card title="网卡列表" extra={<Button type="primary" icon={<PlusOutlined/>}
-                                                            disabled={!hasPermission(userPermissions, VM_PERMISSION.NIC_EDITS) || (config.nic_num !== undefined && config.nic_all && Object.keys(config.nic_all).length >= (config.nic_num || 0))}
+                                                            disabled={operationLocked || !hasPermission(userPermissions, VM_PERMISSION.NIC_EDITS) || (config.nic_num !== undefined && config.nic_all && Object.keys(config.nic_all).length >= (config.nic_num || 0))}
                                                             onClick={() => setIpModalVisible(true)}>添加网卡</Button>}
                             variant="borderless">
                 {vm && vm.config && vm.config.nic_all && Object.keys(vm.config.nic_all).length > 0 ? (
@@ -2557,7 +2577,7 @@ await api.vmPower(hostName!, uuid!, 'H_CLOSE')
                                             {nicConfig.nic_type === 'pub' ? '公网' : '内网'}
                                         </Tag>
                                         <Button danger size="small"
-                                                disabled={!hasPermission(userPermissions, VM_PERMISSION.NIC_EDITS)}
+                                                disabled={operationLocked || !hasPermission(userPermissions, VM_PERMISSION.NIC_EDITS)}
                                                 onClick={() => handleDeleteIPAddress(nicName)}>删除</Button>
                                     </div>
                                 </div>
@@ -2589,7 +2609,7 @@ await api.vmPower(hostName!, uuid!, 'H_CLOSE')
             key: 'hdd',
             label: '数据磁盘',
             children: <Card title="数据盘管理" extra={<Button type="primary" icon={<PlusOutlined/>}
-                                                              disabled={!hasPermission(userPermissions, VM_PERMISSION.HDD_EDITS) || (config.dat_num > 0 && hdds.length >= config.dat_num)}
+                                                              disabled={operationLocked || !hasPermission(userPermissions, VM_PERMISSION.HDD_EDITS) || (config.dat_num > 0 && hdds.length >= config.dat_num)}
                                                               onClick={() => setHddModalVisible(true)}>挂载数据盘</Button>}
                             variant="borderless">
                 {hdds && hdds.length > 0 ? (
@@ -2615,27 +2635,27 @@ await api.vmPower(hostName!, uuid!, 'H_CLOSE')
                                         <Space>
                                             {isMounted ? (
                                                 <>
-                                                    <Button size="small" disabled={!hasPermission(userPermissions, VM_PERMISSION.HDD_EDITS)} onClick={() => {
+                                                    <Button size="small" disabled={operationLocked || !hasPermission(userPermissions, VM_PERMISSION.HDD_EDITS)} onClick={() => {
                                                         setCurrentUnmountHdd(hdd);
                                                         setUnmountHddConfirmChecked(false);
                                                         setUnmountHddModalVisible(true)
                                                     }}>卸载</Button>
                                                     <Button danger size="small"
-                                                            disabled={!hasPermission(userPermissions, VM_PERMISSION.HDD_EDITS)}
+                                                            disabled={operationLocked || !hasPermission(userPermissions, VM_PERMISSION.HDD_EDITS)}
                                                             onClick={() => handleDeleteHDD(hddName)}>删除</Button>
                                                 </>
                                             ) : (
                                                 <>
-                                                    <Button type="primary" size="small" disabled={!hasPermission(userPermissions, VM_PERMISSION.HDD_EDITS)} onClick={() => {
+                                                    <Button type="primary" size="small" disabled={operationLocked || !hasPermission(userPermissions, VM_PERMISSION.HDD_EDITS)} onClick={() => {
                                                         setCurrentMountHdd(hdd);
                                                         setMountHddConfirmChecked(false);
                                                         setMountHddModalVisible(true)
                                                     }}>挂载</Button>
                                                     <Button size="small"
-                                                            disabled={!hasPermission(userPermissions, VM_PERMISSION.HDD_EDITS)}
+                                                            disabled={operationLocked || !hasPermission(userPermissions, VM_PERMISSION.HDD_EDITS)}
                                                             onClick={() => handleOpenTransferHDD(hdd)}>移交</Button>
                                                     <Button danger size="small"
-                                                            disabled={!hasPermission(userPermissions, VM_PERMISSION.HDD_EDITS)}
+                                                            disabled={operationLocked || !hasPermission(userPermissions, VM_PERMISSION.HDD_EDITS)}
                                                             onClick={() => handleDeleteHDD(hddName)}>删除</Button>
                                                 </>
                                             )}
@@ -2663,7 +2683,7 @@ await api.vmPower(hostName!, uuid!, 'H_CLOSE')
             key: 'iso',
             label: '光盘镜像',
             children: <Card title="ISO镜像管理" extra={<Button type="primary" icon={<PlusOutlined/>}
-                                                               disabled={!hasPermission(userPermissions, VM_PERMISSION.ISO_EDITS) || (config.iso_num > 0 && isos.length >= config.iso_num)}
+                                                               disabled={operationLocked || !hasPermission(userPermissions, VM_PERMISSION.ISO_EDITS) || (config.iso_num > 0 && isos.length >= config.iso_num)}
                                                                onClick={() => setIsoModalVisible(true)}>挂载ISO</Button>}
                             variant="borderless">
                 {isos && isos.length > 0 ? (
@@ -2677,7 +2697,7 @@ await api.vmPower(hostName!, uuid!, 'H_CLOSE')
                                         ISO
                                     </span>
                                     <Button danger size="small" icon={<span className="iconify" data-icon="mdi:eject"/>}
-                                            disabled={!hasPermission(userPermissions, VM_PERMISSION.ISO_EDITS)}
+                                            disabled={operationLocked || !hasPermission(userPermissions, VM_PERMISSION.ISO_EDITS)}
                                             onClick={() => {
                                                 setCurrentUnmountIso(iso.iso_name!);
                                                 setUnmountIsoConfirmChecked(false);
@@ -2724,7 +2744,7 @@ await api.vmPower(hostName!, uuid!, 'H_CLOSE')
                                     ]}
                                     size="small"
                                 />
-                                <Button type="primary" icon={<PlusOutlined/>} disabled={!hasPermission(userPermissions, VM_PERMISSION.NET_EDITS) || (config.nat_num > 0 && natRules.length >= config.nat_num)} onClick={() => {
+                                <Button type="primary" icon={<PlusOutlined/>} disabled={operationLocked || !hasPermission(userPermissions, VM_PERMISSION.NET_EDITS) || (config.nat_num > 0 && natRules.length >= config.nat_num)} onClick={() => {
                                     setNatModalVisible(true);
                                     form.setFieldsValue({lan_addr: availableIPs[0]})
                                 }}>添加规则</Button>
@@ -2741,7 +2761,7 @@ await api.vmPower(hostName!, uuid!, 'H_CLOSE')
                                     </span>
                                     <Button danger size="small"
                                             icon={<DeleteOutlined/>}
-                                            disabled={!hasPermission(userPermissions, VM_PERMISSION.NET_EDITS)}
+                                            disabled={operationLocked || !hasPermission(userPermissions, VM_PERMISSION.NET_EDITS)}
                                             onClick={() => handleDeleteNAT(index)}>删除</Button>
                                 </div>
                                 <div className="space-y-2">
@@ -2815,7 +2835,7 @@ await api.vmPower(hostName!, uuid!, 'H_CLOSE')
                                 key: 'action',
                                 render: (_: any, record: any) => (
                                     <Button danger size="small" icon={<DeleteOutlined/>}
-                                            disabled={!hasPermission(userPermissions, VM_PERMISSION.NET_EDITS)}
+                                            disabled={operationLocked || !hasPermission(userPermissions, VM_PERMISSION.NET_EDITS)}
                                             onClick={() => handleDeleteNAT(record._index)}>删除</Button>
                                 ),
                             },
@@ -2830,7 +2850,7 @@ await api.vmPower(hostName!, uuid!, 'H_CLOSE')
         {
             key: 'proxy',
             label: '反向代理',
-            children: <Card title="反向代理配置" extra={<Button type="primary" icon={<PlusOutlined/>} disabled={!hasPermission(userPermissions, VM_PERMISSION.WEB_EDITS) || (config.web_num > 0 && proxyRules.length >= config.web_num)} onClick={() => {
+            children: <Card title="反向代理配置" extra={<Button type="primary" icon={<PlusOutlined/>} disabled={operationLocked || !hasPermission(userPermissions, VM_PERMISSION.WEB_EDITS) || (config.web_num > 0 && proxyRules.length >= config.web_num)} onClick={() => {
                 setProxyModalVisible(true);
                 proxyForm.setFieldsValue({backend_ip: availableIPs[0]})
             }}>添加代理</Button>} variant="borderless">
@@ -2849,7 +2869,7 @@ await api.vmPower(hostName!, uuid!, 'H_CLOSE')
                                     </span>
                                     <Button danger size="small"
                                             icon={<DeleteOutlined/>}
-                                            disabled={!hasPermission(userPermissions, VM_PERMISSION.WEB_EDITS)}
+                                            disabled={operationLocked || !hasPermission(userPermissions, VM_PERMISSION.WEB_EDITS)}
                                             onClick={() => handleDeleteProxy(index)}>删除</Button>
                                 </div>
                                 <div className="rounded-lg p-3 mb-2">
@@ -2877,7 +2897,7 @@ await api.vmPower(hostName!, uuid!, 'H_CLOSE')
             key: 'pci',
             label: 'PCI设备',
             children: <Card title="PCI设备直通" extra={<Button type="primary" icon={<PlusOutlined/>}
-                                                            disabled={config.pci_num > 0 && vm && vm.config && vm.config.pci_all && Object.keys(vm.config.pci_all).length >= config.pci_num}
+                                                            disabled={operationLocked || (config.pci_num > 0 && vm && vm.config && vm.config.pci_all && Object.keys(vm.config.pci_all).length >= config.pci_num)}
                                                             onClick={handleOpenPciModal}>添加PCI设备</Button>}
                             variant="borderless">
                 {vm && vm.config && vm.config.pci_all && Object.keys(vm.config.pci_all).length > 0 ? (
@@ -2888,7 +2908,7 @@ await api.vmPower(hostName!, uuid!, 'H_CLOSE')
                                     <span className="font-medium">{gpuConfig.gpu_hint || gpuKey}</span>
                                     <Space>
                                         <Tag color={gpuConfig.gpu_mdev === 'PV' ? 'blue' : gpuConfig.gpu_mdev === 'DDA' ? 'orange' : 'green'}>{gpuConfig.gpu_mdev || '直通'}</Tag>
-                                        <Button danger size="small" onClick={() => handleDeleteGpu(gpuKey)}>删除</Button>
+                                        <Button danger size="small" disabled={operationLocked} onClick={() => handleDeleteGpu(gpuKey)}>删除</Button>
                                     </Space>
                                 </div>
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-3 text-sm">
@@ -2912,7 +2932,7 @@ await api.vmPower(hostName!, uuid!, 'H_CLOSE')
         {
             key: 'usb',
             label: 'USB设备',
-            children: <Card title="USB设备管理" extra={<Button type="primary" icon={<PlusOutlined/>} disabled={config.usb_num > 0 && usbList.length >= config.usb_num} onClick={handleOpenUsbModal}>添加USB设备</Button>} variant="borderless">
+            children: <Card title="USB设备管理" extra={<Button type="primary" icon={<PlusOutlined/>} disabled={operationLocked || (config.usb_num > 0 && usbList.length >= config.usb_num)} onClick={handleOpenUsbModal}>添加USB设备</Button>} variant="borderless">
                 {usbList && usbList.length > 0 ? (
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                         {usbList.map((usb, index) => (
@@ -2922,7 +2942,7 @@ await api.vmPower(hostName!, uuid!, 'H_CLOSE')
                                     <span className="px-2 py-0.5 text-xs font-medium text-blue-700 dark:text-blue-300 bg-blue-100 dark:bg-blue-900/40 rounded">
                                         USB设备
                                     </span>
-                                    <Button danger size="small" icon={<DeleteOutlined/>} onClick={() => handleDeleteUSB(usb.key)} loading={usbActionLoading}>删除</Button>
+                                    <Button danger size="small" icon={<DeleteOutlined/>} disabled={operationLocked} onClick={() => handleDeleteUSB(usb.key)} loading={usbActionLoading}>删除</Button>
                                 </div>
                                 <div className="rounded-lg p-3 mb-2">
                                     <div className="flex justify-between mb-1">
@@ -2949,7 +2969,7 @@ await api.vmPower(hostName!, uuid!, 'H_CLOSE')
             key: 'backup',
             label: '备份管理',
             children: <Card title="备份管理" extra={<Button type="primary" icon={<PlusOutlined/>}
-                                                            disabled={!hasPermission(userPermissions, VM_PERMISSION.VM_BACKUP) || (config.bak_num > 0 && backups.length >= config.bak_num)}
+                                                            disabled={operationLocked || !hasPermission(userPermissions, VM_PERMISSION.VM_BACKUP) || (config.bak_num > 0 && backups.length >= config.bak_num)}
                                                             onClick={() => setBackupModalVisible(true)}>创建备份</Button>}
                             variant="borderless">
                 {backups && backups.length > 0 ? (
@@ -2968,7 +2988,7 @@ await api.vmPower(hostName!, uuid!, 'H_CLOSE')
                                         <Space>
                                             <Button size="small"
                                                     icon={<span className="iconify" data-icon="mdi:restore"/>}
-                                                    disabled={!hasPermission(userPermissions, VM_PERMISSION.VM_BACKUP)}
+                                                    disabled={operationLocked || !hasPermission(userPermissions, VM_PERMISSION.VM_BACKUP)}
                                                     onClick={() => {
                                                         setCurrentRestoreBackup(backup.backup_name!);
                                                         setRestoreConfirmChecked1(false);
@@ -2977,7 +2997,7 @@ await api.vmPower(hostName!, uuid!, 'H_CLOSE')
                                                     }}>恢复</Button>
                                             <Button danger size="small"
                                                     icon={<span className="iconify" data-icon="mdi:delete"/>}
-                                                    disabled={!hasPermission(userPermissions, VM_PERMISSION.VM_BACKUP)}
+                                                    disabled={operationLocked || !hasPermission(userPermissions, VM_PERMISSION.VM_BACKUP)}
                                                     onClick={() => handleDeleteBackup(backup.backup_name!)}>删除</Button>
                                         </Space>
                                     </div>

@@ -7,6 +7,7 @@ import {
     UserOutlined,
     SettingOutlined,
     FileTextOutlined,
+    ScheduleOutlined,
     BellOutlined,
     LogoutOutlined,
     MenuFoldOutlined,
@@ -111,6 +112,7 @@ function MainLayout() {
         { key: '/web-proxys', icon: <GlobalOutlined/>,      label: '反向代理' },
         { key: '/nat-rules',  icon: <SwapOutlined/>,        label: '端口转发' },
         { key: '/users',      icon: <UserOutlined/>,        label: '用户管理' },
+        { key: '/tasks',      icon: <ScheduleOutlined/>,    label: '任务管理' },
         { key: '/logs',       icon: <FileTextOutlined/>,    label: '日志查看' },
         { key: '/settings',   icon: <SettingOutlined/>,     label: '系统设置' },
     ]
