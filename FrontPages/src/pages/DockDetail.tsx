@@ -2215,7 +2215,7 @@ await api.vmPower(hostName!, uuid!, 'H_CLOSE')
                                     <Descriptions.Item label="下行带宽">{config.speed_d || 0} Mbps</Descriptions.Item>
 
                                     <Descriptions.Item
-                                        label="所有者">{config.own_all?.[0] || 'admin'}</Descriptions.Item>
+                                        label="主所有者">{config.own_all?.[0] || 'admin'}</Descriptions.Item>
                                     <Descriptions.Item label="VNC端口">{config.vc_port || '未设置'}</Descriptions.Item>
                                 </Descriptions>
                             </Col>
