@@ -183,6 +183,41 @@ def _clear_login_fail(ip: str):
         pass
 
 
+def _verify_turnstile(token: str) -> bool:
+    """验证Cloudflare Turnstile token，返回是否通过"""
+    import requests as _requests
+    try:
+        settings = db.get_system_settings()
+        if settings.get('turnstile_enabled') != '1':
+            return True  # 未启用验证码，直接通过
+        secret_key = settings.get('turnstile_secret_key', '')
+        if not secret_key:
+            return True  # 未配置密钥，直接通过
+        if not token:
+            return False  # 启用了但未提供token
+        resp = _requests.post(
+            'https://challenges.cloudflare.com/turnstile/v0/siteverify',
+            data={'secret': secret_key, 'response': token},
+            timeout=10
+        )
+        result = resp.json()
+        return result.get('success', False)
+    except Exception as e:
+        logger.error(f"[Turnstile] 验证异常: {e}")
+        return False
+
+
+def _check_turnstile_if_enabled(data) -> tuple:
+    """检查Turnstile验证码（如果启用），返回 (是否通过, 错误响应或None)"""
+    settings = db.get_system_settings()
+    if settings.get('turnstile_enabled') != '1':
+        return True, None
+    turnstile_token = data.get('turnstile_token', '') if data else ''
+    if not _verify_turnstile(turnstile_token):
+        return False, api_response_wrapper(400, '验证码验证失败，请重试')
+    return True, None
+
+
 def _load_login_fail_records():
     """启动时从数据库加载未过期的IP锁定记录"""
     try:
@@ -359,6 +394,21 @@ python build_pyinstaller.py  # 所有平台
         ''', 503
 
 
+# 获取Turnstile公开配置（无需认证） ################################################
+@app.route('/api/public/turnstile-config', methods=['GET'])
+def get_turnstile_config():
+    """获取Turnstile验证码公开配置（仅返回site_key和是否启用，不返回secret_key）"""
+    try:
+        settings = db.get_system_settings()
+        return api_response_wrapper(200, 'success', {
+            'enabled': settings.get('turnstile_enabled') == '1',
+            'site_key': settings.get('turnstile_site_key', ''),
+        })
+    except Exception as e:
+        logger.error(f"获取Turnstile配置失败: {e}")
+        return api_response_wrapper(500, '获取配置失败')
+
+
 # 登录API ####################################################################
 @app.route('/api/login', methods=['POST'])
 def login():
@@ -371,6 +421,12 @@ def login():
 
         # POST登录处理
         data = request.get_json() or request.form
+
+        # Turnstile验证码检查
+        passed, err_resp = _check_turnstile_if_enabled(data)
+        if not passed:
+            return err_resp
+
         login_type = data.get('login_type', 'token')
         
         if login_type == 'user':
@@ -493,6 +549,11 @@ def register():
         username = data.get('username', '').strip()
         email = data.get('email', '').strip()
         password = data.get('password', '')
+
+        # Turnstile验证码检查
+        passed, err_resp = _check_turnstile_if_enabled(data)
+        if not passed:
+            return err_resp
         
         # 验证输入
         if not username or not email or not password:
@@ -760,6 +821,11 @@ def forgot_password():
     try:
         data = request.get_json()
         email = data.get('email')
+
+        # Turnstile验证码检查
+        passed, err_resp = _check_turnstile_if_enabled(data)
+        if not passed:
+            return err_resp
         
         if not email:
             return jsonify({'code': 400, 'msg': '请输入邮箱地址'})

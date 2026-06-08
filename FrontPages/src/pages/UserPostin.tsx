@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef, useCallback } from 'react'
 import { useNavigate, Link } from 'react-router-dom'
 import { Form, Input, Button, Alert, Dropdown } from 'antd'
 import { UserOutlined, LockOutlined, MailOutlined, UserAddOutlined, CheckCircleOutlined, CloseCircleOutlined, BulbOutlined, BulbFilled, BgColorsOutlined, TranslationOutlined, SwapOutlined } from '@ant-design/icons'
@@ -29,6 +29,79 @@ function UserPostin() {
   const [success, setSuccess] = useState<string>('')
   const [currentLang, setCurrentLang] = useState('zh-cn') // 当前语言
   const [languages, setLanguages] = useState<any[]>([]) // 可用语言列表
+  // Turnstile验证码状态
+  const [turnstileEnabled, setTurnstileEnabled] = useState(false)
+  const [turnstileSiteKey, setTurnstileSiteKey] = useState('')
+  const [turnstileToken, setTurnstileToken] = useState('')
+  const turnstileRef = useRef<HTMLDivElement>(null)
+  const turnstileWidgetId = useRef<string | null>(null)
+
+  // 加载Turnstile配置
+  useEffect(() => {
+    const loadTurnstileConfig = async () => {
+      try {
+        const res = await api.getTurnstileConfig()
+        if (res.code === 200 && res.data) {
+          setTurnstileEnabled(res.data.enabled)
+          setTurnstileSiteKey(res.data.site_key || '')
+        }
+      } catch (e) {
+        // 获取失败不影响注册
+      }
+    }
+    loadTurnstileConfig()
+  }, [])
+
+  // 加载Turnstile脚本并渲染组件
+  const renderTurnstile = useCallback((container: HTMLDivElement | null) => {
+    if (!container || !turnstileEnabled || !turnstileSiteKey) return
+    const existingScript = document.querySelector('script[src*="turnstile"]')
+    const doRender = () => {
+      if ((window as any).turnstile && container) {
+        if (turnstileWidgetId.current) {
+          try { (window as any).turnstile.remove(turnstileWidgetId.current) } catch (_) {}
+        }
+        turnstileWidgetId.current = (window as any).turnstile.render(container, {
+          sitekey: turnstileSiteKey,
+          callback: (token: string) => setTurnstileToken(token),
+          'expired-callback': () => setTurnstileToken(''),
+          'error-callback': () => setTurnstileToken(''),
+        })
+      }
+    }
+    if (!existingScript) {
+      const script = document.createElement('script')
+      script.src = 'https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit'
+      script.async = true
+      script.onload = doRender
+      document.head.appendChild(script)
+    } else {
+      if ((window as any).turnstile) {
+        doRender()
+      } else {
+        existingScript.addEventListener('load', doRender)
+      }
+    }
+  }, [turnstileEnabled, turnstileSiteKey])
+
+  useEffect(() => {
+    if (turnstileEnabled && turnstileSiteKey && turnstileRef.current) {
+      renderTurnstile(turnstileRef.current)
+    }
+    return () => {
+      if (turnstileWidgetId.current && (window as any).turnstile) {
+        try { (window as any).turnstile.remove(turnstileWidgetId.current) } catch (_) {}
+        turnstileWidgetId.current = null
+      }
+    }
+  }, [turnstileEnabled, turnstileSiteKey, renderTurnstile])
+
+  const resetTurnstile = () => {
+    setTurnstileToken('')
+    if (turnstileWidgetId.current && (window as any).turnstile) {
+      try { (window as any).turnstile.reset(turnstileWidgetId.current) } catch (_) {}
+    }
+  }
 
   // 初始化语言状态
   useEffect(() => {
@@ -67,6 +140,11 @@ function UserPostin() {
    */
   const handleSubmit = async (values: RegisterForm) => {
     try {
+      // Turnstile验证检查
+      if (turnstileEnabled && !turnstileToken) {
+        setError('请完成验证码验证')
+        return
+      }
       setLoading(true)
       setError('')
       setSuccess('')
@@ -76,6 +154,7 @@ function UserPostin() {
         username: values.username,
         email: values.email,
         password: values.password,
+        turnstile_token: turnstileToken,
       })
       
       // 处理响应
@@ -90,6 +169,7 @@ function UserPostin() {
       }
     } catch (error: any) {
       setError(error.response?.data?.msg || '注册失败，请重试')
+      resetTurnstile()
     } finally {
       setLoading(false)
     }
@@ -326,6 +406,13 @@ function UserPostin() {
               placeholder="请再次输入密码"
             />
           </Form.Item>
+
+          {/* Turnstile验证码 */}
+          {turnstileEnabled && turnstileSiteKey && (
+            <div style={{ marginBottom: 16, display: 'flex', justifyContent: 'center' }}>
+              <div ref={turnstileRef} />
+            </div>
+          )}
 
           {/* 错误提示 */}
           {error && (

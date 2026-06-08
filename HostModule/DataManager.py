@@ -1438,6 +1438,9 @@ quota_bandwidth_up = 9999, quota_bandwidth_down = 9999, quota_traffic = 9999
             settings.setdefault("resend_email", "")
             settings.setdefault("resend_user", "")
             settings.setdefault("resend_apikey", "")
+            settings.setdefault("turnstile_enabled", "0")
+            settings.setdefault("turnstile_site_key", "")
+            settings.setdefault("turnstile_secret_key", "")
             
             return settings
         finally:

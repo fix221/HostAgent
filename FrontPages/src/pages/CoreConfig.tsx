@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { Card, Form, Input, Button, Switch, message, InputNumber, Checkbox, Alert } from 'antd'
-import { EyeOutlined, EyeInvisibleOutlined, CopyOutlined, ReloadOutlined, SaveOutlined, FolderOpenOutlined, MailOutlined, SettingOutlined } from '@ant-design/icons'
+import { EyeOutlined, EyeInvisibleOutlined, CopyOutlined, ReloadOutlined, SaveOutlined, FolderOpenOutlined, MailOutlined, SettingOutlined, SafetyCertificateOutlined } from '@ant-design/icons'
 import api from '@/utils/apis.ts'
 import { SystemStats } from '@/types'
 import PageHeader from '@/components/PageHeader'
@@ -18,6 +18,7 @@ function CoreConfig() {
   const [registrationForm] = Form.useForm()
   const [emailForm] = Form.useForm()
   const [testEmailForm] = Form.useForm()
+  const [turnstileForm] = Form.useForm()
 
   /**
    * 页面加载时获取数据
@@ -94,6 +95,12 @@ function CoreConfig() {
           resend_domain: settings.resend_domain || '',
           resend_apikey: settings.resend_apikey || '',
         })
+        // 设置Turnstile表单
+        turnstileForm.setFieldsValue({
+          turnstile_enabled: settings.turnstile_enabled === '1',
+          turnstile_site_key: settings.turnstile_site_key || '',
+          turnstile_secret_key: settings.turnstile_secret_key || '',
+        })
       }
     } catch (error) {
       console.error('加载系统设置失败:', error)
@@ -136,6 +143,30 @@ function CoreConfig() {
   }
 
 
+
+  /**
+   * 保存Turnstile设置
+   */
+  const saveTurnstileSettings = async (values: any) => {
+    try {
+      setLoading(true)
+      const data = {
+        turnstile_enabled: values.turnstile_enabled ? '1' : '0',
+        turnstile_site_key: values.turnstile_site_key || '',
+        turnstile_secret_key: values.turnstile_secret_key || '',
+      }
+      const res = await api.updateSystemSettings(data)
+      if (res.code === 200) {
+        message.success('Turnstile验证码设置已保存')
+      } else {
+        message.error(res.msg || '保存失败')
+      }
+    } catch (error) {
+      message.error('保存Turnstile设置失败')
+    } finally {
+      setLoading(false)
+    }
+  }
 
   /**
    * 保存配置
@@ -301,6 +332,36 @@ function CoreConfig() {
               type="warning"
               showIcon
             />
+
+            <div className="border-t pt-4">
+              <h4 className="text-sm font-medium mb-3 flex items-center gap-2">
+                <SafetyCertificateOutlined className="text-green-600" />
+                Turnstile 验证码
+              </h4>
+              <Form form={turnstileForm} onFinish={saveTurnstileSettings} layout="vertical">
+                <div className="flex items-center justify-between mb-3">
+                  <div>
+                    <p className="text-sm font-medium">开启验证码</p>
+                    <p className="text-xs" style={{ color: 'var(--text-secondary)' }}>启用后登录、注册、找回密码都需要验证Turnstile</p>
+                  </div>
+                  <Form.Item name="turnstile_enabled" valuePropName="checked" className="mb-0">
+                    <Switch />
+                  </Form.Item>
+                </div>
+
+                <Form.Item name="turnstile_site_key" label="Turnstile 站点密钥">
+                  <Input placeholder="请输入Cloudflare Turnstile Site Key" />
+                </Form.Item>
+
+                <Form.Item name="turnstile_secret_key" label="Turnstile 密钥">
+                  <Input.Password placeholder="请输入Cloudflare Turnstile Secret Key" />
+                </Form.Item>
+
+                <Button type="primary" htmlType="submit" block loading={loading} icon={<SaveOutlined />}>
+                  保存验证码设置
+                </Button>
+              </Form>
+            </div>
           </div>
         </Card>
 

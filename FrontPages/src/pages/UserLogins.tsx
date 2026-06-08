@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef, useCallback } from 'react'
 import { useNavigate, Link } from 'react-router-dom'
 import { Form, Input, Button, Modal, message, Alert, Dropdown } from 'antd'
 import { UserOutlined, LockOutlined, KeyOutlined, LoginOutlined, MailOutlined, InfoCircleOutlined, BulbOutlined, BulbFilled, BgColorsOutlined, TranslationOutlined, SwapOutlined } from '@ant-design/icons'
@@ -47,6 +47,84 @@ function UserLogins() {
   const [forgotPasswordForm] = Form.useForm() // 找回密码表单实例
   const [currentLang, setCurrentLang] = useState('zh-cn') // 当前语言
   const [languages, setLanguages] = useState<any[]>([]) // 可用语言列表
+  // Turnstile验证码状态
+  const [turnstileEnabled, setTurnstileEnabled] = useState(false)
+  const [turnstileSiteKey, setTurnstileSiteKey] = useState('')
+  const [turnstileToken, setTurnstileToken] = useState('')
+  const turnstileRef = useRef<HTMLDivElement>(null)
+  const turnstileWidgetId = useRef<string | null>(null)
+
+  // 加载Turnstile配置
+  useEffect(() => {
+    const loadTurnstileConfig = async () => {
+      try {
+        const res = await api.getTurnstileConfig()
+        if (res.code === 200 && res.data) {
+          setTurnstileEnabled(res.data.enabled)
+          setTurnstileSiteKey(res.data.site_key || '')
+        }
+      } catch (e) {
+        // 获取失败不影响登录
+      }
+    }
+    loadTurnstileConfig()
+  }, [])
+
+  // 加载Turnstile脚本并渲染组件
+  const renderTurnstile = useCallback((container: HTMLDivElement | null) => {
+    if (!container || !turnstileEnabled || !turnstileSiteKey) return
+    // 加载Turnstile脚本
+    const existingScript = document.querySelector('script[src*="turnstile"]')
+    const doRender = () => {
+      if ((window as any).turnstile && container) {
+        // 清除旧的widget
+        if (turnstileWidgetId.current) {
+          try { (window as any).turnstile.remove(turnstileWidgetId.current) } catch (_) {}
+        }
+        turnstileWidgetId.current = (window as any).turnstile.render(container, {
+          sitekey: turnstileSiteKey,
+          callback: (token: string) => setTurnstileToken(token),
+          'expired-callback': () => setTurnstileToken(''),
+          'error-callback': () => setTurnstileToken(''),
+        })
+      }
+    }
+    if (!existingScript) {
+      const script = document.createElement('script')
+      script.src = 'https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit'
+      script.async = true
+      script.onload = doRender
+      document.head.appendChild(script)
+    } else {
+      // 脚本已加载，等待turnstile对象可用
+      if ((window as any).turnstile) {
+        doRender()
+      } else {
+        existingScript.addEventListener('load', doRender)
+      }
+    }
+  }, [turnstileEnabled, turnstileSiteKey])
+
+  // 当Turnstile配置加载完成后渲染
+  useEffect(() => {
+    if (turnstileEnabled && turnstileSiteKey && turnstileRef.current) {
+      renderTurnstile(turnstileRef.current)
+    }
+    return () => {
+      if (turnstileWidgetId.current && (window as any).turnstile) {
+        try { (window as any).turnstile.remove(turnstileWidgetId.current) } catch (_) {}
+        turnstileWidgetId.current = null
+      }
+    }
+  }, [turnstileEnabled, turnstileSiteKey, renderTurnstile])
+
+  // 重置Turnstile
+  const resetTurnstile = () => {
+    setTurnstileToken('')
+    if (turnstileWidgetId.current && (window as any).turnstile) {
+      try { (window as any).turnstile.reset(turnstileWidgetId.current) } catch (_) {}
+    }
+  }
 
   // 初始化语言状态
   useEffect(() => {
@@ -84,6 +162,11 @@ function UserLogins() {
    */
   const handleUserLogin = async (values: LoginForm) => {
     try {
+      // Turnstile验证检查
+      if (turnstileEnabled && !turnstileToken) {
+        setErrorMsg('请完成验证码验证')
+        return
+      }
       setLoading(true)
       setErrorMsg('')
       
@@ -92,7 +175,8 @@ function UserLogins() {
         login_type: 'user',
         username: values.username,
         password: values.password,
-      })
+        turnstile_token: turnstileToken,
+      } as any)
       
       // 保存用户信息和token
       if (response.data?.token) {
@@ -109,6 +193,7 @@ function UserLogins() {
     } catch (error: any) {
       const errMsg = error?.response?.data?.msg || '登录失败，请检查用户名和密码'
       setErrorMsg(errMsg)
+      resetTurnstile()
       // 4秒后自动隐藏错误提示
       setTimeout(() => setErrorMsg(''), 4000)
       setLoading(false)
@@ -120,6 +205,11 @@ function UserLogins() {
    */
   const handleTokenLogin = async (values: TokenLoginForm) => {
     try {
+      // Turnstile验证检查
+      if (turnstileEnabled && !turnstileToken) {
+        setErrorMsg('请完成验证码验证')
+        return
+      }
       setLoading(true)
       setErrorMsg('')
       
@@ -127,7 +217,8 @@ function UserLogins() {
       const response = await api.login({
         login_type: 'token',
         token: values.token,
-      })
+        turnstile_token: turnstileToken,
+      } as any)
       
       // 保存用户信息和token
       if (response.data?.token) {
@@ -143,6 +234,7 @@ function UserLogins() {
     } catch (error: any) {
       const errMsg = error?.response?.data?.msg || 'Token登录失败，请检查Token是否正确'
       setErrorMsg(errMsg)
+      resetTurnstile()
       // 4秒后自动隐藏错误提示
       setTimeout(() => setErrorMsg(''), 4000)
       setLoading(false)
@@ -178,10 +270,15 @@ function UserLogins() {
    */
   const handleForgotPassword = async (values: ForgotPasswordForm) => {
     try {
+      // Turnstile验证检查
+      if (turnstileEnabled && !turnstileToken) {
+        message.error('请完成验证码验证')
+        return
+      }
       setForgotPasswordLoading(true)
       
       // 调用找回密码API
-      await api.forgotPassword(values.email)
+      await api.forgotPassword(values.email, turnstileToken)
       
       message.success('重置邮件已发送，请查收')
       // 3秒后自动关闭模态框
@@ -191,6 +288,7 @@ function UserLogins() {
     } catch (error: any) {
       const errorMessage = error?.response?.data?.msg || '发送失败，请重试'
       message.error(errorMessage)
+      resetTurnstile()
     } finally {
       setForgotPasswordLoading(false)
     }
@@ -597,6 +695,12 @@ function UserLogins() {
               </div>
             </div>
           </Form>
+        )}
+        {/* Turnstile验证码（两种登录方式共用） */}
+        {turnstileEnabled && turnstileSiteKey && (
+          <div style={{ marginBottom: 16, marginTop: 8, display: 'flex', justifyContent: 'center' }}>
+            <div ref={turnstileRef} />
+          </div>
         )}
       </div>
 

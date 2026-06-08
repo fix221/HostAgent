@@ -39,10 +39,17 @@ export const getCurrentUser = (): Promise<ApiResponse<User>> => {
 };
 
 /**
+ * 获取Turnstile验证码公开配置（无需认证）
+ */
+export const getTurnstileConfig = (): Promise<ApiResponse<{ enabled: boolean; site_key: string }>> => {
+  return http.get('/api/public/turnstile-config');
+};
+
+/**
  * 找回密码
  */
-export const forgotPassword = (email: string): Promise<ApiResponse> => {
-  return http.post('/api/system/forgot-password', { email });
+export const forgotPassword = (email: string, turnstile_token?: string): Promise<ApiResponse> => {
+  return http.post('/api/system/forgot-password', { email, turnstile_token });
 };
 
 /**
