@@ -198,7 +198,7 @@ class HttpManager:
             for listen_port, token_dict in self.proxys_sshd.items():
                 # PVE代理需要HTTPS（PVE noVNC要求wss://）
                 if self.proxys_pve:
-                    config += "https://:%s {\n" % listen_port
+                    config += "https://0.0.0.0:%s {\n" % listen_port
                     # 使用预生成的自签名证书
                     cert_path = str(self.ssl_cert).replace("\\", "/")
                     key_path = str(self.ssl_key).replace("\\", "/")
