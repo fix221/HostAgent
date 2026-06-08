@@ -1849,6 +1849,7 @@ def api_create_user():
             'can_create_vm': data.get('can_create_vm', 0),
             'can_modify_vm': data.get('can_modify_vm', 0),
             'can_delete_vm': data.get('can_delete_vm', 0),
+            'can_free_config': data.get('can_free_config', 0),
             'quota_cpu': data.get('quota_cpu', 0),
             'quota_ram': data.get('quota_ram', 0),
             'quota_ssd': data.get('quota_ssd', 0),
@@ -1914,6 +1915,13 @@ def api_update_user(user_id):
         data = request.get_json()
         if not data:
             return api_response_wrapper(400, '无效的请求数据')
+        
+        # 处理密码字段：为空则不更新，非空则hash后再存储
+        if 'password' in data:
+            if data['password']:
+                data['password'] = UserManager.hash_password(data['password'])
+            else:
+                del data['password']
         
         # 更新用户
         success = db.update_user(user_id, **data)

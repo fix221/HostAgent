@@ -282,7 +282,7 @@ jobs:
   # ============================================================
   # 发布 Release
   # ============================================================
-  release-all:
+  release-all-pub:
     needs: [build-winnt-x64, build-linux-x64, build-macos-a64]
     runs-on: ubuntu-latest
     if: always() && inputs.create_release == 'yes' && !cancelled() && !contains(needs.*.result, 'failure')

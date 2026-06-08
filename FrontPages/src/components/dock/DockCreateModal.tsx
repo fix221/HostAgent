@@ -21,7 +21,8 @@ import {
     ThunderboltOutlined,
     DesktopOutlined,
     GlobalOutlined,
-    ReloadOutlined
+    ReloadOutlined,
+    AppstoreOutlined
 } from '@ant-design/icons'
 import api from '@/utils/apis.ts'
 import { VM_PERMISSION, hasPermission } from '@/types'
@@ -48,6 +49,7 @@ interface UserQuota {
     used_nat: number
     quota_web: number
     used_web: number
+    can_free_config?: number
 }
 
 // 操作系统镜像配置
@@ -115,6 +117,12 @@ const DockCreateModal: React.FC<DockCreateModalProps> = ({
     const [saveConfirmVisible, setSaveConfirmVisible] = useState(false)
     const [pendingValues, setPendingValues] = useState<any>(null)
     const [vmPerms, setVmPerms] = useState<number>(userPermissions ?? VM_PERMISSION.FULL_MASK)
+    // 套餐卡片选择相关状态
+    const [serverPlans, setServerPlans] = useState<Record<string, any>>({})
+    const [selectedPlanName, setSelectedPlanName] = useState<string>('')
+
+    // 是否可以自由配置（管理员或有自由配置权限）
+    const canFreeConfig = isAdmin || !!(userQuota as any)?.can_free_config
 
     // 编辑模式下的权限控制（管理员拥有全部权限）
     const canEditSys = isAdmin || hasPermission(vmPerms, VM_PERMISSION.SYS_EDITS)
@@ -205,15 +213,17 @@ const DockCreateModal: React.FC<DockCreateModalProps> = ({
             setHostImages([])
             setGpuList({})
             setHostConfig(null)
+            setServerPlans({})
             return { hostImages: [], gpuList: {}, pciDeviceList: {}, usbDeviceList: {}, hostConfig: null }
         }
         try {
-            // 并行加载所有主机配置
-            const [imagesResult, gpuResult, pciResult, usbResult] = await Promise.all([
+            // 并行加载所有主机配置和套餐列表
+            const [imagesResult, gpuResult, pciResult, usbResult, plansResult] = await Promise.all([
                 api.getOSImages(host),
                 api.getGPUList(host),
                 api.getPCIList(host),
                 api.getUSBList(host),
+                api.getServerPlan(host),
             ])
 
             const loadedHostConfig = (imagesResult.code === 200 && imagesResult.data) ? imagesResult.data as any : null
@@ -231,6 +241,10 @@ const DockCreateModal: React.FC<DockCreateModalProps> = ({
             setPciDeviceList(loadedPciList)
             setUsbDeviceList(loadedUsbList)
 
+            // 加载套餐列表
+            const loadedPlans = (plansResult.code === 200 && plansResult.data) ? plansResult.data : {}
+            setServerPlans(loadedPlans)
+
             return {
                 hostImages: loadedHostImages,
                 gpuList: loadedGpuList,
@@ -244,6 +258,7 @@ const DockCreateModal: React.FC<DockCreateModalProps> = ({
             setGpuList({})
             setPciDeviceList({})
             setUsbDeviceList({})
+            setServerPlans({})
             return { hostImages: [], gpuList: {}, pciDeviceList: {}, usbDeviceList: {}, hostConfig: null }
         }
     }
@@ -399,6 +414,36 @@ const DockCreateModal: React.FC<DockCreateModalProps> = ({
     }
 
     const handleAddNic = () => {
+        // 非自由配置模式下，根据套餐限制网卡数量
+        if (!canFreeConfig && selectedPlanName && serverPlans[selectedPlanName]) {
+            const plan = serverPlans[selectedPlanName]
+            const nicMax = plan.nic_max ?? 1
+            if (nicList.length >= nicMax) {
+                message.warning(`当前套餐最多允许 ${nicMax} 张网卡`)
+                return
+            }
+            // 根据 ip4_max/ip6_max 限制网卡类型
+            const ip4Max = plan.ip4_max ?? 1
+            const ip6Max = plan.ip6_max ?? 0
+            const currentNatCount = nicList.filter(n => {
+                const typeVal = form.getFieldValue(`nic_type_${n.key}`)
+                return typeVal === 'nat' || typeVal === 'pub'
+            }).length
+            let nextType = 'nat'
+            if (currentNatCount >= ip4Max && ip6Max > 0) nextType = 'pub'
+            
+            const newNic = { key: nicCounter, name: `ethernet${nicCounter}`, type: nextType }
+            setNicList([...nicList, newNic])
+            setTimeout(() => {
+                form.setFieldsValue({
+                    [`nic_name_${nicCounter}`]: `ethernet${nicCounter}`,
+                    [`nic_type_${nicCounter}`]: nextType
+                })
+            }, 0)
+            setNicCounter(nicCounter + 1)
+            return
+        }
+
         if (userQuota) {
             const currentNatIps = nicList.filter(n => n.type === 'nat').length
             const currentPubIps = nicList.filter(n => n.type === 'pub').length
@@ -429,6 +474,14 @@ const DockCreateModal: React.FC<DockCreateModalProps> = ({
     }
 
     const handleRemoveNic = (key: number) => {
+        // 非自由配置模式下，检查最小网卡数量限制
+        if (!canFreeConfig && selectedPlanName && serverPlans[selectedPlanName]) {
+            const nicMin = serverPlans[selectedPlanName].nic_min ?? 1
+            if (nicList.length <= nicMin) {
+                message.warning(`当前套餐最少需要 ${nicMin} 张网卡`)
+                return
+            }
+        }
         setNicList(nicList.filter(n => n.key !== key))
     }
 
@@ -496,6 +549,10 @@ const DockCreateModal: React.FC<DockCreateModalProps> = ({
                 vmData.os_pass = values.os_pass
                 vmData.vc_pass = values.vc_pass
                 vmData.nic_all = nicAll
+                // 非自由配置模式下，附带选中的套餐名称
+                if (!canFreeConfig && selectedPlanName) {
+                    vmData.plan_name = selectedPlanName
+                }
             } else {
             // 编辑模式：有权限则发送用户修改值，无权限不发送（后端从旧配置复制）
                 if (canEditSys) vmData.os_name = values.os_name
@@ -785,6 +842,75 @@ const DockCreateModal: React.FC<DockCreateModalProps> = ({
                         </Row>
                     </div>
 
+                    {/* 套餐卡片选择（非自由配置模式且为创建模式时显示） */}
+                    {!canFreeConfig && !isEditMode && (
+                        <div className="modal-section">
+                            <div style={sectionTitleStyle}>
+                                <div className="w-8 h-8 rounded-lg section-icon-bg-orange flex items-center justify-center">
+                                    <AppstoreOutlined />
+                                </div>
+                                <span>选择套餐</span>
+                            </div>
+                            {Object.keys(serverPlans).length === 0 ? (
+                                <Alert message="当前主机暂无可用套餐，请联系管理员" type="warning" showIcon />
+                            ) : (
+                                <Row gutter={[16, 16]}>
+                                    {Object.entries(serverPlans).map(([planName, planCfg]: [string, any]) => (
+                                        <Col span={8} key={planName}>
+                                            <div
+                                                onClick={() => {
+                                                    setSelectedPlanName(planName)
+                                                    // 自动填充表单资源字段
+                                                    form.setFieldsValue({
+                                                        cpu_num: planCfg.cpu_num,
+                                                        cpu_per: planCfg.cpu_per ?? 100,
+                                                        mem_num: planCfg.mem_num,
+                                                        hdd_num: planCfg.hdd_num,
+                                                        hdd_iop: planCfg.hdd_iop ?? 1000,
+                                                        gpu_mem: planCfg.gpu_mem ?? 0,
+                                                        speed_u: planCfg.speed_u,
+                                                        speed_d: planCfg.speed_d,
+                                                        nat_num: planCfg.nat_num,
+                                                        web_num: planCfg.web_num,
+                                                        flu_num: planCfg.flu_num,
+                                                        bak_num: planCfg.bak_num ?? 1,
+                                                        iso_num: planCfg.iso_num ?? 1,
+                                                        pci_num: planCfg.pci_num ?? 0,
+                                                        usb_num: planCfg.usb_num ?? 0,
+                                                        dat_num: planCfg.dat_num ?? 1,
+                                                        dat_all: planCfg.dat_all ?? 0,
+                                                    })
+                                                }}
+                                                style={{
+                                                    border: selectedPlanName === planName ? '2px solid #1677ff' : '1px solid #d9d9d9',
+                                                    borderRadius: 8,
+                                                    padding: 16,
+                                                    cursor: 'pointer',
+                                                    transition: 'all 0.2s',
+                                                    background: selectedPlanName === planName ? '#e6f4ff' : 'transparent',
+                                                    boxShadow: selectedPlanName === planName ? '0 2px 8px rgba(22,119,255,0.15)' : 'none',
+                                                }}
+                                            >
+                                                <div style={{ fontWeight: 600, fontSize: 14, marginBottom: 8 }}>{planName}</div>
+                                                <div className="space-y-1 text-xs" style={{ color: '#666' }}>
+                                                    <div>CPU: {planCfg.cpu_num}核</div>
+                                                    <div>内存: {planCfg.mem_num >= 1024 ? `${Math.round(planCfg.mem_num / 1024)}GB` : `${planCfg.mem_num}MB`}</div>
+                                                    <div>硬盘: {planCfg.hdd_num >= 1024 ? `${Math.round(planCfg.hdd_num / 1024)}GB` : `${planCfg.hdd_num}MB`}</div>
+                                                    <div>带宽: ↑{planCfg.speed_u}Mbps ↓{planCfg.speed_d}Mbps</div>
+                                                    <div>网卡: {planCfg.nic_min ?? 1}~{planCfg.nic_max ?? 1}张</div>
+                                                    <div>IPv4: 最多{planCfg.ip4_max ?? 1}个 / IPv6: 最多{planCfg.ip6_max ?? 0}个</div>
+                                                </div>
+                                            </div>
+                                        </Col>
+                                    ))}
+                                </Row>
+                            )}
+                        </div>
+                    )}
+
+                    {/* 资源配置（自由配置模式或编辑模式时显示） */}
+                    {(canFreeConfig || isEditMode) && (
+                    <>
                     <div className="modal-section">
                         <div style={sectionTitleStyle}>
                             <div className="w-8 h-8 rounded-lg section-icon-bg-orange flex items-center justify-center">
@@ -873,6 +999,8 @@ const DockCreateModal: React.FC<DockCreateModalProps> = ({
                             </Col>
                         </Row>
                     </div>
+                    </>
+                    )}
 
                     <div className="modal-section">
                         <div style={sectionTitleStyle}>
@@ -1036,6 +1164,13 @@ const DockCreateModal: React.FC<DockCreateModalProps> = ({
                                 <RadarChartOutlined />
                             </div>
                             <span>网卡配置</span>
+                            {!canFreeConfig && selectedPlanName && serverPlans[selectedPlanName] && (
+                                <span className="text-xs" style={{ color: '#999', marginLeft: 8 }}>
+                                    (允许 {serverPlans[selectedPlanName].nic_min ?? 1}~{serverPlans[selectedPlanName].nic_max ?? 1} 张网卡，
+                                    IPv4最多{serverPlans[selectedPlanName].ip4_max ?? 1}个，
+                                    IPv6最多{serverPlans[selectedPlanName].ip6_max ?? 0}个)
+                                </span>
+                            )}
                         </div>
 
                         {nicList.map((nic) => (

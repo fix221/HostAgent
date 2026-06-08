@@ -34,7 +34,7 @@ permissions:
   contents: write
 
 jobs:
-  release-pyinstaller:
+  release-pyinst:
     if: github.event_name == 'push' || inputs.build_type == 'pyinstaller'
     uses: ./.github/workflows/build-pyinst.yml
     with:
@@ -43,7 +43,7 @@ jobs:
       create_release: 'yes'
     secrets: inherit
 
-  release-cxfreeze:
+  release-freeze:
     if: github.event_name != 'push' && inputs.build_type == 'cxfreeze'
     uses: ./.github/workflows/build-freeze.yml
     with:

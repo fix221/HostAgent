@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { Row, Col, Card, Button, Modal, Form, Input, Select, Slider, Progress, Tag, message, Space, Divider, Table, Tooltip } from 'antd'
+import { Row, Col, Card, Button, Modal, Form, Input, Select, Slider, Progress, Tag, message, Space, Divider, Table, Tooltip, Alert } from 'antd'
 
 import {
   DesktopOutlined,
@@ -167,6 +167,12 @@ function Dashboards() {
     { id: 0, type: 'nat', ip: '' }
   ])
   const [nicCounter, setNicCounter] = useState(1)
+  // 套餐卡片选择相关状态
+  const [serverPlans, setServerPlans] = useState<Record<string, any>>({})
+  const [selectedPlanName, setSelectedPlanName] = useState<string>('')
+
+  // 是否可以自由配置（管理员或有自由配置权限）
+  const canFreeConfig = isAdmin || !!(userQuota as any)?.can_free_config
 
   // 电源操作模态框状态
   const [powerModalVisible, setPowerModalVisible] = useState(false)
@@ -327,6 +333,8 @@ function Dashboards() {
     setNicList([{ id: 0, type: 'nat', ip: '' }])
     setNicCounter(1)
     setHostConfig(null)
+    setServerPlans({})
+    setSelectedPlanName('')
     
     // 生成随机密码和VNC端口
     const randomPassword = generateRandomPassword()
@@ -404,7 +412,10 @@ function Dashboards() {
    */
   const handleHostChange = async (hostName: string) => {
     try {
-      const result = await api.get(`/api/client/os-images/${hostName}`)
+      const [result, plansResult] = await Promise.all([
+        api.get(`/api/client/os-images/${hostName}`),
+        api.get(`/api/server/plan/${hostName}`),
+      ])
       if (result.code === 200 && result.data) {
         setHostConfig(result.data)
         
@@ -426,6 +437,10 @@ function Dashboards() {
           // 同时也需要保存映射关系以供选择显示，这里简化处理，假设value即文件名
         }
       }
+      // 加载套餐列表
+      const loadedPlans = (plansResult.code === 200 && plansResult.data) ? plansResult.data : {}
+      setServerPlans(loadedPlans)
+      setSelectedPlanName('')
     } catch (error) {
       console.error('加载系统镜像失败:', error)
       message.error('加载系统镜像失败')
@@ -460,6 +475,8 @@ function Dashboards() {
         gpu_mem: Math.round(values.gpu_mem),
         flu_num: Math.round(values.flu_num * 1024),
         nic_all: nicAll,
+        // 非自由配置模式下附带套餐名称
+        ...((!canFreeConfig && selectedPlanName) ? { plan_name: selectedPlanName } : {}),
       }
       
       // 删除临时字段
@@ -1570,8 +1587,58 @@ function Dashboards() {
           </Form.Item>
 
           <Divider orientation="left">资源配置</Divider>
-          
-          <Form.Item 
+
+          {/* 套餐卡片选择（非自由配置模式时显示） */}
+          {!canFreeConfig && (
+            <div style={{ marginBottom: 24 }}>
+              {Object.keys(serverPlans).length === 0 ? (
+                <Alert message="当前主机暂无可用套餐，请联系管理员" type="warning" showIcon style={{ marginBottom: 16 }} />
+              ) : (
+                <Row gutter={[12, 12]}>
+                  {Object.entries(serverPlans).map(([planName, planCfg]: [string, any]) => (
+                    <Col span={8} key={planName}>
+                      <div
+                        onClick={() => {
+                          setSelectedPlanName(planName)
+                          createVMForm.setFieldsValue({
+                            cpu_num: planCfg.cpu_num,
+                            mem_num: Math.round(planCfg.mem_num / 1024),
+                            hdd_num: Math.round(planCfg.hdd_num / 1024),
+                            gpu_mem: planCfg.gpu_mem ?? 0,
+                            flu_num: Math.round(planCfg.flu_num / 1024),
+                            speed_u: planCfg.speed_u,
+                            speed_d: planCfg.speed_d,
+                            web_num: planCfg.web_num,
+                            nat_num: planCfg.nat_num,
+                          })
+                        }}
+                        style={{
+                          border: selectedPlanName === planName ? '2px solid #1677ff' : '1px solid #d9d9d9',
+                          borderRadius: 8,
+                          padding: 12,
+                          cursor: 'pointer',
+                          transition: 'all 0.2s',
+                          background: selectedPlanName === planName ? '#e6f4ff' : 'transparent',
+                        }}
+                      >
+                        <div style={{ fontWeight: 600, marginBottom: 6 }}>{planName}</div>
+                        <div className="text-xs" style={{ color: '#666' }}>
+                          <div>CPU: {planCfg.cpu_num}核 / 内存: {Math.round(planCfg.mem_num / 1024)}GB</div>
+                          <div>硬盘: {Math.round(planCfg.hdd_num / 1024)}GB / 带宽: {planCfg.speed_d}Mbps</div>
+                          <div>网卡: {planCfg.nic_min ?? 1}~{planCfg.nic_max ?? 1}张</div>
+                        </div>
+                      </div>
+                    </Col>
+                  ))}
+                </Row>
+              )}
+            </div>
+          )}
+
+          {/* 资源配置（自由配置模式时显示） */}
+          {canFreeConfig && (
+          <>
+          <Form.Item
             label={`CPU核心 (可用: ${userQuota ? userQuota.quota_cpu - userQuota.used_cpu : 0}个)`} 
             name="cpu_num" 
             initialValue={1}
@@ -1614,6 +1681,8 @@ function Dashboards() {
           <Form.Item label="下行带宽 (Mbps)" name="flu_num" initialValue={10}>
             <Slider min={1} max={100} marks={{ 1: '1M', 10: '10M', 50: '50M', 100: '100M' }} />
           </Form.Item>
+          </>
+          )}
 
           <Divider orientation="left">
             <div className="flex justify-between items-center w-full">

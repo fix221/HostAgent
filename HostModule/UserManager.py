@@ -84,6 +84,7 @@ class UserManager:
                 'username': session.get('username'),
                 'is_admin': session.get('is_admin', False),
                 'is_token_login': session.get('is_token_login', False),
+                'can_free_config': session.get('can_free_config', 0),
                 'assigned_hosts': session.get('assigned_hosts', [])
             }
         return None
@@ -96,6 +97,7 @@ class UserManager:
         session['username'] = user_data.get('username')
         session['is_admin'] = user_data.get('is_admin', False)
         session['is_token_login'] = is_token_login
+        session['can_free_config'] = user_data.get('can_free_config', 0)
         
         # 设置assigned_hosts
         assigned_hosts = user_data.get('assigned_hosts', [])

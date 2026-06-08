@@ -197,6 +197,13 @@ export const setupUSB = (hsName: string, vmUuid: string, data: {
   return http.post(`/api/client/usb/setup/${hsName}/${vmUuid}`, data);
 };
 
+/**
+ * 获取主机套餐列表
+ */
+export const getServerPlan = (hsName: string): Promise<ApiResponse<Record<string, any>>> => {
+  return http.get(`/api/server/plan/${hsName}`);
+};
+
 // ============================================================================
 // 虚拟机管理API
 // ============================================================================
@@ -728,6 +735,7 @@ export default {
   setupPCI,
   getUSBList,
   setupUSB,
+  getServerPlan,
   
   // 虚拟机管理
   getVMs,

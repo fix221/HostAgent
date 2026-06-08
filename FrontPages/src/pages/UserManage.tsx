@@ -107,6 +107,7 @@ function UserManage() {
         can_create_vm: values.can_create_vm ? 1 : 0,
         can_modify_vm: values.can_modify_vm ? 1 : 0,
         can_delete_vm: values.can_delete_vm ? 1 : 0,
+        can_free_config: values.can_free_config ? 1 : 0,
         quota_ram: Math.round(values.quota_ram * 1024),
         quota_ssd: Math.round(values.quota_ssd * 1024),
         quota_gpu: Math.round(values.quota_gpu * 1024),
@@ -443,19 +444,24 @@ function UserManage() {
           {/* 虚拟机权限 */}
           <Divider orientation="left">虚拟机权限</Divider>
           <Row gutter={16}>
-            <Col span={8}>
+            <Col span={6}>
               <Form.Item name="can_create_vm" valuePropName="checked">
                 <Checkbox>允许创建虚拟机</Checkbox>
               </Form.Item>
             </Col>
-            <Col span={8}>
+            <Col span={6}>
               <Form.Item name="can_modify_vm" valuePropName="checked">
                 <Checkbox>允许修改虚拟机</Checkbox>
               </Form.Item>
             </Col>
-            <Col span={8}>
+            <Col span={6}>
               <Form.Item name="can_delete_vm" valuePropName="checked">
                 <Checkbox>允许删除虚拟机</Checkbox>
+              </Form.Item>
+            </Col>
+            <Col span={6}>
+              <Form.Item name="can_free_config" valuePropName="checked">
+                <Checkbox>允许自由配置</Checkbox>
               </Form.Item>
             </Col>
           </Row>

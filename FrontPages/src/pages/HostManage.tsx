@@ -105,6 +105,10 @@ interface ServerPlanRow {
     web_num: number
     flu_num: number
     flu_rst: number[]
+    nic_min: number
+    nic_max: number
+    ip4_max: number
+    ip6_max: number
 }
 
 // 主机数据接口
@@ -487,6 +491,10 @@ function HostManage() {
                             web_num: planCfg.web_num ?? 100,
                             flu_num: planCfg.flu_num ?? 102400,
                             flu_rst: Array.isArray(planCfg.flu_rst) ? planCfg.flu_rst : [31, 10, 10],
+                            nic_min: planCfg.nic_min ?? 1,
+                            nic_max: planCfg.nic_max ?? 1,
+                            ip4_max: planCfg.ip4_max ?? 1,
+                            ip6_max: planCfg.ip6_max ?? 0,
                         })
                     })
                 }
@@ -580,6 +588,10 @@ function HostManage() {
                         web_num: row.web_num,
                         flu_num: row.flu_num,
                         flu_rst: Array.isArray(row.flu_rst) && row.flu_rst.length === 3 ? row.flu_rst : [31, 10, 10],
+                        nic_min: row.nic_min,
+                        nic_max: row.nic_max,
+                        ip4_max: row.ip4_max,
+                        ip6_max: row.ip6_max,
                     }
                 }
             })
@@ -1984,6 +1996,62 @@ function HostManage() {
                                                             />
                                                         </Col>
                                                     </Row>
+                                                    <Row gutter={8} className="mt-2">
+                                                        <Col span={6}>
+                                                            <div className="text-xs text-gray-500 mb-1">网卡最小数量</div>
+                                                            <InputNumber
+                                                                value={row.nic_min}
+                                                                min={1}
+                                                                className="w-full"
+                                                                onChange={(v) => {
+                                                                    const newPlans = [...serverPlans]
+                                                                    newPlans[index].nic_min = v ?? 1
+                                                                    setServerPlans(newPlans)
+                                                                }}
+                                                            />
+                                                        </Col>
+                                                        <Col span={6}>
+                                                            <div className="text-xs text-gray-500 mb-1">网卡最大数量</div>
+                                                            <InputNumber
+                                                                value={row.nic_max}
+                                                                min={row.nic_min || 1}
+                                                                className="w-full"
+                                                                onChange={(v) => {
+                                                                    const newPlans = [...serverPlans]
+                                                                    newPlans[index].nic_max = v ?? 1
+                                                                    setServerPlans(newPlans)
+                                                                }}
+                                                            />
+                                                        </Col>
+                                                        <Col span={6}>
+                                                            <div className="text-xs text-gray-500 mb-1">IPv4最大数量</div>
+                                                            <InputNumber
+                                                                value={row.ip4_max}
+                                                                min={0}
+                                                                max={row.nic_max || 1}
+                                                                className="w-full"
+                                                                onChange={(v) => {
+                                                                    const newPlans = [...serverPlans]
+                                                                    newPlans[index].ip4_max = v ?? 1
+                                                                    setServerPlans(newPlans)
+                                                                }}
+                                                            />
+                                                        </Col>
+                                                        <Col span={6}>
+                                                            <div className="text-xs text-gray-500 mb-1">IPv6最大数量</div>
+                                                            <InputNumber
+                                                                value={row.ip6_max}
+                                                                min={0}
+                                                                max={row.nic_max || 1}
+                                                                className="w-full"
+                                                                onChange={(v) => {
+                                                                    const newPlans = [...serverPlans]
+                                                                    newPlans[index].ip6_max = v ?? 0
+                                                                    setServerPlans(newPlans)
+                                                                }}
+                                                            />
+                                                        </Col>
+                                                    </Row>
                                                 </div>
                                             ))}
                                             <Button
@@ -2010,6 +2078,10 @@ function HostManage() {
                                                     web_num: 100,
                                                     flu_num: 102400,
                                                     flu_rst: [31, 10, 10],
+                                                    nic_min: 1,
+                                                    nic_max: 1,
+                                                    ip4_max: 1,
+                                                    ip6_max: 0,
                                                 }])}
                                                 block
                                             >

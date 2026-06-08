@@ -181,7 +181,7 @@ jobs:
   #       path: BuildCache/websockify/dist/websocketproxy
   #       retention-days: 30
 
-  release-all:
+  release-all-pub:
     needs: [build-winnt-x64, build-linux-x64, build-macos-a64]
     runs-on: ubuntu-latest
     if: inputs.create_release == 'yes'

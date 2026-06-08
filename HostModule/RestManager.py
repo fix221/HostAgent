@@ -1881,6 +1881,66 @@ class RestManager:
 
         data = request.get_json() or {}
 
+        # 套餐校验：非管理员且无自由配置权限的用户，必须选择预设套餐
+        is_privileged = user_data.get('is_admin') or user_data.get('is_token_login')
+        can_free_config = user_data.get('can_free_config', 0)
+        if not is_privileged and not can_free_config:
+            # 获取该主机的套餐列表
+            server_plans = server.hs_config.server_plan or {}
+            if not server_plans:
+                return self.api_response(400, '当前主机暂无可用套餐，请联系管理员')
+            
+            # 用户必须提交plan_name字段指定选择的套餐
+            selected_plan_name = data.get('plan_name', '').strip()
+            if not selected_plan_name:
+                return self.api_response(400, '请选择一个套餐配置')
+            
+            if selected_plan_name not in server_plans:
+                return self.api_response(400, f'套餐不存在：{selected_plan_name}')
+            
+            plan_vm_config = server_plans[selected_plan_name]
+            if hasattr(plan_vm_config, '__save__') and callable(getattr(plan_vm_config, '__save__')):
+                plan_dict = plan_vm_config.__save__()
+            elif isinstance(plan_vm_config, dict):
+                plan_dict = plan_vm_config
+            else:
+                return self.api_response(500, '套餐配置格式异常')
+            
+            # 强制使用套餐中的资源配置覆盖用户提交的数据
+            resource_fields = ['cpu_num', 'cpu_per', 'gpu_mem', 'mem_num', 'hdd_num', 'hdd_iop',
+                               'bak_num', 'iso_num', 'pci_num', 'usb_num', 'dat_num', 'dat_all',
+                               'speed_u', 'speed_d', 'nat_num', 'web_num', 'flu_num', 'flu_rst']
+            for field in resource_fields:
+                if field in plan_dict:
+                    data[field] = plan_dict[field]
+            
+            # 校验网卡数量在套餐允许的范围内
+            nic_min = getattr(plan_vm_config, 'nic_min', 1) if hasattr(plan_vm_config, 'nic_min') else plan_dict.get('nic_min', 1)
+            nic_max = getattr(plan_vm_config, 'nic_max', 1) if hasattr(plan_vm_config, 'nic_max') else plan_dict.get('nic_max', 1)
+            ip4_max = getattr(plan_vm_config, 'ip4_max', 1) if hasattr(plan_vm_config, 'ip4_max') else plan_dict.get('ip4_max', 1)
+            ip6_max = getattr(plan_vm_config, 'ip6_max', 0) if hasattr(plan_vm_config, 'ip6_max') else plan_dict.get('ip6_max', 0)
+            
+            nic_all_data = data.get('nic_all', {})
+            nic_count = len(nic_all_data)
+            if nic_count < nic_min or nic_count > nic_max:
+                return self.api_response(400, f'网卡数量必须在 {nic_min} ~ {nic_max} 之间，当前为 {nic_count}')
+            
+            # 校验IPv4/IPv6网卡数量
+            ipv4_count = 0
+            ipv6_count = 0
+            for nic_name, nic_conf in nic_all_data.items():
+                nic_type = nic_conf.get('nic_type', 'nat') if isinstance(nic_conf, dict) else getattr(nic_conf, 'nic_type', 'nat')
+                ip_ver = nic_conf.get('ip_ver', 4) if isinstance(nic_conf, dict) else getattr(nic_conf, 'ip_ver', 4)
+                if ip_ver == 6:
+                    ipv6_count += 1
+                else:
+                    ipv4_count += 1
+            
+            if ipv4_count > ip4_max:
+                return self.api_response(400, f'IPv4网卡数量不能超过 {ip4_max}，当前为 {ipv4_count}')
+            if ipv6_count > ip6_max:
+                return self.api_response(400, f'IPv6网卡数量不能超过 {ip6_max}，当前为 {ipv6_count}')
+
         # 获取system_maps，确定最小磁盘要求
         min_disk_gb = 10  # 默认10GB
         system_maps = []
@@ -5136,6 +5196,11 @@ window.location.replace({repr(target_url)});
                         'gpu_mem_gb': getattr(vm_config, 'gpu_mem', 0) // 1024,  # MB -> GB
                         'bandwidth_mbps': getattr(vm_config, 'speed_d', 0),
                         'traffic_gb': getattr(vm_config, 'flu_num', 0) // 1024,  # MB -> GB
+                        # 网卡和IP配置
+                        'nic_min': getattr(vm_config, 'nic_min', 1),
+                        'nic_max': getattr(vm_config, 'nic_max', 1),
+                        'ip4_max': getattr(vm_config, 'ip4_max', 1),
+                        'ip6_max': getattr(vm_config, 'ip6_max', 0),
                         # 价格配置（主机级，所有套餐共用）
                         'n_cpu_price': n_cpu_price,
                         'n_mem_price': n_mem_price,
