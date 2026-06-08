@@ -8,6 +8,11 @@ from pathlib import Path
 from loguru import logger
 from HostModule.DataManager import DataManager
 
+# Caddy配置文件目录
+CADDY_CONFIG_DIR = Path("DataSaving/webs")
+# SSL证书文件目录
+SSL_CERT_DIR = Path("DataSaving/cert")
+
 
 class HttpManager:
     # 初始化 #####################################################################################
@@ -22,7 +27,7 @@ class HttpManager:
         self.binary_proc = None
         self.binary_path = "HostConfig/Server_x64"
         self.config_path = Path("HostConfig")
-        self.config_file = Path(f"DataSaving/{config_name}")
+        self.config_file = CADDY_CONFIG_DIR / config_name
         self.manage_port = random.randint(8000, 9000)
         # proxys_sshd格式: { ===============================
         #   port: {
@@ -30,6 +35,13 @@ class HttpManager:
         #   }
         # } ================================================
         self.proxys_sshd = {}
+        # proxys_pve格式: { ================================
+        #   token: {
+        #       "ip": str, "port": int,
+        #       "pve_ticket": str
+        #   }
+        # } ================================================
+        self.proxys_pve = {}
         # proxys_list格式: { ===============================
         # domain: {
         #   "target": (port, ip),
@@ -43,8 +55,19 @@ class HttpManager:
             self.binary_path += ".exe"
             self.binary_path = self.binary_path.replace(
                 "/", "\\")
+        # SSL证书路径（根据配置名提取主机名）=============
+        # config_name格式: vnc-{hostname}.txt 或 HttpManage.txt
+        stem = Path(config_name).stem  # 如 vnc-x99pve 或 HttpManage
+        if stem.startswith("vnc-"):
+            cert_name = stem[4:]  # 提取主机名，如 x99pve
+        else:
+            cert_name = stem
+        self.ssl_cert = SSL_CERT_DIR / f"web-{cert_name}.crt"
+        self.ssl_key = SSL_CERT_DIR / f"web-{cert_name}.key"
         # 初始数据库管理 ===================================
         self.config_path.mkdir(exist_ok=True)
+        CADDY_CONFIG_DIR.mkdir(parents=True, exist_ok=True)
+        SSL_CERT_DIR.mkdir(parents=True, exist_ok=True)
         self.db_manager = DataManager()
         # 生成初始的配置 ===================================
         self.config_all()
@@ -52,10 +75,94 @@ class HttpManager:
               f"管理端口: {self.manage_port}，"
               f"配置文件: {self.config_file}")
 
+    # 生成SSL自签名证书 ########################################################################
+    @staticmethod
+    def generate_ssl_cert(hostname="default"):
+        """自动生成自签名SSL证书（如果不存在）"""
+        cert_file = SSL_CERT_DIR / f"web-{hostname}.crt"
+        key_file = SSL_CERT_DIR / f"web-{hostname}.key"
+        if cert_file.exists() and key_file.exists():
+            return True
+        try:
+            SSL_CERT_DIR.mkdir(parents=True, exist_ok=True)
+            # 使用Python cryptography库生成自签名证书
+            from cryptography import x509
+            from cryptography.x509.oid import NameOID
+            from cryptography.hazmat.primitives import hashes, serialization
+            from cryptography.hazmat.primitives.asymmetric import rsa
+            import datetime as dt
+            import ipaddress
+
+            # 生成RSA私钥
+            key = rsa.generate_private_key(public_exponent=65537, key_size=2048)
+
+            # 构建证书
+            subject = issuer = x509.Name([
+                x509.NameAttribute(NameOID.COMMON_NAME, "127.0.0.1"),
+            ])
+            cert = (
+                x509.CertificateBuilder()
+                .subject_name(subject)
+                .issuer_name(issuer)
+                .public_key(key.public_key())
+                .serial_number(x509.random_serial_number())
+                .not_valid_before(dt.datetime.now(dt.timezone.utc))
+                .not_valid_after(dt.datetime.now(dt.timezone.utc) + dt.timedelta(days=3650))
+                .add_extension(
+                    x509.SubjectAlternativeName([
+                        x509.IPAddress(ipaddress.IPv4Address("127.0.0.1")),
+                        x509.DNSName("localhost"),
+                    ]),
+                    critical=False,
+                )
+                .add_extension(
+                    x509.BasicConstraints(ca=True, path_length=None),
+                    critical=True,
+                )
+                .sign(key, hashes.SHA256())
+            )
+
+            # 写入证书文件
+            cert_file.write_bytes(
+                cert.public_bytes(serialization.Encoding.PEM))
+            # 写入私钥文件
+            key_file.write_bytes(
+                key.private_bytes(
+                    serialization.Encoding.PEM,
+                    serialization.PrivateFormat.TraditionalOpenSSL,
+                    serialization.NoEncryption()))
+
+            logger.info(f"[HttpManager] SSL证书已生成: {cert_file}")
+            return True
+        except ImportError:
+            # 如果没有cryptography库，尝试用openssl命令
+            try:
+                cmd = [
+                    "openssl", "req", "-x509", "-newkey", "rsa:2048",
+                    "-keyout", str(key_file),
+                    "-out", str(cert_file),
+                    "-days", "3650", "-nodes",
+                    "-subj", "/CN=127.0.0.1",
+                    "-addext", "subjectAltName=IP:127.0.0.1,DNS:localhost"
+                ]
+                subprocess.run(cmd, capture_output=True, check=True)
+                logger.info(f"[HttpManager] SSL证书已通过openssl生成: {cert_file}")
+                return True
+            except Exception as e:
+                logger.error(f"[HttpManager] 生成SSL证书失败: {e}")
+                return False
+        except Exception as e:
+            logger.error(f"[HttpManager] 生成SSL证书失败: {e}")
+            return False
+
     # 生成完整的Caddy配置文件 ####################################################################
     def config_all(self):
         # 使用实例的管理端口生成全局配置
-        config = f"{{\n\tadmin localhost:{self.manage_port}\n}}\n\n"
+        # 有PVE代理时需要禁用HTTP重定向，避免Caddy尝试监听80端口
+        if self.proxys_pve:
+            config = f"{{\n\tadmin localhost:{self.manage_port}\n\tauto_https disable_redirects\n}}\n\n"
+        else:
+            config = f"{{\n\tadmin localhost:{self.manage_port}\n}}\n\n"
         # 生成普通代理配置 #######################################################################
         for domain, proxy_info in self.proxys_list.items():
             port, ip = proxy_info["target"]
@@ -80,15 +187,24 @@ class HttpManager:
                     f"{backend_protocol}://{ip}:{port}\n"
                     f"}}\n\n")
             else:
+                tls_skip = "\n\t\ttransport http {\n\t\t\ttls_insecure_skip_verify\n\t\t}" if is_https else ""
                 config += (
                     f"{url} "
                     f"{{\n\treverse_proxy "
-                    f"{backend_protocol}://{ip}:{port}\n"
+                    f"{backend_protocol}://{ip}:{port} {{{tls_skip}\n\t}}\n"
                     f"}}\n\n")
         # 生成SSH代理配置 ########################################################################
         if self.proxys_sshd:
             for listen_port, token_dict in self.proxys_sshd.items():
-                config += ":%s {\n" % listen_port
+                # PVE代理需要HTTPS（PVE noVNC要求wss://）
+                if self.proxys_pve:
+                    config += "https://:%s {\n" % listen_port
+                    # 使用预生成的自签名证书
+                    cert_path = str(self.ssl_cert).replace("\\", "/")
+                    key_path = str(self.ssl_key).replace("\\", "/")
+                    config += f"\ttls {cert_path} {key_path}\n"
+                else:
+                    config += ":%s {\n" % listen_port
                 if self.proxys_type == "vmk":
                     # 静态文件代理
                     config += f"\thandle_path /static/* {{\n"
@@ -160,6 +276,44 @@ class HttpManager:
                         config += f"\t\theader Content-Type text/html;charset=utf-8\n"
                         config += f"\t\trespond `{html_template}` 200\n"
                         config += f"\t}}\n"
+
+                # 生成PVE代理配置（合并到同一端口块）========================================
+                if self.proxys_pve:
+                    # 收集所有PVE后端信息（用于兜底代理）
+                    # 注意：PVE页面中的JS/CSS/API使用绝对路径（如/api2/...），
+                    # 不会带token前缀，所以需要兜底handle代理所有请求到PVE
+                    first_pve = list(self.proxys_pve.values())[0]
+                    for pve_token, pve_info in self.proxys_pve.items():
+                        ip = pve_info["ip"]
+                        port = pve_info["port"]
+                        pve_ticket = pve_info["pve_ticket"]
+                        # /{token}/* -> strip prefix -> 代理到 PVE 根路径（入口）
+                        config += f"\thandle_path /{pve_token}/* {{\n"
+                        config += f"\t\treverse_proxy https://{ip}:{port} {{\n"
+                        config += f"\t\t\theader_up Host {ip}:{port}\n"
+                        config += f"\t\t\theader_up Cookie \"PVEAuthCookie={pve_ticket}\"\n"
+                        config += f"\t\t\theader_up Connection {{http.request.header.Connection}}\n"
+                        config += f"\t\t\theader_up Upgrade {{http.request.header.Upgrade}}\n"
+                        config += f"\t\t\ttransport http {{\n"
+                        config += f"\t\t\t\ttls_insecure_skip_verify\n"
+                        config += f"\t\t\t}}\n"
+                        config += f"\t\t}}\n"
+                        config += f"\t}}\n"
+                    # 兜底：代理所有其他请求（PVE页面内的绝对路径资源/API/WebSocket）
+                    ip = first_pve["ip"]
+                    port = first_pve["port"]
+                    pve_ticket = first_pve["pve_ticket"]
+                    config += f"\thandle {{\n"
+                    config += f"\t\treverse_proxy https://{ip}:{port} {{\n"
+                    config += f"\t\t\theader_up Host {ip}:{port}\n"
+                    config += f"\t\t\theader_up Cookie \"PVEAuthCookie={pve_ticket}\"\n"
+                    config += f"\t\t\theader_up Connection {{http.request.header.Connection}}\n"
+                    config += f"\t\t\theader_up Upgrade {{http.request.header.Upgrade}}\n"
+                    config += f"\t\t\ttransport http {{\n"
+                    config += f"\t\t\t\ttls_insecure_skip_verify\n"
+                    config += f"\t\t\t}}\n"
+                    config += f"\t\t}}\n"
+                    config += f"\t}}\n"
                 config += "}\n\n"
         # 保存配置文件 ###########################################################################
         self.config_file.write_text(config)
@@ -176,6 +330,26 @@ class HttpManager:
     def closed_vnc(self, port: int):
         if str(port) in self.proxys_sshd:
             del self.proxys_sshd[str(port)]
+
+    # 添加PVE VNC代理 ##########################################################################
+    def create_pve(self, token, ip, port, pve_ticket, **kwargs):
+        """添加PVE noVNC代理配置（通过Caddy代理整个PVE Web界面）"""
+        try:
+            if token in self.proxys_pve:
+                logger.warning(f"[HttpManager] PVE代理 {token} 已存在")
+                return False
+            if self.proxys_port == 0:
+                self.launch_vnc()
+            self.proxys_pve[token] = {
+                "ip": ip, "port": port,
+                "pve_ticket": pve_ticket
+            }
+            logger.info(f"[HttpManager] PVE代理已添加: /{token} -> {ip}:{port}")
+            self.config_all()
+            return self.reload_web()
+        except Exception as e:
+            logger.error(f"[HttpManager] 添加PVE代理失败: {str(e)}")
+            return False
 
     # 添加SSH的代理配置 ##########################################################################
     def create_vnc(self, token, target_ip, target_port, path=""):
@@ -214,7 +388,7 @@ class HttpManager:
             # 检查域名是否已存在
             if domain in self.proxys_list:
                 logger.warning(f"[HttpManager] 域名 {domain} 的配置已存在")
-                return False
+                return True
 
             # 添加到内存配置
             self.proxys_list[domain] = {
@@ -280,7 +454,7 @@ class HttpManager:
             # 将Caddy的stdout/stderr重定向到独立日志文件
             caddy_log_dir = Path("DataSaving/logs")
             caddy_log_dir.mkdir(parents=True, exist_ok=True)
-            caddy_log_path = caddy_log_dir / "log-caddy.log"
+            caddy_log_path = caddy_log_dir / "log-weball.log"
             self._caddy_log_file = open(caddy_log_path, "a", encoding="utf-8")
             self.binary_proc = subprocess.Popen(
                 cmd, shell=True,
@@ -359,9 +533,8 @@ class HttpManager:
                     logger.info(f"[HttpManager] Caddy配置已重载（管理端口: {self.manage_port}）")
                     return True
                 else:
-                    print(f"重载失败，尝试重新启动服务: {result.stderr}")
-                    self.closed_web()
-                    return self.launch_web()
+                    logger.warning(f"[HttpManager] Caddy重载失败: {result.stderr}")
+                    return False
             else:
                 # Linux/Mac: 如果有进程引用则发送信号
                 if self.binary_proc and self.binary_proc.poll() is None:

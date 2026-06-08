@@ -9,6 +9,7 @@ from copy import deepcopy
 from proxmoxer import ProxmoxAPI
 from typing import Optional, Tuple, Dict
 from HostServer.BasicServer import BasicServer
+from HostModule.HttpManager import HttpManager
 from MainObject.Config.HSConfig import HSConfig
 from MainObject.Config.IMConfig import IMConfig
 from MainObject.Config.SDConfig import SDConfig
@@ -1699,55 +1700,100 @@ class HostServer(BasicServer):
     # 虚拟机控制台 #############################################################
     def VMRemote(self, vm_uuid: str, ip_addr: str = "127.0.0.1") -> ZMessage:
         try:
+            import random, string
             # 获取虚拟机连接 ===================================================
             vm_conn, vmid, vm_conf, result = self._get_vm_connection(vm_uuid)
             if not result.success:
                 return result
-            
+
             # 获取主机外网IP ===================================================
             if len(self.hs_config.public_addr) == 0:
                 return ZMessage(
                     success=False,
                     action="VCRemote",
                     message="主机外网IP不存在")
-            
+
             public_ip = self.hs_config.public_addr[0]
             if public_ip in ["localhost", "127.0.0.1", ""]:
                 public_ip = "127.0.0.1"
-            
-            # 通过 Caddy 代理 remote_port -> PVE:8006 ========================
-            pve_port = self.hs_config.remote_port if self.hs_config.remote_port else 8006
+
+            # 获取 PVE 认证 Ticket =============================================
+            import requests, urllib3
+            urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
             pve_host = self.hs_config.server_addr
-            proxy_domain = f"*:{pve_port}"
-            # 初始化 HttpManager 并注册代理（幂等：已存在则跳过）
+            user = self.hs_config.server_user + "@pam"
+            password = self.hs_config.server_pass
+            auth_resp = requests.post(
+                f"https://{pve_host}:8006/api2/json/access/ticket",
+                data={"username": user, "password": password},
+                verify=False, timeout=10
+            )
+            auth_data = auth_resp.json().get('data', {})
+            pve_ticket = auth_data.get('ticket', '')
+            if not pve_ticket:
+                return ZMessage(
+                    success=False,
+                    action="VCRemote",
+                    message="获取PVE认证ticket失败")
+
+            # 获取 VNC Proxy Ticket ============================================
+            ticket_data = vm_conn.vncproxy.post(websocket=1)
+            vnc_ticket = ticket_data.get('ticket', '')
+            vnc_port = ticket_data.get('port', '5900')
+            if not vnc_ticket:
+                return ZMessage(
+                    success=False,
+                    action="VCRemote",
+                    message="获取VNC ticket失败")
+
+            # 初始化 HttpManager ===============================================
+            # PVE自带WebSocket端点，不需要websockify，Caddy直接使用remote_port
             if not self.http_manager:
                 hostname = getattr(self.hs_config, 'server_name', 'pve')
+                # 确保SSL证书已生成
+                HttpManager.generate_ssl_cert(hostname)
                 self.http_manager = HttpManager(f"vnc-{hostname}.txt")
+                self.http_manager.launch_vnc(self.hs_config.remote_port)
                 self.http_manager.launch_web()
-            if proxy_domain not in self.http_manager.proxys_list:
-                self.http_manager.create_web(
-                    (8006, pve_host),
-                    proxy_domain,
-                    is_https=True,
-                    listen_port=pve_port
-                )
 
-            # 构造Proxmox VNC URL ==============================================
-            vnc_url = (f"https://{public_ip}:{pve_port}/"
-                       f"?console=kvm&novnc=1&vmid={vmid}&node={self.hs_config.launch_path}")
+            # 生成随机token，注册PVE代理 =======================================
+            token = ''.join(random.choices(string.ascii_letters + string.digits, k=16))
+            success = self.http_manager.create_pve(
+                token=token,
+                ip=pve_host,
+                port=8006,
+                pve_ticket=pve_ticket,
+                vnc_ticket=vnc_ticket,
+                vmid=vmid,
+                node=self.hs_config.launch_path,
+                vnc_port=vnc_port
+            )
+            if not success:
+                return ZMessage(
+                    success=False,
+                    action="VCRemote",
+                    message="添加VNC代理失败")
 
-            logger.info(f"VMRemote for {vm_uuid}: {vnc_url}")
-            
+            # 构造访问URL ======================================================
+            remote_port = self.hs_config.remote_port  # PVE不需要websockify，Caddy直接用remote_port
+            node = self.hs_config.launch_path
+            vm_name = getattr(vm_conf, 'name', '')
+            url = (f"https://{public_ip}:{remote_port}/{token}/"
+                   f"?console=kvm&novnc=1&vmid={vmid}"
+                   f"&vmname={vm_name}&node={node}&resize=off&cmd=")
+            logger.info(f"VMRemote for {vm_uuid}: PVE -> /{token} -> {url}")
+
             return ZMessage(
                 success=True,
                 action="VCRemote",
-                message=vnc_url,
+                message=url,
                 results={
                     "vmid": vmid,
-                    "url": vnc_url
+                    "token": token,
+                    "url": url
                 }
             )
-        
+
         except Exception as e:
             logger.error(f"获取虚拟机远程控制台失败: {str(e)}")
             traceback.print_exc()

@@ -786,7 +786,7 @@ class BasicServer:
     # 分支的方法 ####################################################################
     # ###############################################################################
 
-    vnc_type = ["VMWareSetup", "vSphereESXi", "HyperVSetup", "PromoxSetup",
+    vnc_type = ["VMWareSetup", "vSphereESXi", "HyperVSetup",
                 "VirtualBoxs", "QEMUServer", "MemuAndroid"]
     tty_type = ["OCInterface", "LxContainer"]
 

@@ -2273,7 +2273,7 @@ if __name__ == '__main__':
         
         # 添加平台日志（排除主机模块和Flask请求日志）
         logger.add(
-            os.path.join(log_dir, "log-platform.log"),
+            os.path.join(log_dir, "log-server.log"),
             rotation="10 MB",
             retention="7 days",
             compression="zip",
@@ -2287,7 +2287,7 @@ if __name__ == '__main__':
         
         # 添加Flask/Werkzeug请求日志
         logger.add(
-            os.path.join(log_dir, "log-flask.log"),
+            os.path.join(log_dir, "log-webapi.log"),
             rotation="10 MB",
             retention="7 days",
             compression="zip",
