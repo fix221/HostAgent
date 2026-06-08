@@ -26,7 +26,7 @@ jobs:
   # ============================================================
   # 统一前端构建（只构建一次，供所有平台后端使用）
   # ============================================================
-  build-frontend:
+  build-front:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v4
@@ -59,7 +59,7 @@ jobs:
   # cx-Freeze Windows
   # ============================================================
   build-cxfreeze-windows:
-    needs: build-frontend
+    needs: build-front
     runs-on: windows-latest
     if: inputs.build_type == 'cxfreeze' && (inputs.target_platform == 'windows' || inputs.target_platform == 'all')
     steps:
@@ -99,7 +99,7 @@ jobs:
   # cx-Freeze Linux
   # ============================================================
   build-cxfreeze-linux:
-    needs: build-frontend
+    needs: build-front
     runs-on: ubuntu-latest
     if: inputs.build_type == 'cxfreeze' && (inputs.target_platform == 'linux' || inputs.target_platform == 'all')
     steps:
@@ -141,10 +141,96 @@ jobs:
         retention-days: 30
 
   # ============================================================
+  # cx-Freeze Windows x86（暂未启用）
+  # ============================================================
+  # build-cxfreeze-windows-x86:
+  #   needs: build-front
+  #   runs-on: windows-latest
+  #   if: inputs.build_type == 'cxfreeze' && (inputs.target_platform == 'windows' || inputs.target_platform == 'all')
+  #   steps:
+  #   - uses: actions/checkout@v4
+  #
+  #   - name: Set up Python
+  #     uses: actions/setup-python@v4
+  #     with:
+  #       python-version: '3.10'
+  #       architecture: 'x86'
+  #
+  #   - name: Download frontend artifact
+  #     uses: actions/download-artifact@v4
+  #     with:
+  #       name: frontend-dist
+  #       path: BuildCache/frontend
+  #
+  #   - name: Install dependencies
+  #     run: |
+  #       python -m pip install --upgrade pip
+  #       pip install -r HostConfig/pipinstall.txt
+  #       pip install cx_Freeze
+  #
+  #   - name: Build with cx-Freeze
+  #     run: |
+  #       python AllBuilder\build_cxfreeze.py build
+  #     env:
+  #       SKIP_FRONTEND_BUILD: "1"
+  #
+  #   - name: Upload artifact
+  #     uses: actions/upload-artifact@v4
+  #     with:
+  #       name: openidcs-client-freeze-winnt-x86
+  #       path: BuildCache/cxfreeze
+  #       retention-days: 30
+
+  # ============================================================
+  # cx-Freeze Linux ARM64（暂未启用）
+  # ============================================================
+  # build-cxfreeze-linux-a64:
+  #   needs: build-front
+  #   runs-on: ubuntu-24.04-arm
+  #   if: inputs.build_type == 'cxfreeze' && (inputs.target_platform == 'linux' || inputs.target_platform == 'all')
+  #   steps:
+  #   - uses: actions/checkout@v4
+  #
+  #   - name: Set up Python
+  #     uses: actions/setup-python@v4
+  #     with:
+  #       python-version: '3.10'
+  #
+  #   - name: Download frontend artifact
+  #     uses: actions/download-artifact@v4
+  #     with:
+  #       name: frontend-dist
+  #       path: BuildCache/frontend
+  #
+  #   - name: Install system dependencies
+  #     run: |
+  #       sudo apt-get update
+  #       sudo apt-get install -y build-essential
+  #
+  #   - name: Install Python dependencies
+  #     run: |
+  #       python -m pip install --upgrade pip
+  #       pip install -r HostConfig/pipinstall.txt
+  #       pip install cx_Freeze
+  #
+  #   - name: Build with cx-Freeze
+  #     run: |
+  #       python ./AllBuilder/build_cxfreeze.py build
+  #     env:
+  #       SKIP_FRONTEND_BUILD: "1"
+  #
+  #   - name: Upload artifact
+  #     uses: actions/upload-artifact@v4
+  #     with:
+  #       name: openidcs-client-freeze-linux-a64
+  #       path: BuildCache/cxfreeze
+  #       retention-days: 30
+
+  # ============================================================
   # Nuitka Windows
   # ============================================================
   build-nuitka-windows:
-    needs: build-frontend
+    needs: build-front
     runs-on: windows-latest
     if: inputs.build_type == 'nuitka' && (inputs.target_platform == 'windows' || inputs.target_platform == 'all')
     steps:
@@ -182,7 +268,7 @@ jobs:
   # Nuitka Linux
   # ============================================================
   build-nuitka-linux:
-    needs: build-frontend
+    needs: build-front
     runs-on: ubuntu-latest
     if: inputs.build_type == 'nuitka' && (inputs.target_platform == 'linux' || inputs.target_platform == 'all')
     steps:
@@ -220,3 +306,85 @@ jobs:
         name: openidcs-client-nuitka-linux-x64
         path: BuildCache/nuitka
         retention-days: 30
+
+  # ============================================================
+  # Nuitka Windows x86（暂未启用）
+  # ============================================================
+  # build-nuitka-windows-x86:
+  #   needs: build-front
+  #   runs-on: windows-latest
+  #   if: inputs.build_type == 'nuitka' && (inputs.target_platform == 'windows' || inputs.target_platform == 'all')
+  #   steps:
+  #   - uses: actions/checkout@v4
+  #
+  #   - name: Set up Python
+  #     uses: actions/setup-python@v4
+  #     with:
+  #       python-version: '3.10'
+  #       architecture: 'x86'
+  #
+  #   - name: Download frontend artifact
+  #     uses: actions/download-artifact@v4
+  #     with:
+  #       name: frontend-dist
+  #       path: BuildCache/frontend
+  #
+  #   - name: Install dependencies
+  #     run: |
+  #       python -m pip install --upgrade pip
+  #       pip install -r HostConfig/pipinstall.txt
+  #       pip install nuitka
+  #
+  #   - name: Build with Nuitka
+  #     run: |
+  #       python .\AllBuilder\build_nuitkaui.py
+  #
+  #   - name: Upload artifact
+  #     uses: actions/upload-artifact@v4
+  #     with:
+  #       name: openidcs-client-nuitka-winnt-x86
+  #       path: BuildCache/nuitka
+  #       retention-days: 30
+
+  # ============================================================
+  # Nuitka Linux ARM64（暂未启用）
+  # ============================================================
+  # build-nuitka-linux-a64:
+  #   needs: build-front
+  #   runs-on: ubuntu-24.04-arm
+  #   if: inputs.build_type == 'nuitka' && (inputs.target_platform == 'linux' || inputs.target_platform == 'all')
+  #   steps:
+  #   - uses: actions/checkout@v4
+  #
+  #   - name: Set up Python
+  #     uses: actions/setup-python@v4
+  #     with:
+  #       python-version: '3.10'
+  #
+  #   - name: Download frontend artifact
+  #     uses: actions/download-artifact@v4
+  #     with:
+  #       name: frontend-dist
+  #       path: BuildCache/frontend
+  #
+  #   - name: Install system dependencies
+  #     run: |
+  #       sudo apt-get update
+  #       sudo apt-get install -y build-essential patchelf
+  #
+  #   - name: Install Python dependencies
+  #     run: |
+  #       python -m pip install --upgrade pip
+  #       pip install -r HostConfig/pipinstall.txt
+  #       pip install nuitka
+  #
+  #   - name: Build with Nuitka
+  #     run: |
+  #       python ./AllBuilder/build_nuitkaui.py
+  #
+  #   - name: Upload artifact
+  #     uses: actions/upload-artifact@v4
+  #     with:
+  #       name: openidcs-client-nuitka-linux-a64
+  #       path: BuildCache/nuitka
+  #       retention-days: 30

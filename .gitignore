@@ -15,3 +15,4 @@ BuildCache
 .idea/*
 static
 .codebuddy
+.config

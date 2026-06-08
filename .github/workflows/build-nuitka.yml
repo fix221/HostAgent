@@ -47,7 +47,7 @@ jobs:
   # ============================================================
   # 统一前端构建（只构建一次，供所有平台后端使用）
   # ============================================================
-  build-frontend:
+  build-front:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v4
@@ -79,8 +79,8 @@ jobs:
   # ============================================================
   # Windows 后端构建
   # ============================================================
-  build-windows:
-    needs: build-frontend
+  build-winnt:
+    needs: build-front
     runs-on: windows-latest
     if: inputs.target_platform == 'windows' || inputs.target_platform == 'all'
     steps:
@@ -119,7 +119,7 @@ jobs:
   # Linux 后端构建
   # ============================================================
   build-linux:
-    needs: build-frontend
+    needs: build-front
     runs-on: ubuntu-latest
     if: inputs.target_platform == 'linux' || inputs.target_platform == 'all'
     steps:
@@ -159,10 +159,93 @@ jobs:
         retention-days: 30
 
   # ============================================================
+  # Windows x86 后端构建（暂未启用）
+  # ============================================================
+  # build-winnt-x86:
+  #   needs: build-front
+  #   runs-on: windows-latest
+  #   if: inputs.target_platform == 'windows' || inputs.target_platform == 'all'
+  #   steps:
+  #   - uses: actions/checkout@v4
+  #
+  #   - name: Set up Python
+  #     uses: actions/setup-python@v4
+  #     with:
+  #       python-version: '3.13'
+  #       architecture: 'x86'
+  #
+  #   - name: Download frontend artifact
+  #     uses: actions/download-artifact@v4
+  #     with:
+  #       name: frontend-dist
+  #       path: BuildCache/frontend
+  #
+  #   - name: Install dependencies
+  #     run: |
+  #       python -m pip install --upgrade pip
+  #       pip install -r HostConfig/pipinstall.txt
+  #       pip install pywin32 pythonnet
+  #       pip install nuitka
+  #
+  #   - name: Build with Nuitka
+  #     run: |
+  #       python .\AllBuilder\build_nuitkaui.py
+  #
+  #   - name: Upload artifact
+  #     uses: actions/upload-artifact@v4
+  #     with:
+  #       name: openidcs-client-nuitka-winnt-x86
+  #       path: BuildCache/nuitka
+  #       retention-days: 30
+
+  # ============================================================
+  # Linux ARM64 后端构建（暂未启用）
+  # ============================================================
+  # build-linux-a64:
+  #   needs: build-front
+  #   runs-on: ubuntu-24.04-arm
+  #   if: inputs.target_platform == 'linux' || inputs.target_platform == 'all'
+  #   steps:
+  #   - uses: actions/checkout@v4
+  #
+  #   - name: Set up Python
+  #     uses: actions/setup-python@v4
+  #     with:
+  #       python-version: '3.13'
+  #
+  #   - name: Download frontend artifact
+  #     uses: actions/download-artifact@v4
+  #     with:
+  #       name: frontend-dist
+  #       path: BuildCache/frontend
+  #
+  #   - name: Install system dependencies
+  #     run: |
+  #       sudo apt-get update
+  #       sudo apt-get install -y build-essential patchelf
+  #
+  #   - name: Install Python dependencies
+  #     run: |
+  #       python -m pip install --upgrade pip
+  #       pip install -r HostConfig/pipinstall.txt
+  #       pip install nuitka
+  #
+  #   - name: Build with Nuitka
+  #     run: |
+  #       python ./AllBuilder/build_nuitkaui.py
+  #
+  #   - name: Upload artifact
+  #     uses: actions/upload-artifact@v4
+  #     with:
+  #       name: openidcs-client-nuitka-linux-a64
+  #       path: BuildCache/nuitka
+  #       retention-days: 30
+
+  # ============================================================
   # macOS 后端构建
   # ============================================================
   build-macos:
-    needs: build-frontend
+    needs: build-front
     runs-on: macos-latest
     if: inputs.target_platform == 'macos' || inputs.target_platform == 'all'
     steps:
@@ -200,7 +283,7 @@ jobs:
   # 发布 Release
   # ============================================================
   release:
-    needs: [build-windows, build-linux, build-macos]
+    needs: [build-winnt, build-linux, build-macos]
     runs-on: ubuntu-latest
     if: inputs.create_release == 'yes'
     steps:
@@ -209,9 +292,15 @@ jobs:
 
     - name: Package build folders
       run: |
-        tar -czf openidcs-client-nuitka-winnt-x64.tar.gz openidcs-client-nuitka-winnt-x64
-        tar -czf openidcs-client-nuitka-linux-x64.tar.gz openidcs-client-nuitka-linux-x64
-        tar -czf openidcs-client-nuitka-macos-a64.tar.gz openidcs-client-nuitka-macos-a64
+        if [ -d "openidcs-client-nuitka-winnt-x64" ]; then
+          tar -czf openidcs-client-nuitka-winnt-x64.tar.gz openidcs-client-nuitka-winnt-x64
+        fi
+        if [ -d "openidcs-client-nuitka-linux-x64" ]; then
+          tar -czf openidcs-client-nuitka-linux-x64.tar.gz openidcs-client-nuitka-linux-x64
+        fi
+        if [ -d "openidcs-client-nuitka-macos-a64" ]; then
+          tar -czf openidcs-client-nuitka-macos-a64.tar.gz openidcs-client-nuitka-macos-a64
+        fi
 
     - name: Create Release
       uses: softprops/action-gh-release@v1
