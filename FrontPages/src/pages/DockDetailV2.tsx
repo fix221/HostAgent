@@ -507,6 +507,10 @@ export default function DockDetailV2() {
                             style={{ background: 'rgba(239,68,68,0.15)', borderColor: 'rgba(239,68,68,0.3)', color: '#f87171' }}>
                             经典版
                         </Button>
+                        <Button onClick={() => navigate(`/hosts/${hostName}/vms/${uuid}/v3`)}
+                            style={{ background: 'rgba(68,96,255,0.15)', borderColor: 'rgba(68,96,255,0.3)', color: '#4460ff' }}>
+                            MMUI版
+                        </Button>
                         <Dropdown menu={{ items: [{ key: 'reinstall', label: '重装系统', danger: true }] }}>
                             <Button icon={<MoreOutlined />}
                                 style={{ background: 'rgba(255,255,255,0.06)', borderColor: 'rgba(255,255,255,0.1)', color: '#e6e9ef' }} />
