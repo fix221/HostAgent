@@ -25,6 +25,11 @@ on:
           - yes
           - no
         default: 'yes'
+      skip_signing:
+        description: '跳过代码签名'
+        required: false
+        type: boolean
+        default: false
   workflow_call:
     inputs:
       version:
@@ -42,6 +47,11 @@ on:
         required: true
         type: string
         default: 'yes'
+      skip_signing:
+        description: '跳过代码签名'
+        required: false
+        type: boolean
+        default: false
 
 jobs:
   # ============================================================
@@ -77,9 +87,9 @@ jobs:
         retention-days: 1
 
   # ============================================================
-  # Windows 构建
+  # Windows x64 构建
   # ============================================================
-  build-winnt:
+  build-winnt-x64:
     needs: build-front
     runs-on: windows-latest
     if: inputs.target_platform == 'windows' || inputs.target_platform == 'all'
@@ -112,7 +122,7 @@ jobs:
 
     # ── 签名：安装 SimplySign Desktop（仅 beta/release）────────────────
     - name: Setup Certum Code Signing
-      if: inputs.version != 'alpha'
+      if: inputs.version != 'alpha' && !inputs.skip_signing
       shell: bash
       run: |
         chmod +x ./.github/scripts/install-simplysign.sh
@@ -122,7 +132,7 @@ jobs:
 
     # ── 签名：认证 SimplySign ─────────────────────────────────────────
     - name: Authenticate Certum
-      if: inputs.version != 'alpha'
+      if: inputs.version != 'alpha' && !inputs.skip_signing
       shell: bash
       env:
         CERTUM_OTP_URI: ${{ secrets.CERTUM_OTP_URI }}
@@ -144,7 +154,7 @@ jobs:
 
     # ── 签名：对构建产物签名 ──────────────────────────────────────────
     - name: Sign Windows binary
-      if: inputs.version != 'alpha'
+      if: inputs.version != 'alpha' && !inputs.skip_signing
       shell: pwsh
       env:
         CERTUM_CERTIFICATE_SHA1: ${{ secrets.CERTUM_CERTIFICATE_SHA1 }}
@@ -156,7 +166,7 @@ jobs:
       uses: actions/upload-artifact@v4
       with:
         name: openidcs-client-pyinst-winnt-x64
-        path: BuildCache/pyinstaller/openidcs-client.exe
+        path: BuildCache/pyinstaller/OpenIDCS-Client.exe
         retention-days: 30
 
   # ============================================================
@@ -202,9 +212,9 @@ jobs:
   #       retention-days: 30
 
   # ============================================================
-  # Linux 构建
+  # Linux x64 构建
   # ============================================================
-  build-linux:
+  build-linux-x64:
     needs: build-front
     runs-on: ubuntu-latest
     if: inputs.target_platform == 'linux' || inputs.target_platform == 'all'
@@ -243,7 +253,7 @@ jobs:
       uses: actions/upload-artifact@v4
       with:
         name: openidcs-client-pyinst-linux-x64
-        path: BuildCache/pyinstaller/openidcs-client
+        path: BuildCache/pyinstaller/OpenIDCS-Client
         retention-days: 30
 
   # ============================================================
@@ -292,9 +302,9 @@ jobs:
   #       retention-days: 30
 
   # ============================================================
-  # macOS 构建
+  # macOS a64 构建
   # ============================================================
-  build-macos:
+  build-macos-a64:
     needs: build-front
     runs-on: macos-latest
     if: inputs.target_platform == 'macos' || inputs.target_platform == 'all'
@@ -328,16 +338,16 @@ jobs:
       uses: actions/upload-artifact@v4
       with:
         name: openidcs-client-pyinst-macos-a64
-        path: BuildCache/pyinstaller/openidcs-client
+        path: BuildCache/pyinstaller/OpenIDCS-Client
         retention-days: 30
 
   # ============================================================
   # 发布 Release
   # ============================================================
-  release:
-    needs: [build-winnt, build-linux, build-macos]
+  release-all:
+    needs: [build-winnt-x64, build-linux-x64, build-macos-a64]
     runs-on: ubuntu-latest
-    if: inputs.create_release == 'yes'
+    if: always() && inputs.create_release == 'yes' && !cancelled() && !contains(needs.*.result, 'failure')
     steps:
     - name: Download all artifacts
       uses: actions/download-artifact@v4
@@ -348,21 +358,21 @@ jobs:
         # Windows: 打包为 tar.gz
         if [ -d "openidcs-client-pyinst-winnt-x64" ]; then
           cd openidcs-client-pyinst-winnt-x64
-          tar -czf ../release/openidcs-client-pyinst-winnt-x64.tar.gz openidcs-client.exe
+          tar -czf ../release/openidcs-client-pyinst-winnt-x64.tar.gz OpenIDCS-Client.exe
           cd ..
         fi
         # Linux: 打包为 tar.gz
         if [ -d "openidcs-client-pyinst-linux-x64" ]; then
           cd openidcs-client-pyinst-linux-x64
-          chmod +x openidcs-client
-          tar -czf ../release/openidcs-client-pyinst-linux-x64.tar.gz openidcs-client
+          chmod +x OpenIDCS-Client
+          tar -czf ../release/openidcs-client-pyinst-linux-x64.tar.gz OpenIDCS-Client
           cd ..
         fi
         # macOS: 打包为 tar.gz
         if [ -d "openidcs-client-pyinst-macos-a64" ]; then
           cd openidcs-client-pyinst-macos-a64
-          chmod +x openidcs-client
-          tar -czf ../release/openidcs-client-pyinst-macos-a64.tar.gz openidcs-client
+          chmod +x OpenIDCS-Client
+          tar -czf ../release/openidcs-client-pyinst-macos-a64.tar.gz OpenIDCS-Client
           cd ..
         fi
 
@@ -375,6 +385,7 @@ jobs:
           release/openidcs-client-pyinst-winnt-x64.tar.gz
           release/openidcs-client-pyinst-linux-x64.tar.gz
           release/openidcs-client-pyinst-macos-a64.tar.gz
+        fail_on_unmatched_files: false
         draft: false
         prerelease: ${{ inputs.version == '' || inputs.version == 'alpha' }}
       env:

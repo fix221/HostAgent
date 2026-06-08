@@ -14,7 +14,7 @@ on:
         options:
           - windows
           - linux
-          - mac
+          - macos
           - all
         default: 'all'
       create_release:
@@ -27,7 +27,7 @@ on:
         default: 'yes'
 
 jobs:
-  build-winnt:
+  build-winnt-x64:
     runs-on: windows-latest
     if: inputs.target_platform == 'windows' || inputs.target_platform == 'all'
     steps:
@@ -55,7 +55,7 @@ jobs:
         path: BuildCache/websockify/dist/websocketproxy.exe
         retention-days: 30
 
-  build-linux:
+  build-linux-x64:
     runs-on: ubuntu-latest
     if: inputs.target_platform == 'linux' || inputs.target_platform == 'all'
     steps:
@@ -88,9 +88,9 @@ jobs:
         path: BuildCache/websockify/dist/websocketproxy
         retention-days: 30
 
-  build-mac:
+  build-macos-a64:
     runs-on: macos-latest
-    if: inputs.target_platform == 'mac' || inputs.target_platform == 'all'
+    if: inputs.target_platform == 'macos' || inputs.target_platform == 'all'
     steps:
     - uses: actions/checkout@v4
     
@@ -181,8 +181,8 @@ jobs:
   #       path: BuildCache/websockify/dist/websocketproxy
   #       retention-days: 30
 
-  release:
-    needs: [build-winnt, build-linux, build-mac]
+  release-all:
+    needs: [build-winnt-x64, build-linux-x64, build-macos-a64]
     runs-on: ubuntu-latest
     if: inputs.create_release == 'yes'
     steps:

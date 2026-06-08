@@ -77,9 +77,9 @@ jobs:
         retention-days: 1
 
   # ============================================================
-  # Windows 后端构建
+  # Windows x64 后端构建
   # ============================================================
-  build-winnt:
+  build-winnt-x64:
     needs: build-front
     runs-on: windows-latest
     if: inputs.target_platform == 'windows' || inputs.target_platform == 'all'
@@ -116,9 +116,9 @@ jobs:
         retention-days: 30
 
   # ============================================================
-  # Linux 后端构建
+  # Linux x64 后端构建
   # ============================================================
-  build-linux:
+  build-linux-x64:
     needs: build-front
     runs-on: ubuntu-latest
     if: inputs.target_platform == 'linux' || inputs.target_platform == 'all'
@@ -242,9 +242,9 @@ jobs:
   #       retention-days: 30
 
   # ============================================================
-  # macOS 后端构建
+  # macOS a64 后端构建
   # ============================================================
-  build-macos:
+  build-macos-a64:
     needs: build-front
     runs-on: macos-latest
     if: inputs.target_platform == 'macos' || inputs.target_platform == 'all'
@@ -282,10 +282,10 @@ jobs:
   # ============================================================
   # 发布 Release
   # ============================================================
-  release:
-    needs: [build-winnt, build-linux, build-macos]
+  release-all:
+    needs: [build-winnt-x64, build-linux-x64, build-macos-a64]
     runs-on: ubuntu-latest
-    if: inputs.create_release == 'yes'
+    if: always() && inputs.create_release == 'yes' && !cancelled() && !contains(needs.*.result, 'failure')
     steps:
     - name: Download all artifacts
       uses: actions/download-artifact@v4
@@ -305,13 +305,14 @@ jobs:
     - name: Create Release
       uses: softprops/action-gh-release@v1
       with:
-        tag_name: ${{ inputs.version != '' && format('v{0}', inputs.version) || 'beta' }}
-        name: ${{ inputs.version != '' && format('Release v{0}', inputs.version) || 'Beta Release' }}
+        tag_name: ${{ inputs.version == 'alpha' && 'alpha' || (inputs.version != '' && format('v{0}', inputs.version) || 'beta') }}
+        name: ${{ inputs.version == 'alpha' && 'Alpha Release' || (inputs.version != '' && format('Release v{0}', inputs.version) || 'Beta Release') }}
         files: |
           openidcs-client-nuitka-winnt-x64.tar.gz
           openidcs-client-nuitka-linux-x64.tar.gz
           openidcs-client-nuitka-macos-a64.tar.gz
+        fail_on_unmatched_files: false
         draft: false
-        prerelease: ${{ inputs.version == '' }}
+        prerelease: ${{ inputs.version == '' || inputs.version == 'alpha' }}
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

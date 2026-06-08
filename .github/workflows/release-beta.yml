@@ -1,9 +1,15 @@
-name: Release Alpha Run
+name: Release
 
 on:
   push:
     branches:
       - main
+  workflow_dispatch:
+    inputs:
+      version:
+        description: '发布版本号（例如 1.0.0，将发布为 Release）'
+        required: true
+        type: string
 
 permissions:
   contents: write
@@ -12,7 +18,7 @@ jobs:
   build-and-release:
     uses: ./.github/workflows/build-pyinst.yml
     with:
-      version: 'alpha'
+      version: ${{ github.event_name == 'push' && 'alpha' || inputs.version }}
       target_platform: 'all'
       create_release: 'yes'
     secrets: inherit
