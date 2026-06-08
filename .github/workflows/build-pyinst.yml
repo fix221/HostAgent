@@ -166,7 +166,7 @@ jobs:
       uses: actions/upload-artifact@v4
       with:
         name: openidcs-client-pyinst-winnt-x64
-        path: BuildCache/pyinstaller/OpenIDCS-Client.exe
+        path: BuildCache/pyinstaller/openidcs-client.exe
         retention-days: 30
 
   # ============================================================
@@ -253,7 +253,7 @@ jobs:
       uses: actions/upload-artifact@v4
       with:
         name: openidcs-client-pyinst-linux-x64
-        path: BuildCache/pyinstaller/OpenIDCS-Client
+        path: BuildCache/pyinstaller/openidcs-client
         retention-days: 30
 
   # ============================================================
@@ -338,7 +338,7 @@ jobs:
       uses: actions/upload-artifact@v4
       with:
         name: openidcs-client-pyinst-macos-a64
-        path: BuildCache/pyinstaller/OpenIDCS-Client
+        path: BuildCache/pyinstaller/openidcs-client
         retention-days: 30
 
   # ============================================================
@@ -358,21 +358,21 @@ jobs:
         # Windows: 打包为 tar.gz
         if [ -d "openidcs-client-pyinst-winnt-x64" ]; then
           cd openidcs-client-pyinst-winnt-x64
-          tar -czf ../release/openidcs-client-pyinst-winnt-x64.tar.gz OpenIDCS-Client.exe
+          tar -czf ../release/openidcs-client-pyinst-winnt-x64.tar.gz openidcs-client.exe
           cd ..
         fi
         # Linux: 打包为 tar.gz
         if [ -d "openidcs-client-pyinst-linux-x64" ]; then
           cd openidcs-client-pyinst-linux-x64
-          chmod +x OpenIDCS-Client
-          tar -czf ../release/openidcs-client-pyinst-linux-x64.tar.gz OpenIDCS-Client
+          chmod +x openidcs-client
+          tar -czf ../release/openidcs-client-pyinst-linux-x64.tar.gz openidcs-client
           cd ..
         fi
         # macOS: 打包为 tar.gz
         if [ -d "openidcs-client-pyinst-macos-a64" ]; then
           cd openidcs-client-pyinst-macos-a64
-          chmod +x OpenIDCS-Client
-          tar -czf ../release/openidcs-client-pyinst-macos-a64.tar.gz OpenIDCS-Client
+          chmod +x openidcs-client
+          tar -czf ../release/openidcs-client-pyinst-macos-a64.tar.gz openidcs-client
           cd ..
         fi
 

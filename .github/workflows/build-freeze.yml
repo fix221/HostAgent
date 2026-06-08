@@ -166,7 +166,7 @@ jobs:
       uses: actions/upload-artifact@v4
       with:
         name: openidcs-client-freeze-winnt-x64
-        path: BuildCache/OpenIDCS-Client-Windows.zip
+        path: BuildCache/openidcs-client-Windows.zip
         retention-days: 30
 
   # ============================================================
@@ -253,7 +253,7 @@ jobs:
       uses: actions/upload-artifact@v4
       with:
         name: openidcs-client-freeze-linux-x64
-        path: BuildCache/OpenIDCS-Client-Linux.tar.gz
+        path: BuildCache/openidcs-client-Linux.tar.gz
         retention-days: 30
 
   # ============================================================
@@ -338,7 +338,7 @@ jobs:
       uses: actions/upload-artifact@v4
       with:
         name: openidcs-client-freeze-macos-a64
-        path: BuildCache/OpenIDCS-Client-macOS.tar.gz
+        path: BuildCache/openidcs-client-macOS.tar.gz
         retention-days: 30
 
   # ============================================================
@@ -358,9 +358,9 @@ jobs:
         tag_name: ${{ inputs.version == 'alpha' && 'alpha' || (inputs.version != '' && format('v{0}', inputs.version) || 'beta') }}
         name: ${{ inputs.version == 'alpha' && 'Alpha Release' || (inputs.version != '' && format('Release v{0}', inputs.version) || 'Beta Release') }}
         files: |
-          openidcs-client-freeze-winnt-x64/OpenIDCS-Client-Windows.zip
-          openidcs-client-freeze-linux-x64/OpenIDCS-Client-Linux.tar.gz
-          openidcs-client-freeze-macos-a64/OpenIDCS-Client-macOS.tar.gz
+          openidcs-client-freeze-winnt-x64/openidcs-client-Windows.zip
+          openidcs-client-freeze-linux-x64/openidcs-client-Linux.tar.gz
+          openidcs-client-freeze-macos-a64/openidcs-client-macOS.tar.gz
         fail_on_unmatched_files: false
         draft: false
         prerelease: ${{ inputs.version == '' || inputs.version == 'alpha' }}

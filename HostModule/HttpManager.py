@@ -479,6 +479,19 @@ class HttpManager:
                 logger.info(f"[HttpManager] Caddy日志输出到: {caddy_log_path}")
                 return True
 
+            # 进程已退出，读取日志获取错误信息
+            exit_code = self.binary_proc.returncode
+            self._caddy_log_file.flush()
+            self._caddy_log_file.close()
+            self._caddy_log_file = None
+            try:
+                with open(caddy_log_path, "r", encoding="utf-8") as f:
+                    # 读取最后20行日志
+                    lines = f.readlines()
+                    last_lines = ''.join(lines[-20:]) if len(lines) > 20 else ''.join(lines)
+                    logger.error(f"[HttpManager] Caddy启动失败(退出码:{exit_code})，日志:\n{last_lines}")
+            except Exception:
+                logger.error(f"[HttpManager] Caddy启动失败(退出码:{exit_code})，无法读取日志")
             return False
 
         except FileNotFoundError:

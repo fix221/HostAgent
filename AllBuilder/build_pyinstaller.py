@@ -17,7 +17,7 @@ if sys.platform == "win32":
     sys.stderr = io.TextIOWrapper(sys.stderr.buffer, encoding='utf-8', errors='replace')
 
 # 项目配置
-PROJECT_NAME = "OpenIDCS-Client"
+PROJECT_NAME = "openidcs-client"
 PROJECT_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
 MAIN_SCRIPT = os.path.join(PROJECT_ROOT, "MainServer.py")
 OUTPUT_DIR = os.path.join(PROJECT_ROOT, "BuildCache", "pyinstaller")

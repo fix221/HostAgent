@@ -108,7 +108,7 @@ if "build" in sys.argv:
         build_frontend()
 
 # 项目配置
-PROJECT_NAME = "OpenIDCS-Client"
+PROJECT_NAME = "openidcs-client"
 PROJECT_VERSION = "1.0.0"
 PROJECT_DESCRIPTION = "OpenIDCS Flask Server - 虚拟机管理平台"
 PROJECT_AUTHOR = "OpenIDCS Team"

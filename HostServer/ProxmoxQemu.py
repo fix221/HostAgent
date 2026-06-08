@@ -1754,7 +1754,6 @@ class HostServer(BasicServer):
                 HttpManager.generate_ssl_cert(hostname)
                 self.http_manager = HttpManager(f"vnc-{hostname}.txt")
                 self.http_manager.launch_vnc(self.hs_config.remote_port)
-                self.http_manager.launch_web()
 
             # 生成随机token，注册PVE代理 =======================================
             token = ''.join(random.choices(string.ascii_letters + string.digits, k=16))
