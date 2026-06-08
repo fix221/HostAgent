@@ -1642,7 +1642,7 @@ function Dashboards() {
                           <div>带宽: ↑{planCfg.speed_u}Mbps ↓{planCfg.speed_d}Mbps</div>
                           <div>流量: {planCfg.flu_num >= 1024 ? `${Math.round(planCfg.flu_num / 1024)}GB` : `${planCfg.flu_num}MB`} / {planCfg.flu_rst?.[0] ?? 31}天重置 / 超限{planCfg.flu_rst?.[1] ?? 10}Mbps</div>
                           <div>NAT: {planCfg.nat_num ?? 0}个 / Web: {planCfg.web_num ?? 0}个</div>
-                          <div>网卡: {planCfg.nic_min ?? 1}~{planCfg.nic_max ?? 1}张 / IPv4: {planCfg.ip4_max ?? 1} / IPv6: {planCfg.ip6_max ?? 0}</div>
+                          <div>网卡: 公网{planCfg.nic_pub ?? 0}张 + 内网{planCfg.nic_pri ?? 1}张 / IPv4: {planCfg.ip4_max ?? 1} / IPv6: {planCfg.ip6_max ?? 0}</div>
                           <div>备份: {planCfg.bak_num ?? 1} / 光盘: {planCfg.iso_num ?? 1}</div>
                           <div>数据盘: {planCfg.dat_num ?? 1}个 / 空间: {planCfg.dat_all ? (planCfg.dat_all >= 1024 ? `${Math.round(planCfg.dat_all / 1024)}GB` : `${planCfg.dat_all}MB`) : '0MB'}</div>
                         </div>

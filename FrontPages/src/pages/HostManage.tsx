@@ -105,8 +105,8 @@ interface ServerPlanRow {
     web_num: number
     flu_num: number
     flu_rst: number[]
-    nic_min: number
-    nic_max: number
+    nic_pub: number
+    nic_pri: number
     ip4_max: number
     ip6_max: number
 }
@@ -491,8 +491,8 @@ function HostManage() {
                             web_num: planCfg.web_num ?? 100,
                             flu_num: planCfg.flu_num ?? 102400,
                             flu_rst: Array.isArray(planCfg.flu_rst) ? planCfg.flu_rst : [31, 10, 10],
-                            nic_min: planCfg.nic_min ?? 1,
-                            nic_max: planCfg.nic_max ?? 1,
+                            nic_pub: planCfg.nic_pub ?? 0,
+                            nic_pri: planCfg.nic_pri ?? 1,
                             ip4_max: planCfg.ip4_max ?? 1,
                             ip6_max: planCfg.ip6_max ?? 0,
                         })
@@ -588,8 +588,8 @@ function HostManage() {
                         web_num: row.web_num,
                         flu_num: row.flu_num,
                         flu_rst: Array.isArray(row.flu_rst) && row.flu_rst.length === 3 ? row.flu_rst : [31, 10, 10],
-                        nic_min: row.nic_min,
-                        nic_max: row.nic_max,
+                        nic_pub: row.nic_pub,
+                        nic_pri: row.nic_pri,
                         ip4_max: row.ip4_max,
                         ip6_max: row.ip6_max,
                     }
@@ -1998,27 +1998,27 @@ function HostManage() {
                                                     </Row>
                                                     <Row gutter={8} className="mt-2">
                                                         <Col span={6}>
-                                                            <div className="text-xs text-gray-500 mb-1">网卡最小数量</div>
+                                                            <div className="text-xs text-gray-500 mb-1">公网网卡数量</div>
                                                             <InputNumber
-                                                                value={row.nic_min}
-                                                                min={1}
+                                                                value={row.nic_pub}
+                                                                min={0}
                                                                 className="w-full"
                                                                 onChange={(v) => {
                                                                     const newPlans = [...serverPlans]
-                                                                    newPlans[index].nic_min = v ?? 1
+                                                                    newPlans[index].nic_pub = v ?? 0
                                                                     setServerPlans(newPlans)
                                                                 }}
                                                             />
                                                         </Col>
                                                         <Col span={6}>
-                                                            <div className="text-xs text-gray-500 mb-1">网卡最大数量</div>
+                                                            <div className="text-xs text-gray-500 mb-1">内网网卡数量</div>
                                                             <InputNumber
-                                                                value={row.nic_max}
-                                                                min={row.nic_min || 1}
+                                                                value={row.nic_pri}
+                                                                min={0}
                                                                 className="w-full"
                                                                 onChange={(v) => {
                                                                     const newPlans = [...serverPlans]
-                                                                    newPlans[index].nic_max = v ?? 1
+                                                                    newPlans[index].nic_pri = v ?? 1
                                                                     setServerPlans(newPlans)
                                                                 }}
                                                             />
@@ -2028,7 +2028,7 @@ function HostManage() {
                                                             <InputNumber
                                                                 value={row.ip4_max}
                                                                 min={0}
-                                                                max={row.nic_max || 1}
+                                                                max={(row.nic_pub || 0) + (row.nic_pri || 0)}
                                                                 className="w-full"
                                                                 onChange={(v) => {
                                                                     const newPlans = [...serverPlans]
@@ -2042,7 +2042,7 @@ function HostManage() {
                                                             <InputNumber
                                                                 value={row.ip6_max}
                                                                 min={0}
-                                                                max={row.nic_max || 1}
+                                                                max={(row.nic_pub || 0) + (row.nic_pri || 0)}
                                                                 className="w-full"
                                                                 onChange={(v) => {
                                                                     const newPlans = [...serverPlans]
@@ -2078,8 +2078,8 @@ function HostManage() {
                                                     web_num: 100,
                                                     flu_num: 102400,
                                                     flu_rst: [31, 10, 10],
-                                                    nic_min: 1,
-                                                    nic_max: 1,
+                                                    nic_pub: 0,
+                                                    nic_pri: 1,
                                                     ip4_max: 1,
                                                     ip6_max: 0,
                                                 }])}

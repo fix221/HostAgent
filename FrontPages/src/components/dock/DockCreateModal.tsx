@@ -413,34 +413,39 @@ const DockCreateModal: React.FC<DockCreateModalProps> = ({
         return banList && banList.includes(fieldName)
     }
 
+    // 根据套餐自动生成网卡列表
+    const autoConfigNicsByPlan = (plan: any) => {
+        const nicPub = plan.nic_pub ?? 0
+        const nicPri = plan.nic_pri ?? 1
+        const newNicList: any[] = []
+        let counter = 0
+        // 先添加内网网卡
+        for (let i = 0; i < nicPri; i++) {
+            newNicList.push({ key: counter, name: `ethernet${counter}`, type: 'nat' })
+            counter++
+        }
+        // 再添加公网网卡
+        for (let i = 0; i < nicPub; i++) {
+            newNicList.push({ key: counter, name: `ethernet${counter}`, type: 'pub' })
+            counter++
+        }
+        setNicList(newNicList)
+        setNicCounter(counter)
+        // 设置表单值
+        setTimeout(() => {
+            const formValues: Record<string, any> = {}
+            newNicList.forEach(nic => {
+                formValues[`nic_name_${nic.key}`] = nic.name
+                formValues[`nic_type_${nic.key}`] = nic.type
+            })
+            form.setFieldsValue(formValues)
+        }, 0)
+    }
+
     const handleAddNic = () => {
-        // 非自由配置模式下，根据套餐限制网卡数量
+        // 非自由配置模式下，禁止手动添加网卡
         if (!canFreeConfig && selectedPlanName && serverPlans[selectedPlanName]) {
-            const plan = serverPlans[selectedPlanName]
-            const nicMax = plan.nic_max ?? 1
-            if (nicList.length >= nicMax) {
-                message.warning(`当前套餐最多允许 ${nicMax} 张网卡`)
-                return
-            }
-            // 根据 ip4_max/ip6_max 限制网卡类型
-            const ip4Max = plan.ip4_max ?? 1
-            const ip6Max = plan.ip6_max ?? 0
-            const currentNatCount = nicList.filter(n => {
-                const typeVal = form.getFieldValue(`nic_type_${n.key}`)
-                return typeVal === 'nat' || typeVal === 'pub'
-            }).length
-            let nextType = 'nat'
-            if (currentNatCount >= ip4Max && ip6Max > 0) nextType = 'pub'
-            
-            const newNic = { key: nicCounter, name: `ethernet${nicCounter}`, type: nextType }
-            setNicList([...nicList, newNic])
-            setTimeout(() => {
-                form.setFieldsValue({
-                    [`nic_name_${nicCounter}`]: `ethernet${nicCounter}`,
-                    [`nic_type_${nicCounter}`]: nextType
-                })
-            }, 0)
-            setNicCounter(nicCounter + 1)
+            message.warning('套餐模式下网卡由套餐自动配置，无法手动添加')
             return
         }
 
@@ -474,13 +479,10 @@ const DockCreateModal: React.FC<DockCreateModalProps> = ({
     }
 
     const handleRemoveNic = (key: number) => {
-        // 非自由配置模式下，检查最小网卡数量限制
+        // 非自由配置模式下，禁止手动删除网卡
         if (!canFreeConfig && selectedPlanName && serverPlans[selectedPlanName]) {
-            const nicMin = serverPlans[selectedPlanName].nic_min ?? 1
-            if (nicList.length <= nicMin) {
-                message.warning(`当前套餐最少需要 ${nicMin} 张网卡`)
-                return
-            }
+            message.warning('套餐模式下网卡由套餐自动配置，无法手动删除')
+            return
         }
         setNicList(nicList.filter(n => n.key !== key))
     }
@@ -584,6 +586,40 @@ const DockCreateModal: React.FC<DockCreateModalProps> = ({
                     hide()
                     if (result.code === 200) {
                         message.success('创建成功')
+
+                        // 根据操作系统类型自动添加默认端口映射
+                        const selectedOs = hostImages.find(it => it.sys_file === values.os_name)
+                        if (selectedOs) {
+                            let defaultPort = 0
+                            let portTips = ''
+                            switch (selectedOs.sys_type) {
+                                case 'WinNT':
+                                    defaultPort = 3389
+                                    portTips = 'RDP远程桌面'
+                                    break
+                                case 'Linux':
+                                    defaultPort = 22
+                                    portTips = 'SSH远程连接'
+                                    break
+                                case 'macOS':
+                                    defaultPort = 5900
+                                    portTips = 'VNC远程桌面'
+                                    break
+                            }
+                            if (defaultPort > 0) {
+                                try {
+                                    await api.addNATRule(targetHost, fullUuid, {
+                                        wan_port: 0,
+                                        lan_port: defaultPort,
+                                        lan_addr: '',
+                                        nat_tips: portTips,
+                                    } as any)
+                                } catch (e) {
+                                    console.warn('自动添加默认端口映射失败:', e)
+                                }
+                            }
+                        }
+
                         onSuccess()
                     } else {
                         message.error(result.msg || '创建失败')
@@ -892,6 +928,10 @@ const DockCreateModal: React.FC<DockCreateModalProps> = ({
                                                         dat_num: planCfg.dat_num ?? 1,
                                                         dat_all: planCfg.dat_all ?? 0,
                                                     })
+                                                    // 套餐模式下自动配置网卡
+                                                    if (!canFreeConfig) {
+                                                        autoConfigNicsByPlan(planCfg)
+                                                    }
                                                 }}
                                                 style={{
                                                     border: selectedPlanName === planName ? '2px solid #1677ff' : isExceeded ? '1px solid #d9d9d9' : '1px solid #d9d9d9',
@@ -912,7 +952,8 @@ const DockCreateModal: React.FC<DockCreateModalProps> = ({
                                                     <div>带宽: ↑{planCfg.speed_u}Mbps ↓{planCfg.speed_d}Mbps</div>
                                                     <div>流量: {planCfg.flu_num >= 1024 ? `${Math.round(planCfg.flu_num / 1024)}GB` : `${planCfg.flu_num}MB`} / {planCfg.flu_rst?.[0] ?? 31}天 / 超限{planCfg.flu_rst?.[1] ?? 10}M</div>
                                                     <div>端口: {planCfg.nat_num ?? 0}个 / Web: {planCfg.web_num ?? 0}个</div>
-                                                    <div>网卡: {planCfg.nic_max ?? 1} / IPv4: {planCfg.ip4_max ?? 1} / IPv6: {planCfg.ip6_max ?? 0}</div>
+                                                    <div>网卡: 公网{planCfg.nic_pub ?? 0} + 内网{planCfg.nic_pri ?? 1} </div>
+                                                    <div> IPv4: {planCfg.ip4_max ?? 1} / IPv6: {planCfg.ip6_max ?? 0}</div>
                                                     <div>备份数量: {planCfg.bak_num ?? 1} / ISO光盘数: {planCfg.iso_num ?? 1}</div>
                                                     <div>数据盘: {planCfg.dat_num ?? 1}个 / 可用空间: {planCfg.dat_all ? (planCfg.dat_all >= 1024 ? `${Math.round(planCfg.dat_all / 1024)}GB` : `${planCfg.dat_all}MB`) : '0MB'}</div>
                                                 </div>
@@ -1024,6 +1065,7 @@ const DockCreateModal: React.FC<DockCreateModalProps> = ({
                     </>
                     )}
 
+                    {(canFreeConfig || isEditMode) && (
                     <div className="modal-section">
                         <div style={sectionTitleStyle}>
                             <div className="w-8 h-8 rounded-lg section-icon-bg-red flex items-center justify-center">
@@ -1069,7 +1111,9 @@ const DockCreateModal: React.FC<DockCreateModalProps> = ({
                             </Col>
                         </Row>
                     </div>
+                    )}
 
+                    {(canFreeConfig || isEditMode) && (
                     <div className="modal-section">
                         <div style={sectionTitleStyle}>
                             <div className="w-8 h-8 rounded-lg section-icon-bg-blue flex items-center justify-center">
@@ -1118,7 +1162,9 @@ const DockCreateModal: React.FC<DockCreateModalProps> = ({
                             </Col>
                         </Row>
                     </div>
+                    )}
 
+                    {(canFreeConfig || isEditMode) && (
                     <div className="modal-section">
                         <div style={sectionTitleStyle}>
                             <div className="w-8 h-8 rounded-lg section-icon-bg-green flex items-center justify-center">
@@ -1177,9 +1223,10 @@ const DockCreateModal: React.FC<DockCreateModalProps> = ({
                             </Col>
                         </Row>
                     </div>
+                    )}
 
-                    {/* 编辑模式下隐藏网卡配置 */}
-                    {!isEditMode && (
+                    {/* 非自由配置用户不显示网卡配置（由套餐自动配置）；编辑模式也隐藏 */}
+                    {!isEditMode && canFreeConfig && (
                     <div className="modal-section">
                         <div style={sectionTitleStyle}>
                             <div className="w-8 h-8 rounded-lg section-icon-bg-blue flex items-center justify-center">
@@ -1188,7 +1235,7 @@ const DockCreateModal: React.FC<DockCreateModalProps> = ({
                             <span>网卡配置</span>
                             {!canFreeConfig && selectedPlanName && serverPlans[selectedPlanName] && (
                                 <span className="text-xs" style={{ color: '#999', marginLeft: 8 }}>
-                                    (允许 {serverPlans[selectedPlanName].nic_min ?? 1}~{serverPlans[selectedPlanName].nic_max ?? 1} 张网卡，
+                                    (公网{serverPlans[selectedPlanName].nic_pub ?? 0}张 + 内网{serverPlans[selectedPlanName].nic_pri ?? 1}张，
                                     IPv4最多{serverPlans[selectedPlanName].ip4_max ?? 1}个，
                                     IPv6最多{serverPlans[selectedPlanName].ip6_max ?? 0}个)
                                 </span>
@@ -1201,24 +1248,28 @@ const DockCreateModal: React.FC<DockCreateModalProps> = ({
                                     <Input style={{ width: 120 }} disabled />
                                 </Form.Item>
                                 <Form.Item name={`nic_type_${nic.key}`} initialValue="nat" noStyle>
-                                    <Select style={{ width: 100 }}>
+                                    <Select style={{ width: 100 }} disabled={!canFreeConfig && !!selectedPlanName}>
                                         <Select.Option value="nat">内网</Select.Option>
                                         <Select.Option value="pub">公网</Select.Option>
                                     </Select>
                                 </Form.Item>
                                 <Form.Item name={`nic_ip_${nic.key}`} noStyle>
-                                    <Input placeholder="IPv4 (可选)" style={{ margin: '0 10px' }} />
+                                    <Input placeholder="IPv4 (可选)" style={{ margin: '0 10px' }} disabled={!canFreeConfig && !!selectedPlanName} />
                                 </Form.Item>
                                 <Form.Item name={`nic_ip6_${nic.key}`} noStyle>
-                                    <Input placeholder="IPv6 (可选)" style={{ margin: '0 10px' }} />
+                                    <Input placeholder="IPv6 (可选)" style={{ margin: '0 10px' }} disabled={!canFreeConfig && !!selectedPlanName} />
                                 </Form.Item>
-                                <Button danger icon={<DeleteOutlined />} onClick={() => handleRemoveNic(nic.key)} />
+                                {(canFreeConfig || !selectedPlanName) && (
+                                    <Button danger icon={<DeleteOutlined />} onClick={() => handleRemoveNic(nic.key)} />
+                                )}
                             </Space.Compact>
                         ))}
                         
+                        {(canFreeConfig || !selectedPlanName) && (
                         <Button type="dashed" onClick={handleAddNic} block icon={<PlusOutlined />}>
                             添加网卡
                         </Button>
+                        )}
                     </div>
                     )}
                 </Form>

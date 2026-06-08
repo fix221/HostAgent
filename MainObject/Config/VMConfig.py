@@ -44,8 +44,8 @@ class VMConfig:
         self.usb_num = 0  # 允许最大的USBs数量
         self.dat_num = 1  # 允许最大数据盘数量
         self.dat_all = 0  # 允许数据盘合计容量
-        self.nic_min = 1  # 网卡最小数量
-        self.nic_max = 1  # 网卡最大数量
+        self.nic_pub = 0  # 公网网卡数量
+        self.nic_pri = 1  # 内网网卡数量
         self.ip4_max = 1  # IPv4最大数量
         self.ip6_max = 0  # IPv6最大数量
         # 网络配置 ===========================
@@ -242,8 +242,8 @@ class VMConfig:
             "usb_num": self.usb_num,
             "dat_num": self.dat_num,
             "dat_all": self.dat_all,
-            "nic_min": self.nic_min,
-            "nic_max": self.nic_max,
+            "nic_pub": self.nic_pub,
+            "nic_pri": self.nic_pri,
             "ip4_max": self.ip4_max,
             "ip6_max": self.ip6_max,
             # 远程连接 =======================

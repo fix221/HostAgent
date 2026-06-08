@@ -1918,31 +1918,31 @@ class RestManager:
                     data[field] = plan_dict[field]
             
             # 校验网卡数量在套餐允许的范围内
-            nic_min = getattr(plan_vm_config, 'nic_min', 1) if hasattr(plan_vm_config, 'nic_min') else plan_dict.get('nic_min', 1)
-            nic_max = getattr(plan_vm_config, 'nic_max', 1) if hasattr(plan_vm_config, 'nic_max') else plan_dict.get('nic_max', 1)
+            nic_pub = getattr(plan_vm_config, 'nic_pub', 0) if hasattr(plan_vm_config, 'nic_pub') else plan_dict.get('nic_pub', 0)
+            nic_pri = getattr(plan_vm_config, 'nic_pri', 1) if hasattr(plan_vm_config, 'nic_pri') else plan_dict.get('nic_pri', 1)
             ip4_max = getattr(plan_vm_config, 'ip4_max', 1) if hasattr(plan_vm_config, 'ip4_max') else plan_dict.get('ip4_max', 1)
             ip6_max = getattr(plan_vm_config, 'ip6_max', 0) if hasattr(plan_vm_config, 'ip6_max') else plan_dict.get('ip6_max', 0)
             
             nic_all_data = data.get('nic_all', {})
+            nic_total = nic_pub + nic_pri
             nic_count = len(nic_all_data)
-            if nic_count < nic_min or nic_count > nic_max:
-                return self.api_response(400, f'网卡数量必须在 {nic_min} ~ {nic_max} 之间，当前为 {nic_count}')
+            if nic_count != nic_total:
+                return self.api_response(400, f'网卡总数量应为 {nic_total}（公网{nic_pub} + 内网{nic_pri}），当前为 {nic_count}')
             
-            # 校验IPv4/IPv6网卡数量
-            ipv4_count = 0
-            ipv6_count = 0
+            # 校验公网/内网网卡数量
+            pub_count = 0
+            pri_count = 0
             for nic_name, nic_conf in nic_all_data.items():
                 nic_type = nic_conf.get('nic_type', 'nat') if isinstance(nic_conf, dict) else getattr(nic_conf, 'nic_type', 'nat')
-                ip_ver = nic_conf.get('ip_ver', 4) if isinstance(nic_conf, dict) else getattr(nic_conf, 'ip_ver', 4)
-                if ip_ver == 6:
-                    ipv6_count += 1
+                if nic_type == 'pub':
+                    pub_count += 1
                 else:
-                    ipv4_count += 1
+                    pri_count += 1
             
-            if ipv4_count > ip4_max:
-                return self.api_response(400, f'IPv4网卡数量不能超过 {ip4_max}，当前为 {ipv4_count}')
-            if ipv6_count > ip6_max:
-                return self.api_response(400, f'IPv6网卡数量不能超过 {ip6_max}，当前为 {ipv6_count}')
+            if pub_count != nic_pub:
+                return self.api_response(400, f'公网网卡数量应为 {nic_pub}，当前为 {pub_count}')
+            if pri_count != nic_pri:
+                return self.api_response(400, f'内网网卡数量应为 {nic_pri}，当前为 {pri_count}')
 
         # 获取system_maps，确定最小磁盘要求
         min_disk_gb = 10  # 默认10GB
@@ -5200,8 +5200,8 @@ window.location.replace({repr(target_url)});
                         'bandwidth_mbps': getattr(vm_config, 'speed_d', 0),
                         'traffic_gb': getattr(vm_config, 'flu_num', 0) // 1024,  # MB -> GB
                         # 网卡和IP配置
-                        'nic_min': getattr(vm_config, 'nic_min', 1),
-                        'nic_max': getattr(vm_config, 'nic_max', 1),
+                        'nic_pub': getattr(vm_config, 'nic_pub', 0),
+                        'nic_pri': getattr(vm_config, 'nic_pri', 1),
                         'ip4_max': getattr(vm_config, 'ip4_max', 1),
                         'ip6_max': getattr(vm_config, 'ip6_max', 0),
                         # 价格配置（主机级，所有套餐共用）
