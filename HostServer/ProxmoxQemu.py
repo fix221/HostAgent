@@ -667,6 +667,8 @@ class HostServer(BasicServer):
                     else:
                         logger.info(f"本地importdisk: {src_file_abs} -> {system_storage}")
                 # importdisk后磁盘进入unused状态，需挂载 ========================
+                # 刷新存储，确保PVE识别到新磁盘文件 ============================
+                self._refresh_storage(client, system_storage)
                 vm_conn = client.nodes(self.hs_config.launch_path).qemu(vm_vmid)
                 vm_conn.config.put(ide0=f"{system_storage}:{vm_vmid}/{disk_name}")
                 # 设置启动项（磁盘挂载后才能生效）================================
@@ -752,6 +754,8 @@ class HostServer(BasicServer):
                                 success=False, action="VInstall",
                                 message=f"SSH回退执行异常: {str(ssh_err)}")
                 # 分配磁盘 ======================================================
+                # 刷新存储，确保PVE识别到新复制的磁盘文件 ======================
+                self._refresh_storage(client, system_storage)
                 vm_conn = client.nodes(self.hs_config.launch_path).qemu(vm_vmid)
                 vm_conn.config.put(ide0=f"{system_storage}:{vm_vmid}/{disk_name}")
                 # 设置启动项（磁盘挂载后才能生效）================================
@@ -1357,6 +1361,42 @@ class HostServer(BasicServer):
             logger.error(f"查找SCSI设备时出错: {str(e)}")
             traceback.print_exc()
             return None
+
+    # 刷新PVE存储 #############################################################
+    def _refresh_storage(self, client, storage_name: str):
+        """刷新PVE存储，确保新复制/导入的磁盘文件被PVE识别。
+
+        通过API调用 pvesm scan 或直接SSH执行 pvesm refresh，
+        解决直接cp文件后PVE未识别volume的问题。
+        """
+        import time
+        try:
+            # 方式1：通过PVE API刷新存储内容 ====================================
+            node = client.nodes(self.hs_config.launch_path)
+            node.storage(storage_name).content.get()
+            logger.info(f"通过API刷新存储 {storage_name} 内容列表")
+        except Exception as api_err:
+            logger.warning(f"API刷新存储失败({api_err})，尝试SSH执行pvesm refresh...")
+            # 方式2：通过SSH执行pvesm命令刷新 ==================================
+            try:
+                if self.flag_web():
+                    ssh = paramiko.SSHClient()
+                    ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+                    ssh.connect(
+                        self.hs_config.server_addr,
+                        username=self.hs_config.server_user,
+                        password=self.hs_config.server_pass)
+                    stdin, stdout, stderr = ssh.exec_command(
+                        f"pvesm scan dir {storage_name} 2>/dev/null; pvesm status {storage_name}")
+                    stdout.channel.recv_exit_status()
+                    ssh.close()
+                else:
+                    os.system(f"pvesm scan dir {storage_name} 2>/dev/null; pvesm status {storage_name}")
+                logger.info(f"通过命令刷新存储 {storage_name}")
+            except Exception as ssh_err:
+                logger.warning(f"SSH刷新存储也失败: {ssh_err}")
+        # 短暂等待PVE内部索引更新 ==============================================
+        time.sleep(1)
 
     # 扩容系统盘 ###############################################################
     def _resize_system_disk(self, vm_conn, disk_id: str, target_mb: int) -> bool:

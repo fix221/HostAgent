@@ -1503,6 +1503,7 @@ class BasicServer:
             logger.info(f"  - 系统镜像: {vm_conf.os_name}")
 
             # 只有在所有操作都成功后才保存配置到vm_saving
+            vm_conf.vm_flag = VMPowers.ON_OPEN  # 创建后默认为启动中状态
             self.vm_saving[vm_conf.vm_uuid] = vm_conf
             # 保存到数据库 =====================================================
             self.data_set()
