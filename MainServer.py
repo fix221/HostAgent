@@ -1186,9 +1186,9 @@ def api_get_host_status(hs_name):
 
 # 获取套餐列表 ####################################################################
 @app.route('/api/server/plan/<hs_name>', methods=['GET'])
-@require_admin
+@require_auth
 def api_get_server_plan(hs_name):
-    """获取主机套餐列表"""
+    """获取主机套餐列表（已认证用户可访问，用于创建虚拟机时选择套餐）"""
     return rest_manager.get_server_plan(hs_name)
 
 

@@ -1595,10 +1595,26 @@ function Dashboards() {
                 <Alert message="当前主机暂无可用套餐，请联系管理员" type="warning" showIcon style={{ marginBottom: 16 }} />
               ) : (
                 <Row gutter={[12, 12]}>
-                  {Object.entries(serverPlans).map(([planName, planCfg]: [string, any]) => (
+                  {Object.entries(serverPlans).map(([planName, planCfg]: [string, any]) => {
+                    // 检查套餐是否超出用户配额
+                    const remainCpu = (userQuota?.quota_cpu || 0) - (userQuota?.used_cpu || 0)
+                    const remainRam = (userQuota?.quota_ram || 0) - (userQuota?.used_ram || 0)
+                    const remainSsd = (userQuota?.quota_ssd || 0) - (userQuota?.used_ssd || 0)
+                    const remainBwUp = (userQuota?.quota_bandwidth_up || 0) - (userQuota?.used_bandwidth_up || 0)
+                    const remainBwDn = (userQuota?.quota_bandwidth_down || 0) - (userQuota?.used_bandwidth_down || 0)
+                    const exceedReasons: string[] = []
+                    if (planCfg.cpu_num > remainCpu) exceedReasons.push(`CPU超出${planCfg.cpu_num - remainCpu}核`)
+                    if (planCfg.mem_num > remainRam) exceedReasons.push(`内存超出${planCfg.mem_num - remainRam}MB`)
+                    if (planCfg.hdd_num > remainSsd) exceedReasons.push(`硬盘超出${planCfg.hdd_num - remainSsd}MB`)
+                    if (planCfg.speed_u > remainBwUp) exceedReasons.push(`上行带宽超出`)
+                    if (planCfg.speed_d > remainBwDn) exceedReasons.push(`下行带宽超出`)
+                    const isExceeded = exceedReasons.length > 0
+
+                    return (
                     <Col span={8} key={planName}>
                       <div
                         onClick={() => {
+                          if (isExceeded) return
                           setSelectedPlanName(planName)
                           createVMForm.setFieldsValue({
                             cpu_num: planCfg.cpu_num,
@@ -1616,20 +1632,27 @@ function Dashboards() {
                           border: selectedPlanName === planName ? '2px solid #1677ff' : '1px solid #d9d9d9',
                           borderRadius: 8,
                           padding: 12,
-                          cursor: 'pointer',
+                          cursor: isExceeded ? 'not-allowed' : 'pointer',
                           transition: 'all 0.2s',
-                          background: selectedPlanName === planName ? '#e6f4ff' : 'transparent',
+                          background: isExceeded ? '#f5f5f5' : selectedPlanName === planName ? '#e6f4ff' : 'transparent',
+                          opacity: isExceeded ? 0.6 : 1,
                         }}
                       >
                         <div style={{ fontWeight: 600, marginBottom: 6 }}>{planName}</div>
-                        <div className="text-xs" style={{ color: '#666' }}>
+                        <div className="text-xs" style={{ color: isExceeded ? '#999' : '#666' }}>
                           <div>CPU: {planCfg.cpu_num}核 / 内存: {Math.round(planCfg.mem_num / 1024)}GB</div>
                           <div>硬盘: {Math.round(planCfg.hdd_num / 1024)}GB / 带宽: {planCfg.speed_d}Mbps</div>
                           <div>网卡: {planCfg.nic_min ?? 1}~{planCfg.nic_max ?? 1}张</div>
                         </div>
+                        {isExceeded && (
+                          <div style={{ marginTop: 4, color: '#ff4d4f', fontSize: 11 }}>
+                            配额不足: {exceedReasons.join('、')}
+                          </div>
+                        )}
                       </div>
                     </Col>
-                  ))}
+                    )
+                  })}
                 </Row>
               )}
             </div>

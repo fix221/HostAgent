@@ -251,7 +251,7 @@ function LogsManage() {
       />
 
       {/* 过滤器 */}
-      <div className="glass-card p-4 mb-4 flex-shrink-0">
+      <div className="glass-card p-4 mb-4 flex-shrink-0" style={{ position: 'relative', zIndex: 10 }}>
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
           <div>
             <label className="block text-sm font-medium mb-1">主机筛选</label>
@@ -261,6 +261,7 @@ function LogsManage() {
               allowClear
               value={filters.host || undefined}
               onChange={(value) => setFilters({ ...filters, host: value || '' })}
+              getPopupContainer={() => document.body}
             >
               {hosts.map(host => (
                 <Select.Option key={host} value={host}>{host}</Select.Option>
@@ -275,6 +276,7 @@ function LogsManage() {
               allowClear
               value={filters.level || undefined}
               onChange={(value) => setFilters({ ...filters, level: value || '' })}
+              getPopupContainer={() => document.body}
             >
               <Select.Option value="ERROR">错误</Select.Option>
               <Select.Option value="WARNING">警告</Select.Option>
@@ -288,6 +290,7 @@ function LogsManage() {
               className="w-full"
               value={filters.limit}
               onChange={(value) => setFilters({ ...filters, limit: value })}
+              getPopupContainer={() => document.body}
             >
               <Select.Option value={50}>50条</Select.Option>
               <Select.Option value={100}>100条</Select.Option>

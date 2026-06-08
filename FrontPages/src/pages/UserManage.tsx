@@ -303,6 +303,7 @@ function UserManage() {
             onConfirm={() => handleDelete(record.id)}
             okText="确定"
             cancelText="取消"
+            getPopupContainer={() => document.body}
           >
             <Button type="link" size="small" danger icon={<DeleteOutlined />}>
               删除

@@ -148,19 +148,19 @@ const DockCreateModal: React.FC<DockCreateModalProps> = ({
         return Math.floor(Math.random() * (6999 - 5900 + 1)) + 5900
     }
 
-    // Helper for rendering slider + input
-    const renderResourceInput = (
-        name: string,
-        label: string,
-        min: number,
-        max: number,
-        step: number = 1,
-        unit: string = '',
-        disabled: boolean = false,
-        quotaUsed: number = 0,
-        quotaTotal: number = 0,
-        showQuota: boolean = false
-    ) => {
+    // 资源输入子组件（独立组件以合法使用 useWatch Hook）
+    const ResourceInput: React.FC<{
+        name: string
+        label: string
+        min: number
+        max: number
+        step?: number
+        unit?: string
+        disabled?: boolean
+        quotaUsed?: number
+        quotaTotal?: number
+        showQuota?: boolean
+    }> = ({ name, label, min, max, step = 1, unit = '', disabled = false, quotaUsed = 0, quotaTotal = 0, showQuota = false }) => {
         const currentValue = Form.useWatch(name, form)
         
         return (
@@ -855,10 +855,26 @@ const DockCreateModal: React.FC<DockCreateModalProps> = ({
                                 <Alert message="当前主机暂无可用套餐，请联系管理员" type="warning" showIcon />
                             ) : (
                                 <Row gutter={[16, 16]}>
-                                    {Object.entries(serverPlans).map(([planName, planCfg]: [string, any]) => (
+                                    {Object.entries(serverPlans).map(([planName, planCfg]: [string, any]) => {
+                                        // 检查套餐是否超出用户配额
+                                        const remainCpu = (userQuota?.quota_cpu || 0) - (userQuota?.used_cpu || 0)
+                                        const remainRam = (userQuota?.quota_ram || 0) - (userQuota?.used_ram || 0)
+                                        const remainSsd = (userQuota?.quota_ssd || 0) - (userQuota?.used_ssd || 0)
+                                        const remainBwUp = (userQuota?.quota_upload_bw || 0) - (userQuota?.used_upload_bw || 0)
+                                        const remainBwDn = (userQuota?.quota_download_bw || 0) - (userQuota?.used_download_bw || 0)
+                                        const exceedReasons: string[] = []
+                                        if (planCfg.cpu_num > remainCpu) exceedReasons.push(`CPU超出${planCfg.cpu_num - remainCpu}核`)
+                                        if (planCfg.mem_num > remainRam) exceedReasons.push(`内存超出${planCfg.mem_num - remainRam}MB`)
+                                        if (planCfg.hdd_num > remainSsd) exceedReasons.push(`硬盘超出${planCfg.hdd_num - remainSsd}MB`)
+                                        if (planCfg.speed_u > remainBwUp) exceedReasons.push(`上行带宽超出`)
+                                        if (planCfg.speed_d > remainBwDn) exceedReasons.push(`下行带宽超出`)
+                                        const isExceeded = exceedReasons.length > 0
+
+                                        return (
                                         <Col span={8} key={planName}>
                                             <div
                                                 onClick={() => {
+                                                    if (isExceeded) return
                                                     setSelectedPlanName(planName)
                                                     // 自动填充表单资源字段
                                                     form.setFieldsValue({
@@ -882,17 +898,18 @@ const DockCreateModal: React.FC<DockCreateModalProps> = ({
                                                     })
                                                 }}
                                                 style={{
-                                                    border: selectedPlanName === planName ? '2px solid #1677ff' : '1px solid #d9d9d9',
+                                                    border: selectedPlanName === planName ? '2px solid #1677ff' : isExceeded ? '1px solid #d9d9d9' : '1px solid #d9d9d9',
                                                     borderRadius: 8,
                                                     padding: 16,
-                                                    cursor: 'pointer',
+                                                    cursor: isExceeded ? 'not-allowed' : 'pointer',
                                                     transition: 'all 0.2s',
-                                                    background: selectedPlanName === planName ? '#e6f4ff' : 'transparent',
+                                                    background: isExceeded ? '#f5f5f5' : selectedPlanName === planName ? '#e6f4ff' : 'transparent',
                                                     boxShadow: selectedPlanName === planName ? '0 2px 8px rgba(22,119,255,0.15)' : 'none',
+                                                    opacity: isExceeded ? 0.6 : 1,
                                                 }}
                                             >
                                                 <div style={{ fontWeight: 600, fontSize: 14, marginBottom: 8 }}>{planName}</div>
-                                                <div className="space-y-1 text-xs" style={{ color: '#666' }}>
+                                                <div className="space-y-1 text-xs" style={{ color: isExceeded ? '#999' : '#666' }}>
                                                     <div>CPU: {planCfg.cpu_num}核</div>
                                                     <div>内存: {planCfg.mem_num >= 1024 ? `${Math.round(planCfg.mem_num / 1024)}GB` : `${planCfg.mem_num}MB`}</div>
                                                     <div>硬盘: {planCfg.hdd_num >= 1024 ? `${Math.round(planCfg.hdd_num / 1024)}GB` : `${planCfg.hdd_num}MB`}</div>
@@ -900,9 +917,15 @@ const DockCreateModal: React.FC<DockCreateModalProps> = ({
                                                     <div>网卡: {planCfg.nic_min ?? 1}~{planCfg.nic_max ?? 1}张</div>
                                                     <div>IPv4: 最多{planCfg.ip4_max ?? 1}个 / IPv6: 最多{planCfg.ip6_max ?? 0}个</div>
                                                 </div>
+                                                {isExceeded && (
+                                                    <div style={{ marginTop: 6, color: '#ff4d4f', fontSize: 11 }}>
+                                                        配额不足: {exceedReasons.join('、')}
+                                                    </div>
+                                                )}
                                             </div>
                                         </Col>
-                                    ))}
+                                        )
+                                    })}
                                 </Row>
                             )}
                         </div>
@@ -921,40 +944,40 @@ const DockCreateModal: React.FC<DockCreateModalProps> = ({
 
                         <Row gutter={24}>
                             <Col span={12}>
-                                {renderResourceInput(
-                                    'cpu_num', 'CPU核心', 1, isAdmin ? 128 : (userQuota?.quota_cpu || 4), 1, '核',
-                                    isFieldDisabled('cpu_num'), userQuota?.used_cpu || 0, userQuota?.quota_cpu || 0, true
-                                )}
+                                <ResourceInput
+                                    name="cpu_num" label="CPU核心" min={1} max={isAdmin ? 128 : (userQuota?.quota_cpu || 4)} step={1} unit="核"
+                                    disabled={isFieldDisabled('cpu_num')} quotaUsed={userQuota?.used_cpu || 0} quotaTotal={userQuota?.quota_cpu || 0} showQuota
+                                />
                             </Col>
                             <Col span={12}>
-                                {renderResourceInput(
-                                    'cpu_per', '最大可用率', 0, 100, 1, '%',
-                                    isFieldDisabled('cpu_per')
-                                )}
+                                <ResourceInput
+                                    name="cpu_per" label="最大可用率" min={0} max={100} step={1} unit="%"
+                                    disabled={isFieldDisabled('cpu_per')}
+                                />
                             </Col>
                             <Col span={12}>
-                                {renderResourceInput(
-                                    'mem_num', '内存', 512, isAdmin ? 131072 : (userQuota?.quota_ram || 4096), 512, 'MB',
-                                    isFieldDisabled('mem_num'), userQuota?.used_ram || 0, userQuota?.quota_ram || 0, true
-                                )}
+                                <ResourceInput
+                                    name="mem_num" label="内存" min={512} max={isAdmin ? 131072 : (userQuota?.quota_ram || 4096)} step={512} unit="MB"
+                                    disabled={isFieldDisabled('mem_num')} quotaUsed={userQuota?.used_ram || 0} quotaTotal={userQuota?.quota_ram || 0} showQuota
+                                />
                             </Col>
                             <Col span={12}>
-                                {renderResourceInput(
-                                    'hdd_num', '硬盘', selectedOsMinDisk * 1024 || 10240, isAdmin ? 10485760 : (userQuota?.quota_ssd || 51200), 1024, 'MB',
-                                    isFieldDisabled('hdd_num'), userQuota?.used_ssd || 0, userQuota?.quota_ssd || 0, true
-                                )}
+                                <ResourceInput
+                                    name="hdd_num" label="硬盘" min={selectedOsMinDisk * 1024 || 10240} max={isAdmin ? 10485760 : (userQuota?.quota_ssd || 51200)} step={1024} unit="MB"
+                                    disabled={isFieldDisabled('hdd_num')} quotaUsed={userQuota?.used_ssd || 0} quotaTotal={userQuota?.quota_ssd || 0} showQuota
+                                />
                             </Col>
                             <Col span={12}>
-                                {renderResourceInput(
-                                    'hdd_iop', '硬盘速率', 100, 50000, 100, 'IOPS',
-                                    isFieldDisabled('hdd_iop')
-                                )}
+                                <ResourceInput
+                                    name="hdd_iop" label="硬盘速率" min={100} max={50000} step={100} unit="IOPS"
+                                    disabled={isFieldDisabled('hdd_iop')}
+                                />
                             </Col>
                             <Col span={12}>
-                                {renderResourceInput(
-                                    'gpu_mem', '显存', 0, isAdmin ? 16384 : 128, 128, 'MB',
-                                    isFieldDisabled('gpu_mem')
-                                )}
+                                <ResourceInput
+                                    name="gpu_mem" label="显存" min={0} max={isAdmin ? 16384 : 128} step={128} unit="MB"
+                                    disabled={isFieldDisabled('gpu_mem')}
+                                />
                         </Col>
                         </Row>
                     </div>
@@ -1107,24 +1130,24 @@ const DockCreateModal: React.FC<DockCreateModalProps> = ({
 
                         <Row gutter={24}>
                             <Col span={12}>
-                                {renderResourceInput(
-                                    'speed_u', '上传带宽', 1, isAdmin ? 10000 : (userQuota?.quota_upload_bw || 100), 1, 'Mbps',
-                                    false, userQuota?.used_upload_bw || 0, userQuota?.quota_upload_bw || 0, true
-                                )}
+                                <ResourceInput
+                                    name="speed_u" label="上传带宽" min={1} max={isAdmin ? 10000 : (userQuota?.quota_upload_bw || 100)} step={1} unit="Mbps"
+                                    disabled={false} quotaUsed={userQuota?.used_upload_bw || 0} quotaTotal={userQuota?.quota_upload_bw || 0} showQuota
+                                />
                             </Col>
                             <Col span={12}>
-                                {renderResourceInput(
-                                    'speed_d', '下载带宽', 1, isAdmin ? 10000 : (userQuota?.quota_download_bw || 100), 1, 'Mbps',
-                                    false, userQuota?.used_download_bw || 0, userQuota?.quota_download_bw || 0, true
-                                )}
+                                <ResourceInput
+                                    name="speed_d" label="下载带宽" min={1} max={isAdmin ? 10000 : (userQuota?.quota_download_bw || 100)} step={1} unit="Mbps"
+                                    disabled={false} quotaUsed={userQuota?.used_download_bw || 0} quotaTotal={userQuota?.quota_download_bw || 0} showQuota
+                                />
                             </Col>
                         </Row>
                         <Row gutter={24}>
                             <Col span={12}>
-                                {renderResourceInput(
-                                    'flu_num', '流量限制', 0, 1024000, 1024, 'MB',
-                                    isFieldDisabled('flu_num'), userQuota?.used_traffic || 0, userQuota?.quota_traffic || 0, true
-                                )}
+                                <ResourceInput
+                                    name="flu_num" label="流量限制" min={0} max={1024000} step={1024} unit="MB"
+                                    disabled={isFieldDisabled('flu_num')} quotaUsed={userQuota?.used_traffic || 0} quotaTotal={userQuota?.quota_traffic || 0} showQuota
+                                />
                             </Col>
                             <Col span={6}>
                                 <Form.Item label="重置时间" name="flu_rst_day" style={{ marginBottom: 24 }}>
@@ -1142,16 +1165,16 @@ const DockCreateModal: React.FC<DockCreateModalProps> = ({
 
                         <Row gutter={24}>
                             <Col span={12}>
-                                {renderResourceInput(
-                                    'nat_num', 'NAT端口数', 0, isAdmin ? 1000 : (userQuota?.quota_nat || 100), 1, '个',
-                                    isFieldDisabled('nat_num'), userQuota?.used_nat || 0, userQuota?.quota_nat || 0, true
-                                )}
+                                <ResourceInput
+                                    name="nat_num" label="NAT端口数" min={0} max={isAdmin ? 1000 : (userQuota?.quota_nat || 100)} step={1} unit="个"
+                                    disabled={isFieldDisabled('nat_num')} quotaUsed={userQuota?.used_nat || 0} quotaTotal={userQuota?.quota_nat || 0} showQuota
+                                />
                             </Col>
                             <Col span={12}>
-                                {renderResourceInput(
-                                    'web_num', 'Web代理数', 0, isAdmin ? 1000 : (userQuota?.quota_web || 10), 1, '个',
-                                    isFieldDisabled('web_num'), userQuota?.used_web || 0, userQuota?.quota_web || 0, true
-                                )}
+                                <ResourceInput
+                                    name="web_num" label="Web代理数" min={0} max={isAdmin ? 1000 : (userQuota?.quota_web || 10)} step={1} unit="个"
+                                    disabled={isFieldDisabled('web_num')} quotaUsed={userQuota?.used_web || 0} quotaTotal={userQuota?.quota_web || 0} showQuota
+                                />
                             </Col>
                         </Row>
                     </div>
