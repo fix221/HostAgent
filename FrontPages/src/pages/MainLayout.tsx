@@ -244,6 +244,20 @@ function MainLayout() {
         </div>
     )
 
+    // 检测是否为V2详情页（MMUI风格），如果是则隐藏系统侧边栏和顶栏
+    const isV2Page = location.pathname.endsWith('/v2')
+
+    // V2页面：全屏模式，不显示系统侧边栏和顶栏
+    if (isV2Page) {
+        return (
+            <Layout style={{ minHeight: '100vh', height: '100vh', overflow: 'hidden' }}>
+                <Content style={{ overflow: 'auto', height: '100vh' }}>
+                    <Outlet />
+                </Content>
+            </Layout>
+        )
+    }
+
     return (
         <Layout style={{ minHeight: '100vh', height: '100vh', overflow: 'hidden' }}>
 

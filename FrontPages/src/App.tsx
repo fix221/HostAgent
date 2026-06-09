@@ -8,7 +8,6 @@ import Dashboard from './pages/Dashboards'
 import VMs from './pages/DockManage'
 import VMDetail from './pages/DockDetail'
 import VMDetailV2 from './pages/DockDetailV2'
-import VMDetailV3 from './pages/DockDetailV3'
 import Hosts from './pages/HostManage'
 import Users from './pages/UserManage'
 import Tasks from './pages/TaskManage'
@@ -59,7 +58,6 @@ function App() {
           <Route path="hosts/:hostName/vms" element={<VMs />} />
           <Route path="hosts/:hostName/vms/:uuid" element={<VMDetail />} />
           <Route path="hosts/:hostName/vms/:uuid/v2" element={<VMDetailV2 />} />
-          <Route path="hosts/:hostName/vms/:uuid/v3" element={<VMDetailV3 />} />
           <Route path="vms" element={<UserVMs />} /> {/* 全局容器管理 */}
           <Route path="users" element={<Users />} />
           <Route path="tasks" element={<Tasks />} />

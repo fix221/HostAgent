@@ -234,6 +234,22 @@ class HostServer(BasicServer):
     # 宿主机任务 ###############################################################
     def Crontabs(self) -> bool:
         """定时任务"""
+        # 专用操作：定期刷新PVE代理的ticket（防止2小时过期导致401）============
+        try:
+            if self.http_manager and self.http_manager.proxys_pve:
+                import time
+                # 每90分钟刷新一次（PVE ticket有效期2小时）
+                now = int(time.time())
+                if not hasattr(self, '_pve_ticket_refresh_time'):
+                    self._pve_ticket_refresh_time = 0
+                if now - self._pve_ticket_refresh_time > 5400:  # 90分钟
+                    user = self.hs_config.server_user + "@pam"
+                    password = self.hs_config.server_pass
+                    pve_host = self.hs_config.server_addr
+                    self.http_manager.refresh_pve_tickets(pve_host, user, password)
+                    self._pve_ticket_refresh_time = now
+        except Exception as e:
+            logger.warning(f"[{self.hs_config.server_name}] 刷新PVE ticket失败: {e}")
         # 通用操作 =============================================================
         return super().Crontabs()
 

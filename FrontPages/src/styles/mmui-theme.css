@@ -90,8 +90,8 @@
   --mmui-row-height: 48px;
 
   /* 布局尺寸 */
-  --mmui-sidebar-width: 272px;
-  --mmui-sidebar-width-collapsed: 72px;
+  --mmui-sidebar-width: 180px;
+  --mmui-sidebar-width-collapsed: 56px;
   --mmui-header-height: 56px;
 
   /* 卡片 */

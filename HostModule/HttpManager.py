@@ -351,6 +351,41 @@ class HttpManager:
             logger.error(f"[HttpManager] 添加PVE代理失败: {str(e)}")
             return False
 
+    def refresh_pve_tickets(self, pve_host, username, password):
+        """刷新所有PVE代理的ticket（PVE ticket默认2小时过期）"""
+        if not self.proxys_pve:
+            return False
+        try:
+            import requests, urllib3
+            urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
+            # 重新获取PVE认证ticket
+            auth_resp = requests.post(
+                f"https://{pve_host}:8006/api2/json/access/ticket",
+                data={"username": username, "password": password},
+                verify=False, timeout=10
+            )
+            if auth_resp.status_code != 200:
+                logger.warning(f"[HttpManager] 刷新PVE ticket失败: HTTP {auth_resp.status_code}")
+                return False
+            new_ticket = auth_resp.json().get('data', {}).get('ticket', '')
+            if not new_ticket:
+                logger.warning("[HttpManager] 刷新PVE ticket失败: 返回ticket为空")
+                return False
+            # 更新所有PVE代理的ticket
+            for token in self.proxys_pve:
+                self.proxys_pve[token]["pve_ticket"] = new_ticket
+            # 重新生成配置并重载
+            self.config_all()
+            if self.reload_web():
+                logger.info("[HttpManager] PVE ticket已刷新并重载Caddy配置")
+                return True
+            else:
+                logger.warning("[HttpManager] PVE ticket已刷新但重载Caddy失败")
+                return False
+        except Exception as e:
+            logger.error(f"[HttpManager] 刷新PVE ticket异常: {str(e)}")
+            return False
+
     # 添加SSH的代理配置 ##########################################################################
     def create_vnc(self, token, target_ip, target_port, path=""):
         try:

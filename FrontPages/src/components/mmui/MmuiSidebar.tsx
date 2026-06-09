@@ -1,10 +1,11 @@
 import React from 'react';
 import { Tooltip } from 'antd';
 import {
-  AppstoreOutlined, DesktopOutlined, DatabaseOutlined, SettingOutlined,
+  AppstoreOutlined, DatabaseOutlined,
   HddOutlined, CameraOutlined, GlobalOutlined, SwapOutlined,
-  SafetyCertificateOutlined, ArrowLeftOutlined, MenuFoldOutlined,
-  MenuUnfoldOutlined, ThunderboltOutlined
+  ArrowLeftOutlined, MenuFoldOutlined,
+  MenuUnfoldOutlined, ThunderboltOutlined, ApiOutlined,
+  UsbOutlined, UserOutlined, OrderedListOutlined, CloudServerOutlined
 } from '@ant-design/icons';
 
 export interface SidebarItem {
@@ -25,17 +26,17 @@ interface MmuiSidebarProps {
 
 /** 默认侧边栏导航项 */
 export const defaultSidebarItems: SidebarItem[] = [
-  { key: 'panel', icon: <AppstoreOutlined />, label: '面板' },
-  { key: 'system', icon: <DesktopOutlined />, label: '系统' },
-  { key: 'monitor', icon: <DatabaseOutlined />, label: '监控' },
-  { key: 'sysadmin', icon: <SettingOutlined />, label: '系统管理' },
-  { key: 'vnc', icon: <DesktopOutlined />, label: 'VNC' },
-  { key: 'data', icon: <HddOutlined />, label: '数据' },
-  { key: 'snapshot', icon: <CameraOutlined />, label: '快照' },
-  { key: 'backup', icon: <DatabaseOutlined />, label: '备份' },
-  { key: 'network', icon: <GlobalOutlined />, label: '网络' },
+  { key: 'panel', icon: <AppstoreOutlined />, label: '实例概览' },
+  { key: 'nic', icon: <GlobalOutlined />, label: '网卡管理' },
+  { key: 'disk', icon: <HddOutlined />, label: '数据磁盘' },
+  { key: 'iso', icon: <CameraOutlined />, label: '光盘镜像' },
   { key: 'nat', icon: <SwapOutlined />, label: '端口映射' },
-  { key: 'policy', icon: <SafetyCertificateOutlined />, label: '策略' },
+  { key: 'proxy', icon: <CloudServerOutlined />, label: '反向代理' },
+  { key: 'pci', icon: <ApiOutlined />, label: 'PCI设备' },
+  { key: 'usb', icon: <UsbOutlined />, label: 'USB设备' },
+  { key: 'backup', icon: <DatabaseOutlined />, label: '备份管理' },
+  { key: 'boot', icon: <OrderedListOutlined />, label: '启动顺序' },
+  { key: 'permission', icon: <UserOutlined />, label: '用户权限' },
 ];
 
 /** MMUI 风格侧边栏导航项 */
@@ -76,7 +77,7 @@ export default function MmuiSidebar({
       {/* 品牌区域 */}
       <div className="mmui-sidebar__brand">
         <ThunderboltOutlined className="mmui-sidebar__brand-icon" />
-        {!collapsed && <span className="mmui-sidebar__brand-title">云管理系统</span>}
+        {!collapsed && <span className="mmui-sidebar__brand-title">OpenIDC</span>}
       </div>
 
       {/* 导航列表 */}
