@@ -385,11 +385,9 @@ class HttpManager:
                         ip = pve_info["ip"]
                         port = pve_info["port"]
                         pve_ticket = pve_info["pve_ticket"]
-                        # /{token}、/{token}/ 和 /{token}/* -> strip prefix -> 代理到 PVE 根路径
-                        # 必须包含 /{token}/ 否则带尾部斜杠的请求会落入兜底handle
-                        config += f"\t@pve_{pve_token} path /{pve_token} /{pve_token}/ /{pve_token}/*\n"
-                        config += f"\troute @pve_{pve_token} {{\n"
-                        config += f"\t\turi strip_prefix /{pve_token}\n"
+                        # 参考TTY代理写法：handle_path /{token}* 匹配所有以token开头的路径并去掉前缀
+                        # 包括 /{token}、/{token}/、/{token}/xxx 等所有情况
+                        config += f"\thandle_path /{pve_token}* {{\n"
                         config += f"\t\treverse_proxy https://{ip}:{port} {{\n"
                         config += f"\t\t\theader_up Host {ip}:{port}\n"
                         config += f"\t\t\theader_up Cookie \"PVEAuthCookie={pve_ticket}\"\n"

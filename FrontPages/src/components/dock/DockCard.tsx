@@ -14,7 +14,8 @@ import {
     PlayCircleOutlined,
     QuestionCircleOutlined,
     LoadingOutlined,
-    PauseCircleOutlined
+    PauseCircleOutlined,
+    UserOutlined,
 } from '@ant-design/icons'
 import { VM_STATUS_MAP } from '@/constants/status'
 import { VM_PERMISSION, hasPermission } from '@/types'
@@ -155,6 +156,20 @@ const DockCard: React.FC<DockCardProps> = ({
                                 <span className="text-xs ">
                                     {config.os_name || '未知系统'}
                                 </span>
+                                {(() => {
+                                    const ownAll = config.own_all || {}
+                                    const ownerNames = Object.keys(ownAll)
+                                    if (ownerNames.length > 0) {
+                                        return (
+                                            <Tooltip title={ownerNames.length > 1 ? `共享: ${ownerNames.join(', ')}` : undefined}>
+                                                <Tag icon={<UserOutlined />} className="m-0 text-xs" color="default">
+                                                    {ownerNames[0]}
+                                                </Tag>
+                                            </Tooltip>
+                                        )
+                                    }
+                                    return null
+                                })()}
                             </div>
                         </div>
                     </div>

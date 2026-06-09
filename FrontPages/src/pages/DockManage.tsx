@@ -9,13 +9,27 @@ import {
     Col,
     Modal,
     Input,
+    Table,
+    Tag,
+    Tooltip,
+    Space,
 } from 'antd'
 import {
     PlusOutlined,
     ReloadOutlined,
     ArrowLeftOutlined,
-    RadarChartOutlined
+    RadarChartOutlined,
+    AppstoreOutlined,
+    UnorderedListOutlined,
+    DesktopOutlined,
+    EyeOutlined,
+    PoweroffOutlined,
+    EditOutlined,
+    DeleteOutlined,
+    UserOutlined,
 } from '@ant-design/icons'
+import { VM_STATUS_MAP } from '@/constants/status'
+import { VM_PERMISSION, hasPermission } from '@/types'
 import api, { getHosts } from '@/utils/apis.ts'
 import { startTaskWithNotification } from '@/utils/taskPoller'
 import { useUserStore } from '@/utils/data.ts'
@@ -36,6 +50,9 @@ function DockManage() {
     const [loading, setLoading] = useState(false)
     const [availableHosts, setAvailableHosts] = useState<Record<string, any>>({})
     const [userQuota, setUserQuota] = useState<any>(null)
+    const [viewMode, setViewMode] = useState<'card' | 'table'>(() => {
+        return (localStorage.getItem('dockManage_viewMode') as 'card' | 'table') || 'card'
+    })
     
     // Modals state
     const [createModalOpen, setCreateModalOpen] = useState(false)
@@ -295,6 +312,22 @@ function DockManage() {
                 subtitle="管理和监控虚拟机实例"
                 actions={
                     <>
+                        <Button.Group>
+                            <Tooltip title="卡片视图">
+                                <Button
+                                    icon={<AppstoreOutlined />}
+                                    type={viewMode === 'card' ? 'primary' : 'default'}
+                                    onClick={() => { setViewMode('card'); localStorage.setItem('dockManage_viewMode', 'card') }}
+                                />
+                            </Tooltip>
+                            <Tooltip title="列表视图">
+                                <Button
+                                    icon={<UnorderedListOutlined />}
+                                    type={viewMode === 'table' ? 'primary' : 'default'}
+                                    onClick={() => { setViewMode('table'); localStorage.setItem('dockManage_viewMode', 'table') }}
+                                />
+                            </Tooltip>
+                        </Button.Group>
                         {hostName && (
                             <Button 
                                 icon={<RadarChartOutlined />} 
@@ -333,7 +366,7 @@ function DockManage() {
                 </div>
             ) : Object.keys(vms).length === 0 ? (
                 <Empty description="暂无虚拟机" />
-            ) : (
+            ) : viewMode === 'card' ? (
                 <Row gutter={[16, 16]}>
                     {Object.entries(vms).map(([key, vm]) => {
                         const vmHost = vm._host || hostName
@@ -356,6 +389,128 @@ function DockManage() {
                         )
                     })}
                 </Row>
+            ) : (
+                <Table
+                    dataSource={Object.entries(vms).map(([key, vm]) => ({
+                        key,
+                        uuid: vm._realUuid || key,
+                        vm,
+                        hostName: vm._host || hostName,
+                    }))}
+                    columns={[
+                        {
+                            title: '虚拟机',
+                            dataIndex: 'uuid',
+                            key: 'uuid',
+                            render: (uuid: string, record: any) => (
+                                <div className="flex items-center gap-2">
+                                    <DesktopOutlined className="text-purple-500" />
+                                    <span className="font-medium">{uuid}</span>
+                                </div>
+                            ),
+                        },
+                        {
+                            title: '所有者',
+                            key: 'owner',
+                            width: 120,
+                            render: (_: any, record: any) => {
+                                const ownAll = record.vm?.config?.own_all || {}
+                                const ownerNames = Object.keys(ownAll)
+                                const primaryOwner = ownerNames.length > 0 ? ownerNames[0] : '-'
+                                return (
+                                    <Tooltip title={ownerNames.length > 1 ? `共享: ${ownerNames.join(', ')}` : undefined}>
+                                        <span><UserOutlined className="mr-1" />{primaryOwner}</span>
+                                    </Tooltip>
+                                )
+                            },
+                        },
+                        {
+                            title: '主机',
+                            dataIndex: 'hostName',
+                            key: 'hostName',
+                            width: 120,
+                            render: (host: string) => <Tag color="blue">{host}</Tag>,
+                        },
+                        {
+                            title: '系统',
+                            key: 'os',
+                            width: 140,
+                            render: (_: any, record: any) => record.vm?.config?.os_name || '未知',
+                        },
+                        {
+                            title: '状态',
+                            key: 'status',
+                            width: 100,
+                            render: (_: any, record: any) => {
+                                const statusList = record.vm?.status || []
+                                const firstStatus = statusList.length > 0 ? statusList[0] : { ac_status: 'UNKNOWN' }
+                                const powerStatus = firstStatus.ac_status || 'UNKNOWN'
+                                const statusInfo = VM_STATUS_MAP[powerStatus] || VM_STATUS_MAP.UNKNOWN
+                                return <Tag color={statusInfo.color}>{statusInfo.text}</Tag>
+                            },
+                        },
+                        {
+                            title: 'CPU',
+                            key: 'cpu',
+                            width: 80,
+                            render: (_: any, record: any) => {
+                                const config = record.vm?.config || {}
+                                return `${config.cpu_num || 0} 核`
+                            },
+                        },
+                        {
+                            title: '内存',
+                            key: 'mem',
+                            width: 80,
+                            render: (_: any, record: any) => {
+                                const config = record.vm?.config || {}
+                                const mem = config.mem_num || 0
+                                return mem >= 1024 ? `${(mem / 1024).toFixed(1)} GB` : `${mem} MB`
+                            },
+                        },
+                        {
+                            title: 'IP地址',
+                            key: 'ip',
+                            width: 140,
+                            render: (_: any, record: any) => {
+                                const nicAll = record.vm?.config?.nic_all || {}
+                                const firstNic: any = Object.values(nicAll)[0] || {}
+                                return firstNic.ip4_addr || '-'
+                            },
+                        },
+                        {
+                            title: '操作',
+                            key: 'actions',
+                            width: 180,
+                            render: (_: any, record: any) => {
+                                const isHostDisabled = record.hostName ? availableHosts[record.hostName]?.enabled === false : false
+                                const perms = record.vm?.user_permissions ?? VM_PERMISSION.FULL_MASK
+                                return (
+                                    <Space size="small">
+                                        <Tooltip title="查看详情">
+                                            <Button type="link" size="small" icon={<EyeOutlined />} onClick={() => handleOpenDetail(record.uuid, record.vm?._host)} />
+                                        </Tooltip>
+                                        <Tooltip title="VNC">
+                                            <Button type="text" size="small" icon={<DesktopOutlined />} onClick={() => handleOpenVnc(record.uuid, record.vm?._host)} disabled={isHostDisabled || !hasPermission(perms, VM_PERMISSION.VNC_EDITS)} />
+                                        </Tooltip>
+                                        <Tooltip title="电源">
+                                            <Button type="text" size="small" icon={<PoweroffOutlined />} onClick={() => handleOpenPower(record.uuid, record.vm?._host)} disabled={isHostDisabled || !hasPermission(perms, VM_PERMISSION.PWR_EDITS)} />
+                                        </Tooltip>
+                                        <Tooltip title="编辑">
+                                            <Button type="text" size="small" icon={<EditOutlined />} onClick={() => handleEdit(record.uuid, record.vm?._host)} disabled={isHostDisabled || !hasPermission(perms, VM_PERMISSION.VM_MODIFY)} />
+                                        </Tooltip>
+                                        <Tooltip title="删除">
+                                            <Button type="text" size="small" danger icon={<DeleteOutlined />} onClick={() => handleDelete(record.uuid, record.vm?._host)} disabled={isHostDisabled || !hasPermission(perms, VM_PERMISSION.VM_DELETE)} />
+                                        </Tooltip>
+                                    </Space>
+                                )
+                            },
+                        },
+                    ]}
+                    pagination={false}
+                    size="middle"
+                    scroll={{ x: 'max-content' }}
+                />
             )}
 
             <DockCreateModal

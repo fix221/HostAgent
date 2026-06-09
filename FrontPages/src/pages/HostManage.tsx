@@ -31,7 +31,9 @@ import {
     FolderOutlined,
     DatabaseOutlined,
     CopyOutlined,
-    ExclamationCircleOutlined
+    ExclamationCircleOutlined,
+    AppstoreOutlined,
+    UnorderedListOutlined,
 } from '@ant-design/icons'
 import {useNavigate} from 'react-router-dom'
 import api from '@/utils/apis.ts'
@@ -193,6 +195,9 @@ function HostManage() {
     const [hostsStatus, setHostsStatus] = useState<Record<string, HostStatus>>({})
     const [engineTypes, setEngineTypes] = useState<Record<string, EngineTypeConfig>>({})
     const [loading, setLoading] = useState(false)
+    const [viewMode, setViewMode] = useState<'card' | 'table'>(() => {
+        return (localStorage.getItem('hostManage_viewMode') as 'card' | 'table') || 'card'
+    })
     const [modalVisible, setModalVisible] = useState(false)
     const [editMode, setEditMode] = useState<'add' | 'edit'>('add')
     const [currentHost, setCurrentHost] = useState<string>('')
@@ -1058,6 +1063,22 @@ function HostManage() {
                     <Button icon={<ReloadOutlined/>} onClick={loadHosts}>
                         刷新
                     </Button>
+                    <Button.Group>
+                        <Tooltip title="卡片视图">
+                            <Button
+                                icon={<AppstoreOutlined />}
+                                type={viewMode === 'card' ? 'primary' : 'default'}
+                                onClick={() => { setViewMode('card'); localStorage.setItem('hostManage_viewMode', 'card') }}
+                            />
+                        </Tooltip>
+                        <Tooltip title="列表视图">
+                            <Button
+                                icon={<UnorderedListOutlined />}
+                                type={viewMode === 'table' ? 'primary' : 'default'}
+                                onClick={() => { setViewMode('table'); localStorage.setItem('hostManage_viewMode', 'table') }}
+                            />
+                        </Tooltip>
+                    </Button.Group>
                 </Space>
                 <div className="text-sm flex items-center gap-2" style={{ color: 'var(--text-secondary)' }}>
                     <InfoCircleOutlined/>
@@ -1077,13 +1098,70 @@ function HostManage() {
                     <p className=" mb-4">暂无主机</p>
                     <Button type="primary" onClick={handleAdd}>添加第一个主机</Button>
                 </div>
-            ) : (
+            ) : viewMode === 'card' ? (
                 <div className="grid grid-cols-[repeat(auto-fill,minmax(500px,1fr))] gap-4">
                     {Object.entries(hosts).map(([name, host]) => (
                         <div key={name}>
                             {renderHostCard(name, host)}
                         </div>
                     ))}
+                </div>
+            ) : (
+                <div className="glass-card overflow-hidden">
+                    <table className="w-full text-sm">
+                        <thead>
+                            <tr className="border-b" style={{ borderColor: 'var(--border-color)' }}>
+                                <th className="text-left p-3 font-semibold">主机名称</th>
+                                <th className="text-left p-3 font-semibold">类型</th>
+                                <th className="text-left p-3 font-semibold">状态</th>
+                                <th className="text-left p-3 font-semibold">连接地址</th>
+                                <th className="text-left p-3 font-semibold">虚拟机</th>
+                                <th className="text-left p-3 font-semibold">CPU</th>
+                                <th className="text-left p-3 font-semibold">内存</th>
+                                <th className="text-left p-3 font-semibold">操作</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {Object.entries(hosts).map(([name, host]) => {
+                                const status = hostsStatus[name]
+                                const typeInfo = engineTypes[host.type] || {}
+                                const cpuPercent = status ? Math.min(status.cpu_usage || 0, 100) : 0
+                                const memPercent = status && status.mem_total ? Math.min((status.mem_usage || 0) / status.mem_total * 100, 100) : 0
+                                return (
+                                    <tr key={name} className="border-b hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors" style={{ borderColor: 'var(--border-color)' }}>
+                                        <td className="p-3">
+                                            <div className="flex items-center gap-2">
+                                                <CloudServerOutlined className="text-blue-500" />
+                                                <span className="font-medium">{name}</span>
+                                            </div>
+                                        </td>
+                                        <td className="p-3">{typeInfo.description || host.type}</td>
+                                        <td className="p-3">
+                                            <Tag color={host.status === 'active' ? 'success' : 'error'}>
+                                                {host.status === 'active' ? '已启用' : '已禁用'}
+                                            </Tag>
+                                        </td>
+                                        <td className="p-3">{host.addr || '未配置'}</td>
+                                        <td className="p-3">{host.vm_count || 0} / {host.config?.limits_nums || 0}</td>
+                                        <td className="p-3">{cpuPercent.toFixed(0)}%</td>
+                                        <td className="p-3">{memPercent.toFixed(0)}%</td>
+                                        <td className="p-3">
+                                            <Space size="small">
+                                                <Tooltip title="管理虚拟机">
+                                                    <Button type="link" size="small" onClick={() => navigate(`/hosts/${name}/vms`)} disabled={host.status !== 'active'}>
+                                                        管理
+                                                    </Button>
+                                                </Tooltip>
+                                                <Tooltip title="编辑">
+                                                    <Button type="text" size="small" icon={<EditOutlined />} onClick={() => handleEdit(name)} disabled={host.status !== 'active'} />
+                                                </Tooltip>
+                                            </Space>
+                                        </td>
+                                    </tr>
+                                )
+                            })}
+                        </tbody>
+                    </table>
                 </div>
             )}
 
