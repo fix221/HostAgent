@@ -385,16 +385,20 @@ class HttpManager:
                         ip = pve_info["ip"]
                         port = pve_info["port"]
                         pve_ticket = pve_info["pve_ticket"]
-                        # 参考TTY代理写法：handle_path /{token}* 匹配所有以token开头的路径并去掉前缀
-                        # 包括 /{token}、/{token}/、/{token}/xxx 等所有情况
-                        config += f"\thandle_path /{pve_token}* {{\n"
-                        config += f"\t\treverse_proxy https://{ip}:{port} {{\n"
-                        config += f"\t\t\theader_up Host {ip}:{port}\n"
-                        config += f"\t\t\theader_up Cookie \"PVEAuthCookie={pve_ticket}\"\n"
-                        config += f"\t\t\theader_up Connection {{http.request.header.Connection}}\n"
-                        config += f"\t\t\theader_up Upgrade {{http.request.header.Upgrade}}\n"
-                        config += f"\t\t\ttransport http {{\n"
-                        config += f"\t\t\t\ttls_insecure_skip_verify\n"
+                        # handle保证互斥匹配（不会落入兜底），route保证按声明顺序执行
+                        # Caddy directive order中uri在reverse_proxy之后，必须用route强制顺序
+                        config += f"\t@pve_{pve_token} path /{pve_token} /{pve_token}/ /{pve_token}/*\n"
+                        config += f"\thandle @pve_{pve_token} {{\n"
+                        config += f"\t\troute {{\n"
+                        config += f"\t\t\turi strip_prefix /{pve_token}\n"
+                        config += f"\t\t\treverse_proxy https://{ip}:{port} {{\n"
+                        config += f"\t\t\t\theader_up Host {ip}:{port}\n"
+                        config += f"\t\t\t\theader_up Cookie \"PVEAuthCookie={pve_ticket}\"\n"
+                        config += f"\t\t\t\theader_up Connection {{http.request.header.Connection}}\n"
+                        config += f"\t\t\t\theader_up Upgrade {{http.request.header.Upgrade}}\n"
+                        config += f"\t\t\t\ttransport http {{\n"
+                        config += f"\t\t\t\t\ttls_insecure_skip_verify\n"
+                        config += f"\t\t\t\t}}\n"
                         config += f"\t\t\t}}\n"
                         config += f"\t\t}}\n"
                         config += f"\t}}\n"
@@ -694,9 +698,15 @@ class HttpManager:
                                         env=self._get_caddy_env())
                 if result.returncode == 0:
                     logger.info(f"[HttpManager] Caddy配置已重载（管理端口: {self.manage_port}）")
+                    if result.stderr:
+                        logger.debug(f"[HttpManager] Caddy重载输出: {result.stderr.strip()}")
                     return True
                 else:
-                    logger.warning(f"[HttpManager] Caddy重载失败: {result.stderr}")
+                    logger.warning(f"[HttpManager] Caddy重载失败(退出码:{result.returncode})")
+                    if result.stdout:
+                        logger.warning(f"[HttpManager] stdout: {result.stdout.strip()}")
+                    if result.stderr:
+                        logger.warning(f"[HttpManager] stderr: {result.stderr.strip()}")
                     # 重载失败时尝试重启Caddy
                     logger.info("[HttpManager] 尝试重启Caddy服务")
                     self.closed_web()
@@ -715,9 +725,15 @@ class HttpManager:
                                         env=self._get_caddy_env())
                 if result.returncode == 0:
                     logger.info(f"[HttpManager] Caddy配置已重载（管理端口: {self.manage_port}）")
+                    if result.stderr:
+                        logger.debug(f"[HttpManager] Caddy重载输出: {result.stderr.strip()}")
                     return True
                 else:
-                    logger.warning(f"[HttpManager] Caddy重载失败: {result.stderr}")
+                    logger.warning(f"[HttpManager] Caddy重载失败(退出码:{result.returncode})")
+                    if result.stdout:
+                        logger.warning(f"[HttpManager] stdout: {result.stdout.strip()}")
+                    if result.stderr:
+                        logger.warning(f"[HttpManager] stderr: {result.stderr.strip()}")
                     # 重载失败时尝试重启Caddy
                     logger.info("[HttpManager] 尝试重启Caddy服务")
                     self.closed_web()
