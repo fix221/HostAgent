@@ -892,7 +892,7 @@ const [operationTimeoutId, setOperationTimeoutId] = useState<ReturnType<typeof s
                 data.gpu.push(status.gpu_total || 0)
                 data.netUp.push(status.network_u || 0)
                 data.netDown.push(status.network_d || 0)
-                data.traffic.push(status.flu_usage || 0)
+                data.traffic.push(Number(((status.flu_usage || 0) / 1024).toFixed(2)))
                 data.nat.push(status.nat_usage || 0)
                 data.proxy.push(status.web_usage || 0)
             } else {
