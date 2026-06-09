@@ -2364,6 +2364,23 @@ if __name__ == '__main__':
         import multiprocessing
         multiprocessing.freeze_support()
         
+        # ===== 启动前清理残留的旧 Server 进程 =====
+        try:
+            if platform.system() == "Windows":
+                subprocess.run(
+                    ["taskkill", "/F", "/IM", "idcs_caddy"],
+                    stdout=subprocess.DEVNULL,
+                    stderr=subprocess.DEVNULL
+                )
+            else:
+                subprocess.run(
+                    ["pkill", "-f", "idcs_caddy"],
+                    stdout=subprocess.DEVNULL,
+                    stderr=subprocess.DEVNULL
+                )
+        except Exception:
+            pass  # 忽略清理失败（可能没有残留进程）
+        
         # 检测是否为打包后的环境
         is_frozen = getattr(sys, 'frozen', False)
         

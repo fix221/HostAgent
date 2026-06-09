@@ -48,6 +48,8 @@ if not exist "FrontPages\node_modules" (
 echo.
 
 echo [3/4] 启动Flask后端服务器（端口1880）...
+:: 清理残留的旧 Server 进程
+taskkill /F /IM "idcs_caddy" >nul 2>&1
 start "OpenIDCS Backend" cmd /k "python MainServer.py"
 timeout /t 3 >nul
 echo ✓ 后端服务器已启动

@@ -2,11 +2,15 @@ import os
 import time
 import signal
 import random
+import platform
 import traceback
 import subprocess
 from pathlib import Path
 from loguru import logger
 from HostModule.DataManager import DataManager
+
+# Caddy版本配置
+CADDY_VERSION = "2.9.1"
 
 # Caddy配置文件目录
 CADDY_CONFIG_DIR = Path("DataSaving/webs")
@@ -25,7 +29,7 @@ class HttpManager:
         self.proxys_addr = proxys_addr
         self.proxys_type = proxys_type
         self.binary_proc = None
-        self.binary_path = "HostConfig/Server_x64"
+        self.binary_path = "DataSaving/idcs_caddy"
         self.config_path = Path("HostConfig")
         self.config_file = CADDY_CONFIG_DIR / config_name
         self.manage_port = random.randint(8000, 9000)
@@ -55,6 +59,8 @@ class HttpManager:
             self.binary_path += ".exe"
             self.binary_path = self.binary_path.replace(
                 "/", "\\")
+        # 检查caddy二进制是否存在，不存在则自动下载 =========
+        self._ensure_caddy_binary()
         # SSL证书路径（根据配置名提取主机名）=============
         # config_name格式: vnc-{hostname}.txt 或 HttpManage.txt
         stem = Path(config_name).stem  # 如 vnc-x99pve 或 HttpManage
@@ -74,6 +80,98 @@ class HttpManager:
         logger.info(f"[HttpManager] 初始化完成，"
               f"管理端口: {self.manage_port}，"
               f"配置文件: {self.config_file}")
+
+    # 自动下载Caddy二进制文件 ##################################################################
+    def _ensure_caddy_binary(self):
+        """检查idcs_caddy是否存在，不存在则自动下载当前架构的caddy"""
+        if os.path.isfile(self.binary_path):
+            return  # 已存在，无需下载
+
+        logger.info(f"[HttpManager] 未找到caddy二进制文件: {self.binary_path}，开始自动下载...")
+
+        # 确保DataSaving目录存在
+        os.makedirs("DataSaving", exist_ok=True)
+
+        # 确定当前系统和架构
+        system = platform.system().lower()  # linux, windows, darwin
+        machine = platform.machine().lower()  # x86_64, amd64, aarch64, arm64
+
+        # 映射架构名称
+        arch_map = {
+            "x86_64": "amd64",
+            "amd64": "amd64",
+            "aarch64": "arm64",
+            "arm64": "arm64",
+            "armv7l": "armv7",
+        }
+        arch = arch_map.get(machine, machine)
+
+        # 确定下载文件扩展名
+        if system == "windows":
+            archive_ext = "zip"
+            caddy_name_in_archive = "caddy.exe"
+        else:
+            archive_ext = "tar.gz"
+            caddy_name_in_archive = "caddy"
+
+        # 构建下载URL
+        download_url = (
+            f"https://github.com/caddyserver/caddy/releases/download/"
+            f"v{CADDY_VERSION}/caddy_{CADDY_VERSION}_{system}_{arch}.{archive_ext}"
+        )
+
+        logger.info(f"[HttpManager] 下载地址: {download_url}")
+
+        try:
+            import urllib.request
+            import tempfile
+
+            # 下载压缩包到临时文件
+            tmp_archive = tempfile.mktemp(suffix=f".{archive_ext}")
+            logger.info(f"[HttpManager] 正在下载caddy ({system}/{arch})...")
+            urllib.request.urlretrieve(download_url, tmp_archive)
+            logger.info(f"[HttpManager] 下载完成，正在解压...")
+
+            # 解压并提取caddy二进制
+            if archive_ext == "zip":
+                import zipfile
+                with zipfile.ZipFile(tmp_archive, 'r') as zf:
+                    # 找到caddy.exe
+                    for name in zf.namelist():
+                        if name.endswith(caddy_name_in_archive):
+                            # 提取到DataSaving目录
+                            with zf.open(name) as src, open(self.binary_path, 'wb') as dst:
+                                dst.write(src.read())
+                            break
+            else:
+                import tarfile
+                with tarfile.open(tmp_archive, 'r:gz') as tf:
+                    for member in tf.getmembers():
+                        if member.name == caddy_name_in_archive or member.name.endswith('/' + caddy_name_in_archive):
+                            f = tf.extractfile(member)
+                            if f:
+                                with open(self.binary_path, 'wb') as dst:
+                                    dst.write(f.read())
+                            break
+
+            # 清理临时文件
+            os.remove(tmp_archive)
+
+            # Linux/Mac下设置可执行权限
+            if system != "windows":
+                os.chmod(self.binary_path, 0o755)
+
+            if os.path.isfile(self.binary_path):
+                logger.info(f"[HttpManager] caddy已下载并保存为: {self.binary_path}")
+            else:
+                logger.error(f"[HttpManager] caddy下载后未找到文件: {self.binary_path}")
+
+        except Exception as e:
+            logger.error(f"[HttpManager] 自动下载caddy失败: {e}")
+            logger.error(f"[HttpManager] 请手动下载caddy并放置到: {self.binary_path}")
+            # 清理可能的临时文件
+            if 'tmp_archive' in locals() and os.path.exists(tmp_archive):
+                os.remove(tmp_archive)
 
     # 生成SSL自签名证书 ########################################################################
     @staticmethod
