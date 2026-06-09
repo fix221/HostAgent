@@ -76,8 +76,8 @@ export default function MmuiSidebar({
     <aside className="mmui-sidebar" data-collapsed={collapsed || undefined}>
       {/* 品牌区域 */}
       <div className="mmui-sidebar__brand">
-        <ThunderboltOutlined className="mmui-sidebar__brand-icon" />
-        {!collapsed && <span className="mmui-sidebar__brand-title">OpenIDC</span>}
+        <CloudServerOutlined className="mmui-sidebar__brand-icon" />
+        {!collapsed && <span className="mmui-sidebar__brand-title">云管理系统</span>}
       </div>
 
       {/* 导航列表 */}

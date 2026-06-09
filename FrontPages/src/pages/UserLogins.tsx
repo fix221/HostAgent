@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef, useCallback } from 'react'
 import { useNavigate, Link } from 'react-router-dom'
 import { Form, Input, Button, Modal, message, Alert, Dropdown } from 'antd'
-import { UserOutlined, LockOutlined, KeyOutlined, LoginOutlined, MailOutlined, InfoCircleOutlined, BulbOutlined, BulbFilled, BgColorsOutlined, TranslationOutlined, SwapOutlined } from '@ant-design/icons'
+import { UserOutlined, LockOutlined, KeyOutlined, LoginOutlined, MailOutlined, BulbOutlined, BulbFilled, BgColorsOutlined, TranslationOutlined, SwapOutlined } from '@ant-design/icons'
 import { useUserStore } from '@/utils/data.ts'
 import api from '@/utils/apis.ts'
 import { useTheme } from '@/contexts/ThemeContext'

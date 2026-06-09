@@ -1516,6 +1516,29 @@ def api_vm_upload():
     return rest_manager.vm_upload()
 
 
+# 命令执行结果回传 ########################################################################
+@app.route('/api/client/cmd_result', methods=['POST'])
+def api_vm_cmd_result():
+    """虚拟机命令执行结果回传（无需认证，由CloudInit回调）"""
+    return rest_manager.vm_cmd_result()
+
+
+# 下发命令到虚拟机 ########################################################################
+@app.route('/api/client/cmd_send/<hs_name>/<vm_uuid>', methods=['POST'])
+@require_auth
+def api_vm_cmd_send(hs_name, vm_uuid):
+    """下发命令到虚拟机（前端调用，等待CloudInit握手时下发）"""
+    return rest_manager.vm_cmd_send(hs_name, vm_uuid)
+
+
+# 获取命令执行结果 ########################################################################
+@app.route('/api/client/cmd_status/<hs_name>/<vm_uuid>', methods=['GET'])
+@require_auth
+def api_vm_cmd_status(hs_name, vm_uuid):
+    """获取虚拟机最近一次命令执行结果"""
+    return rest_manager.vm_cmd_status(hs_name, vm_uuid)
+
+
 # ============================================================================
 # 虚拟机网络配置API - NAT端口转发
 # ============================================================================

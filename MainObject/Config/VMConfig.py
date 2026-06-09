@@ -28,6 +28,9 @@ class VMConfig:
         self.vm_deleted = False  # 扫描时未找到标记
         self.os_name = ""  # 设置SYS操作系统名
         self.os_pass = ""  # 设置SYS系统的密码
+        # 远程命令执行 ========================
+        self.vm_cmd = None  # 待执行命令（dict: {cmd_id, command, timeout}），CloudInit握手时下发并清空
+        self.vm_cmd_result = None  # 最近一次命令执行结果（dict: {cmd_id, command, exit_code, stdout, stderr, success, duration}）
         # 远程连接 ===========================
         self.vc_port = self.random_conn_port()
         self.vc_pass = ""  # 分配VNC远程的密码
@@ -223,6 +226,9 @@ class VMConfig:
             "os_name": self.os_name,
             "os_pass": self.os_pass,
             "vm_flag": str(self.vm_flag),
+            # 远程命令 =======================
+            "vm_cmd": self.vm_cmd,
+            "vm_cmd_result": self.vm_cmd_result,
             # 资源配置 =======================
             "cpu_num": self.cpu_num,
             "cpu_per": self.cpu_per,

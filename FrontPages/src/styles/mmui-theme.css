@@ -21,9 +21,9 @@
     "Microsoft YaHei UI", "Microsoft YaHei", "Helvetica Neue", Arial, sans-serif;
 
   /* 圆角 */
-  --mmui-radius: 6px;
+  --mmui-radius: 8px;
   --mmui-radius-sm: 6px;
-  --mmui-radius-lg: 6px;
+  --mmui-radius-lg: 12px;
   --mmui-radius-btn: 8px;
 
   /* 字体大小 */
@@ -90,9 +90,9 @@
   --mmui-row-height: 48px;
 
   /* 布局尺寸 */
-  --mmui-sidebar-width: 180px;
+  --mmui-sidebar-width: 200px;
   --mmui-sidebar-width-collapsed: 56px;
-  --mmui-header-height: 56px;
+  --mmui-header-height: 52px;
 
   /* 卡片 */
   --mmui-card-head-height: 64px;
@@ -111,11 +111,11 @@
 [data-mmui-theme="light"] {
   color-scheme: light;
 
-  /* 页面背景 */
-  --mmui-page-gradient: radial-gradient(circle at 18% 0%, rgba(68, 96, 255, 0.16) 0%, rgba(68, 96, 255, 0) 19%),
-    radial-gradient(circle at 84% 3%, rgba(118, 136, 255, 0.13) 0%, rgba(118, 136, 255, 0) 17%),
-    linear-gradient(180deg, #f7f8ff 0%, #fbfcff 22%, #ffffff 58%, #fbfcff 100%);
-  --mmui-bg: #f5f7fb;
+  /* 页面背景 - 更干净的渐变 */
+  --mmui-page-gradient: radial-gradient(ellipse at 18% 0%, rgba(68, 96, 255, 0.06) 0%, transparent 50%),
+    radial-gradient(ellipse at 85% 5%, rgba(118, 136, 255, 0.05) 0%, transparent 40%),
+    linear-gradient(180deg, #f8f9ff 0%, #ffffff 40%, #f9fafb 100%);
+  --mmui-bg: #f8f9fb;
 
   /* 文字颜色 */
   --mmui-text: rgba(0, 0, 0, 0.88);
@@ -133,20 +133,20 @@
   --mmui-surface-elevated: #ffffff;
   --mmui-card-surface: #ffffff;
   --mmui-card-surface-elevated: #ffffff;
-  --mmui-card-border: rgba(15, 23, 42, 0.09);
-  --mmui-card-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.03), 0 1px 6px -1px rgba(0, 0, 0, 0.02), 0 2px 4px 0 rgba(0, 0, 0, 0.02);
-  --mmui-card-title: #111827;
-  --mmui-card-subtitle: rgba(0, 0, 0, 0.65);
+  --mmui-card-border: rgba(0, 0, 0, 0.06);
+  --mmui-card-shadow: 0 1px 3px rgba(0, 0, 0, 0.02), 0 1px 2px rgba(0, 0, 0, 0.02);
+  --mmui-card-title: #1f2937;
+  --mmui-card-subtitle: rgba(0, 0, 0, 0.55);
 
   /* Header */
-  --mmui-header-bg: rgba(255, 255, 255, 0.6);
+  --mmui-header-bg: rgba(255, 255, 255, 0.72);
 
   /* 侧边栏 */
-  --mmui-sidebar-text: rgba(0, 0, 0, 0.88);
-  --mmui-sidebar-icon: rgba(0, 0, 0, 0.88);
-  --mmui-sidebar-hover: rgba(0, 0, 0, 0.04);
-  --mmui-sidebar-active: rgba(0, 0, 0, 0.04);
-  --mmui-sidebar-active-text: rgba(0, 0, 0, 0.88);
+  --mmui-sidebar-text: #374151;
+  --mmui-sidebar-icon: #6b7280;
+  --mmui-sidebar-hover: rgba(68, 96, 255, 0.04);
+  --mmui-sidebar-active: linear-gradient(135deg, #4460ff 0%, #6b7dff 100%);
+  --mmui-sidebar-active-text: #ffffff;
 
   /* 滚动条 */
   --mmui-scrollbar-track: transparent;

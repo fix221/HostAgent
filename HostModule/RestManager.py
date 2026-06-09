@@ -3847,11 +3847,22 @@ window.location.replace({repr(target_url)});
                                 logger.info(f"[虚拟机上报] 虚拟机 {vm_uuid} 已开机")
                                 vm_config.vm_flag = VMPowers.STARTED
                                 server.data_set()
+
+                            # 获取待执行命令（握手时下发）
+                            vm_cmd = None
+                            if hasattr(vm_config, 'vm_cmd') and vm_config.vm_cmd:
+                                vm_cmd = vm_config.vm_cmd
+                                logger.info(f"[虚拟机上报] 下发命令到 {vm_uuid}: {vm_cmd.get('command', '')[:50]}")
+                                # 下发后清空待执行命令
+                                vm_config.vm_cmd = None
+                                server.data_set()
+
                             return self.api_response(200, f'虚拟机 {vm_uuid} 状态已更新', {
                                 'hs_name': hs_name,
                                 'vm_uuid': vm_uuid,
                                 'vm_pass': vm_pass,
                                 'vm_flag': vm_flag,
+                                'vm_cmd': vm_cmd,
                             })
 
                         except Exception as e:
@@ -3861,6 +3872,140 @@ window.location.replace({repr(target_url)});
         if not found:
             logger.warning(f"[虚拟机上报] 未找到MAC地址为 {mac_addr} 的虚拟机")
             return self.api_response(404, f'未找到MAC地址为 {mac_addr} 的虚拟机')
+
+    # ========================================================================
+    # 虚拟机远程命令执行API
+    # ========================================================================
+
+    # 下发命令到虚拟机 ########################################################################
+    def vm_cmd_send(self, hs_name, vm_uuid):
+        """前端下发命令到虚拟机（存储到vm_cmd字段，等待CloudInit握手时下发）"""
+        import uuid as uuid_lib
+
+        data = request.get_json(silent=True) or {}
+        command = data.get('command', '')
+        timeout = data.get('timeout', 60)
+
+        if not command:
+            return self.api_response(400, '命令不能为空')
+
+        server = self.hs_manage.get_host(hs_name)
+        if not server:
+            return self.api_response(404, '主机不存在')
+
+        server.data_get()
+        vm_config = server.vm_saving.get(vm_uuid)
+        if not vm_config:
+            return self.api_response(404, '虚拟机不存在')
+
+        # 生成命令ID
+        cmd_id = str(uuid_lib.uuid4())
+
+        # 存储待执行命令
+        vm_config.vm_cmd = {
+            'cmd_id': cmd_id,
+            'command': command,
+            'timeout': timeout,
+        }
+        server.data_set()
+
+        logger.info(f"[远程命令] 已下发命令到 {hs_name}/{vm_uuid}: {command[:50]}")
+
+        return self.api_response(200, '命令已下发，等待虚拟机握手执行', {
+            'cmd_id': cmd_id,
+            'command': command,
+            'timeout': timeout,
+            'status': 'pending',
+        })
+
+    # 命令执行结果回传 ########################################################################
+    def vm_cmd_result(self):
+        """CloudInit回传命令执行结果（无需认证）"""
+        result_data = request.get_json(silent=True) or {}
+        cmd_id = result_data.get('cmd_id', '')
+        command = result_data.get('command', '')
+        success = result_data.get('success', False)
+
+        if not cmd_id:
+            return self.api_response(400, '缺少cmd_id参数')
+
+        logger.info(f"[远程命令] 收到命令执行结果: cmd_id={cmd_id}, success={success}")
+
+        # 遍历所有主机查找对应的虚拟机（通过cmd_id匹配vm_cmd_result）
+        found = False
+        for hs_name, server in self.hs_manage.engine.items():
+            if not server:
+                continue
+            try:
+                server.data_get()
+            except Exception:
+                continue
+
+            for vm_uuid, vm_config in server.vm_saving.items():
+                # 检查是否有匹配的cmd_id（可能在vm_cmd中还未清空，或通过结果匹配）
+                # 将结果存储到vm_cmd_result
+                if hasattr(vm_config, 'vm_cmd_result'):
+                    # 检查最近下发的命令是否匹配
+                    last_cmd = getattr(vm_config, 'vm_cmd', None)
+                    last_result = getattr(vm_config, 'vm_cmd_result', None)
+
+                    # 如果vm_cmd已被清空（已下发），或者结果中的cmd_id匹配
+                    if (last_cmd and last_cmd.get('cmd_id') == cmd_id) or \
+                       (last_result and last_result.get('cmd_id') == cmd_id):
+                        vm_config.vm_cmd_result = result_data
+                        server.data_set()
+                        found = True
+
+                        # 生成系统事件日志
+                        log_level = 'INFO' if success else 'ERROR'
+                        log_message = f"虚拟机 {vm_uuid} 命令执行{'成功' if success else '失败'}: {command[:100]}"
+                        exit_code = result_data.get('exit_code', -1)
+                        duration = result_data.get('duration', 0)
+
+                        log_data = {
+                            'level': log_level,
+                            'message': log_message,
+                            'operation': '远程命令执行',
+                            'target': f'{hs_name}/{vm_uuid}',
+                            'details': f"命令: {command} | 退出码: {exit_code} | 耗时: {duration}s",
+                            'success': success,
+                        }
+
+                        # 保存系统事件到日志表
+                        if server.save_data:
+                            try:
+                                server.save_data.add_hs_logger(hs_name, log_data)
+                            except Exception as e:
+                                logger.error(f"[远程命令] 保存系统事件失败: {e}")
+
+                        logger.info(f"[远程命令] 结果已存储: {hs_name}/{vm_uuid}, 退出码={exit_code}")
+                        return self.api_response(200, '命令结果已接收')
+
+        if not found:
+            # 兜底：即使找不到匹配的虚拟机，也记录日志
+            logger.warning(f"[远程命令] 未找到cmd_id={cmd_id}对应的虚拟机，结果丢弃")
+            return self.api_response(404, '未找到对应的虚拟机')
+
+    # 获取命令执行状态 ########################################################################
+    def vm_cmd_status(self, hs_name, vm_uuid):
+        """获取虚拟机最近一次命令执行结果"""
+        server = self.hs_manage.get_host(hs_name)
+        if not server:
+            return self.api_response(404, '主机不存在')
+
+        server.data_get()
+        vm_config = server.vm_saving.get(vm_uuid)
+        if not vm_config:
+            return self.api_response(404, '虚拟机不存在')
+
+        # 获取当前待执行命令和最近结果
+        pending_cmd = getattr(vm_config, 'vm_cmd', None)
+        last_result = getattr(vm_config, 'vm_cmd_result', None)
+
+        return self.api_response(200, '获取成功', {
+            'pending_cmd': pending_cmd,
+            'last_result': last_result,
+        })
 
     # ========================================================================
     # 虚拟机网络配置API - NAT端口转发

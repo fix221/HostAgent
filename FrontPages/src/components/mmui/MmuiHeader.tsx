@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useRef } from 'react';
 import { Button, Tooltip } from 'antd';
-import { MenuOutlined, SunOutlined, MoonOutlined } from '@ant-design/icons';
+import { MenuOutlined, SunOutlined, MoonOutlined, CloudServerOutlined } from '@ant-design/icons';
 import type { UseMmuiThemeReturn } from '@/hooks/useMmuiTheme';
 
 interface MmuiHeaderProps {
@@ -21,13 +21,18 @@ export default function MmuiHeader({
   // 监听滚动计算背景模糊进度
   useEffect(() => {
     const handleScroll = () => {
-      const scrollTop = document.documentElement.scrollTop || document.body.scrollTop;
-      const progress = Math.min(scrollTop / 100, 1);
-      setScrollProgress(progress);
+      const container = headerRef.current?.parentElement?.querySelector('.mmui-layout__content');
+      if (container) {
+        const progress = Math.min(container.scrollTop / 100, 1);
+        setScrollProgress(progress);
+      }
     };
 
-    window.addEventListener('scroll', handleScroll, { passive: true });
-    return () => window.removeEventListener('scroll', handleScroll);
+    const container = headerRef.current?.parentElement?.querySelector('.mmui-layout__content');
+    if (container) {
+      container.addEventListener('scroll', handleScroll, { passive: true });
+      return () => container.removeEventListener('scroll', handleScroll);
+    }
   }, []);
 
   return (
@@ -36,11 +41,11 @@ export default function MmuiHeader({
       className="mmui-header"
       data-sidebar-collapsed={sidebarCollapsed || undefined}
       style={{
-        backdropFilter: `blur(${scrollProgress * 12}px)`,
-        WebkitBackdropFilter: `blur(${scrollProgress * 12}px)`,
+        backdropFilter: `blur(${8 + scrollProgress * 4}px)`,
+        WebkitBackdropFilter: `blur(${8 + scrollProgress * 4}px)`,
       }}
     >
-      {/* 左侧：移动端汉堡菜单 + 标题 */}
+      {/* 左侧：移动端汉堡菜单 + 品牌图标 + 标题 */}
       <div className="mmui-header__left">
         <button
           className="mmui-header__hamburger"
@@ -49,7 +54,8 @@ export default function MmuiHeader({
         >
           <MenuOutlined />
         </button>
-        {title && <span className="mmui-header__title">{title}</span>}
+        <CloudServerOutlined style={{ fontSize: 18, color: 'var(--mmui-accent-blue)' }} />
+        <span className="mmui-header__title">云管理系统</span>
       </div>
 
       {/* 右侧：主题切换 + 额外操作 */}

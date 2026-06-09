@@ -391,11 +391,11 @@ const [operationTimeoutId, setOperationTimeoutId] = useState<ReturnType<typeof s
     ) => {
         setOperationLocked(true)
         startTaskWithNotification(result, taskLabel, {
-            onCompleted: (task) => {
+            onCompleted: (_task) => {
                 setOperationLocked(false)
                 options.onCompleted?.()
             },
-            onFailed: (task) => {
+            onFailed: (_task) => {
                 setOperationLocked(false)
                 options.onFailed?.()
             },
@@ -1528,15 +1528,11 @@ const [operationTimeoutId, setOperationTimeoutId] = useState<ReturnType<typeof s
     const handleDeleteHDD = async (hddPath: string) => {
         if (!hostEnabled) { message.error('该主机已被禁用，无法操作'); return }
         showConfirmAction('删除数据盘确认', `确定要删除数据盘 "${hddPath}" 吗？此操作不可恢复！`, async () => {
-            try {
-                const result = await api.delete(`/api/client/hdd/delete/${hostName}/${uuid}`, {data: {hdd_name: hddPath}})
-                submitAsyncTask(result, '删除数据盘', {
-                    onCompleted: () => loadHDDs(),
-                    onFailed: () => loadHDDs(),
-                })
-            } catch (error) {
-                throw error
-            }
+            const result = await api.delete(`/api/client/hdd/delete/${hostName}/${uuid}`, {data: {hdd_name: hddPath}})
+            submitAsyncTask(result, '删除数据盘', {
+                onCompleted: () => loadHDDs(),
+                onFailed: () => loadHDDs(),
+            })
         }, true)
     }
 
