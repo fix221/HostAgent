@@ -287,8 +287,11 @@ class HttpManager:
                         ip = pve_info["ip"]
                         port = pve_info["port"]
                         pve_ticket = pve_info["pve_ticket"]
-                        # /{token}/* -> strip prefix -> 代理到 PVE 根路径（入口）
-                        config += f"\thandle_path /{pve_token}/* {{\n"
+                        # /{token} 和 /{token}/* -> strip prefix -> 代理到 PVE 根路径
+                        # 使用 route + path matcher 同时匹配 /token 和 /token/*
+                        config += f"\t@pve_{pve_token} path /{pve_token} /{pve_token}/*\n"
+                        config += f"\thandle @pve_{pve_token} {{\n"
+                        config += f"\t\turi strip_prefix /{pve_token}\n"
                         config += f"\t\treverse_proxy https://{ip}:{port} {{\n"
                         config += f"\t\t\theader_up Host {ip}:{port}\n"
                         config += f"\t\t\theader_up Cookie \"PVEAuthCookie={pve_ticket}\"\n"

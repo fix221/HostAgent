@@ -2481,11 +2481,26 @@ class HostServer(BasicServer):
 
                 if check_result == 'ok':
                     # 7. 先通过SFTP读取PPM文件到内存（避免后续操作破坏源文件）
-                    sftp = ssh.open_sftp()
-                    buf = io.BytesIO()
-                    sftp.getfo(remote_ppm, buf)
-                    sftp.close()
-                    ppm_data = buf.getvalue()
+                    #    增加重试机制，防止screendump异步写入与读取之间的竞态
+                    ppm_data = b''
+                    for _retry in range(3):
+                        try:
+                            sftp = ssh.open_sftp()
+                            buf = io.BytesIO()
+                            sftp.getfo(remote_ppm, buf)
+                            sftp.close()
+                            ppm_data = buf.getvalue()
+                            break
+                        except (IOError, OSError) as sftp_err:
+                            logger.warning(
+                                f"[{self.hs_config.server_name}] "
+                                f"SFTP读取PPM文件失败(重试{_retry+1}/3): {sftp_err}")
+                            try:
+                                sftp.close()
+                            except Exception:
+                                pass
+                            time.sleep(1.0)
+                            ppm_data = b''
 
                     if ppm_data:
                         # 8. PPM转PNG：优先PIL，回退纯Python实现
