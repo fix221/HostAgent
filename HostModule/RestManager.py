@@ -2856,7 +2856,7 @@ class RestManager:
                 'vm_config_data': vm_config.__save__(),
                 'old_vm_config_data': old_vm_config.__save__(),
                 'old_resource_usage': old_resource_usage,
-                'vm_owners': vm_owners,
+                'vm_owners': list(vm_owners.keys()) if isinstance(vm_owners, dict) else vm_owners,
             }
             current_user = self._get_current_user()
             username = current_user.get('username', '') if current_user else ''
