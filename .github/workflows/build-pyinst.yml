@@ -127,8 +127,8 @@ jobs:
 
     - name: Prepare release package
       run: |
-        mkdir -p BuildCache/pyinstaller/Websockify
-        copy BuildCache\websockify\dist\websocketproxy.exe BuildCache\pyinstaller\Websockify\websocketproxy.exe
+        if not exist "BuildCache\pyinstaller\Websockify" mkdir "BuildCache\pyinstaller\Websockify"
+        copy "BuildCache\websockify\dist\websocketproxy.exe" "BuildCache\pyinstaller\Websockify\websocketproxy.exe"
       shell: cmd
 
     # ── 签名：安装 SimplySign Desktop（仅 beta/release）────────────────
