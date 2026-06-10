@@ -9,7 +9,6 @@ from copy import deepcopy
 from proxmoxer import ProxmoxAPI
 from typing import Optional, Tuple, Dict
 from HostServer.BasicServer import BasicServer
-from HostModule.HttpManager import HttpManager
 from MainObject.Config.HSConfig import HSConfig
 from MainObject.Config.IMConfig import IMConfig
 from MainObject.Config.SDConfig import SDConfig
@@ -234,22 +233,6 @@ class HostServer(BasicServer):
     # 宿主机任务 ###############################################################
     def Crontabs(self) -> bool:
         """定时任务"""
-        # 专用操作：定期刷新PVE代理的ticket（防止2小时过期导致401）============
-        try:
-            if self.http_manager and self.http_manager.proxys_pve:
-                import time
-                # 每90分钟刷新一次（PVE ticket有效期2小时）
-                now = int(time.time())
-                if not hasattr(self, '_pve_ticket_refresh_time'):
-                    self._pve_ticket_refresh_time = 0
-                if now - self._pve_ticket_refresh_time > 5400:  # 90分钟
-                    user = self.hs_config.server_user + "@pam"
-                    password = self.hs_config.server_pass
-                    pve_host = self.hs_config.server_addr
-                    self.http_manager.refresh_pve_tickets(pve_host, user, password)
-                    self._pve_ticket_refresh_time = now
-        except Exception as e:
-            logger.warning(f"[{self.hs_config.server_name}] 刷新PVE ticket失败: {e}")
         # 通用操作 =============================================================
         return super().Crontabs()
 
@@ -312,8 +295,8 @@ class HostServer(BasicServer):
         client, result = self.api_conn()
         if not result.success:
             return result
-        # 加载远程控制台配置 ===================================================
-        # self.VMLoader()
+        # 加载远程控制台配置（websockify + noVNC）==============================
+        self.VMLoader()
         # 同步端口转发配置
         # self.ssh_sync()
         return super().HSLoader()
@@ -1990,6 +1973,7 @@ class HostServer(BasicServer):
 
     # 虚拟机控制台 #############################################################
     def VMRemote(self, vm_uuid: str, ip_addr: str = "127.0.0.1") -> ZMessage:
+        """使用QEMU VNC直通端口 + websockify + noVNC（与VMware方案一致）"""
         try:
             import random, string
             # 获取虚拟机连接 ===================================================
@@ -2008,70 +1992,75 @@ class HostServer(BasicServer):
             if public_ip in ["localhost", "127.0.0.1", ""]:
                 public_ip = "127.0.0.1"
 
-            # 获取 PVE 认证 Ticket =============================================
-            import requests, urllib3
-            urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
+            # 确定VNC端口 =====================================================
+            # 优先使用vm_saving中配置的vc_port，否则使用 5900 + VMID
             pve_host = self.hs_config.server_addr
-            user = self.hs_config.server_user + "@pam"
-            password = self.hs_config.server_pass
-            auth_resp = requests.post(
-                f"https://{pve_host}:8006/api2/json/access/ticket",
-                data={"username": user, "password": password},
-                verify=False, timeout=10
+            if vm_uuid in self.vm_saving and self.vm_saving[vm_uuid].vc_port:
+                vnc_port = int(self.vm_saving[vm_uuid].vc_port)
+            else:
+                vnc_port = 5900 + int(vmid)
+            # VNCID = 端口 - 5900（QEMU -vnc 参数使用的是display number）
+            vnc_id = vnc_port - 5900
+            logger.info(f"[{self.hs_config.server_name}] VM {vmid} VNC配置: vnc_id={vnc_id}, vnc_port={vnc_port}")
+
+            # 为QEMU配置VNC直通端口 ============================================
+            # 1) 写入args配置（下次启动生效）
+            # 2) 如果VM正在运行，通过monitor命令动态开启VNC（立即生效）
+            try:
+                current_config = vm_conn.config.get()
+                current_args = current_config.get('args', '')
+                vnc_arg = f"-vnc 0.0.0.0:{vnc_id}"
+                logger.info(f"[{self.hs_config.server_name}] VM {vmid} 当前args: '{current_args}'")
+                if vnc_arg not in current_args:
+                    # 清除旧的-vnc参数（如果有）
+                    import re
+                    new_args = re.sub(r'-vnc\s+\S+', '', current_args).strip()
+                    if new_args:
+                        new_args = f"{new_args} {vnc_arg}"
+                    else:
+                        new_args = vnc_arg
+                    vm_conn.config.put(args=new_args)
+                    logger.info(f"[{self.hs_config.server_name}] 已为VM {vmid} 配置VNC直通: {vnc_arg}")
+                else:
+                    logger.info(f"[{self.hs_config.server_name}] VM {vmid} VNC参数已存在，无需修改")
+            except Exception as e:
+                logger.warning(f"[{self.hs_config.server_name}] 写入VNC配置失败: {e}")
+
+            # 对运行中的VM，通过QEMU monitor动态开启VNC端口（无需重启）
+            try:
+                status = vm_conn.status.current.get()
+                logger.info(f"[{self.hs_config.server_name}] VM {vmid} 当前状态: {status.get('status')}")
+                if status.get('status') == 'running':
+                    # PVE QEMU monitor命令格式
+                    monitor_result = vm_conn.monitor.post(command=f"change vnc 0.0.0.0:{vnc_id}")
+                    logger.info(f"[{self.hs_config.server_name}] VM {vmid} monitor返回: {monitor_result}")
+                    logger.info(f"[{self.hs_config.server_name}] VM {vmid} 已动态开启VNC端口: {vnc_port}")
+            except Exception as e:
+                logger.warning(f"[{self.hs_config.server_name}] 动态开启VNC失败（需重启VM生效）: {e}")
+
+            # 初始化websockify（与VMware方案一致）==============================
+            self.VMLoader()
+
+            # 使用vc_pass作为websockify的token（用户需输入密码才能连接）=========
+            vnc_pass = self.vm_saving[vm_uuid].vc_pass if vm_uuid in self.vm_saving else ''
+            if not vnc_pass:
+                return ZMessage(
+                    success=False,
+                    action="VCRemote",
+                    message="VNC密码为空，请先设置VNC密码")
+
+            # 删除旧端口映射 ===================================================
+            self.vm_remote.exec.del_port(pve_host, vnc_port)
+
+            # 添加新端口映射（token=vc_pass -> PVE主机VNC端口）=================
+            self.vm_remote.exec.add_port(pve_host, vnc_port, vnc_pass)
+
+            # 构造noVNC访问URL（不带token，让用户自己输入密码）=================
+            url = (
+                f"http://{public_ip}:{self.hs_config.remote_port}"
+                f"/vnc.html?autoconnect=false"
             )
-            auth_data = auth_resp.json().get('data', {})
-            pve_ticket = auth_data.get('ticket', '')
-            if not pve_ticket:
-                return ZMessage(
-                    success=False,
-                    action="VCRemote",
-                    message="获取PVE认证ticket失败")
-
-            # 获取 VNC Proxy Ticket ============================================
-            ticket_data = vm_conn.vncproxy.post(websocket=1)
-            vnc_ticket = ticket_data.get('ticket', '')
-            vnc_port = ticket_data.get('port', '5900')
-            if not vnc_ticket:
-                return ZMessage(
-                    success=False,
-                    action="VCRemote",
-                    message="获取VNC ticket失败")
-
-            # 初始化 HttpManager ===============================================
-            # PVE自带WebSocket端点，不需要websockify，Caddy直接使用remote_port
-            if not self.http_manager:
-                hostname = getattr(self.hs_config, 'server_name', 'pve')
-                # 确保SSL证书已生成
-                HttpManager.generate_ssl_cert(hostname)
-                self.http_manager = HttpManager(f"vnc-{hostname}.txt")
-                self.http_manager.launch_vnc(self.hs_config.remote_port)
-
-            # 生成随机token，注册PVE代理 =======================================
-            token = ''.join(random.choices(string.ascii_letters + string.digits, k=16))
-            success = self.http_manager.create_pve(
-                token=token,
-                ip=pve_host,
-                port=8006,
-                pve_ticket=pve_ticket,
-                vnc_ticket=vnc_ticket,
-                vmid=vmid,
-                node=self.hs_config.launch_path,
-                vnc_port=vnc_port
-            )
-            if not success:
-                return ZMessage(
-                    success=False,
-                    action="VCRemote",
-                    message="添加VNC代理失败")
-
-            # 构造访问URL ======================================================
-            remote_port = self.hs_config.remote_port  # PVE不需要websockify，Caddy直接用remote_port
-            node = self.hs_config.launch_path
-            vm_name = getattr(vm_conf, 'name', '')
-            url = (f"https://{public_ip}:{remote_port}/{token}/"
-                   f"?console=kvm&novnc=1&vmid={vmid}"
-                   f"&vmname={vm_name}&node={node}&resize=off&cmd=")
-            logger.info(f"VMRemote for {vm_uuid}: PVE -> /{token} -> {url}")
+            logger.info(f"VMRemote for {vm_uuid}: VNC({pve_host}:{vnc_port}) -> {url}")
 
             return ZMessage(
                 success=True,
@@ -2079,7 +2068,8 @@ class HostServer(BasicServer):
                 message=url,
                 results={
                     "vmid": vmid,
-                    "token": token,
+                    "vnc_port": vnc_port,
+                    "vnc_pass": vnc_pass,
                     "url": url
                 }
             )
@@ -2091,6 +2081,16 @@ class HostServer(BasicServer):
                 success=False,
                 action="VCRemote",
                 message=f"获取远程控制台失败: {str(e)}")
+
+    # [旧方案-已废弃] 通过Caddy反向代理PVE Web界面实现noVNC =====================
+    # def VMRemote_PVE_OLD(self, vm_uuid, ip_addr="127.0.0.1"):
+    #     """旧方案：通过Caddy代理整个PVE Web界面（存在路由匹配和WebSocket问题）"""
+    #     # 1. 获取PVE认证ticket
+    #     # 2. 获取VNC proxy ticket
+    #     # 3. 通过HttpManager.create_pve()注册Caddy反向代理
+    #     # 4. 返回 https://{ip}:{port}/{token}/?console=kvm&novnc=1&vmid=...
+    #     # 问题：Caddy handle_path路由匹配不生效、WebSocket代理失败、reload不生效
+    #     pass
 
     # 加载备份 #################################################################
     def LDBackup(self, vm_back: str = "") -> ZMessage:

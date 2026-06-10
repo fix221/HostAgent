@@ -2621,7 +2621,20 @@ class RestManager:
                 vm_config.own_all['admin'] = UserMask.full()
                 vm_config.own_all[virtual_user] = UserMask(35287)
 
-            vm_config.vc_port = random.randint(10000, 59999)
+            # 分配VNC端口（6000-6999），检查主机已有端口避免冲突
+            used_vnc_ports = set()
+            for _uuid, _conf in server.vm_saving.items():
+                if hasattr(_conf, 'vc_port') and _conf.vc_port:
+                    try:
+                        used_vnc_ports.add(int(_conf.vc_port))
+                    except (ValueError, TypeError):
+                        pass
+            # 在6000-6999范围内随机选择一个不冲突的端口
+            available_ports = [p for p in range(6000, 7000) if p not in used_vnc_ports]
+            if available_ports:
+                vm_config.vc_port = random.choice(available_ports)
+            else:
+                vm_config.vc_port = random.randint(6000, 6999)
             if vm_config.vc_pass == '':
                 vm_config.vc_pass = ''.join(
                     random.sample(string.ascii_letters + string.digits, 8))

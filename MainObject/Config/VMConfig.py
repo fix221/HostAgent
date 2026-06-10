@@ -17,8 +17,8 @@ from MainObject.Config.WebProxy import WebProxy
 class VMConfig:
     @staticmethod
     def random_conn_port():
-        """生成随机VNC端口，范围5900-6999"""
-        return str(random.randint(5900, 6999))
+        """生成随机VNC端口，范围6000-6999（VNCID = port - 5900，即100-1099）"""
+        return str(random.randint(6000, 6999))
 
     # 初始化 #################################
     def __init__(self, **kwargs):

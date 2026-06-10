@@ -3295,8 +3295,8 @@ await api.vmPower(hostName!, uuid!, 'H_CLOSE')
                             </Form.Item>
                         </Col>
                         <Col span={12}><Form.Item label="VNC端口" name="vc_port"
-                                                  initialValue={config.vc_port}><InputNumber min={5900} max={65535}
-                                                                                             style={{width: '100%'}}/></Form.Item></Col>
+                                                  initialValue={config.vc_port}><InputNumber min={6000} max={6999}
+                                                                                             disabled style={{width: '100%'}}/></Form.Item></Col>
                     </Row>
                     <Row gutter={16}>
                         <Col span={12}><Form.Item label="系统密码" name="os_pass"

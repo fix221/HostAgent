@@ -1583,7 +1583,7 @@ function Dashboards() {
           </Row>
 
           <Form.Item label="VNC端口" name="vc_port">
-            <Input type="number" placeholder="VNC端口" />
+            <Input type="number" placeholder="VNC端口（自动分配）" disabled />
           </Form.Item>
 
           <Divider orientation="left">资源配置</Divider>

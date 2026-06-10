@@ -39,13 +39,6 @@ class HttpManager:
         #   }
         # } ================================================
         self.proxys_sshd = {}
-        # proxys_pve格式: { ================================
-        #   token: {
-        #       "ip": str, "port": int,
-        #       "pve_ticket": str
-        #   }
-        # } ================================================
-        self.proxys_pve = {}
         # proxys_list格式: { ===============================
         # domain: {
         #   "target": (port, ip),
@@ -256,11 +249,7 @@ class HttpManager:
     # 生成完整的Caddy配置文件 ####################################################################
     def config_all(self):
         # 使用实例的管理端口生成全局配置
-        # 有PVE代理时需要禁用HTTP重定向，避免Caddy尝试监听80端口
-        if self.proxys_pve:
-            config = f"{{\n\tadmin localhost:{self.manage_port}\n\tauto_https disable_redirects\n}}\n\n"
-        else:
-            config = f"{{\n\tadmin localhost:{self.manage_port}\n}}\n\n"
+        config = f"{{\n\tadmin localhost:{self.manage_port}\n}}\n\n"
         # 生成普通代理配置 #######################################################################
         for domain, proxy_info in self.proxys_list.items():
             port, ip = proxy_info["target"]
@@ -294,15 +283,7 @@ class HttpManager:
         # 生成SSH代理配置 ########################################################################
         if self.proxys_sshd:
             for listen_port, token_dict in self.proxys_sshd.items():
-                # PVE代理需要HTTPS（PVE noVNC要求wss://）
-                if self.proxys_pve:
-                    config += "https://:%s {\n" % listen_port
-                    # 使用预生成的自签名证书
-                    cert_path = str(self.ssl_cert).replace("\\", "/")
-                    key_path = str(self.ssl_key).replace("\\", "/")
-                    config += f"\ttls {cert_path} {key_path}\n"
-                else:
-                    config += ":%s {\n" % listen_port
+                config += ":%s {\n" % listen_port
                 if self.proxys_type == "vmk":
                     # 静态文件代理
                     config += f"\thandle_path /static/* {{\n"
@@ -375,44 +356,7 @@ class HttpManager:
                         config += f"\t\trespond `{html_template}` 200\n"
                         config += f"\t}}\n"
 
-                # 生成PVE代理配置（合并到同一端口块）========================================
-                if self.proxys_pve:
-                    # 收集所有PVE后端信息（用于兜底代理）
-                    # 注意：PVE页面中的JS/CSS/API使用绝对路径（如/api2/...），
-                    # 不会带token前缀，所以需要兜底handle代理所有请求到PVE
-                    first_pve = list(self.proxys_pve.values())[0]
-                    for pve_token, pve_info in self.proxys_pve.items():
-                        ip = pve_info["ip"]
-                        port = pve_info["port"]
-                        pve_ticket = pve_info["pve_ticket"]
-                        # handle保证互斥匹配（不会落入兜底），route保证按声明顺序执行
-                        # Caddy directive order中uri在reverse_proxy之后，必须用route强制顺序
-                        config += f"\t@pve_{pve_token} path /{pve_token} /{pve_token}/ /{pve_token}/*\n"
-                        config += f"\thandle @pve_{pve_token} {{\n"
-                        config += f"\t\troute {{\n"
-                        config += f"\t\t\turi strip_prefix /{pve_token}\n"
-                        config += f"\t\t\treverse_proxy https://{ip}:{port} {{\n"
-                        config += f"\t\t\t\theader_up Host {ip}:{port}\n"
-                        config += f"\t\t\t\theader_up Cookie \"PVEAuthCookie={pve_ticket}\"\n"
-                        config += f"\t\t\t\ttransport http {{\n"
-                        config += f"\t\t\t\t\ttls_insecure_skip_verify\n"
-                        config += f"\t\t\t\t}}\n"
-                        config += f"\t\t\t}}\n"
-                        config += f"\t\t}}\n"
-                        config += f"\t}}\n"
-                    # 兜底：代理所有其他请求（PVE页面内的绝对路径资源/API/WebSocket）
-                    ip = first_pve["ip"]
-                    port = first_pve["port"]
-                    pve_ticket = first_pve["pve_ticket"]
-                    config += f"\thandle {{\n"
-                    config += f"\t\treverse_proxy https://{ip}:{port} {{\n"
-                    config += f"\t\t\theader_up Host {ip}:{port}\n"
-                    config += f"\t\t\theader_up Cookie \"PVEAuthCookie={pve_ticket}\"\n"
-                    config += f"\t\t\ttransport http {{\n"
-                    config += f"\t\t\t\ttls_insecure_skip_verify\n"
-                    config += f"\t\t\t}}\n"
-                    config += f"\t\t}}\n"
-                    config += f"\t}}\n"
+
                 config += "}\n\n"
         # 保存配置文件 ###########################################################################
         self.config_file.write_text(config)
@@ -430,60 +374,7 @@ class HttpManager:
         if str(port) in self.proxys_sshd:
             del self.proxys_sshd[str(port)]
 
-    # 添加PVE VNC代理 ##########################################################################
-    def create_pve(self, token, ip, port, pve_ticket, **kwargs):
-        """添加PVE noVNC代理配置（通过Caddy代理整个PVE Web界面）"""
-        try:
-            if token in self.proxys_pve:
-                logger.warning(f"[HttpManager] PVE代理 {token} 已存在")
-                return False
-            if self.proxys_port == 0:
-                self.launch_vnc()
-            self.proxys_pve[token] = {
-                "ip": ip, "port": port,
-                "pve_ticket": pve_ticket
-            }
-            logger.info(f"[HttpManager] PVE代理已添加: /{token} -> {ip}:{port}")
-            self.config_all()
-            return self.reload_web()
-        except Exception as e:
-            logger.error(f"[HttpManager] 添加PVE代理失败: {str(e)}")
-            return False
 
-    def refresh_pve_tickets(self, pve_host, username, password):
-        """刷新所有PVE代理的ticket（PVE ticket默认2小时过期）"""
-        if not self.proxys_pve:
-            return False
-        try:
-            import requests, urllib3
-            urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
-            # 重新获取PVE认证ticket
-            auth_resp = requests.post(
-                f"https://{pve_host}:8006/api2/json/access/ticket",
-                data={"username": username, "password": password},
-                verify=False, timeout=10
-            )
-            if auth_resp.status_code != 200:
-                logger.warning(f"[HttpManager] 刷新PVE ticket失败: HTTP {auth_resp.status_code}")
-                return False
-            new_ticket = auth_resp.json().get('data', {}).get('ticket', '')
-            if not new_ticket:
-                logger.warning("[HttpManager] 刷新PVE ticket失败: 返回ticket为空")
-                return False
-            # 更新所有PVE代理的ticket
-            for token in self.proxys_pve:
-                self.proxys_pve[token]["pve_ticket"] = new_ticket
-            # 重新生成配置并重载
-            self.config_all()
-            if self.reload_web():
-                logger.info("[HttpManager] PVE ticket已刷新并重载Caddy配置")
-                return True
-            else:
-                logger.warning("[HttpManager] PVE ticket已刷新但重载Caddy失败")
-                return False
-        except Exception as e:
-            logger.error(f"[HttpManager] 刷新PVE ticket异常: {str(e)}")
-            return False
 
     # 添加SSH的代理配置 ##########################################################################
     def create_vnc(self, token, target_ip, target_port, path=""):

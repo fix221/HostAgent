@@ -873,7 +873,7 @@ const DockCreateModal: React.FC<DockCreateModalProps> = ({
                                 <Form.Item label="VNC端口">
                                     <Space.Compact style={{ width: '100%' }}>
                                         <Form.Item name="vc_port" noStyle>
-                                            <InputNumber style={{ width: '100%' }} min={5900} max={6999} />
+                                            <InputNumber style={{ width: '100%' }} min={5900} max={6999} disabled />
                                         </Form.Item>
                                         <Button 
                                             htmlType="button"
