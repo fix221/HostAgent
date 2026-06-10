@@ -102,11 +102,22 @@ jobs:
         python -m pip install --upgrade pip
         pip install -r HostConfig/pipinstall.txt
         pip install pywin32 pythonnet
-        pip install nuitka
+        pip install nuitka pyinstaller
 
     - name: Build with Nuitka
       run: |
         python .\AllBuilder\build_nuitkaui.py
+
+    - name: Build VNC Proxy (websocketproxy)
+      run: |
+        cd AllBuilder
+        python build_vncproxy.py
+
+    - name: Prepare release package
+      run: |
+        mkdir BuildCache\nuitka\Websockify
+        copy BuildCache\websockify\dist\websocketproxy.exe BuildCache\nuitka\Websockify\websocketproxy.exe
+      shell: cmd
 
     - name: Upload artifact
       uses: actions/upload-artifact@v4
@@ -145,11 +156,22 @@ jobs:
       run: |
         python -m pip install --upgrade pip
         pip install -r HostConfig/pipinstall.txt
-        pip install nuitka
+        pip install nuitka pyinstaller
 
     - name: Build with Nuitka
       run: |
         python ./AllBuilder/build_nuitkaui.py
+
+    - name: Build VNC Proxy (websocketproxy)
+      run: |
+        cd AllBuilder
+        python build_vncproxy.py
+
+    - name: Prepare release package
+      run: |
+        mkdir -p BuildCache/nuitka/Websockify
+        cp BuildCache/websockify/dist/websocketproxy BuildCache/nuitka/Websockify/websocketproxy
+        chmod +x BuildCache/nuitka/Websockify/websocketproxy
 
     - name: Upload artifact
       uses: actions/upload-artifact@v4
@@ -266,11 +288,22 @@ jobs:
       run: |
         python -m pip install --upgrade pip
         pip install -r HostConfig/pipinstall.txt
-        pip install nuitka
+        pip install nuitka pyinstaller
 
     - name: Build with Nuitka
       run: |
         python ./AllBuilder/build_nuitkaui.py
+
+    - name: Build VNC Proxy (websocketproxy)
+      run: |
+        cd AllBuilder
+        python build_vncproxy.py
+
+    - name: Prepare release package
+      run: |
+        mkdir -p BuildCache/nuitka/Websockify
+        cp BuildCache/websockify/dist/websocketproxy BuildCache/nuitka/Websockify/websocketproxy
+        chmod +x BuildCache/nuitka/Websockify/websocketproxy
 
     - name: Upload artifact
       uses: actions/upload-artifact@v4

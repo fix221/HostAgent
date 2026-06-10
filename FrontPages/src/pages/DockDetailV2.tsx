@@ -6,7 +6,8 @@ import {
 import {
   ReloadOutlined, PoweroffOutlined, DesktopOutlined, EyeOutlined, CopyOutlined,
   PlayCircleOutlined, PauseCircleOutlined, SwapOutlined,
-  CameraOutlined, DatabaseOutlined, SafetyCertificateOutlined, GlobalOutlined, MoreOutlined
+  CameraOutlined, DatabaseOutlined, SafetyCertificateOutlined, GlobalOutlined, MoreOutlined,
+  WindowsOutlined, CodeOutlined
 } from '@ant-design/icons'
 import ReactECharts from 'echarts-for-react'
 import { useMmuiTheme } from '@/hooks/useMmuiTheme'
@@ -38,7 +39,7 @@ interface BackupInfo {
 
 interface HostConfig {
   system_maps: any[]; images_maps?: any[]; server_type?: string;
-  enable_host?: boolean; ipaddr_maps?: Record<string, any>
+  enable_host?: boolean; ipaddr_maps?: Record<string, any>; public_addr?: string[]
 }
 
 // ─── Utility ────────────────────────────────────────────────────────────
@@ -89,6 +90,7 @@ export default function DockDetailV2() {
   void _setTempStatus // 保留setter备用
   const [reinstallOS, setReinstallOS] = useState('')
   const [reinstallPass, setReinstallPass] = useState('')
+  const [remoteModalVisible, setRemoteModalVisible] = useState(false)
   const [timeRange, setTimeRange] = useState(30)
   const [monitorData, setMonitorData] = useState<any>({
     cpu: [], memory: [], disk: [], gpu: [], netUp: [], netDown: [], traffic: [], labels: []
@@ -466,7 +468,7 @@ export default function DockDetailV2() {
                   </div>
                 </div>
                 <div style={{ display: 'flex', gap: 10, alignItems: 'center', flexShrink: 0 }}>
-                  <button className="mmui-page-btn mmui-page-btn--primary" onClick={handleOpenVNC}
+                  <button className="mmui-page-btn mmui-page-btn--primary" onClick={() => setRemoteModalVisible(true)}
                     disabled={!hostEnabled || !hasPermission(userPermissions, VM_PERMISSION.VNC_EDITS)}
                     style={{ padding: '0 20px', minHeight: 38, borderRadius: 8, fontWeight: 500 }}>
                     <DesktopOutlined style={{ marginRight: 6 }} /> 远程
@@ -541,13 +543,29 @@ export default function DockDetailV2() {
 
               {/* 远程登录 + 账号信息 */}
               <div style={{ display: 'grid', gridTemplateColumns: '1.4fr 1fr', gap: 20 }}>
-                <MmuiCard title="远程登录" extra={<span style={{ fontSize: 12, color: 'var(--mmui-accent-blue)', cursor: 'pointer', fontWeight: 500 }}>查看更多方式 &gt;</span>}>
+                <MmuiCard title="远程登录" extra={<span style={{ fontSize: 12, color: 'var(--mmui-accent-blue)', cursor: 'pointer', fontWeight: 500 }} onClick={() => setRemoteModalVisible(true)}>查看更多方式 &gt;</span>}>
                   <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: 12 }}>
                     <MmuiLoginCard icon={<DesktopOutlined style={{ color: '#4460ff' }} />} title="RDP" badge={{ text: '推荐', color: '#4460ff' }}
-                      desc="Windows 下载 BAT，手机唤起 Remote App，其他设备下载 RDP 文件。" buttonText="下载文件" onClick={() => handleCopy(`${vm.ipv4_address}:3389`, 'RDP地址')} />
+                      desc="Windows 下载 BAT，手机唤起 Remote App，其他设备下载 RDP 文件。" buttonText="下载文件" onClick={() => {
+                        const addr = hostConfig?.public_addr?.[0] || vm?.ipv4_address || ''
+                        const user = config.rdp_info?.ms_rdp?.user || 'Administrator'
+                        const rdpContent = `full address:s:${addr}:3389\r\nusername:s:${user}\r\nprompt for credentials:i:1\r\nadministrative session:i:1`
+                        const blob = new Blob([rdpContent], { type: 'application/x-rdp' })
+                        const url = URL.createObjectURL(blob)
+                        const a = document.createElement('a')
+                        a.href = url
+                        a.download = `${config.vm_uuid || uuid}.rdp`
+                        a.click()
+                        URL.revokeObjectURL(url)
+                        message.success('RDP文件已下载')
+                      }} />
                     <MmuiLoginCard icon={<GlobalOutlined style={{ color: '#10b981' }} />} title="VNC" badge={{ text: '可用', color: '#10b981' }}
                       desc="网页 VNC，适合救援排障。" buttonText="打开 VNC" onClick={handleOpenVNC}
                       disabled={!hostEnabled || !hasPermission(userPermissions, VM_PERMISSION.VNC_EDITS)} />
+                    {config.rdp_info?.todesk?.code && (config.os_name || '').toLowerCase().includes('win') && (
+                      <MmuiLoginCard icon={<GlobalOutlined style={{ color: '#f59e0b' }} />} title="ToDesk" badge={{ text: '就绪', color: '#f59e0b' }}
+                        desc={`设备代码: ${config.rdp_info.todesk.code}`} buttonText="查看详情" onClick={() => setRemoteModalVisible(true)} />
+                    )}
                   </div>
                 </MmuiCard>
 
@@ -1620,6 +1638,189 @@ export default function DockDetailV2() {
           )}
         </div>
       </div>
+
+      {/* 远程桌面模态框 */}
+      <Modal
+        title="远程桌面"
+        open={remoteModalVisible}
+        onCancel={() => setRemoteModalVisible(false)}
+        footer={null}
+        width={560}
+      >
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 16, padding: '8px 0' }}>
+          {/* 1. VNC/TTY 一键连接 */}
+          {hostConfig?.server_type !== 'OCInterface' && hostConfig?.server_type !== 'LxContainer' && (
+            <div style={{ border: '1px solid var(--mmui-border, #e5e7eb)', borderRadius: 8, padding: 16 }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                <div>
+                  <div style={{ fontWeight: 600, fontSize: 15, color: 'var(--mmui-text)' }}>
+                    <DesktopOutlined style={{ marginRight: 8, color: '#6366f1' }} />
+                    VNC / TTY 控制台
+                  </div>
+                  <div style={{ color: 'var(--mmui-text-muted)', fontSize: 13, marginTop: 4 }}>网页远程控制台，适合救援排障</div>
+                </div>
+                <button className="mmui-page-btn mmui-page-btn--primary" onClick={handleOpenVNC} disabled={!hostEnabled}
+                  style={{ padding: '0 16px', minHeight: 32, borderRadius: 6 }}>
+                  一键连接
+                </button>
+              </div>
+            </div>
+          )}
+
+          {/* 2. ToDesk远程桌面 - 仅Windows */}
+          {hostConfig?.server_type !== 'OCInterface' && hostConfig?.server_type !== 'LxContainer' &&
+           (config.os_name || '').toLowerCase().includes('win') && (
+            <div style={{ border: '1px solid var(--mmui-border, #e5e7eb)', borderRadius: 8, padding: 16 }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+                <div>
+                  <div style={{ fontWeight: 600, fontSize: 15, color: 'var(--mmui-text)' }}>
+                    <GlobalOutlined style={{ marginRight: 8, color: '#10b981' }} />
+                    ToDesk 远程桌面
+                  </div>
+                  <div style={{ color: 'var(--mmui-text-muted)', fontSize: 13, marginTop: 4 }}>高性能远程桌面，适合日常使用</div>
+                </div>
+                {config.rdp_info?.todesk?.code ? (
+                  <span style={{ padding: '2px 8px', borderRadius: 4, background: '#d1fae5', color: '#065f46', fontSize: 12 }}>已就绪</span>
+                ) : (
+                  <span style={{ padding: '2px 8px', borderRadius: 4, background: '#f3f4f6', color: '#6b7280', fontSize: 12 }}>未就绪</span>
+                )}
+              </div>
+              {config.rdp_info?.todesk?.code ? (
+                <div style={{ marginTop: 12, background: 'var(--mmui-bg-soft, #f9fafb)', borderRadius: 6, padding: 12 }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 }}>
+                    <span style={{ color: 'var(--mmui-text-muted)', fontSize: 13 }}>设备代码</span>
+                    <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
+                      <code style={{ fontSize: 14, fontWeight: 600, color: 'var(--mmui-text)' }}>{config.rdp_info.todesk.code}</code>
+                      <CopyOutlined style={{ cursor: 'pointer', color: 'var(--mmui-text-muted)' }}
+                        onClick={() => handleCopy(config.rdp_info.todesk.code, 'ToDesk设备代码')} />
+                    </div>
+                  </div>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                    <span style={{ color: 'var(--mmui-text-muted)', fontSize: 13 }}>临时密码</span>
+                    <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
+                      <code style={{ fontSize: 14, fontWeight: 600, color: 'var(--mmui-text)' }}>{config.rdp_info.todesk.password}</code>
+                      <CopyOutlined style={{ cursor: 'pointer', color: 'var(--mmui-text-muted)' }}
+                        onClick={() => handleCopy(config.rdp_info.todesk.password, 'ToDesk临时密码')} />
+                    </div>
+                  </div>
+                </div>
+              ) : (
+                <div style={{ marginTop: 12, color: 'var(--mmui-text-muted)', fontSize: 13 }}>
+                  ToDesk服务未就绪，请等待虚拟机上报连接信息
+                </div>
+              )}
+            </div>
+          )}
+
+          {/* 3. RDP - 仅Windows */}
+          {hostConfig?.server_type !== 'OCInterface' && hostConfig?.server_type !== 'LxContainer' &&
+           (config.os_name || '').toLowerCase().includes('win') && (
+            <div style={{ border: '1px solid var(--mmui-border, #e5e7eb)', borderRadius: 8, padding: 16 }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+                <div>
+                  <div style={{ fontWeight: 600, fontSize: 15, color: 'var(--mmui-text)' }}>
+                    <WindowsOutlined style={{ marginRight: 8, color: '#3b82f6' }} />
+                    Microsoft RDP 远程桌面
+                  </div>
+                  <div style={{ color: 'var(--mmui-text-muted)', fontSize: 13, marginTop: 4 }}>Windows原生远程桌面协议</div>
+                </div>
+              </div>
+              <div style={{ marginTop: 12, background: 'var(--mmui-bg-soft, #f9fafb)', borderRadius: 6, padding: 12 }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 }}>
+                  <span style={{ color: 'var(--mmui-text-muted)', fontSize: 13 }}>连接地址</span>
+                  <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
+                    <code style={{ fontSize: 13, color: 'var(--mmui-text)' }}>{(hostConfig?.public_addr?.[0] || vm?.ipv4_address || '未知')}:3389</code>
+                    <CopyOutlined style={{ cursor: 'pointer', color: 'var(--mmui-text-muted)' }}
+                      onClick={() => handleCopy(`${hostConfig?.public_addr?.[0] || vm?.ipv4_address || ''}:3389`, 'RDP地址')} />
+                  </div>
+                </div>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 }}>
+                  <span style={{ color: 'var(--mmui-text-muted)', fontSize: 13 }}>用户名</span>
+                  <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
+                    <code style={{ fontSize: 13, color: 'var(--mmui-text)' }}>{config.rdp_info?.ms_rdp?.user || 'Administrator'}</code>
+                    <CopyOutlined style={{ cursor: 'pointer', color: 'var(--mmui-text-muted)' }}
+                      onClick={() => handleCopy(config.rdp_info?.ms_rdp?.user || 'Administrator', 'RDP用户名')} />
+                  </div>
+                </div>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12 }}>
+                  <span style={{ color: 'var(--mmui-text-muted)', fontSize: 13 }}>密码</span>
+                  <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
+                    <code style={{ fontSize: 13, color: 'var(--mmui-text)' }}>{config.os_pass || '未设置'}</code>
+                    <CopyOutlined style={{ cursor: 'pointer', color: 'var(--mmui-text-muted)' }}
+                      onClick={() => handleCopy(config.os_pass || '', 'RDP密码')} />
+                  </div>
+                </div>
+                <button className="mmui-page-btn mmui-page-btn--primary" style={{ width: '100%', minHeight: 32, borderRadius: 6 }}
+                  onClick={() => {
+                    const addr = hostConfig?.public_addr?.[0] || vm?.ipv4_address || ''
+                    const user = config.rdp_info?.ms_rdp?.user || 'Administrator'
+                    const rdpContent = `full address:s:${addr}:3389\r\nusername:s:${user}\r\nprompt for credentials:i:1\r\nadministrative session:i:1`
+                    const blob = new Blob([rdpContent], { type: 'application/x-rdp' })
+                    const url = URL.createObjectURL(blob)
+                    const a = document.createElement('a')
+                    a.href = url
+                    a.download = `${config.vm_uuid || uuid}.rdp`
+                    a.click()
+                    URL.revokeObjectURL(url)
+                    message.success('RDP文件已下载')
+                  }}>
+                  下载 RDP 文件
+                </button>
+              </div>
+            </div>
+          )}
+
+          {/* 4. SSH - 仅Linux/macOS */}
+          {hostConfig?.server_type !== 'OCInterface' && hostConfig?.server_type !== 'LxContainer' &&
+           !(config.os_name || '').toLowerCase().includes('win') && (
+            <div style={{ border: '1px solid var(--mmui-border, #e5e7eb)', borderRadius: 8, padding: 16 }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+                <div>
+                  <div style={{ fontWeight: 600, fontSize: 15, color: 'var(--mmui-text)' }}>
+                    <CodeOutlined style={{ marginRight: 8, color: '#f59e0b' }} />
+                    SSH 远程连接
+                  </div>
+                  <div style={{ color: 'var(--mmui-text-muted)', fontSize: 13, marginTop: 4 }}>命令行远程连接，适合Linux/macOS</div>
+                </div>
+              </div>
+              <div style={{ marginTop: 12, background: 'var(--mmui-bg-soft, #f9fafb)', borderRadius: 6, padding: 12 }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 }}>
+                  <span style={{ color: 'var(--mmui-text-muted)', fontSize: 13 }}>连接地址</span>
+                  <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
+                    <code style={{ fontSize: 13, color: 'var(--mmui-text)' }}>{hostConfig?.public_addr?.[0] || vm?.ipv4_address || '未知'}:22</code>
+                    <CopyOutlined style={{ cursor: 'pointer', color: 'var(--mmui-text-muted)' }}
+                      onClick={() => handleCopy(`${hostConfig?.public_addr?.[0] || vm?.ipv4_address || ''}:22`, 'SSH地址')} />
+                  </div>
+                </div>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 }}>
+                  <span style={{ color: 'var(--mmui-text-muted)', fontSize: 13 }}>用户名</span>
+                  <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
+                    <code style={{ fontSize: 13, color: 'var(--mmui-text)' }}>root</code>
+                    <CopyOutlined style={{ cursor: 'pointer', color: 'var(--mmui-text-muted)' }}
+                      onClick={() => handleCopy('root', 'SSH用户名')} />
+                  </div>
+                </div>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12 }}>
+                  <span style={{ color: 'var(--mmui-text-muted)', fontSize: 13 }}>密码</span>
+                  <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
+                    <code style={{ fontSize: 13, color: 'var(--mmui-text)' }}>{config.os_pass || '未设置'}</code>
+                    <CopyOutlined style={{ cursor: 'pointer', color: 'var(--mmui-text-muted)' }}
+                      onClick={() => handleCopy(config.os_pass || '', 'SSH密码')} />
+                  </div>
+                </div>
+                <button className="mmui-page-btn mmui-page-btn--primary" style={{ width: '100%', minHeight: 32, borderRadius: 6 }}
+                  onClick={() => {
+                    const addr = hostConfig?.public_addr?.[0] || vm?.ipv4_address || ''
+                    navigator.clipboard.writeText(`ssh root@${addr}`)
+                    message.success('SSH命令已复制')
+                  }}>
+                  复制 SSH 命令
+                </button>
+              </div>
+            </div>
+          )}
+        </div>
+      </Modal>
     </div>
   )
 }

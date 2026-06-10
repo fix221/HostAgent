@@ -44,12 +44,14 @@ class WebsocketUI:
         # 检测环境：如果不是 Python 解释器，使用可执行文件
         if 'python' in os.path.basename(sys.executable).lower():
             script_name = "websocketproxy.py"
+            self.bin_path = os.path.join(project_root, "Websockify", script_name)
         else:
             script_name = "websocketproxy"
             if os.name == 'nt':
                 script_name += '.exe'
-
-        self.bin_path = os.path.join(project_root, "Websockify", script_name)
+            # 打包环境下，websocketproxy 独立可执行文件应在 exe 同级目录的 Websockify 下
+            exe_dir = Path(sys.executable).parent
+            self.bin_path = os.path.join(exe_dir, "Websockify", script_name)
         self.process = None
         self.storage: Dict[str, str] = {}
         self.cfg_load()

@@ -3954,6 +3954,16 @@ window.location.replace({repr(target_url)});
                         logger.info(f"[虚拟机上报] 找到匹配的虚拟机! 主机: {hs_name}, UUID: {vm_uuid}")
                         logger.debug(f"[虚拟机上报] 状态数据: {status_data}")
                         try:
+                            # 处理rdp_info远程桌面信息（ToDesk等）
+                            rdp_info = status_data.pop('rdp_info', None)
+                            if rdp_info and isinstance(rdp_info, dict):
+                                # 合并到vm_config.rdp_info中（保留已有的ms_rdp等信息）
+                                if not hasattr(vm_config, 'rdp_info') or not vm_config.rdp_info:
+                                    vm_config.rdp_info = {}
+                                vm_config.rdp_info.update(rdp_info)
+                                server.data_set()
+                                logger.info(f"[虚拟机上报] 已更新 {vm_uuid} 的远程桌面信息: {list(rdp_info.keys())}")
+
                             # 添加上报时间戳（秒级）
                             import time
                             status_data['on_update'] = int(time.time())

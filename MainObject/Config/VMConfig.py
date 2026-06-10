@@ -34,6 +34,7 @@ class VMConfig:
         # 远程连接 ===========================
         self.vc_port = self.random_conn_port()
         self.vc_pass = ""  # 分配VNC远程的密码
+        self.rdp_info = {}  # 远程桌面信息(JSON): {"ms_rdp": {"user": "", "password": ""}, "todesk": {"code": "", "password": ""}}
         # 资源配置 ===========================
         self.cpu_num = 2  # 分配的处理器核心数
         self.cpu_per = 0  # 分配处理器可用比例
@@ -257,6 +258,7 @@ class VMConfig:
             # 远程连接 =======================
             "vc_port": self.vc_port,
             "vc_pass": self.vc_pass,
+            "rdp_info": self.rdp_info,
             # 网卡配置 =======================
             "nic_all": {
                 k: v.__save__()

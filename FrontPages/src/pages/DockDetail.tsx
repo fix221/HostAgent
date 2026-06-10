@@ -269,6 +269,7 @@ function VMDetail() {
     const [editPermOwner, setEditPermOwner] = useState('')
     const [editPermMask, setEditPermMask] = useState<number>(VM_PERMISSION.FULL_MASK)
     const [unmountHddModalVisible, setUnmountHddModalVisible] = useState(false)
+    const [remoteModalVisible, setRemoteModalVisible] = useState(false) // 远程桌面模态框
 
     const [ipQuota, setIpQuota] = useState<any>(null)
     const [hdds, setHdds] = useState<HDDInfo[]>([])
@@ -3742,7 +3743,7 @@ await api.vmPower(hostName!, uuid!, 'H_CLOSE')
                         </div>
                         <Space>
                             <Button type="primary" style={{background: 'linear-gradient(135deg, #6366f1, #8b5cf6)', border: 'none'}} onClick={() => navigate(`/hosts/${hostName}/vms/${uuid}/v2`)}>新版面板</Button>
-                            <Button type="primary" className="bg-blue-600" onClick={handleOpenVNC} disabled={!hostEnabled || operationLocked || !hasPermission(userPermissions, VM_PERMISSION.VNC_EDITS)}>一键远程</Button>
+            <Button type="primary" className="bg-blue-600" onClick={() => setRemoteModalVisible(true)} disabled={!hostEnabled || operationLocked || !hasPermission(userPermissions, VM_PERMISSION.VNC_EDITS)}>远程桌面</Button>
                             <Button onClick={() => setPasswordModalVisible(true)} disabled={!hostEnabled || operationLocked || !hasPermission(userPermissions, VM_PERMISSION.PWD_EDITS)}>设置密码</Button>
                             <Dropdown menu={powerMenuProps}>
                                 <Button icon={defaultPowerAction.icon}
@@ -4370,6 +4371,179 @@ await api.vmPower(hostName!, uuid!, 'H_CLOSE')
                                   onChange={(e) => setUsbShutdownConfirmChecked(e.target.checked)}
                                   className="w-4 h-4 text-blue-600"/><label htmlFor="usbShutdownCheck"
                                                                             className="cursor-pointer select-none text-sm ">我已同意强制关机此虚拟机</label></Space>
+                </div>
+            </Modal>
+
+            {/* 远程桌面模态框 */}
+            <Modal
+                title="远程桌面"
+                open={remoteModalVisible}
+                onCancel={() => setRemoteModalVisible(false)}
+                footer={null}
+                width={560}
+            >
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 16, padding: '8px 0' }}>
+                    {/* 1. VNC/TTY 一键连接 - 所有非docker+lxc系统都有 */}
+                    {hostConfig?.server_type !== 'OCInterface' && hostConfig?.server_type !== 'LxContainer' && (
+                        <div style={{ border: '1px solid #e5e7eb', borderRadius: 8, padding: 16 }}>
+                            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                                <div>
+                                    <div style={{ fontWeight: 600, fontSize: 15 }}>
+                                        <DesktopOutlined style={{ marginRight: 8, color: '#6366f1' }} />
+                                        VNC / TTY 控制台
+                                    </div>
+                                    <div style={{ color: '#6b7280', fontSize: 13, marginTop: 4 }}>网页远程控制台，适合救援排障</div>
+                                </div>
+                                <Button type="primary" onClick={handleOpenVNC} disabled={!hostEnabled}>
+                                    一键连接
+                                </Button>
+                            </div>
+                        </div>
+                    )}
+
+                    {/* 2. ToDesk远程桌面 - 仅Windows+非docker+lxc */}
+                    {hostConfig?.server_type !== 'OCInterface' && hostConfig?.server_type !== 'LxContainer' &&
+                     (config.os_name || '').toLowerCase().includes('win') && (
+                        <div style={{ border: '1px solid #e5e7eb', borderRadius: 8, padding: 16 }}>
+                            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+                                <div>
+                                    <div style={{ fontWeight: 600, fontSize: 15 }}>
+                                        <GlobalOutlined style={{ marginRight: 8, color: '#10b981' }} />
+                                        ToDesk 远程桌面
+                                    </div>
+                                    <div style={{ color: '#6b7280', fontSize: 13, marginTop: 4 }}>高性能远程桌面，适合日常使用</div>
+                                </div>
+                                {config.rdp_info?.todesk?.code ? (
+                                    <Tag color="green">已就绪</Tag>
+                                ) : (
+                                    <Tag color="default">未就绪</Tag>
+                                )}
+                            </div>
+                            {config.rdp_info?.todesk?.code ? (
+                                <div style={{ marginTop: 12, background: '#f9fafb', borderRadius: 6, padding: 12 }}>
+                                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 }}>
+                                        <span style={{ color: '#6b7280', fontSize: 13 }}>设备代码</span>
+                                        <Space>
+                                            <code style={{ fontSize: 14, fontWeight: 600 }}>{config.rdp_info.todesk.code}</code>
+                                            <Button size="small" icon={<CopyOutlined />} onClick={() => handleCopyPassword(config.rdp_info.todesk.code, 'ToDesk设备代码')} />
+                                        </Space>
+                                    </div>
+                                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                                        <span style={{ color: '#6b7280', fontSize: 13 }}>临时密码</span>
+                                        <Space>
+                                            <code style={{ fontSize: 14, fontWeight: 600 }}>{config.rdp_info.todesk.password}</code>
+                                            <Button size="small" icon={<CopyOutlined />} onClick={() => handleCopyPassword(config.rdp_info.todesk.password, 'ToDesk临时密码')} />
+                                        </Space>
+                                    </div>
+                                </div>
+                            ) : (
+                                <div style={{ marginTop: 12, color: '#9ca3af', fontSize: 13 }}>
+                                    ToDesk服务未就绪，请等待虚拟机上报连接信息
+                                </div>
+                            )}
+                        </div>
+                    )}
+
+                    {/* 3. RDP 一键连接 - 仅Windows+非docker+lxc */}
+                    {hostConfig?.server_type !== 'OCInterface' && hostConfig?.server_type !== 'LxContainer' &&
+                     (config.os_name || '').toLowerCase().includes('win') && (
+                        <div style={{ border: '1px solid #e5e7eb', borderRadius: 8, padding: 16 }}>
+                            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+                                <div>
+                                    <div style={{ fontWeight: 600, fontSize: 15 }}>
+                                        <WindowsOutlined style={{ marginRight: 8, color: '#3b82f6' }} />
+                                        Microsoft RDP 远程桌面
+                                    </div>
+                                    <div style={{ color: '#6b7280', fontSize: 13, marginTop: 4 }}>Windows原生远程桌面协议</div>
+                                </div>
+                            </div>
+                            <div style={{ marginTop: 12, background: '#f9fafb', borderRadius: 6, padding: 12 }}>
+                                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 }}>
+                                    <span style={{ color: '#6b7280', fontSize: 13 }}>连接地址</span>
+                                    <Space>
+                                        <code style={{ fontSize: 13 }}>{(hostConfig?.public_addr?.[0] || vm?.ipv4_address || '未知')}:3389</code>
+                                        <Button size="small" icon={<CopyOutlined />} onClick={() => handleCopyPassword(`${hostConfig?.public_addr?.[0] || vm?.ipv4_address || ''}:3389`, 'RDP地址')} />
+                                    </Space>
+                                </div>
+                                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 }}>
+                                    <span style={{ color: '#6b7280', fontSize: 13 }}>用户名</span>
+                                    <Space>
+                                        <code style={{ fontSize: 13 }}>{config.rdp_info?.ms_rdp?.user || 'Administrator'}</code>
+                                        <Button size="small" icon={<CopyOutlined />} onClick={() => handleCopyPassword(config.rdp_info?.ms_rdp?.user || 'Administrator', 'RDP用户名')} />
+                                    </Space>
+                                </div>
+                                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12 }}>
+                                    <span style={{ color: '#6b7280', fontSize: 13 }}>密码</span>
+                                    <Space>
+                                        <code style={{ fontSize: 13 }}>{config.os_pass || '未设置'}</code>
+                                        <Button size="small" icon={<CopyOutlined />} onClick={() => handleCopyPassword(config.os_pass || '', 'RDP密码')} />
+                                    </Space>
+                                </div>
+                                <Button block onClick={() => {
+                                    const addr = hostConfig?.public_addr?.[0] || vm?.ipv4_address || ''
+                                    const user = config.rdp_info?.ms_rdp?.user || 'Administrator'
+                                    const rdpContent = `full address:s:${addr}:3389\r\nusername:s:${user}\r\nprompt for credentials:i:1\r\nadministrative session:i:1`
+                                    const blob = new Blob([rdpContent], { type: 'application/x-rdp' })
+                                    const url = URL.createObjectURL(blob)
+                                    const a = document.createElement('a')
+                                    a.href = url
+                                    a.download = `${config.vm_uuid || uuid}.rdp`
+                                    a.click()
+                                    URL.revokeObjectURL(url)
+                                    message.success('RDP文件已下载')
+                                }}>
+                                    下载 RDP 文件
+                                </Button>
+                            </div>
+                        </div>
+                    )}
+
+                    {/* 4. SSH 一键连接 - 仅Linux和macOS+非docker+lxc */}
+                    {hostConfig?.server_type !== 'OCInterface' && hostConfig?.server_type !== 'LxContainer' &&
+                     !(config.os_name || '').toLowerCase().includes('win') && (
+                        <div style={{ border: '1px solid #e5e7eb', borderRadius: 8, padding: 16 }}>
+                            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+                                <div>
+                                    <div style={{ fontWeight: 600, fontSize: 15 }}>
+                                        <CodeOutlined style={{ marginRight: 8, color: '#f59e0b' }} />
+                                        SSH 远程连接
+                                    </div>
+                                    <div style={{ color: '#6b7280', fontSize: 13, marginTop: 4 }}>命令行远程连接，适合Linux/macOS</div>
+                                </div>
+                            </div>
+                            <div style={{ marginTop: 12, background: '#f9fafb', borderRadius: 6, padding: 12 }}>
+                                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 }}>
+                                    <span style={{ color: '#6b7280', fontSize: 13 }}>连接地址</span>
+                                    <Space>
+                                        <code style={{ fontSize: 13 }}>{hostConfig?.public_addr?.[0] || vm?.ipv4_address || '未知'}:22</code>
+                                        <Button size="small" icon={<CopyOutlined />} onClick={() => handleCopyPassword(`${hostConfig?.public_addr?.[0] || vm?.ipv4_address || ''}:22`, 'SSH地址')} />
+                                    </Space>
+                                </div>
+                                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 }}>
+                                    <span style={{ color: '#6b7280', fontSize: 13 }}>用户名</span>
+                                    <Space>
+                                        <code style={{ fontSize: 13 }}>root</code>
+                                        <Button size="small" icon={<CopyOutlined />} onClick={() => handleCopyPassword('root', 'SSH用户名')} />
+                                    </Space>
+                                </div>
+                                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12 }}>
+                                    <span style={{ color: '#6b7280', fontSize: 13 }}>密码</span>
+                                    <Space>
+                                        <code style={{ fontSize: 13 }}>{config.os_pass || '未设置'}</code>
+                                        <Button size="small" icon={<CopyOutlined />} onClick={() => handleCopyPassword(config.os_pass || '', 'SSH密码')} />
+                                    </Space>
+                                </div>
+                                <Button block onClick={() => {
+                                    const addr = hostConfig?.public_addr?.[0] || vm?.ipv4_address || ''
+                                    const sshCmd = `ssh root@${addr}`
+                                    navigator.clipboard.writeText(sshCmd)
+                                    message.success('SSH命令已复制')
+                                }}>
+                                    复制 SSH 命令
+                                </Button>
+                            </div>
+                        </div>
+                    )}
                 </div>
             </Modal>
         </div>

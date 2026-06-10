@@ -120,6 +120,17 @@ jobs:
       env:
         SKIP_FRONTEND_BUILD: "1"
 
+    - name: Build VNC Proxy (websocketproxy)
+      run: |
+        cd AllBuilder
+        python build_vncproxy.py
+
+    - name: Prepare release package
+      run: |
+        mkdir -p BuildCache/pyinstaller/Websockify
+        copy BuildCache\websockify\dist\websocketproxy.exe BuildCache\pyinstaller\Websockify\websocketproxy.exe
+      shell: cmd
+
     # ── 签名：安装 SimplySign Desktop（仅 beta/release）────────────────
     - name: Setup Certum Code Signing
       if: inputs.version != 'alpha' && !inputs.skip_signing
@@ -166,7 +177,9 @@ jobs:
       uses: actions/upload-artifact@v4
       with:
         name: openidcs-client-pyinst-winnt-x64
-        path: BuildCache/pyinstaller/openidcs-client.exe
+        path: |
+          BuildCache/pyinstaller/openidcs-client.exe
+          BuildCache/pyinstaller/Websockify/websocketproxy.exe
         retention-days: 30
 
   # ============================================================
@@ -249,11 +262,24 @@ jobs:
       env:
         SKIP_FRONTEND_BUILD: "1"
 
+    - name: Build VNC Proxy (websocketproxy)
+      run: |
+        cd AllBuilder
+        python build_vncproxy.py
+
+    - name: Prepare release package
+      run: |
+        mkdir -p BuildCache/pyinstaller/Websockify
+        cp BuildCache/websockify/dist/websocketproxy BuildCache/pyinstaller/Websockify/websocketproxy
+        chmod +x BuildCache/pyinstaller/Websockify/websocketproxy
+
     - name: Upload artifact
       uses: actions/upload-artifact@v4
       with:
         name: openidcs-client-pyinst-linux-x64
-        path: BuildCache/pyinstaller/openidcs-client
+        path: |
+          BuildCache/pyinstaller/openidcs-client
+          BuildCache/pyinstaller/Websockify/websocketproxy
         retention-days: 30
 
   # ============================================================
@@ -334,11 +360,24 @@ jobs:
       env:
         SKIP_FRONTEND_BUILD: "1"
 
+    - name: Build VNC Proxy (websocketproxy)
+      run: |
+        cd AllBuilder
+        python build_vncproxy.py
+
+    - name: Prepare release package
+      run: |
+        mkdir -p BuildCache/pyinstaller/Websockify
+        cp BuildCache/websockify/dist/websocketproxy BuildCache/pyinstaller/Websockify/websocketproxy
+        chmod +x BuildCache/pyinstaller/Websockify/websocketproxy
+
     - name: Upload artifact
       uses: actions/upload-artifact@v4
       with:
         name: openidcs-client-pyinst-macos-a64
-        path: BuildCache/pyinstaller/openidcs-client
+        path: |
+          BuildCache/pyinstaller/openidcs-client
+          BuildCache/pyinstaller/Websockify/websocketproxy
         retention-days: 30
 
   # ============================================================
@@ -355,24 +394,26 @@ jobs:
     - name: Prepare release files
       run: |
         mkdir -p release
-        # Windows: 打包为 tar.gz
+        # Windows: 打包为 tar.gz（包含 Websockify 目录）
         if [ -d "openidcs-client-pyinst-winnt-x64" ]; then
           cd openidcs-client-pyinst-winnt-x64
-          tar -czf ../release/openidcs-client-pyinst-winnt-x64.tar.gz openidcs-client.exe
+          tar -czf ../release/openidcs-client-pyinst-winnt-x64.tar.gz openidcs-client.exe Websockify/
           cd ..
         fi
-        # Linux: 打包为 tar.gz
+        # Linux: 打包为 tar.gz（包含 Websockify 目录）
         if [ -d "openidcs-client-pyinst-linux-x64" ]; then
           cd openidcs-client-pyinst-linux-x64
           chmod +x openidcs-client
-          tar -czf ../release/openidcs-client-pyinst-linux-x64.tar.gz openidcs-client
+          chmod +x Websockify/websocketproxy
+          tar -czf ../release/openidcs-client-pyinst-linux-x64.tar.gz openidcs-client Websockify/
           cd ..
         fi
-        # macOS: 打包为 tar.gz
+        # macOS: 打包为 tar.gz（包含 Websockify 目录）
         if [ -d "openidcs-client-pyinst-macos-a64" ]; then
           cd openidcs-client-pyinst-macos-a64
           chmod +x openidcs-client
-          tar -czf ../release/openidcs-client-pyinst-macos-a64.tar.gz openidcs-client
+          chmod +x Websockify/websocketproxy
+          tar -czf ../release/openidcs-client-pyinst-macos-a64.tar.gz openidcs-client Websockify/
           cd ..
         fi
 
