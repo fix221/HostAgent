@@ -487,6 +487,25 @@ class HostServer(BasicServer):
             else:
                 logger.info(f"[{self.hs_config.server_name}] 系统安装完成")
 
+            # 配置VNC直通端口（创建时立即写入，无需重启）--------------
+            try:
+                vnc_port = int(vm_conf.vc_port) if hasattr(vm_conf, 'vc_port') and vm_conf.vc_port else (5900 + int(vm_vmid))
+                vnc_id = vnc_port - 5900
+                vnc_arg = f"-vnc 0.0.0.0:{vnc_id}"
+                vm_conn = client.nodes(self.hs_config.launch_path).qemu(vm_vmid)
+                current_config = vm_conn.config.get()
+                current_args = current_config.get('args', '')
+                if vnc_arg not in current_args:
+                    import re
+                    new_args = re.sub(r'-vnc\s+\S+', '', current_args).strip()
+                    new_args = f"{new_args} {vnc_arg}".strip()
+                    vm_conn.config.put(args=new_args)
+                    logger.info(f"[{self.hs_config.server_name}] 已为VM {vm_vmid} 配置VNC直通: {vnc_arg} (端口:{vnc_port})")
+                # 同步vc_port到vm_conf
+                vm_conf.vc_port = str(vnc_port)
+            except Exception as vnc_err:
+                logger.warning(f"[{self.hs_config.server_name}] VNC配置写入失败: {vnc_err}")
+
             # 启动虚拟机 --------------------------------------------
             # 注意：此时 vm_conf 尚未写入 self.vm_saving（将在 super().VMCreate 中写入），
             # 因此不能走 self.VMPowers（其内部通过 vm_finds 查 vm_saving 会返回 None）。
@@ -2003,62 +2022,23 @@ class HostServer(BasicServer):
             vnc_id = vnc_port - 5900
             logger.info(f"[{self.hs_config.server_name}] VM {vmid} VNC配置: vnc_id={vnc_id}, vnc_port={vnc_port}")
 
-            # 为QEMU配置VNC直通端口 ============================================
-            # 1) 写入args配置（下次启动生效）
-            # 2) 如果VM正在运行，通过monitor命令动态开启VNC（立即生效）
-            try:
-                current_config = vm_conn.config.get()
-                current_args = current_config.get('args', '')
-                vnc_arg = f"-vnc 0.0.0.0:{vnc_id}"
-                logger.info(f"[{self.hs_config.server_name}] VM {vmid} 当前args: '{current_args}'")
-                if vnc_arg not in current_args:
-                    # 清除旧的-vnc参数（如果有）
-                    import re
-                    new_args = re.sub(r'-vnc\s+\S+', '', current_args).strip()
-                    if new_args:
-                        new_args = f"{new_args} {vnc_arg}"
-                    else:
-                        new_args = vnc_arg
-                    vm_conn.config.put(args=new_args)
-                    logger.info(f"[{self.hs_config.server_name}] 已为VM {vmid} 配置VNC直通: {vnc_arg}")
-                else:
-                    logger.info(f"[{self.hs_config.server_name}] VM {vmid} VNC参数已存在，无需修改")
-            except Exception as e:
-                logger.warning(f"[{self.hs_config.server_name}] 写入VNC配置失败: {e}")
-
-            # 对运行中的VM，通过QEMU monitor动态开启VNC端口（无需重启）
-            try:
-                status = vm_conn.status.current.get()
-                logger.info(f"[{self.hs_config.server_name}] VM {vmid} 当前状态: {status.get('status')}")
-                if status.get('status') == 'running':
-                    # PVE QEMU monitor命令格式
-                    monitor_result = vm_conn.monitor.post(command=f"change vnc 0.0.0.0:{vnc_id}")
-                    logger.info(f"[{self.hs_config.server_name}] VM {vmid} monitor返回: {monitor_result}")
-                    logger.info(f"[{self.hs_config.server_name}] VM {vmid} 已动态开启VNC端口: {vnc_port}")
-            except Exception as e:
-                logger.warning(f"[{self.hs_config.server_name}] 动态开启VNC失败（需重启VM生效）: {e}")
-
             # 初始化websockify（与VMware方案一致）==============================
             self.VMLoader()
 
-            # 使用vc_pass作为websockify的token（用户需输入密码才能连接）=========
-            vnc_pass = self.vm_saving[vm_uuid].vc_pass if vm_uuid in self.vm_saving else ''
-            if not vnc_pass:
-                return ZMessage(
-                    success=False,
-                    action="VCRemote",
-                    message="VNC密码为空，请先设置VNC密码")
+            # 生成随机token用于websockify端口映射 ==============================
+            rand_pass = ''.join(random.choices(string.ascii_letters + string.digits, k=16))
 
             # 删除旧端口映射 ===================================================
             self.vm_remote.exec.del_port(pve_host, vnc_port)
 
-            # 添加新端口映射（token=vc_pass -> PVE主机VNC端口）=================
-            self.vm_remote.exec.add_port(pve_host, vnc_port, vnc_pass)
+            # 添加新端口映射（rand_pass -> PVE主机VNC端口）=====================
+            self.vm_remote.exec.add_port(pve_host, vnc_port, rand_pass)
 
-            # 构造noVNC访问URL（不带token，让用户自己输入密码）=================
+            # 构造noVNC访问URL（与VMware方案一致，带token和websockify路径）=====
             url = (
                 f"http://{public_ip}:{self.hs_config.remote_port}"
-                f"/vnc.html?autoconnect=false"
+                f"/vnc.html?autoconnect=true&path=websockify?"
+                f"token={rand_pass}"
             )
             logger.info(f"VMRemote for {vm_uuid}: VNC({pve_host}:{vnc_port}) -> {url}")
 
@@ -2069,7 +2049,6 @@ class HostServer(BasicServer):
                 results={
                     "vmid": vmid,
                     "vnc_port": vnc_port,
-                    "vnc_pass": vnc_pass,
                     "url": url
                 }
             )
