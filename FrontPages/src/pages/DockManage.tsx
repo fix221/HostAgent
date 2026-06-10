@@ -388,27 +388,40 @@ function DockManage() {
         navigate(`/hosts/${targetHost}/vms/${uuid}`)
     }
 
-    const handleQuickPower = async (uuid: string, host: string | undefined, action: string) => {
+    const handleQuickPower = (uuid: string, host: string | undefined, action: string) => {
         const targetHost = host || hostName
         if (!targetHost) return
         const actionMap: Record<string, string> = {
             start: '启动', stop: '关机', hard_stop: '强制关机',
             hard_reset: '强制重启', pause: '暂停', resume: '恢复',
         }
-        const hide = message.loading(`正在${actionMap[action]}...`, 0)
-        try {
-            const result = await api.vmPower(targetHost, uuid, action as any)
-            hide()
-            if (result.code === 200) {
-                message.success(`${actionMap[action]}成功`)
-                setTimeout(loadVMs, 1500)
-            } else {
-                message.error(result.msg || '操作失败')
+        const dangerActions = ['stop', 'hard_stop', 'hard_reset', 'pause']
+        const isDanger = dangerActions.includes(action)
+        
+        Modal.confirm({
+            title: `确认${actionMap[action]}`,
+            content: `确定要对虚拟机 "${uuid}" 执行${actionMap[action]}操作吗？`,
+            okText: '确认',
+            cancelText: '取消',
+            okType: isDanger ? 'danger' : 'primary',
+            mask: false,
+            onOk: async () => {
+                const hide = message.loading(`正在${actionMap[action]}...`, 0)
+                try {
+                    const result = await api.vmPower(targetHost, uuid, action as any)
+                    hide()
+                    if (result.code === 200) {
+                        message.success(`${actionMap[action]}成功`)
+                        setTimeout(loadVMs, 1500)
+                    } else {
+                        message.error(result.msg || '操作失败')
+                    }
+                } catch (error) {
+                    hide()
+                    message.error('操作失败')
+                }
             }
-        } catch (error) {
-            hide()
-            message.error('操作失败')
-        }
+        })
     }
 
     return (

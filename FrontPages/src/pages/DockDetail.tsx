@@ -2269,10 +2269,11 @@ await api.vmPower(hostName!, uuid!, 'H_CLOSE')
                                         label="IPv4地址">{vm.ipv4_address || '未分配'}</Descriptions.Item>
                                     <Descriptions.Item
                                         label="IPv6地址">{vm.ipv6_address || '未分配'}</Descriptions.Item>
+                                    <Descriptions.Item label="VNC 端口">{config.vc_port || '未设置'}</Descriptions.Item>
                                     <Descriptions.Item label="上行带宽">{config.speed_u || 0} Mbps</Descriptions.Item>
                                     <Descriptions.Item label="下行带宽">{config.speed_d || 0} Mbps</Descriptions.Item>
                                     {/*<Descriptions.Item label="主所有者">{config.own_all ? Object.keys(config.own_all)[0] || '未知' : '未知'}</Descriptions.Item>*/}
-                                    <Descriptions.Item label="VNC 端口">{config.vc_port || '未设置'}</Descriptions.Item>
+
                                 </Descriptions>
                             </Col>
                             <Col span={8} className="flex flex-col justify-between">

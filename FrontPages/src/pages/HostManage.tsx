@@ -922,14 +922,35 @@ function HostManage() {
                 }
             })
         } else {
-            // 启用操作直接执行
-            try {
-                await api.setHostEnabled(name, enable)
-                message.success('主机已启用')
-                loadHosts()
-            } catch (error) {
-                message.error('启用失败')
-            }
+            // 启用操作也需要二次确认
+            Modal.confirm({
+                title: '确认启用主机',
+                icon: <ExclamationCircleOutlined style={{color: '#52c41a'}}/>,
+                content: (
+                    <div>
+                        <p>确定要启用主机 <strong>"{name}"</strong> 吗？</p>
+                        <p style={{marginTop: 8}}>
+                            启用后：
+                        </p>
+                        <ul style={{marginTop: 4, paddingLeft: 20}}>
+                            <li>系统将恢复对该主机的状态监控</li>
+                            <li>该主机的虚拟机操作将恢复可用</li>
+                        </ul>
+                    </div>
+                ),
+                okText: '确认启用',
+                cancelText: '取消',
+                mask: false,
+                onOk: async () => {
+                    try {
+                        await api.setHostEnabled(name, enable)
+                        message.success('主机已启用')
+                        loadHosts()
+                    } catch (error) {
+                        message.error('启用失败')
+                    }
+                }
+            })
         }
     }
 

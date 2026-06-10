@@ -5,7 +5,8 @@ import {
     PauseCircleOutlined,
     RedoOutlined,
     PoweroffOutlined,
-    ThunderboltOutlined
+    ThunderboltOutlined,
+    ExclamationCircleOutlined
 } from '@ant-design/icons'
 
 interface DockPowerModalProps {
@@ -15,12 +16,37 @@ interface DockPowerModalProps {
     onAction: (action: string) => void
 }
 
+const actionLabels: Record<string, string> = {
+    start: '启动',
+    stop: '关机',
+    reset: '重启',
+    pause: '暂停',
+    resume: '恢复',
+    hard_stop: '强制关机',
+    hard_reset: '强制重启',
+}
+
 const DockPowerModal: React.FC<DockPowerModalProps> = ({
     open,
     onCancel,
     vmUuid,
     onAction
 }) => {
+    const confirmAction = (action: string) => {
+        const label = actionLabels[action] || action
+        const isDanger = ['stop', 'hard_stop', 'hard_reset'].includes(action)
+        Modal.confirm({
+            title: `确认${label}`,
+            icon: <ExclamationCircleOutlined style={{ color: isDanger ? '#ef4444' : '#faad14' }} />,
+            content: `确定要对虚拟机 "${vmUuid}" 执行${label}操作吗？`,
+            okText: `确认${label}`,
+            okType: isDanger ? 'danger' : 'primary',
+            cancelText: '取消',
+            mask: false,
+            onOk: () => onAction(action)
+        })
+    }
+
     return (
         <Modal
             title="电源操作"
@@ -37,7 +63,7 @@ const DockPowerModal: React.FC<DockPowerModalProps> = ({
                         type="primary"
                         className="bg-green-500 hover:bg-green-600 dark:bg-green-600 dark:hover:bg-green-700"
                         icon={<PlayCircleOutlined/>}
-                        onClick={() => onAction('start')}
+                        onClick={() => confirmAction('start')}
                     >
                         启动
                     </Button>
@@ -47,7 +73,7 @@ const DockPowerModal: React.FC<DockPowerModalProps> = ({
                         block
                         className="bg-yellow-500 hover:bg-yellow-600 dark:bg-yellow-600 dark:hover:bg-yellow-700 text-white"
                         icon={<PauseCircleOutlined/>}
-                        onClick={() => onAction('stop')}
+                        onClick={() => confirmAction('stop')}
                     >
                         关机
                     </Button>
@@ -57,7 +83,7 @@ const DockPowerModal: React.FC<DockPowerModalProps> = ({
                         block
                         type="primary"
                         icon={<RedoOutlined/>}
-                        onClick={() => onAction('reset')}
+                        onClick={() => confirmAction('reset')}
                     >
                         重启
                     </Button>
@@ -67,7 +93,7 @@ const DockPowerModal: React.FC<DockPowerModalProps> = ({
                         block
                         className="bg-gray-500 hover:bg-gray-600 dark:bg-gray-600 dark:hover:bg-gray-700 text-white"
                         icon={<PauseCircleOutlined/>}
-                        onClick={() => onAction('pause')}
+                        onClick={() => confirmAction('pause')}
                     >
                         暂停
                     </Button>
@@ -77,7 +103,7 @@ const DockPowerModal: React.FC<DockPowerModalProps> = ({
                         block
                         className="bg-purple-600 hover:bg-purple-700 dark:bg-purple-700 dark:hover:bg-purple-800 text-white"
                         icon={<PlayCircleOutlined/>}
-                        onClick={() => onAction('resume')}
+                        onClick={() => confirmAction('resume')}
                     >
                         恢复
                     </Button>
@@ -87,7 +113,7 @@ const DockPowerModal: React.FC<DockPowerModalProps> = ({
                         block
                         danger
                         icon={<PoweroffOutlined/>}
-                        onClick={() => onAction('hard_stop')}
+                        onClick={() => confirmAction('hard_stop')}
                     >
                         强制关机
                     </Button>
@@ -97,7 +123,7 @@ const DockPowerModal: React.FC<DockPowerModalProps> = ({
                         block
                         danger
                         icon={<ThunderboltOutlined/>}
-                        onClick={() => onAction('hard_reset')}
+                        onClick={() => confirmAction('hard_reset')}
                     >
                         强制重启
                     </Button>

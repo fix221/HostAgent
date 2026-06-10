@@ -1097,6 +1097,58 @@ html[data-transparent="true"][data-theme="dark"] body .ant-modal .ant-modal-cont
     border: 1px solid rgba(255, 255, 255, 0.1) !important;
 }
 
+/* 4. Modal 深色模式文字颜色适配 */
+[data-theme="dark"] .ant-modal .ant-modal-title,
+[data-theme="dark"] .ant-modal .ant-modal-confirm-title {
+    color: rgba(255, 255, 255, 0.92) !important;
+}
+[data-theme="dark"] .ant-modal .ant-modal-confirm-content,
+[data-theme="dark"] .ant-modal .ant-modal-body p,
+[data-theme="dark"] .ant-modal .ant-modal-body span,
+[data-theme="dark"] .ant-modal .ant-modal-body div,
+[data-theme="dark"] .ant-modal .ant-modal-body label {
+    color: rgba(255, 255, 255, 0.82) !important;
+}
+[data-theme="dark"] .ant-modal .ant-modal-body strong {
+    color: rgba(255, 255, 255, 0.95) !important;
+}
+
+/* 5. Modal 深色模式 Input/Select 边框增强 */
+[data-theme="dark"] .ant-modal .ant-input,
+[data-theme="dark"] .ant-modal .ant-input-affix-wrapper,
+[data-theme="dark"] .ant-modal .ant-input-password,
+[data-theme="dark"] .ant-modal .ant-select-selector,
+[data-theme="dark"] .ant-modal .ant-input-number {
+    background: rgba(255, 255, 255, 0.06) !important;
+    border: 1px solid rgba(255, 255, 255, 0.25) !important;
+    color: rgba(255, 255, 255, 0.9) !important;
+}
+[data-theme="dark"] .ant-modal .ant-input::placeholder,
+[data-theme="dark"] .ant-modal .ant-input-password input::placeholder,
+[data-theme="dark"] .ant-modal .ant-input-number input::placeholder {
+    color: rgba(255, 255, 255, 0.35) !important;
+}
+[data-theme="dark"] .ant-modal .ant-input:focus,
+[data-theme="dark"] .ant-modal .ant-input-affix-wrapper:focus,
+[data-theme="dark"] .ant-modal .ant-input-affix-wrapper-focused,
+[data-theme="dark"] .ant-modal .ant-input-password:focus-within {
+    border-color: rgba(105, 104, 253, 0.7) !important;
+}
+[data-theme="dark"] .ant-modal .ant-select-selection-placeholder {
+    color: rgba(255, 255, 255, 0.35) !important;
+}
+[data-theme="dark"] .ant-modal .ant-select-selection-item {
+    color: rgba(255, 255, 255, 0.9) !important;
+}
+/* Modal 深色模式 Form label */
+[data-theme="dark"] .ant-modal .ant-form-item-label > label {
+    color: rgba(255, 255, 255, 0.82) !important;
+}
+/* Modal 深色模式 Checkbox */
+[data-theme="dark"] .ant-modal .ant-checkbox-wrapper {
+    color: rgba(255, 255, 255, 0.82) !important;
+}
+
 .ant-card-head-title{
     padding: 16px;
 }
