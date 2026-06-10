@@ -3,8 +3,8 @@
 import os
 from pathlib import Path
 
-# 获取项目根目录（AllBuilder 的父目录）
-project_root = Path(__file__).parent.parent.absolute()
+# 获取项目根目录（SPECPATH 是 PyInstaller 在 spec 文件中自动提供的变量，指向 spec 文件所在目录）
+project_root = Path(SPECPATH).parent.absolute()
 websockify_script = project_root / "Websockify" / "websocketproxy.py"
 websockify_dir = project_root / "Websockify"
 
