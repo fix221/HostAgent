@@ -246,7 +246,10 @@ export const updateVM = (hsName: string, vmUuid: string, data: Partial<CreateVMR
 /**
  * 删除虚拟机
  */
-export const deleteVM = (hsName: string, vmUuid: string, force = false): Promise<ApiResponse> => {
+export const deleteVM = (hsName: string, vmUuid: string, force = false, confirmOwner?: string): Promise<ApiResponse> => {
+  if (confirmOwner) {
+    return http.delete(`/api/client/delete/${hsName}/${vmUuid}?force=${force}`, { data: { confirm_owner: confirmOwner } });
+  }
   return http.delete(`/api/client/delete/${hsName}/${vmUuid}?force=${force}`);
 };
 

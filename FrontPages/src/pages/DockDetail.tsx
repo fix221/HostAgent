@@ -58,6 +58,7 @@ import {
 } from '@ant-design/icons'
 import ReactECharts from 'echarts-for-react'
 import api from '@/utils/apis.ts'
+import { useUserStore } from '@/utils/data'
 import { startTaskWithNotification, getTaskList } from '@/utils/taskPoller'
 import {VM_PERMISSION, hasPermission, TAB_PERMISSION_MAP, VM_PERMISSION_LABELS, PERMISSION_FIELD_MASK, HIDDEN_TABS, OWNER_ONLY_TABS, getTabQuota} from '@/types'
 
@@ -213,6 +214,7 @@ interface HostConfig {
 function VMDetail() {
     const {hostName, uuid} = useParams<{ hostName: string; uuid: string }>()
     const navigate = useNavigate()
+    const { user } = useUserStore()
 
     // 状态管理
     const [vm, setVM] = useState<DockDetail | null>(null)
@@ -275,7 +277,7 @@ function VMDetail() {
     const [currentAction, setCurrentAction] = useState<{
         title: string;
         content: string;
-        onConfirm: () => Promise<void>;
+        onConfirm: (confirmInput?: string) => Promise<void>;
         requireShutdown?: boolean;
         confirmChecked?: boolean;
         requireInput?: boolean;
@@ -1092,7 +1094,7 @@ const [operationTimeoutId, setOperationTimeoutId] = useState<ReturnType<typeof s
     const showConfirmAction = (
         title: string,
         content: string,
-        onConfirm: () => Promise<void>,
+        onConfirm: (confirmInput?: string) => Promise<void>,
         requireShutdown: boolean = false,
         requireInput: boolean = false,
         expectedInput: string = ''
@@ -1115,7 +1117,7 @@ const [operationTimeoutId, setOperationTimeoutId] = useState<ReturnType<typeof s
         
         // 如果需要输入验证，检查输入是否匹配
         if (currentAction.requireInput && currentAction.confirmInput !== currentAction.expectedInput) {
-            message.error('输入的虚拟机名称不匹配')
+            message.error('输入内容不匹配')
             return
         }
         
@@ -1125,7 +1127,7 @@ const [operationTimeoutId, setOperationTimeoutId] = useState<ReturnType<typeof s
         setOperationLocked(true)
         
         try {
-            await currentAction.onConfirm()
+            await currentAction.onConfirm(currentAction.confirmInput)
             message.success('操作成功')
             // 操作成功后刷新状态
             setTimeout(loadVMDetail, 1500)
@@ -1210,18 +1212,41 @@ const [operationTimeoutId, setOperationTimeoutId] = useState<ReturnType<typeof s
             message.error('该主机已被禁用，无法删除虚拟机')
             return
         }
-        
-        showConfirmAction(
-            '确认删除',
-            `此操作将永久删除虚拟机 "${uuid}" 且不可恢复，请输入虚拟机名称以确认删除：`,
-            async () => {
-                await api.deleteVM(hostName!, uuid!)
-                navigate(`/hosts/${hostName}/vms`)
-            },
-            true,
-            true,
-            uuid || ''
-        )
+
+        // 判断管理员是否在删除非自己的虚拟机
+        const ownerList = vm?.config?.own_all || {}
+        const ownerNames = Object.keys(ownerList)
+        const primaryOwner = ownerNames.length > 0 ? ownerNames[0] : ''
+        const currentUsername = user?.username || ''
+        const isOwnVM = primaryOwner === currentUsername
+
+        if (isAdminUser && !isOwnVM && primaryOwner) {
+            // 管理员删除非自己的虚拟机，需要输入主所有者用户名确认
+            showConfirmAction(
+                '确认删除',
+                `此操作将永久删除虚拟机 "${uuid}" 且不可恢复。该虚拟机属于用户 "${primaryOwner}"，请输入主所有者用户名以确认删除：`,
+                async (confirmInput) => {
+                    await api.deleteVM(hostName!, uuid!, false, confirmInput)
+                    navigate(`/hosts/${hostName}/vms`)
+                },
+                true,
+                true,
+                primaryOwner
+            )
+        } else {
+            // 普通删除流程，输入虚拟机名称确认
+            showConfirmAction(
+                '确认删除',
+                `此操作将永久删除虚拟机 "${uuid}" 且不可恢复，请输入虚拟机名称以确认删除：`,
+                async () => {
+                    await api.deleteVM(hostName!, uuid!)
+                    navigate(`/hosts/${hostName}/vms`)
+                },
+                true,
+                true,
+                uuid || ''
+            )
+        }
     }
 
     const handleOpenVNC = async () => {
@@ -3410,7 +3435,7 @@ await api.vmPower(hostName!, uuid!, 'H_CLOSE')
                 {currentAction?.requireInput && (
                     <div className="mb-4">
                         <Input
-                            placeholder="\u8bf7\u8f93\u5165\u865a\u62df\u673a\u540d\u79f0"
+                            placeholder={currentAction.expectedInput === uuid ? "请输入虚拟机名称" : "请输入主所有者用户名"}
                             value={currentAction.confirmInput}
                             onChange={(e) => setCurrentAction({
                                 ...currentAction,

@@ -2912,6 +2912,21 @@ class RestManager:
         if not enable_host:
             return self.api_response(403, '该主机已禁用，无法删除虚拟机')
 
+        # 管理员删除非自己的虚拟机时，需要确认主所有者用户名
+        if user_data.get('is_admin') or user_data.get('is_token_login'):
+            vm_config_check = server.vm_saving.get(vm_uuid) if hasattr(server, 'vm_saving') else None
+            if vm_config_check:
+                owners_check = getattr(vm_config_check, 'own_all', {})
+                first_owner = next(iter(owners_check), None)
+                current_username = user_data.get('username', '')
+                # 如果管理员不是该虚拟机的主所有者，需要输入主所有者用户名确认
+                if first_owner and first_owner != current_username:
+                    data = request.get_json() or {}
+                    confirm_owner = data.get('confirm_owner', '') or request.args.get('confirm_owner', '')
+                    if confirm_owner != first_owner:
+                        return self.api_response(400, '请输入该虚拟机主所有者的用户名以确认删除',
+                                                 {'require_confirm_owner': True, 'owner_hint': first_owner[:1] + '***'})
+
         # 获取虚拟机配置以便释放资源
         vm_resource_usage = {'cpu': 0, 'ram': 0, 'ssd': 0, 'gpu': 0, 'traffic': 0, 'nat_ports': 0, 'web_proxy': 0,
                              'bandwidth_up': 0, 'bandwidth_down': 0, 'nat_ips': 0, 'pub_ips': 0}

@@ -2022,6 +2022,20 @@ class HostServer(BasicServer):
             vnc_id = vnc_port - 5900
             logger.info(f"[{self.hs_config.server_name}] VM {vmid} VNC配置: vnc_id={vnc_id}, vnc_port={vnc_port}")
 
+            # 兼容旧虚拟机：检查并写入VNC端口配置到PVE conf ====================
+            try:
+                current_config = vm_conn.config.get()
+                current_args = current_config.get('args', '')
+                vnc_arg = f"-vnc 0.0.0.0:{vnc_id}"
+                if vnc_arg not in current_args:
+                    import re
+                    new_args = re.sub(r'-vnc\s+\S+', '', current_args).strip()
+                    new_args = f"{new_args} {vnc_arg}".strip()
+                    vm_conn.config.put(args=new_args)
+                    logger.info(f"[{self.hs_config.server_name}] 已为VM {vmid} 补写VNC配置: {vnc_arg} (端口:{vnc_port})")
+            except Exception as vnc_err:
+                logger.warning(f"[{self.hs_config.server_name}] VNC配置补写失败: {vnc_err}")
+
             # 初始化websockify（与VMware方案一致）==============================
             self.VMLoader()
 

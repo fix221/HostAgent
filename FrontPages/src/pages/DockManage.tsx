@@ -65,6 +65,8 @@ function DockManage() {
     const [deleteVmUuid, setDeleteVmUuid] = useState<string>('')
     const [deleteHostName, setDeleteHostName] = useState<string>('')
     const [deleteConfirmInput, setDeleteConfirmInput] = useState<string>('')
+    const [deleteRequireOwner, setDeleteRequireOwner] = useState<boolean>(false)
+    const [deletePrimaryOwner, setDeletePrimaryOwner] = useState<string>('')
 
     // Initial data loading
     useEffect(() => {
@@ -208,21 +210,38 @@ function DockManage() {
             return
         }
         
+        // 判断是否是管理员删除非自己的虚拟机
+        const vmData = vms[uuid] || Object.values(vms).find((v: any) => (v._realUuid || '') === uuid)
+        const ownAll = (vmData as any)?.config?.own_all || {}
+        const ownerNames = Object.keys(ownAll)
+        const primaryOwner = ownerNames.length > 0 ? ownerNames[0] : ''
+        const currentUsername = user?.username || ''
+        const needOwnerConfirm = isAdmin && primaryOwner && primaryOwner !== currentUsername
+        
         setDeleteVmUuid(uuid)
         setDeleteHostName(targetHost)
         setDeleteConfirmInput('')
+        setDeleteRequireOwner(!!needOwnerConfirm)
+        setDeletePrimaryOwner(needOwnerConfirm ? primaryOwner : '')
         setDeleteModalOpen(true)
     }
 
     const executeDelete = async () => {
-        if (deleteConfirmInput !== deleteVmUuid) {
-            message.error('输入的虚拟机名称不匹配')
-            return
+        if (deleteRequireOwner) {
+            if (deleteConfirmInput !== deletePrimaryOwner) {
+                message.error('输入的用户名不匹配')
+                return
+            }
+        } else {
+            if (deleteConfirmInput !== deleteVmUuid) {
+                message.error('输入的虚拟机名称不匹配')
+                return
+            }
         }
         
         setDeleteModalOpen(false)
         try {
-            const result = await api.deleteVM(deleteHostName, deleteVmUuid)
+            const result = await api.deleteVM(deleteHostName, deleteVmUuid, false, deleteRequireOwner ? deleteConfirmInput : undefined)
             startTaskWithNotification(result, '删除虚拟机', {
                 onCompleted: () => loadVMs(),
                 onFailed: () => loadVMs(),
@@ -434,7 +453,7 @@ function DockManage() {
                         {
                             title: '系统',
                             key: 'os',
-                            width: 140,
+                            width: 300,
                             render: (_: any, record: any) => record.vm?.config?.os_name || '未知',
                         },
                         {
@@ -543,16 +562,29 @@ function DockManage() {
                 okType="danger"
                 cancelText="取消"
                 mask={false}
-                okButtonProps={{ disabled: deleteConfirmInput !== deleteVmUuid }}
+                okButtonProps={{ disabled: deleteRequireOwner ? deleteConfirmInput !== deletePrimaryOwner : deleteConfirmInput !== deleteVmUuid }}
             >
                 <div>
                     <p>此操作将永久删除虚拟机 "<strong style={{ color: '#ef4444' }}>{deleteVmUuid}</strong>" 且不可恢复</p>
-                    <p className="mt-2 mb-2 text-xs  ">请输入虚拟机名称以确认删除：</p>
-                    <Input
-                        placeholder="请输入虚拟机名称"
-                        value={deleteConfirmInput}
-                        onChange={(e) => setDeleteConfirmInput(e.target.value)}
-                    />
+                    {deleteRequireOwner ? (
+                        <>
+                            <p className="mt-2 mb-2 text-xs">该虚拟机属于用户 "<strong>{deletePrimaryOwner}</strong>"，请输入主所有者用户名以确认删除：</p>
+                            <Input
+                                placeholder="请输入主所有者用户名"
+                                value={deleteConfirmInput}
+                                onChange={(e) => setDeleteConfirmInput(e.target.value)}
+                            />
+                        </>
+                    ) : (
+                        <>
+                            <p className="mt-2 mb-2 text-xs">请输入虚拟机名称以确认删除：</p>
+                            <Input
+                                placeholder="请输入虚拟机名称"
+                                value={deleteConfirmInput}
+                                onChange={(e) => setDeleteConfirmInput(e.target.value)}
+                            />
+                        </>
+                    )}
                 </div>
             </Modal>
         </div>
