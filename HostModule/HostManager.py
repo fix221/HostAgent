@@ -2,6 +2,8 @@ import json
 import secrets
 import traceback
 import threading
+import time
+import requests
 
 from loguru import logger
 
@@ -26,6 +28,8 @@ class HostManage:
         self.proxys: HttpManager | None = None
         # 初始化异步任务引擎
         self.task_engine = TaskEngine(self.saving)
+        # 同步任务计时器
+        self._last_sync_time: float = 0
         # 删除 self.web_all，不再使用全局代理列表
         self.set_conf()
 
@@ -721,6 +725,13 @@ class HostManage:
                 logger.error(f'[Cron] 重新计算用户资源配额失败: {e}')
                 traceback.print_exc()
             
+            # 执行自动同步任务 ====================================================
+            try:
+                self._check_and_execute_sync()
+            except Exception as e:
+                logger.error(f'[Cron] 自动同步任务执行失败: {e}')
+                traceback.print_exc()
+            
             logger.info('[Cron] 定时任务执行完成')
             
         except Exception as e:
@@ -913,3 +924,193 @@ class HostManage:
         logger.info('[手动] 触发用户资源配额重新计算')
         self._recalculate_user_quotas()
         logger.info('[手动] 用户资源配额重新计算完成')
+
+    # ========================================================================
+    # 自动同步逻辑
+    # ========================================================================
+    def _check_and_execute_sync(self):
+        """
+        检查是否需要执行同步，根据设置的间隔时间判断
+        """
+        settings = self.saving.get_system_settings()
+        sync_enabled = settings.get('sync_enabled', '0') == '1'
+        if not sync_enabled:
+            return
+        
+        sync_interval = int(settings.get('sync_interval', '10'))  # 默认10分钟
+        sync_url = settings.get('sync_url', '').strip()
+        sync_token = settings.get('sync_token', '').strip()
+        sync_mode = settings.get('sync_mode', 'pull')
+        
+        if not sync_url or not sync_token:
+            return
+        
+        # 检查是否到达同步间隔
+        now = time.time()
+        if now - self._last_sync_time < sync_interval * 60:
+            return
+        
+        self._last_sync_time = now
+        logger.info(f'[Sync] 开始执行自动同步，模式: {sync_mode}')
+        
+        try:
+            if sync_mode in ('pull', 'both'):
+                self._sync_pull(sync_url, sync_token)
+            if sync_mode in ('push', 'both'):
+                self._sync_push(sync_url, sync_token)
+            logger.info('[Sync] 自动同步执行完成')
+        except Exception as e:
+            logger.error(f'[Sync] 自动同步执行失败: {e}')
+            traceback.print_exc()
+
+    def _sync_pull(self, sync_url: str, sync_token: str):
+        """
+        拉取同步：从远程服务器获取同名主机下的虚拟机信息并写入本地
+        """
+        headers = {'Authorization': f'Bearer {sync_token}'}
+        
+        # 获取远程主机列表
+        try:
+            resp = requests.get(f'{sync_url}/api/server/detail', headers=headers, timeout=30)
+            if resp.status_code != 200:
+                logger.error(f'[Sync-Pull] 获取远程主机列表失败: HTTP {resp.status_code}')
+                return
+            remote_data = resp.json()
+            if remote_data.get('code') != 200:
+                logger.error(f'[Sync-Pull] 获取远程主机列表失败: {remote_data.get("msg")}')
+                return
+            remote_hosts = remote_data.get('data', {})
+        except requests.RequestException as e:
+            logger.error(f'[Sync-Pull] 连接远程服务器失败: {e}')
+            return
+        
+        # 遍历本地主机，查找远程同名主机并拉取虚拟机数据
+        for hs_name, server in self.engine.items():
+            if hs_name not in remote_hosts:
+                continue
+            
+            try:
+                # 获取远程主机的虚拟机列表
+                resp = requests.get(
+                    f'{sync_url}/api/client/detail/{hs_name}',
+                    headers=headers, timeout=30
+                )
+                if resp.status_code != 200:
+                    logger.warning(f'[Sync-Pull] 获取远程主机 {hs_name} 虚拟机列表失败')
+                    continue
+                
+                vm_data = resp.json()
+                if vm_data.get('code') != 200:
+                    logger.warning(f'[Sync-Pull] 获取远程主机 {hs_name} 虚拟机数据失败: {vm_data.get("msg")}')
+                    continue
+                
+                remote_vms = vm_data.get('data', {})
+                if not remote_vms:
+                    continue
+                
+                # 将远程虚拟机信息合并到本地
+                updated_count = 0
+                for vm_uuid, vm_info in remote_vms.items():
+                    config_data = vm_info.get('config', vm_info) if isinstance(vm_info, dict) else {}
+                    if not config_data:
+                        continue
+                    
+                    if vm_uuid in server.vm_saving:
+                        # 已存在：更新配置（保留本地的own_all等敏感信息）
+                        local_vm = server.vm_saving[vm_uuid]
+                        local_own_all = local_vm.own_all  # 保留本地所有者
+                        local_nat_all = local_vm.nat_all  # 保留本地端口转发
+                        local_web_all = local_vm.web_all  # 保留本地反向代理
+                        # 更新基本配置
+                        for key in ['cpu_num', 'mem_num', 'hdd_num', 'gpu_mem',
+                                    'os_name', 'speed_u', 'speed_d', 'nat_num', 'web_num']:
+                            if key in config_data:
+                                setattr(local_vm, key, config_data[key])
+                        # 恢复本地敏感数据
+                        local_vm.own_all = local_own_all
+                        local_vm.nat_all = local_nat_all
+                        local_vm.web_all = local_web_all
+                        updated_count += 1
+                    else:
+                        # 不存在：新建虚拟机配置
+                        new_vm = VMConfig(**config_data)
+                        new_vm.vm_uuid = vm_uuid
+                        server.vm_saving[vm_uuid] = new_vm
+                        updated_count += 1
+                
+                if updated_count > 0:
+                    server.data_set()
+                    logger.info(f'[Sync-Pull] 主机 {hs_name} 同步了 {updated_count} 台虚拟机')
+                    
+            except Exception as e:
+                logger.error(f'[Sync-Pull] 同步主机 {hs_name} 失败: {e}')
+                traceback.print_exc()
+
+    def _sync_push(self, sync_url: str, sync_token: str):
+        """
+        推送同步：将本地同名主机下的虚拟机信息推送到远程服务器
+        """
+        headers = {
+            'Authorization': f'Bearer {sync_token}',
+            'Content-Type': 'application/json'
+        }
+        
+        # 获取远程主机列表
+        try:
+            resp = requests.get(f'{sync_url}/api/server/detail', headers=headers, timeout=30)
+            if resp.status_code != 200:
+                logger.error(f'[Sync-Push] 获取远程主机列表失败: HTTP {resp.status_code}')
+                return
+            remote_data = resp.json()
+            if remote_data.get('code') != 200:
+                logger.error(f'[Sync-Push] 获取远程主机列表失败: {remote_data.get("msg")}')
+                return
+            remote_hosts = remote_data.get('data', {})
+        except requests.RequestException as e:
+            logger.error(f'[Sync-Push] 连接远程服务器失败: {e}')
+            return
+        
+        # 遍历本地主机，推送到远程同名主机
+        for hs_name, server in self.engine.items():
+            if hs_name not in remote_hosts:
+                continue
+            
+            try:
+                # 从数据库重新加载本地数据
+                server.data_get()
+                
+                if not server.vm_saving:
+                    continue
+                
+                # 构建推送数据
+                push_data = {}
+                for vm_uuid, vm_config in server.vm_saving.items():
+                    try:
+                        push_data[vm_uuid] = vm_config.__save__()
+                    except Exception as e:
+                        logger.warning(f'[Sync-Push] 序列化虚拟机 {vm_uuid} 失败: {e}')
+                        continue
+                
+                if not push_data:
+                    continue
+                
+                # 推送到远程
+                resp = requests.post(
+                    f'{sync_url}/api/sync/push/{hs_name}',
+                    headers=headers,
+                    json={'vms': push_data},
+                    timeout=60
+                )
+                
+                if resp.status_code == 200:
+                    result = resp.json()
+                    if result.get('code') == 200:
+                        logger.info(f'[Sync-Push] 主机 {hs_name} 推送了 {len(push_data)} 台虚拟机')
+                    else:
+                        logger.warning(f'[Sync-Push] 主机 {hs_name} 推送失败: {result.get("msg")}')
+                else:
+                    logger.warning(f'[Sync-Push] 主机 {hs_name} 推送失败: HTTP {resp.status_code}')
+                    
+            except Exception as e:
+                logger.error(f'[Sync-Push] 推送主机 {hs_name} 失败: {e}')
+                traceback.print_exc()

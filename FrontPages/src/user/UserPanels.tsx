@@ -32,10 +32,13 @@ const UserPanels: React.FC = () => {
   const [loading, setLoading] = useState(false);
   const [vmsLoading, setVmsLoading] = useState(false);
   const [vms, setVMs] = useState<Record<string, any>>({});
+  const [allNatPorts, setAllNatPorts] = useState<Array<{host: string, uuid: string, port: any, portKey: string}>>([]);
+  const [allWebProxies, setAllWebProxies] = useState<Array<{host: string, uuid: string, proxy: any, proxyKey: string}>>([]);
 
   useEffect(() => {
     fetchUserData();
     loadAllVMs();
+    loadNatAndProxy();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -65,12 +68,19 @@ const UserPanels: React.FC = () => {
         const hosts = Object.keys(hostsData).filter(
           (host) => hostsData[host].enable_host !== false
         );
+        const currentUsername = user?.username || '';
         await Promise.all(hosts.map(async (host) => {
           try {
             const vmsRes = await api.getVMs(host);
             if (vmsRes.code === 200 && vmsRes.data) {
               Object.entries(vmsRes.data).forEach(([uuid, vm]) => {
-                allVMs[`${host}-${uuid}`] = { ...vm, _host: host, _realUuid: uuid };
+                // 只显示当前用户为主所有者的虚拟机
+                const ownAll = (vm as any).config?.own_all || {};
+                const ownerNames = Object.keys(ownAll);
+                const primaryOwner = ownerNames.length > 0 ? ownerNames[0] : '';
+                if (primaryOwner === currentUsername || !primaryOwner) {
+                  allVMs[`${host}-${uuid}`] = { ...vm, _host: host, _realUuid: uuid };
+                }
               });
             }
           } catch (err) {
@@ -83,6 +93,61 @@ const UserPanels: React.FC = () => {
       message.error('加载虚拟机列表失败');
     } finally {
       setVmsLoading(false);
+    }
+  };
+
+  // 通过API加载用户的端口转发和反向代理
+  const loadNatAndProxy = async () => {
+    try {
+      const hostsRes = await api.getHosts();
+      if (hostsRes.code !== 200 || !hostsRes.data) return;
+      const hostsData = hostsRes.data as any;
+      const hosts = Object.keys(hostsData).filter(h => hostsData[h].enable_host !== false);
+      const currentUsername = user?.username || '';
+
+      const natPorts: Array<{host: string, uuid: string, port: any, portKey: string}> = [];
+      const webProxies: Array<{host: string, uuid: string, proxy: any, proxyKey: string}> = [];
+
+      await Promise.all(hosts.map(async (hostName) => {
+        try {
+          const vmsRes = await api.getVMs(hostName);
+          if (vmsRes.code !== 200 || !vmsRes.data) return;
+          const vmsList = Array.isArray(vmsRes.data) ? vmsRes.data : Object.values(vmsRes.data);
+
+          await Promise.all(vmsList.map(async (vm: any) => {
+            const vmUuid = vm.config?.vm_uuid || vm.uuid;
+            const ownAll = vm.config?.own_all || {};
+            const ownerNames = Object.keys(ownAll);
+            const primaryOwner = ownerNames.length > 0 ? ownerNames[0] : '';
+            if (primaryOwner && primaryOwner !== currentUsername) return;
+
+            // 获取NAT规则
+            try {
+              const natRes = await api.getNATRules(hostName, vmUuid);
+              if (natRes.code === 200 && natRes.data) {
+                natRes.data.forEach((r: any, index: number) => {
+                  natPorts.push({ host: hostName, uuid: vmUuid, port: r, portKey: String(index) });
+                });
+              }
+            } catch (e) { /* ignore */ }
+
+            // 获取反向代理
+            try {
+              const proxyRes = await api.getProxyConfigs(hostName, vmUuid);
+              if (proxyRes.code === 200 && proxyRes.data) {
+                proxyRes.data.forEach((p: any, index: number) => {
+                  webProxies.push({ host: hostName, uuid: vmUuid, proxy: p, proxyKey: String(index) });
+                });
+              }
+            } catch (e) { /* ignore */ }
+          }));
+        } catch (e) { /* ignore */ }
+      }));
+
+      setAllNatPorts(natPorts);
+      setAllWebProxies(webProxies);
+    } catch (error) {
+      console.error('加载端口转发和反向代理失败', error);
     }
   };
 
@@ -259,47 +324,15 @@ const UserPanels: React.FC = () => {
     );
   };
 
-  // 收集所有NAT端口和Web代理
-  const allNatPorts: Array<{host: string, uuid: string, port: any, portKey: string}> = [];
-  const allWebProxies: Array<{host: string, uuid: string, proxy: any, proxyKey: string}> = [];
-  
-  Object.entries(vms).forEach(([key, vm]: [string, any]) => {
-    const config = vm.config || {};
-    const vmHost = vm._host;
-    const vmUuid = vm._realUuid || key;
-    
-    // 收集NAT端口 - nat_all 是对象，key为端口索引
-    const natAll = config.nat_all || {};
-    if (typeof natAll === 'object' && !Array.isArray(natAll)) {
-      Object.entries(natAll).forEach(([portKey, nat]: [string, any]) => {
-        allNatPorts.push({ host: vmHost, uuid: vmUuid, port: nat, portKey });
-      });
-    } else if (Array.isArray(natAll)) {
-      natAll.forEach((nat: any, index: number) => {
-        allNatPorts.push({ host: vmHost, uuid: vmUuid, port: nat, portKey: String(index) });
-      });
-    }
-    
-    // 收集Web代理 - web_all 是对象，key为代理索引
-    const webAll = config.web_all || {};
-    if (typeof webAll === 'object' && !Array.isArray(webAll)) {
-      Object.entries(webAll).forEach(([proxyKey, web]: [string, any]) => {
-        allWebProxies.push({ host: vmHost, uuid: vmUuid, proxy: web, proxyKey });
-      });
-    } else if (Array.isArray(webAll)) {
-      webAll.forEach((web: any, index: number) => {
-        allWebProxies.push({ host: vmHost, uuid: vmUuid, proxy: web, proxyKey: String(index) });
-      });
-    }
-  });
+
 
   // 渲染端口卡片
   const renderPortCard = (item: {host: string, uuid: string, port: any, portKey: string}, index: number) => {
     const port = item.port;
     // 兼容不同字段名：wan_port/outer_port, lan_port/inner_port
-    const outerPort = port.wan_port || port.outer_port || '-';
-    const innerPort = port.lan_port || port.inner_port || '-';
-    const portName = port.nat_tips || port.name || `端口${outerPort}`;
+    const outerPort = port.wan_port || port.outer_port || port.public_port || '-';
+    const innerPort = port.lan_port || port.inner_port || port.private_port || '-';
+    const portName = port.nat_tips || port.description || port.name || `端口${outerPort}`;
     const protocol = port.nat_type || port.protocol || 'TCP';
     
     return (
@@ -337,7 +370,7 @@ const UserPanels: React.FC = () => {
     // 兼容不同字段名
     const domain = proxy.domain || proxy.web_domain || '未配置域名';
     const backendPort = proxy.backend_port || proxy.inner_port || 80;
-    const sslEnabled = proxy.ssl_enabled || proxy.https || false;
+    const sslEnabled = proxy.ssl_enabled || proxy.https || proxy.proxy_type === 'https' || false;
     const fullUrl = `${sslEnabled ? 'https' : 'http'}://${domain}`;
     
     return (

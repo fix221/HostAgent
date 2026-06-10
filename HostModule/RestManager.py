@@ -2984,6 +2984,11 @@ class RestManager:
     # ####################################################################################
     def get_vm_owners(self, hs_name, vm_uuid):
         """获取虚拟机的所有者列表"""
+        # 检查当前用户身份
+        user_data = self._get_current_user()
+        if not user_data:
+            return self.api_response(401, '未授权访问')
+
         server = self.hs_manage.get_host(hs_name)
         if not server:
             return self.api_response(404, '主机不存在')
@@ -2993,6 +2998,13 @@ class RestManager:
             return self.api_response(404, '虚拟机不存在')
 
         owners = getattr(vm_config, 'own_all', {})
+
+        # 非管理员需要是该虚拟机的所有者才能查看
+        is_admin = user_data.get('is_admin') or user_data.get('is_token_login')
+        if not is_admin:
+            current_username = user_data.get('username', '')
+            if current_username not in owners:
+                return self.api_response(403, '没有访问该虚拟机的权限')
 
         # 获取每个所有者的详细信息
         owner_details = []
@@ -3371,20 +3383,122 @@ class RestManager:
             return self.api_response(404, '主机不存在')
 
         data = request.get_json() or {}
-        new_password = data.get('password', '').strip()
+        change_type = data.get('type', 'os_password')  # os_password | vnc_password | vnc_port
 
-        # 验证新密码是否提供
-        if not new_password:
-            return self.api_response(400, '新密码不能为空')
-        # vm_conf = server.VMSelect(vm_uuid)
-        # if not vm_conf:
-        #     return self.api_response(404, '虚拟机不存在')
-        result = server.VMPasswd(vm_uuid, new_password)
-        if result and result.success:
+        # 根据类型执行不同操作
+        if change_type == 'vnc_password':
+            # 修改VNC密码
+            new_vnc_pass = data.get('vnc_password', '').strip()
+            if not new_vnc_pass:
+                return self.api_response(400, 'VNC密码不能为空')
+            vm_conf = server.vm_finds(vm_uuid)
+            if not vm_conf:
+                return self.api_response(404, '虚拟机不存在')
+            vm_conf.vc_pass = new_vnc_pass
             self.hs_manage.all_save()
-            return self.api_response(200, result.message if result.message else '密码修改成功')
+            # 通过PVE monitor命令将VNC密码写入QEMU（实时生效）
+            try:
+                client, api_result = server.api_conn()
+                if api_result.success and client:
+                    vmid = server.get_vmid(vm_conf)
+                    if vmid is not None:
+                        vm_conn = client.nodes(server.hs_config.launch_path).qemu(vmid)
+                        status = vm_conn.status.current.get()
+                        if status.get('status') == 'running':
+                            # 通过monitor命令设置VNC密码
+                            vm_conn.monitor.post(command=f"set_password vnc {new_vnc_pass}")
+                            logger.info(f"[VNC密码修改] 虚拟机 {vm_uuid} VNC密码已通过monitor写入")
+                        else:
+                            logger.info(f"[VNC密码修改] 虚拟机 {vm_uuid} 未运行，密码将在下次启动时生效")
+            except Exception as vnc_err:
+                logger.warning(f"[VNC密码修改] 写入QEMU VNC密码失败: {vnc_err}")
+            return self.api_response(200, 'VNC密码修改成功')
 
-        return self.api_response(400, result.message if result else '密码修改失败')
+        elif change_type == 'vnc_port':
+            # 修改VNC端口（随机分配6000-6999不冲突的端口）
+            import random
+            vm_conf = server.vm_finds(vm_uuid)
+            if not vm_conf:
+                return self.api_response(404, '虚拟机不存在')
+            # 获取请求中的端口（前端随机生成的）
+            new_port = data.get('vnc_port', 0)
+            try:
+                new_port = int(new_port)
+            except (ValueError, TypeError):
+                new_port = 0
+            # 检查端口范围
+            if new_port < 6000 or new_port > 6999:
+                new_port = random.randint(6000, 6999)
+            # 检查端口冲突，如冲突则自动分配可用端口
+            used_vnc_ports = set()
+            for _uuid, _conf in server.vm_saving.items():
+                if _uuid != vm_uuid and hasattr(_conf, 'vc_port') and _conf.vc_port:
+                    try:
+                        used_vnc_ports.add(int(_conf.vc_port))
+                    except (ValueError, TypeError):
+                        pass
+            if new_port in used_vnc_ports:
+                available_ports = [p for p in range(6000, 7000) if p not in used_vnc_ports]
+                if available_ports:
+                    new_port = random.choice(available_ports)
+                else:
+                    return self.api_response(400, '6000-6999范围内无可用端口')
+            vm_conf.vc_port = str(new_port)
+            self.hs_manage.all_save()
+            # 通过PVE API更新conf中的args参数（写入新的-vnc配置）
+            try:
+                import re
+                client, api_result = server.api_conn()
+                if api_result.success and client:
+                    vmid = server.get_vmid(vm_conf)
+                    if vmid is not None:
+                        vm_conn = client.nodes(server.hs_config.launch_path).qemu(vmid)
+                        current_config = vm_conn.config.get()
+                        current_args = current_config.get('args', '')
+                        vnc_id = new_port - 5900
+                        vnc_arg = f"-vnc 0.0.0.0:{vnc_id}"
+                        # 替换旧的-vnc参数或添加新的
+                        new_args = re.sub(r'-vnc\s+\S+', '', current_args).strip()
+                        new_args = f"{new_args} {vnc_arg}".strip()
+                        vm_conn.config.put(args=new_args)
+                        logger.info(f"[VNC端口修改] 已更新PVE conf: args={new_args}")
+            except Exception as conf_err:
+                logger.warning(f"[VNC端口修改] 更新PVE conf失败: {conf_err}")
+            # 修改VNC端口需要强制重启虚拟机（强关再强开）
+            try:
+                from MainObject.Config.VMPowers import VMPowers
+                import time
+                server.VMPowers(vm_uuid, VMPowers.H_CLOSE)
+                # 等待虚拟机真正停止（最多等待30秒）
+                client, api_result = server.api_conn()
+                if api_result.success and client:
+                    vmid = server.get_vmid(vm_conf)
+                    if vmid is not None:
+                        vm_conn = client.nodes(server.hs_config.launch_path).qemu(vmid)
+                        for _wait in range(30):
+                            _status = vm_conn.status.current.get()
+                            if _status.get('status') == 'stopped':
+                                logger.info(f"[VNC端口修改] 虚拟机已停止，耗时{_wait+1}秒")
+                                break
+                            time.sleep(1)
+                        else:
+                            logger.warning(f"[VNC端口修改] 等待虚拟机停止超时(30秒)，继续启动")
+                server.VMPowers(vm_uuid, VMPowers.S_START)
+                logger.info(f"[VNC端口修改] 虚拟机 {vm_uuid} 已强制重启")
+            except Exception as restart_err:
+                logger.warning(f"[VNC端口修改] 虚拟机重启失败: {restart_err}")
+            return self.api_response(200, f'VNC端口已修改为 {new_port}，服务器正在重启', data={'vnc_port': new_port})
+
+        else:
+            # 修改系统密码（原有逻辑）
+            new_password = data.get('password', '').strip()
+            if not new_password:
+                return self.api_response(400, '新密码不能为空')
+            result = server.VMPasswd(vm_uuid, new_password)
+            if result and result.success:
+                self.hs_manage.all_save()
+                return self.api_response(200, result.message if result.message else '密码修改成功')
+            return self.api_response(400, result.message if result else '密码修改失败')
 
     # 虚拟机控制台 ######################################################################
     # :param hs_name: 主机名称

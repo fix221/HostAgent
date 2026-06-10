@@ -13,7 +13,9 @@ import {
     Tabs,
     Space,
     Tag,
-    Tooltip
+    Tooltip,
+    Progress,
+    Table
 } from 'antd'
 import {
     PlusOutlined,
@@ -34,6 +36,8 @@ import {
     ExclamationCircleOutlined,
     AppstoreOutlined,
     UnorderedListOutlined,
+    EyeOutlined,
+    EyeInvisibleOutlined,
 } from '@ant-design/icons'
 import {useNavigate} from 'react-router-dom'
 import api from '@/utils/apis.ts'
@@ -181,6 +185,215 @@ interface IpaddrMapRow {
     mask: string
     fromIp: string
     nums: number
+}
+
+// 主机列表视图组件
+function HostTableView({ hosts, hostsStatus, engineTypes, navigate, handleEdit, handleToggle }: {
+    hosts: Record<string, Host>
+    hostsStatus: Record<string, HostStatus>
+    engineTypes: Record<string, EngineTypeConfig>
+    navigate: any
+    handleEdit: (name: string) => void
+    handleToggle: (name: string, enable: boolean) => void
+}) {
+    const [visiblePublicAddr, setVisiblePublicAddr] = useState<Record<string, boolean>>({})
+
+    const togglePublicAddr = (name: string, e: React.MouseEvent) => {
+        e.stopPropagation()
+        setVisiblePublicAddr(prev => ({ ...prev, [name]: !prev[name] }))
+    }
+
+    const dataSource = Object.entries(hosts).map(([name, host]) => ({
+        key: name,
+        name,
+        host,
+        status: hostsStatus[name],
+    }))
+
+    const columns = [
+        {
+            title: '主机名称',
+            key: 'name',
+            width: 160,
+            fixed: 'left' as const,
+            render: (_: any, record: any) => {
+                const isActive = record.host.status === 'active'
+                const dotColor = isActive ? '#10b981' : '#ef4444'
+                return (
+                    <div>
+                        <div className="flex items-center gap-2">
+                            <span style={{ display: 'inline-block', width: 8, height: 8, borderRadius: '50%', backgroundColor: dotColor, flexShrink: 0, boxShadow: isActive ? '0 0 4px #10b981' : undefined }} />
+                            <CloudServerOutlined className="text-blue-500" />
+                            <a className="font-medium text-blue-600 hover:underline cursor-pointer" onClick={() => navigate(`/hosts/${record.name}/vms`)}>{record.name}</a>
+                        </div>
+                        <div className="flex items-center gap-1 mt-1">
+                            <Tag color={isActive ? 'success' : 'error'} style={{ margin: 0, fontSize: 11 }}>
+                                {isActive ? '已启用' : '已禁用'}
+                            </Tag>
+                        </div>
+                    </div>
+                )
+            },
+        },
+        {
+            title: '类型',
+            key: 'type',
+            width: 100,
+            render: (_: any, record: any) => {
+                const typeInfo = engineTypes[record.host.type] || {}
+                return <span className="text-xs">{typeInfo.description || record.host.type}</span>
+            },
+        },
+        {
+            title: 'IP地址',
+            key: 'ip',
+            width: 140,
+            render: (_: any, record: any) => (
+                <span className="text-xs">{record.host.addr || record.host.config?.server_addr || '未配置'}</span>
+            ),
+        },
+        {
+            title: '公网地址',
+            key: 'public',
+            width: 160,
+            render: (_: any, record: any) => {
+                const publicAddrs = record.host.config?.public_addr || []
+                const showPublic = visiblePublicAddr[record.name]
+                if (publicAddrs.length === 0) return <span className="text-xs" style={{ color: '#999' }}>-</span>
+                return (
+                    <div className="flex items-center gap-1">
+                        {showPublic ? (
+                            <span className="text-xs">{publicAddrs.join(', ')}</span>
+                        ) : (
+                            <span className="text-xs" style={{ color: '#999' }}>••••••</span>
+                        )}
+                        <Tooltip title={showPublic ? '隐藏' : '查看'}>
+                            <Button
+                                type="text"
+                                size="small"
+                                icon={showPublic ? <EyeInvisibleOutlined /> : <EyeOutlined />}
+                                onClick={(e) => togglePublicAddr(record.name, e)}
+                                style={{ fontSize: 12 }}
+                            />
+                        </Tooltip>
+                    </div>
+                )
+            },
+        },
+        {
+            title: '虚拟机',
+            key: 'vms',
+            width: 80,
+            render: (_: any, record: any) => (
+                <span className="text-xs">{record.host.vm_count || 0} / {record.host.config?.limits_nums || 0}</span>
+            ),
+        },
+        {
+            title: 'CPU',
+            key: 'cpu',
+            width: 130,
+            render: (_: any, record: any) => {
+                const status = record.status
+                const cpuPercent = status ? Math.min(status.cpu_usage || 0, 100) : 0
+                return (
+                    <div>
+                        <div className="text-xs mb-1">
+                            {status?.cpu_total || 0}核 {cpuPercent.toFixed(1)}%
+                        </div>
+                        <Progress
+                            percent={Number(cpuPercent.toFixed(0))}
+                            size="small"
+                            showInfo={false}
+                            strokeColor={cpuPercent > 80 ? '#ef4444' : cpuPercent > 50 ? '#f59e0b' : '#3b82f6'}
+                        />
+                    </div>
+                )
+            },
+        },
+        {
+            title: '内存',
+            key: 'mem',
+            width: 130,
+            render: (_: any, record: any) => {
+                const status = record.status
+                const memPercent = status && status.mem_total ? Math.min((status.mem_usage || 0) / status.mem_total * 100, 100) : 0
+                const fmtMem = (mb: number) => mb >= 1024 ? `${(mb / 1024).toFixed(1)}G` : `${mb}M`
+                return (
+                    <div>
+                        <div className="text-xs mb-1">
+                            {status ? `${fmtMem(status.mem_usage || 0)}/${fmtMem(status.mem_total || 0)}` : '-'}
+                        </div>
+                        <Progress
+                            percent={Number(memPercent.toFixed(0))}
+                            size="small"
+                            showInfo={false}
+                            strokeColor={memPercent > 80 ? '#ef4444' : memPercent > 50 ? '#f59e0b' : '#8b5cf6'}
+                        />
+                    </div>
+                )
+            },
+        },
+        {
+            title: '磁盘',
+            key: 'hdd',
+            width: 130,
+            render: (_: any, record: any) => {
+                const status = record.status
+                const hddPercent = status && status.hdd_total ? Math.min((status.hdd_usage || 0) / status.hdd_total * 100, 100) : 0
+                const fmtDisk = (mb: number) => mb >= 1024 ? `${(mb / 1024).toFixed(1)}G` : `${mb}M`
+                return (
+                    <div>
+                        <div className="text-xs mb-1">
+                            {status?.hdd_total ? `${fmtDisk(status.hdd_usage || 0)}/${fmtDisk(status.hdd_total)}` : '-'}
+                        </div>
+                        <Progress
+                            percent={Number(hddPercent.toFixed(0))}
+                            size="small"
+                            showInfo={false}
+                            strokeColor={hddPercent > 80 ? '#ef4444' : hddPercent > 50 ? '#f59e0b' : '#10b981'}
+                        />
+                    </div>
+                )
+            },
+        },
+        {
+            title: '操作',
+            key: 'actions',
+            width: 140,
+            fixed: 'right' as const,
+            render: (_: any, record: any) => {
+                const isActive = record.host.status === 'active'
+                return (
+                    <Space size="small">
+                        <Tooltip title="管理虚拟机">
+                            <Button type="text" size="small" icon={<CloudServerOutlined />} onClick={() => navigate(`/hosts/${record.name}/vms`)} disabled={!isActive} />
+                        </Tooltip>
+                        <Tooltip title="编辑">
+                            <Button type="text" size="small" icon={<EditOutlined />} onClick={() => handleEdit(record.name)} disabled={!isActive} />
+                        </Tooltip>
+                        <Tooltip title={isActive ? '禁用' : '启用'}>
+                            <Button
+                                type="text"
+                                size="small"
+                                icon={isActive ? <StopOutlined style={{ color: '#faad14' }} /> : <PlayCircleOutlined style={{ color: '#52c41a' }} />}
+                                onClick={() => handleToggle(record.name, !isActive)}
+                            />
+                        </Tooltip>
+                    </Space>
+                )
+            },
+        },
+    ]
+
+    return (
+        <Table
+            dataSource={dataSource}
+            columns={columns}
+            pagination={false}
+            size="small"
+            scroll={{ x: 1200 }}
+        />
+    )
 }
 
 /**
@@ -1052,39 +1265,33 @@ function HostManage() {
                 icon={<CloudServerOutlined />}
                 title="物理主机管理"
                 subtitle="管理所有虚拟化主机"
+                actions={
+                    <>
+                        <Button.Group>
+                            <Tooltip title="卡片视图">
+                                <Button
+                                    icon={<AppstoreOutlined />}
+                                    type={viewMode === 'card' ? 'primary' : 'default'}
+                                    onClick={() => { setViewMode('card'); localStorage.setItem('hostManage_viewMode', 'card') }}
+                                />
+                            </Tooltip>
+                            <Tooltip title="列表视图">
+                                <Button
+                                    icon={<UnorderedListOutlined />}
+                                    type={viewMode === 'table' ? 'primary' : 'default'}
+                                    onClick={() => { setViewMode('table'); localStorage.setItem('hostManage_viewMode', 'table') }}
+                                />
+                            </Tooltip>
+                        </Button.Group>
+                        <Button icon={<ReloadOutlined/>} onClick={loadHosts}>
+                            刷新
+                        </Button>
+                        <Button type="primary" icon={<PlusOutlined/>} onClick={handleAdd}>
+                            添加主机
+                        </Button>
+                    </>
+                }
             />
-
-            {/* 操作栏 */}
-            <div className="glass-card p-4 mb-6 flex items-center justify-between">
-                <Space>
-                    <Button type="primary" icon={<PlusOutlined/>} onClick={handleAdd}>
-                        添加主机
-                    </Button>
-                    <Button icon={<ReloadOutlined/>} onClick={loadHosts}>
-                        刷新
-                    </Button>
-                    <Button.Group>
-                        <Tooltip title="卡片视图">
-                            <Button
-                                icon={<AppstoreOutlined />}
-                                type={viewMode === 'card' ? 'primary' : 'default'}
-                                onClick={() => { setViewMode('card'); localStorage.setItem('hostManage_viewMode', 'card') }}
-                            />
-                        </Tooltip>
-                        <Tooltip title="列表视图">
-                            <Button
-                                icon={<UnorderedListOutlined />}
-                                type={viewMode === 'table' ? 'primary' : 'default'}
-                                onClick={() => { setViewMode('table'); localStorage.setItem('hostManage_viewMode', 'table') }}
-                            />
-                        </Tooltip>
-                    </Button.Group>
-                </Space>
-                <div className="text-sm flex items-center gap-2" style={{ color: 'var(--text-secondary)' }}>
-                    <InfoCircleOutlined/>
-                    共 <span className="font-medium">{Object.keys(hosts).length}</span> 个主机
-                </div>
-            </div>
 
             {/* 主机列表 */}
             {loading ? (
@@ -1107,62 +1314,14 @@ function HostManage() {
                     ))}
                 </div>
             ) : (
-                <div className="glass-card overflow-hidden">
-                    <table className="w-full text-sm">
-                        <thead>
-                            <tr className="border-b" style={{ borderColor: 'var(--border-color)' }}>
-                                <th className="text-left p-3 font-semibold">主机名称</th>
-                                <th className="text-left p-3 font-semibold">类型</th>
-                                <th className="text-left p-3 font-semibold">状态</th>
-                                <th className="text-left p-3 font-semibold">连接地址</th>
-                                <th className="text-left p-3 font-semibold">虚拟机</th>
-                                <th className="text-left p-3 font-semibold">CPU</th>
-                                <th className="text-left p-3 font-semibold">内存</th>
-                                <th className="text-left p-3 font-semibold">操作</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {Object.entries(hosts).map(([name, host]) => {
-                                const status = hostsStatus[name]
-                                const typeInfo = engineTypes[host.type] || {}
-                                const cpuPercent = status ? Math.min(status.cpu_usage || 0, 100) : 0
-                                const memPercent = status && status.mem_total ? Math.min((status.mem_usage || 0) / status.mem_total * 100, 100) : 0
-                                return (
-                                    <tr key={name} className="border-b hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors" style={{ borderColor: 'var(--border-color)' }}>
-                                        <td className="p-3">
-                                            <div className="flex items-center gap-2">
-                                                <CloudServerOutlined className="text-blue-500" />
-                                                <span className="font-medium">{name}</span>
-                                            </div>
-                                        </td>
-                                        <td className="p-3">{typeInfo.description || host.type}</td>
-                                        <td className="p-3">
-                                            <Tag color={host.status === 'active' ? 'success' : 'error'}>
-                                                {host.status === 'active' ? '已启用' : '已禁用'}
-                                            </Tag>
-                                        </td>
-                                        <td className="p-3">{host.addr || '未配置'}</td>
-                                        <td className="p-3">{host.vm_count || 0} / {host.config?.limits_nums || 0}</td>
-                                        <td className="p-3">{cpuPercent.toFixed(0)}%</td>
-                                        <td className="p-3">{memPercent.toFixed(0)}%</td>
-                                        <td className="p-3">
-                                            <Space size="small">
-                                                <Tooltip title="管理虚拟机">
-                                                    <Button type="link" size="small" onClick={() => navigate(`/hosts/${name}/vms`)} disabled={host.status !== 'active'}>
-                                                        管理
-                                                    </Button>
-                                                </Tooltip>
-                                                <Tooltip title="编辑">
-                                                    <Button type="text" size="small" icon={<EditOutlined />} onClick={() => handleEdit(name)} disabled={host.status !== 'active'} />
-                                                </Tooltip>
-                                            </Space>
-                                        </td>
-                                    </tr>
-                                )
-                            })}
-                        </tbody>
-                    </table>
-                </div>
+                <HostTableView
+                    hosts={hosts}
+                    hostsStatus={hostsStatus}
+                    engineTypes={engineTypes}
+                    navigate={navigate}
+                    handleEdit={handleEdit}
+                    handleToggle={handleToggle}
+                />
             )}
 
             {/* 添加/编辑主机对话框 */}

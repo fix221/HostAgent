@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
-import { Card, Form, Input, Button, Switch, message, InputNumber, Checkbox, Alert, Tooltip } from 'antd'
-import { EyeOutlined, EyeInvisibleOutlined, CopyOutlined, ReloadOutlined, SaveOutlined, FolderOpenOutlined, MailOutlined, SettingOutlined, SafetyCertificateOutlined, QuestionCircleOutlined } from '@ant-design/icons'
+import { Card, Form, Input, Button, Switch, message, InputNumber, Checkbox, Alert, Tooltip, Select, Radio } from 'antd'
+import { EyeOutlined, EyeInvisibleOutlined, CopyOutlined, ReloadOutlined, SaveOutlined, FolderOpenOutlined, MailOutlined, SettingOutlined, SafetyCertificateOutlined, QuestionCircleOutlined, SyncOutlined } from '@ant-design/icons'
 import { VM_PERMISSION, VM_PERMISSION_LABELS, PERMISSION_FIELD_MASK, hasPermission } from '@/types'
 import api from '@/utils/apis.ts'
 import { SystemStats } from '@/types'
@@ -20,6 +20,7 @@ function CoreConfig() {
   const [emailForm] = Form.useForm()
   const [testEmailForm] = Form.useForm()
   const [turnstileForm] = Form.useForm()
+  const [syncForm] = Form.useForm()
 
   /**
    * 页面加载时获取数据
@@ -103,6 +104,14 @@ function CoreConfig() {
           turnstile_site_key: settings.turnstile_site_key || '',
           turnstile_secret_key: settings.turnstile_secret_key || '',
         })
+        // 设置同步表单
+        syncForm.setFieldsValue({
+          sync_enabled: settings.sync_enabled === '1',
+          sync_mode: settings.sync_mode || 'pull',
+          sync_interval: parseInt(settings.sync_interval) || 10,
+          sync_url: settings.sync_url || '',
+          sync_token: settings.sync_token || '',
+        })
       }
     } catch (error) {
       console.error('加载系统设置失败:', error)
@@ -145,6 +154,32 @@ function CoreConfig() {
   }
 
 
+
+  /**
+   * 保存同步设置
+   */
+  const saveSyncSettings = async (values: any) => {
+    try {
+      setLoading(true)
+      const data = {
+        sync_enabled: values.sync_enabled ? '1' : '0',
+        sync_mode: values.sync_mode || 'pull',
+        sync_interval: (values.sync_interval || 10).toString(),
+        sync_url: values.sync_url || '',
+        sync_token: values.sync_token || '',
+      }
+      const res = await api.updateSystemSettings(data)
+      if (res.code === 200) {
+        message.success('同步设置已保存')
+      } else {
+        message.error(res.msg || '保存失败')
+      }
+    } catch (error) {
+      message.error('保存同步设置失败')
+    } finally {
+      setLoading(false)
+    }
+  }
 
   /**
    * 保存Turnstile设置
@@ -369,24 +404,10 @@ function CoreConfig() {
         </Card>
 
         {/* API文档 */}
-        <Card title={<span><span className="text-green-600">🔌</span> API接口说明</span>} className="shadow-sm">
+        <Card title={<span><span className="text-green-600">🔌</span> 自动同步设置</span>} className="shadow-sm">
           <div className="space-y-3 text-sm">
-            <div className="rounded-lg p-3" style={{ background: 'var(--bg-card)', border: '1px solid var(--border-hover)' }}>
-                <p className="font-medium mb-1">认证方式</p>
-                <p className="">在请求头中添加：</p>
-              <code className="block mt-1 px-2 py-1 rounded text-xs" style={{ background: 'rgba(105,104,253,0.08)', color: 'var(--color-primary, #6968fd)' }}>
-                Authorization: Bearer YOUR_TOKEN
-              </code>
-            </div>
-
             <div className="border-t pt-3">
-                <p className="font-medium mb-2">主要接口</p>
               <div className="space-y-2">
-                <div className="flex items-center gap-2">
-                  <span className="px-2 py-0.5 rounded text-xs font-medium" style={{ background: 'rgba(34,197,94,0.15)', color: '#22c55e' }}>GET</span>
-                  <code className="text-xs">/api/hosts</code>
-                  <span className="text-xs" style={{ color: 'var(--text-secondary)' }}>- 获取主机列表</span>
-                </div>
                 <div className="flex items-center gap-2">
                   <span className="px-2 py-0.5 rounded text-xs font-medium" style={{ background: 'rgba(59,130,246,0.15)', color: '#60a5fa' }}>POST</span>
                   <code className="text-xs">/api/hosts</code>
@@ -410,6 +431,50 @@ function CoreConfig() {
               </div>
             </div>
           </div>
+
+          {/* 同步设置 */}
+          <div className="border-t pt-3">
+            <h4 className="text-sm font-medium mb-3 flex items-center gap-2">
+              <SyncOutlined className="text-blue-500" />
+              自动同步设置
+            </h4>
+            <Form form={syncForm} onFinish={saveSyncSettings} layout="vertical">
+              <div className="flex items-center justify-between mb-3">
+                <div>
+                  <p className="text-sm font-medium">自动同步</p>
+                  <p className="text-xs" style={{ color: 'var(--text-secondary)' }}>开启后将按照设定的模式自动同步虚拟机信息</p>
+                </div>
+                <div className="flex items-center gap-3">
+                  <Form.Item name="sync_interval" className="mb-0">
+                    <InputNumber min={1} max={1440} style={{ width: 120 }} placeholder="10" addonAfter="分钟" />
+                  </Form.Item>
+                  <Form.Item name="sync_enabled" valuePropName="checked" className="mb-0">
+                    <Switch />
+                  </Form.Item>
+                </div>
+              </div>
+
+              <Form.Item name="sync_mode" label="同步选项">
+                <Radio.Group>
+                  <Radio value="pull">仅拉取</Radio>
+                  <Radio value="push">仅推送</Radio>
+                  <Radio value="both">拉取+推送</Radio>
+                </Radio.Group>
+              </Form.Item>
+
+              <Form.Item name="sync_url" label="同步地址">
+                <Input placeholder="https://remote-server.com/api" />
+              </Form.Item>
+
+              <Form.Item name="sync_token" label="同步Token">
+                <Input.Password placeholder="远程服务器的访问Token" />
+              </Form.Item>
+
+              <Button type="primary" htmlType="submit" block loading={loading} icon={<SaveOutlined />}>
+                保存同步设置
+              </Button>
+            </Form>
+          </div>
         </Card>
 
         {/* 数据管理 */}
@@ -424,7 +489,7 @@ function CoreConfig() {
             >
               <div className="ml-2">
                 <p className="text-sm font-semibold">保存配置</p>
-                <p className="text-xs" style={{ color: 'var(--text-secondary)' }}>将当前配置保存到文件</p>
+                <p className="text-xs" style={{ color: 'var(--text-secondary)' }}>将当前配置保存文件</p>
               </div>
             </Button>
 
@@ -436,7 +501,7 @@ function CoreConfig() {
               className="h-auto py-3 text-left"
             >
               <div className="ml-2">
-                <p className="text-sm font-semibold">重新加载配置</p>
+                <p className="text-sm font-semibold">重新加载</p>
                 <p className="text-xs" style={{ color: 'var(--text-secondary)' }}>从文件重新加载配置</p>
               </div>
             </Button>
@@ -490,7 +555,6 @@ function CoreConfig() {
               </div>
 
               <div className="border-t pt-4">
-<h4 className="text-sm font-medium mb-3">新用户默认配置</h4>
                 <div className="grid grid-cols-2 gap-3">
                   <Form.Item name="default_allowed_hosts" label="默认可访问主机" className="mb-3" extra="多个主机用英文逗号分隔，留空表示不限制">
                     <Input placeholder="host1,host2 或留空表示全部" className="w-full" />
@@ -565,22 +629,6 @@ function CoreConfig() {
                   </Form.Item>
                 </div>
               </div>
-
-              <div className="border-t pt-4">
-<h4 className="text-sm font-medium mb-3">新用户默认权限</h4>
-                <div className="flex gap-4">
-                  <Form.Item name="default_can_create_vm" valuePropName="checked" className="mb-0">
-                    <Checkbox>允许创建虚拟机</Checkbox>
-                  </Form.Item>
-                  <Form.Item name="default_can_modify_vm" valuePropName="checked" className="mb-0">
-                    <Checkbox>允许修改虚拟机</Checkbox>
-                  </Form.Item>
-                  <Form.Item name="default_can_delete_vm" valuePropName="checked" className="mb-0">
-                    <Checkbox>允许删除虚拟机</Checkbox>
-                  </Form.Item>
-                </div>
-              </div>
-
               <Button type="primary" htmlType="submit" block loading={loading} icon={<SaveOutlined />}>
                 保存设置
               </Button>

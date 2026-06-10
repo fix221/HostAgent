@@ -26,6 +26,8 @@ interface DockCardProps {
     hostName?: string
     hostDisabled?: boolean // 主机是否被禁用
     userPermissions?: number // 当前用户对此虚拟机的权限掩码
+    canModify?: boolean // 用户级别是否允许修改虚拟机
+    canDelete?: boolean // 用户级别是否允许删除虚拟机
     style?: React.CSSProperties
     onEdit: (uuid: string) => void
     onDelete: (uuid: string) => void
@@ -52,6 +54,8 @@ const DockCard: React.FC<DockCardProps> = ({
     hostName,
     hostDisabled = false,
     userPermissions = VM_PERMISSION.FULL_MASK,
+    canModify = true,
+    canDelete = true,
     style,
     onEdit,
     onDelete,
@@ -350,24 +354,24 @@ const DockCard: React.FC<DockCardProps> = ({
                         className="hover:bg-green-50 dark:hover:bg-green-900/30"
                     />
                 </Tooltip>
-                <Tooltip title={hostDisabled ? '主机已禁用' : !hasPermission(userPermissions, VM_PERMISSION.VM_MODIFY) ? '无编辑权限' : '编辑配置'}>
+                <Tooltip title={hostDisabled ? '主机已禁用' : !canModify ? '无修改虚拟机权限' : !hasPermission(userPermissions, VM_PERMISSION.VM_MODIFY) ? '无编辑权限' : '编辑配置'}>
                     <Button 
                         type="text" 
                         size="small"
                         icon={<EditOutlined />} 
                         onClick={() => onEdit(uuid)}
-                        disabled={hostDisabled || !hasPermission(userPermissions, VM_PERMISSION.VM_MODIFY)}
+                        disabled={hostDisabled || !canModify || !hasPermission(userPermissions, VM_PERMISSION.VM_MODIFY)}
                         className="hover:bg-orange-50 dark:hover:bg-orange-900/30"
                     />
                 </Tooltip>
-                <Tooltip title={hostDisabled ? '主机已禁用' : !hasPermission(userPermissions, VM_PERMISSION.VM_DELETE) ? '无删除权限' : '删除虚拟机'}>
+                <Tooltip title={hostDisabled ? '主机已禁用' : !canDelete ? '无删除虚拟机权限' : !hasPermission(userPermissions, VM_PERMISSION.VM_DELETE) ? '无删除权限' : '删除虚拟机'}>
                     <Button 
                         type="text" 
                         size="small"
                         danger
                         icon={<DeleteOutlined />} 
                         onClick={() => onDelete(uuid)}
-                        disabled={hostDisabled || !hasPermission(userPermissions, VM_PERMISSION.VM_DELETE)}
+                        disabled={hostDisabled || !canDelete || !hasPermission(userPermissions, VM_PERMISSION.VM_DELETE)}
                         className="hover:bg-red-50 dark:hover:bg-red-900/30"
                     />
                 </Tooltip>

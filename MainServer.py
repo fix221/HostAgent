@@ -2161,6 +2161,62 @@ def api_update_system_settings():
         return api_response_wrapper(500, f'更新失败: {str(e)}')
 
 
+# ============================================================================
+# 同步API - /api/sync
+# ============================================================================
+
+@app.route('/api/sync/push/<hs_name>', methods=['POST'])
+@require_auth
+def api_sync_push(hs_name):
+    """接收远程推送的虚拟机数据并写入本地同名主机"""
+    try:
+        server = hs_manage.get_host(hs_name)
+        if not server:
+            return api_response_wrapper(404, f'主机 {hs_name} 不存在')
+        
+        data = request.get_json()
+        if not data or 'vms' not in data:
+            return api_response_wrapper(400, '无效的推送数据')
+        
+        remote_vms = data['vms']
+        updated_count = 0
+        
+        for vm_uuid, vm_info in remote_vms.items():
+            config_data = vm_info if isinstance(vm_info, dict) else {}
+            if not config_data:
+                continue
+            
+            if vm_uuid in server.vm_saving:
+                # 已存在：更新配置（保留本地的own_all等敏感信息）
+                local_vm = server.vm_saving[vm_uuid]
+                local_own_all = local_vm.own_all
+                local_nat_all = local_vm.nat_all
+                local_web_all = local_vm.web_all
+                for key in ['cpu_num', 'mem_num', 'hdd_num', 'gpu_mem',
+                            'os_name', 'speed_u', 'speed_d', 'nat_num', 'web_num']:
+                    if key in config_data:
+                        setattr(local_vm, key, config_data[key])
+                local_vm.own_all = local_own_all
+                local_vm.nat_all = local_nat_all
+                local_vm.web_all = local_web_all
+                updated_count += 1
+            else:
+                # 不存在：新建虚拟机配置
+                from MainObject.Config.VMConfig import VMConfig
+                new_vm = VMConfig(**config_data)
+                new_vm.vm_uuid = vm_uuid
+                server.vm_saving[vm_uuid] = new_vm
+                updated_count += 1
+        
+        if updated_count > 0:
+            server.data_set()
+        
+        return api_response_wrapper(200, f'同步成功，更新了 {updated_count} 台虚拟机')
+    except Exception as e:
+        logger.error(f"同步推送失败: {e}")
+        return api_response_wrapper(500, f'同步推送失败: {str(e)}')
+
+
 # 获取系统网卡IPv4地址列表 ##############################################################
 @app.route('/api/system/ipv4', methods=['GET'])
 @require_auth

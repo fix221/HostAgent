@@ -240,8 +240,20 @@ function VMDetail() {
     // 模态框状态
     const [editModalVisible, setEditModalVisible] = useState(false)
     const [passwordModalVisible, setPasswordModalVisible] = useState(false)
+    const [passwordActionType, setPasswordActionType] = useState<'os_password' | 'vnc_password' | 'vnc_port'>('os_password')
+    const [randomVncPort, setRandomVncPort] = useState<number>(Math.floor(Math.random() * 1000) + 6000)
+    const [vncPortConfirmChecked, setVncPortConfirmChecked] = useState(false)
     const [natModalVisible, setNatModalVisible] = useState(false)
     const [natViewMode, setNatViewMode] = useState<'card' | 'table'>('card')
+    const [nicViewMode, setNicViewMode] = useState<'card' | 'table'>('card')
+    const [hddViewMode, setHddViewMode] = useState<'card' | 'table'>('card')
+    const [isoViewMode, setIsoViewMode] = useState<'card' | 'table'>('card')
+    const [proxyViewMode, setProxyViewMode] = useState<'card' | 'table'>('card')
+    const [pciViewMode, setPciViewMode] = useState<'card' | 'table'>('card')
+    const [usbViewMode, setUsbViewMode] = useState<'card' | 'table'>('card')
+    const [backupViewMode, setBackupViewMode] = useState<'card' | 'table'>('card')
+    const [efiViewMode, setEfiViewMode] = useState<'card' | 'table'>('card')
+    const [ownerViewMode, setOwnerViewMode] = useState<'card' | 'table'>('card')
     const [ipModalVisible, setIpModalVisible] = useState(false)
     const [proxyModalVisible, setProxyModalVisible] = useState(false)
     const [gpuModalVisible, setGpuModalVisible] = useState(false)
@@ -314,7 +326,11 @@ function VMDetail() {
     const [selectedPciKey, setSelectedPciKey] = useState<string>('')
     const [selectedUsbKey, setSelectedUsbKey] = useState<string>('')
     const [pciShutdownConfirmVisible, setPciShutdownConfirmVisible] = useState(false)
+    const [pciShutdownConfirmChecked, setPciShutdownConfirmChecked] = useState(false)
+    const [addPciConfirmChecked, setAddPciConfirmChecked] = useState(false)
     const [pendingPciAction, setPendingPciAction] = useState<(() => Promise<void>) | null>(null)
+    const [addHddConfirmChecked, setAddHddConfirmChecked] = useState(false)
+    const [usbShutdownConfirmChecked, setUsbShutdownConfirmChecked] = useState(false)
 
     // EFI State
     const [efiList, setEfiList] = useState<{efi_type: boolean; efi_name: string}[]>([])
@@ -796,25 +812,32 @@ const [operationTimeoutId, setOperationTimeoutId] = useState<ReturnType<typeof s
     const handleDeleteUSB = async (usbKey: string) => {
         if (!hostEnabled) { message.error('该主机已被禁用，无法操作'); return }
         const usbConfig = vm?.config?.usb_all?.[usbKey]
-        try {
-            setUsbActionLoading(true)
-            const result = await api.setupUSB(hostName!, uuid!, {
-                usb_key: usbKey,
-                vid_uuid: usbConfig?.vid_uuid || '',
-                pid_uuid: usbConfig?.pid_uuid || '',
-                usb_hint: usbConfig?.usb_hint || '',
-                action: 'remove'
-            })
-            submitAsyncTask(result, '移除USB设备', {
-                onCompleted: () => loadVMDetail(),
-                onFailed: () => loadVMDetail(),
-            })
-        } catch (error: any) {
-            console.error('删除USB设备失败:', error)
-            message.error(error.message || '删除USB设备失败')
-        } finally {
-            setUsbActionLoading(false)
-        }
+        showConfirmAction(
+            '删除USB设备确认',
+            `确定要移除USB直通设备 "${usbConfig?.usb_hint || usbKey}" 吗？此操作需要关闭虚拟机。`,
+            async () => {
+                try {
+                    setUsbActionLoading(true)
+                    const result = await api.setupUSB(hostName!, uuid!, {
+                        usb_key: usbKey,
+                        vid_uuid: usbConfig?.vid_uuid || '',
+                        pid_uuid: usbConfig?.pid_uuid || '',
+                        usb_hint: usbConfig?.usb_hint || '',
+                        action: 'remove'
+                    })
+                    submitAsyncTask(result, '移除USB设备', {
+                        onCompleted: () => loadVMDetail(),
+                        onFailed: () => loadVMDetail(),
+                    })
+                } catch (error: any) {
+                    console.error('删除USB设备失败:', error)
+                    message.error(error.message || '删除USB设备失败')
+                } finally {
+                    setUsbActionLoading(false)
+                }
+            },
+            true
+        )
     }
 
     // 打开USB设备添加Modal时加载可用设备列表
@@ -1276,30 +1299,36 @@ const [operationTimeoutId, setOperationTimeoutId] = useState<ReturnType<typeof s
 
     const handleChangePassword = async (_values: any) => {
         if (!hostEnabled) { message.error('该主机已被禁用，无法修改密码'); return }
-        showConfirmAction('修改密码确认', '确定要修改密码吗？虚拟机需要重启才能生效。', async () => {
-            // 设置临时状态为改密中
-            setTempStatus('ON_PASSWD')
-            
-            // 设置10分钟超时
-            const timeoutId = setTimeout(() => {
-                setTempStatus(null)
-                setOperationLocked(false)
-                message.error('操作超时，请检查虚拟机状态')
-                loadVMDetail()
-            }, 10 * 60 * 1000)
-            setOperationTimeoutId(timeoutId)
-            
-            try {
-                await api.changeVMPassword(hostName!, uuid!, {password: _values.new_password})
-                // 操作完成后，清除临时状态
-                setTempStatus(null)
-                setPasswordModalVisible(false)
-            } catch (error) {
-                // 操作失败，清除临时状态
-                setTempStatus(null)
-                throw error
-            }
-        }, true)
+        const actionLabels: Record<string, string> = { os_password: '修改系统密码', vnc_password: '修改VNC密码', vnc_port: '修改VNC端口' }
+        const actionLabel = actionLabels[passwordActionType] || '操作'
+
+        // 立即关闭模态框，显示执行中
+        setPasswordModalVisible(false)
+        form.resetFields()
+        setTempStatus('ON_PASSWD')
+        message.loading({ content: `${actionLabel}执行中...`, key: 'pwd_action', duration: 0 })
+
+        // 构建请求数据
+        let requestData: any = { type: passwordActionType }
+        if (passwordActionType === 'os_password') {
+            requestData.password = _values.new_password
+        } else if (passwordActionType === 'vnc_password') {
+            requestData.vnc_password = _values.new_password
+        } else if (passwordActionType === 'vnc_port') {
+            requestData.vnc_port = randomVncPort
+        }
+
+        // 后台异步执行
+        try {
+            await api.changeVMPassword(hostName!, uuid!, requestData)
+            setTempStatus(null)
+            message.success({ content: `${actionLabel}成功`, key: 'pwd_action' })
+            loadVMDetail()
+        } catch (error: any) {
+            setTempStatus(null)
+            message.error({ content: `${actionLabel}失败: ${error?.message || '未知错误'}`, key: 'pwd_action' })
+            loadVMDetail()
+        }
     }
 
     const handleAddIPAddress = async (_values: any) => {
@@ -1570,6 +1599,7 @@ const [operationTimeoutId, setOperationTimeoutId] = useState<ReturnType<typeof s
             setPendingPciAction(() => async () => {
                 await executePciAdd(_values)
             })
+            setPciShutdownConfirmChecked(false)
             setPciShutdownConfirmVisible(true)
             return
         }
@@ -1614,6 +1644,7 @@ const [operationTimeoutId, setOperationTimeoutId] = useState<ReturnType<typeof s
             setPendingPciAction(() => async () => {
                 await executePciRemove(gpuKey, gpuConfig)
             })
+            setPciShutdownConfirmChecked(false)
             setPciShutdownConfirmVisible(true)
             return
         }
@@ -1663,6 +1694,7 @@ const [operationTimeoutId, setOperationTimeoutId] = useState<ReturnType<typeof s
     // PCI关机确认后执行
     const handlePciShutdownConfirm = async () => {
         setPciShutdownConfirmVisible(false)
+        setPciShutdownConfirmChecked(false)
         // 先关机
         try {
             const hide = message.loading('正在关闭虚拟机...', 0)
@@ -2130,7 +2162,7 @@ await api.vmPower(hostName!, uuid!, 'H_CLOSE')
                     },
                 ]
             },
-            {key: 'delete', label: '删除实例', icon: <DeleteOutlined/>, danger: true, onClick: handleDelete, disabled: !hasPermission(userPermissions, VM_PERMISSION.VM_DELETE)}
+{key: 'delete', label: '删除实例', icon: <DeleteOutlined/>, danger: true, onClick: handleDelete, disabled: !hasPermission(userPermissions, VM_PERMISSION.VM_DELETE) || !user?.can_delete_vm}
         ]
     };
 
@@ -2192,6 +2224,8 @@ await api.vmPower(hostName!, uuid!, 'H_CLOSE')
                                                              onClick={() => setShowPassword(!showPassword)}/>
                                                 <CopyOutlined className="cursor-pointer"
                                                               onClick={() => handleCopyPassword(config.os_pass || '', '系统')}/>
+                                                <EditOutlined className="cursor-pointer text-blue-500"
+                                                              onClick={() => { setPasswordActionType('os_password'); setPasswordModalVisible(true) }}/>
                                             </Space>
                                         ) : (
                                             <span className="text-gray-400">无权限查看</span>
@@ -2210,6 +2244,8 @@ await api.vmPower(hostName!, uuid!, 'H_CLOSE')
                                                              onClick={() => setShowVncPassword(!showVncPassword)}/>
                                                 <CopyOutlined className="cursor-pointer"
                                                               onClick={() => handleCopyPassword(config.vc_pass || '', 'VNC')}/>
+                                                <EditOutlined className="cursor-pointer text-blue-500"
+                                                              onClick={() => { setPasswordActionType('vnc_password'); setPasswordModalVisible(true) }}/>
                                             </Space>
                                         ) : (
                                             <span className="text-gray-400">无权限查看</span>
@@ -2236,7 +2272,7 @@ await api.vmPower(hostName!, uuid!, 'H_CLOSE')
                                     <Descriptions.Item label="上行带宽">{config.speed_u || 0} Mbps</Descriptions.Item>
                                     <Descriptions.Item label="下行带宽">{config.speed_d || 0} Mbps</Descriptions.Item>
                                     {/*<Descriptions.Item label="主所有者">{config.own_all ? Object.keys(config.own_all)[0] || '未知' : '未知'}</Descriptions.Item>*/}
-                                    <Descriptions.Item label="VNC端口">{config.vc_port || '未设置'}</Descriptions.Item>
+                                    <Descriptions.Item label="VNC 端口">{config.vc_port || '未设置'}</Descriptions.Item>
                                 </Descriptions>
                             </Col>
                             <Col span={8} className="flex flex-col justify-between">
@@ -2350,7 +2386,7 @@ await api.vmPower(hostName!, uuid!, 'H_CLOSE')
                                         className="hidden md:inline">重置</span></Button></Tooltip>
                                     <Tooltip title="编辑配置"><Button size="small" icon={<EditOutlined/>}
                                                                       onClick={() => setEditModalVisible(true)}
-                                                                      disabled={operationLocked || !hasPermission(userPermissions, VM_PERMISSION.VM_MODIFY)}
+                                                                      disabled={operationLocked || !hasPermission(userPermissions, VM_PERMISSION.VM_MODIFY) || !user?.can_modify_vm}
                                                                       block><span
                                         className="hidden md:inline">编辑</span></Button></Tooltip>
 
@@ -2361,7 +2397,7 @@ await api.vmPower(hostName!, uuid!, 'H_CLOSE')
                                         className="hidden md:inline">重装</span></Button></Tooltip>
                                     <Tooltip title="删除"><Button size="small" danger icon={<DeleteOutlined/>}
                                                                   onClick={handleDelete}
-                                                                  disabled={!hasPermission(userPermissions, VM_PERMISSION.VM_DELETE)}
+                                                                  disabled={!hasPermission(userPermissions, VM_PERMISSION.VM_DELETE) || !user?.can_delete_vm}
                                                                   block><span
                                         className="hidden md:inline">删除</span></Button></Tooltip>
                                     <Tooltip title="VNC控制台"><Button size="small" type="primary"
@@ -2581,44 +2617,79 @@ await api.vmPower(hostName!, uuid!, 'H_CLOSE')
         {
             key: 'ip',
             label: '网卡管理',
-            children: <Card title="网卡列表" extra={<Button type="primary" icon={<PlusOutlined/>}
+            children: <Card title="网卡列表" extra={<Space>
+                                <Segmented
+                                    value={nicViewMode}
+                                    onChange={(val) => setNicViewMode(val as 'card' | 'table')}
+                                    options={[
+                                        { value: 'card', icon: <AppstoreOutlined /> },
+                                        { value: 'table', icon: <UnorderedListOutlined /> },
+                                    ]}
+                                    size="small"
+                                />
+                                <Button type="primary" icon={<PlusOutlined/>}
                                                             disabled={operationLocked || !hasPermission(userPermissions, VM_PERMISSION.NIC_EDITS) || (config.nic_num !== undefined && config.nic_all && Object.keys(config.nic_all).length >= (config.nic_num || 0))}
-                                                            onClick={() => setIpModalVisible(true)}>添加网卡</Button>}
+                                                            onClick={() => setIpModalVisible(true)}>添加网卡</Button>
+                            </Space>}
                             variant="borderless">
                 {vm && vm.config && vm.config.nic_all && Object.keys(vm.config.nic_all).length > 0 ? (
-                    <div className="space-y-3">
+                    nicViewMode === 'card' ? (
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                         {Object.entries(vm.config.nic_all).map(([nicName, nicConfig]: [string, any]) => (
-                <div key={nicName} className="rounded-lg p-3">
-                                <div className="flex items-center justify-between mb-2">
-                                    <span className="font-medium">{nicName}</span>
+                            <div key={nicName} className="glass-card hover:shadow-xl transition-all duration-300 hover:-translate-y-1 hover:border-blue-400 dark:hover:border-blue-500">
+                                <div className="flex items-center justify-between mb-3">
                                     <div className="flex items-center gap-2">
+                                        <span className="px-2 py-0.5 text-xs font-medium text-blue-700 dark:text-blue-300 bg-blue-100 dark:bg-blue-900/40 rounded">
+                                            {nicName}
+                                        </span>
                                         <Tag color={nicConfig.nic_type === 'pub' ? 'blue' : 'green'}>
                                             {nicConfig.nic_type === 'pub' ? '公网' : '内网'}
                                         </Tag>
-                                        <Button danger size="small"
-                                                disabled={operationLocked || !hasPermission(userPermissions, VM_PERMISSION.NIC_EDITS)}
-                                                onClick={() => handleDeleteIPAddress(nicName)}>删除</Button>
                                     </div>
+                                    <Button danger size="small"
+                                            disabled={operationLocked || !hasPermission(userPermissions, VM_PERMISSION.NIC_EDITS)}
+                                            onClick={() => handleDeleteIPAddress(nicName)}>删除</Button>
                                 </div>
-                                <div className="grid grid-cols-1 md:grid-cols-3 gap-3 text-sm">
-                                    <div className="flex items-center gap-2">
-                                        <span style={{ color: 'var(--text-secondary)' }}>IPv4:</span>
+                                <div className="space-y-2 text-sm">
+                                    <div className="flex items-center justify-between">
+                                        <span style={{ color: 'var(--text-secondary)' }}>IPv4</span>
                                         <span className="font-mono">{nicConfig.ip4_addr || '-'}</span>
                                     </div>
-                                    <div className="flex items-center gap-2">
-                                        <span style={{ color: 'var(--text-secondary)' }}>IPv6:</span>
-                                        <span
-                                            className="font-mono break-all">{nicConfig.ip6_addr || '-'}</span>
+                                    <div className="flex items-center justify-between">
+                                        <span style={{ color: 'var(--text-secondary)' }}>IPv6</span>
+                                        <span className="font-mono text-xs break-all">{nicConfig.ip6_addr || '-'}</span>
                                     </div>
-                                    <div className="flex items-center gap-2">
-                                        <span style={{ color: 'var(--text-secondary)' }}>MAC:</span>
-                                        <span
-                                            className="font-mono break-all">{nicConfig.mac_addr || '-'}</span>
+                                    <div className="flex items-center justify-between">
+                                        <span style={{ color: 'var(--text-secondary)' }}>MAC</span>
+                                        <span className="font-mono text-xs">{nicConfig.mac_addr || '-'}</span>
                                     </div>
+                                    {nicConfig.nic_bridge && (
+                                        <div className="flex items-center justify-between">
+                                            <span style={{ color: 'var(--text-secondary)' }}>网桥</span>
+                                            <span className="font-mono text-xs">{nicConfig.nic_bridge}</span>
+                                        </div>
+                                    )}
                                 </div>
                             </div>
                         ))}
                     </div>
+                    ) : (
+                    <Table
+                        dataSource={Object.entries(vm.config.nic_all).map(([nicName, nicConfig]: [string, any]) => ({ key: nicName, nicName, ...nicConfig }))}
+                        pagination={false}
+                        size="small"
+                        columns={[
+                            { title: '网卡名称', dataIndex: 'nicName', key: 'nicName', render: (text: string) => <code className="text-xs">{text}</code> },
+                            { title: '类型', dataIndex: 'nic_type', key: 'nic_type', render: (text: string) => <Tag color={text === 'pub' ? 'blue' : 'green'}>{text === 'pub' ? '公网' : '内网'}</Tag> },
+                            { title: 'IPv4', dataIndex: 'ip4_addr', key: 'ip4_addr', render: (text: string) => <span className="font-mono text-xs">{text || '-'}</span> },
+                            { title: 'IPv6', dataIndex: 'ip6_addr', key: 'ip6_addr', render: (text: string) => <span className="font-mono text-xs">{text || '-'}</span> },
+                            { title: 'MAC', dataIndex: 'mac_addr', key: 'mac_addr', render: (text: string) => <span className="font-mono text-xs">{text || '-'}</span> },
+                            { title: '操作', key: 'action', render: (_: any, record: any) => (
+                                <Button danger size="small" disabled={operationLocked || !hasPermission(userPermissions, VM_PERMISSION.NIC_EDITS)} onClick={() => handleDeleteIPAddress(record.nicName)}>删除</Button>
+                            )},
+                        ]}
+                    />
+                    )
                 ) : (
                     <div className="text-center py-8" style={{ color: 'var(--text-secondary)' }}>暂无网卡配置</div>
                 )}
@@ -2627,11 +2698,23 @@ await api.vmPower(hostName!, uuid!, 'H_CLOSE')
         {
             key: 'hdd',
             label: '数据磁盘',
-            children: <Card title="数据盘管理" extra={<Button type="primary" icon={<PlusOutlined/>}
+            children: <Card title="数据盘管理" extra={<Space>
+                                <Segmented
+                                    value={hddViewMode}
+                                    onChange={(val) => setHddViewMode(val as 'card' | 'table')}
+                                    options={[
+                                        { value: 'card', icon: <AppstoreOutlined /> },
+                                        { value: 'table', icon: <UnorderedListOutlined /> },
+                                    ]}
+                                    size="small"
+                                />
+                                <Button type="primary" icon={<PlusOutlined/>}
                                                               disabled={operationLocked || !hasPermission(userPermissions, VM_PERMISSION.HDD_EDITS) || (config.dat_num > 0 && hdds.length >= config.dat_num)}
-                                                              onClick={() => setHddModalVisible(true)}>挂载数据盘</Button>}
+                                                              onClick={() => setHddModalVisible(true)}>挂载数据盘</Button>
+                            </Space>}
                             variant="borderless">
                 {hdds && hdds.length > 0 ? (
+                    hddViewMode === 'card' ? (
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                         {hdds.map((hdd, index) => {
                             const hddName = hdd.hdd_path || `hdd-${index}`
@@ -2693,6 +2776,39 @@ await api.vmPower(hostName!, uuid!, 'H_CLOSE')
                             )
                         })}
                     </div>
+                    ) : (
+                    <Table
+                        dataSource={hdds.map((hdd, index) => ({ key: hdd.hdd_path || `hdd-${index}`, ...hdd, _index: index }))}
+                        pagination={false}
+                        size="small"
+                        columns={[
+                            { title: '磁盘名称', dataIndex: 'hdd_path', key: 'hdd_path', render: (text: string, _r: any, i: number) => <code className="text-xs font-mono">{text || `hdd-${i}`}</code> },
+                            { title: '类型', dataIndex: 'hdd_type', key: 'hdd_type', render: (val: number) => <Tag color={val === 1 ? 'blue' : 'default'}>{val === 1 ? 'SSD' : 'HDD'}</Tag> },
+                            { title: '容量', dataIndex: 'hdd_size', key: 'hdd_size', render: (val: number) => <span className="font-mono text-xs">{((val || 0) / 1024).toFixed(1)} GB</span> },
+                            { title: '状态', dataIndex: 'hdd_flag', key: 'hdd_flag', render: (val: number) => <Tag color={val === 1 ? 'green' : 'orange'}>{val === 1 ? '已挂载' : '未挂载'}</Tag> },
+                            { title: '操作', key: 'action', render: (_: any, record: any) => {
+                                const hddName = record.hdd_path || `hdd-${record._index}`
+                                const isMounted = record.hdd_flag === 1
+                                return (
+                                    <Space size="small">
+                                        {isMounted ? (
+                                            <>
+                                                <Button size="small" disabled={operationLocked || !hasPermission(userPermissions, VM_PERMISSION.HDD_EDITS)} onClick={() => { setCurrentUnmountHdd(record); setUnmountHddConfirmChecked(false); setUnmountHddModalVisible(true) }}>卸载</Button>
+                                                <Button danger size="small" disabled={operationLocked || !hasPermission(userPermissions, VM_PERMISSION.HDD_EDITS)} onClick={() => handleDeleteHDD(hddName)}>删除</Button>
+                                            </>
+                                        ) : (
+                                            <>
+                                                <Button type="primary" size="small" disabled={operationLocked || !hasPermission(userPermissions, VM_PERMISSION.HDD_EDITS)} onClick={() => { setCurrentMountHdd(record); setMountHddConfirmChecked(false); setMountHddModalVisible(true) }}>挂载</Button>
+                                                <Button size="small" disabled={operationLocked || !hasPermission(userPermissions, VM_PERMISSION.HDD_EDITS)} onClick={() => handleOpenTransferHDD(record)}>移交</Button>
+                                                <Button danger size="small" disabled={operationLocked || !hasPermission(userPermissions, VM_PERMISSION.HDD_EDITS)} onClick={() => handleDeleteHDD(hddName)}>删除</Button>
+                                            </>
+                                        )}
+                                    </Space>
+                                )
+                            }},
+                        ]}
+                    />
+                    )
                 ) : (
                     <div className="text-center py-8" style={{ color: 'var(--text-secondary)' }}>暂无数据盘</div>
                 )}
@@ -2701,11 +2817,23 @@ await api.vmPower(hostName!, uuid!, 'H_CLOSE')
         {
             key: 'iso',
             label: '光盘镜像',
-            children: <Card title="ISO镜像管理" extra={<Button type="primary" icon={<PlusOutlined/>}
+            children: <Card title="ISO镜像管理" extra={<Space>
+                                <Segmented
+                                    value={isoViewMode}
+                                    onChange={(val) => setIsoViewMode(val as 'card' | 'table')}
+                                    options={[
+                                        { value: 'card', icon: <AppstoreOutlined /> },
+                                        { value: 'table', icon: <UnorderedListOutlined /> },
+                                    ]}
+                                    size="small"
+                                />
+                                <Button type="primary" icon={<PlusOutlined/>}
                                                                disabled={operationLocked || !hasPermission(userPermissions, VM_PERMISSION.ISO_EDITS) || (config.iso_num > 0 && isos.length >= config.iso_num)}
-                                                               onClick={() => setIsoModalVisible(true)}>挂载ISO</Button>}
+                                                               onClick={() => setIsoModalVisible(true)}>挂载ISO</Button>
+                            </Space>}
                             variant="borderless">
                 {isos && isos.length > 0 ? (
+                    isoViewMode === 'card' ? (
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                         {isos.map((iso, index) => (
                             <div key={iso.iso_name || `iso-${index}`}
@@ -2744,6 +2872,27 @@ await api.vmPower(hostName!, uuid!, 'H_CLOSE')
                             </div>
                         ))}
                     </div>
+                    ) : (
+                    <Table
+                        dataSource={isos.map((iso, index) => ({ key: iso.iso_name || `iso-${index}`, ...iso, _index: index }))}
+                        pagination={false}
+                        size="small"
+                        columns={[
+                            { title: '挂载名称', dataIndex: 'iso_name', key: 'iso_name', render: (text: string) => <code className="text-xs font-mono">{text || '-'}</code> },
+                            { title: '文件名', dataIndex: 'iso_file', key: 'iso_file', render: (text: string) => <code className="text-xs font-mono break-all">{text || '-'}</code> },
+                            { title: '备注', dataIndex: 'iso_hint', key: 'iso_hint', render: (text: string) => <span>{text || '-'}</span> },
+                            { title: '操作', key: 'action', render: (_: any, record: any) => (
+                                <Button danger size="small" icon={<span className="iconify" data-icon="mdi:eject"/>}
+                                        disabled={operationLocked || !hasPermission(userPermissions, VM_PERMISSION.ISO_EDITS)}
+                                        onClick={() => {
+                                            setCurrentUnmountIso(record.iso_name!);
+                                            setUnmountIsoConfirmChecked(false);
+                                            setUnmountIsoConfirmVisible(true)
+                                        }}>卸载</Button>
+                            )},
+                        ]}
+                    />
+                    )
                 ) : (
                     <div className="text-center py-8" style={{ color: 'var(--text-secondary)' }}>暂无ISO挂载</div>
                 )}
@@ -2785,7 +2934,7 @@ await api.vmPower(hostName!, uuid!, 'H_CLOSE')
                                 </div>
                                 <div className="space-y-2">
                                     {/* 外网信息 */}
-                                    <div className="rounded-lg p-3 bg-blue-50 dark:bg-blue-900/20">
+                                    <div className="rounded-lg p-3" style={{ background: 'var(--bg-secondary, rgba(59,130,246,0.08))' }}>
                                         <p className="text-xs mb-1 font-medium text-blue-600 dark:text-blue-400">外网 (WAN)</p>
                                         <div className="flex items-center justify-between text-sm">
                                             <code className="font-mono text-blue-700 dark:text-blue-300">{hostConfig?.public_addr?.[0] || hostName || '-'}</code>
@@ -2796,7 +2945,7 @@ await api.vmPower(hostName!, uuid!, 'H_CLOSE')
                                         <span className="iconify" data-icon="mdi:arrow-down" style={{width: '20px', height: '20px'}}></span>
                                     </div>
                                     {/* 内网信息 */}
-                                    <div className="rounded-lg p-3 bg-green-50 dark:bg-green-900/20">
+                                    <div className="rounded-lg p-3" style={{ background: 'var(--bg-secondary, rgba(34,197,94,0.08))' }}>
                                         <p className="text-xs mb-1 font-medium text-green-600 dark:text-green-400">内网 (LAN)</p>
                                         <div className="flex items-center justify-between text-sm">
                                             <code className="font-mono text-green-700 dark:text-green-300">{rule.lan_addr || '-'}</code>
@@ -2804,7 +2953,7 @@ await api.vmPower(hostName!, uuid!, 'H_CLOSE')
                                         </div>
                                     </div>
                                     {rule.nat_tips && (
-                                        <div className="bg-yellow-50 dark:bg-yellow-900/30 rounded-lg p-3 mt-2">
+                                        <div className="rounded-lg p-3 mt-2" style={{ background: 'var(--bg-secondary, rgba(234,179,8,0.08))' }}>
                                             <p className="text-xs mb-1">备注</p>
                                             <p className="text-sm">{rule.nat_tips}</p>
                                         </div>
@@ -2869,11 +3018,23 @@ await api.vmPower(hostName!, uuid!, 'H_CLOSE')
         {
             key: 'proxy',
             label: '反向代理',
-            children: <Card title="反向代理配置" extra={<Button type="primary" icon={<PlusOutlined/>} disabled={operationLocked || !hasPermission(userPermissions, VM_PERMISSION.WEB_EDITS) || (config.web_num > 0 && proxyRules.length >= config.web_num)} onClick={() => {
+            children: <Card title="反向代理配置" extra={<Space>
+                <Segmented
+                    value={proxyViewMode}
+                    onChange={(val) => setProxyViewMode(val as 'card' | 'table')}
+                    options={[
+                        { value: 'card', icon: <AppstoreOutlined /> },
+                        { value: 'table', icon: <UnorderedListOutlined /> },
+                    ]}
+                    size="small"
+                />
+                <Button type="primary" icon={<PlusOutlined/>} disabled={operationLocked || !hasPermission(userPermissions, VM_PERMISSION.WEB_EDITS) || (config.web_num > 0 && proxyRules.length >= config.web_num)} onClick={() => {
                 setProxyModalVisible(true);
                 proxyForm.setFieldsValue({backend_ip: availableIPs[0]})
-            }}>添加代理</Button>} variant="borderless">
+            }}>添加代理</Button>
+            </Space>} variant="borderless">
                 {proxyRules && proxyRules.length > 0 ? (
+                    proxyViewMode === 'card' ? (
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                         {proxyRules.map((proxy, index) => (
                             <div key={proxy.id || `proxy-${index}`}
@@ -2907,6 +3068,51 @@ await api.vmPower(hostName!, uuid!, 'H_CLOSE')
                             </div>
                         ))}
                     </div>
+                    ) : (
+                    <Table
+                        dataSource={proxyRules.map((proxy, index) => ({ ...proxy, _index: index }))}
+                        rowKey={(record) => `proxy-${record._index}`}
+                        pagination={false}
+                        size="small"
+                        columns={[
+                            {
+                                title: '域名',
+                                dataIndex: 'domain',
+                                key: 'domain',
+                                render: (text: string) => <code className="text-sm font-mono break-all">{text}</code>,
+                            },
+                            {
+                                title: '协议',
+                                key: 'protocol',
+                                render: (_: any, record: any) => (
+                                    <Tag color={record.ssl_enabled ? 'green' : 'default'}>
+                                        {record.ssl_enabled ? 'HTTPS' : 'HTTP'}
+                                    </Tag>
+                                ),
+                            },
+                            {
+                                title: '后端地址',
+                                key: 'backend',
+                                render: (_: any, record: any) => <code className="font-mono text-xs">{record.backend_ip || '默认'}:{record.backend_port}</code>,
+                            },
+                            {
+                                title: '描述',
+                                dataIndex: 'description',
+                                key: 'description',
+                                render: (text: string) => <span>{text || '-'}</span>,
+                            },
+                            {
+                                title: '操作',
+                                key: 'action',
+                                render: (_: any, record: any) => (
+                                    <Button danger size="small" icon={<DeleteOutlined/>}
+                                            disabled={operationLocked || !hasPermission(userPermissions, VM_PERMISSION.WEB_EDITS)}
+                                            onClick={() => handleDeleteProxy(record._index)}>删除</Button>
+                                ),
+                            },
+                        ]}
+                    />
+                    )
                 ) : (
                     <div className="text-center  py-8">暂无反向代理配置</div>
                 )}
@@ -2915,34 +3121,80 @@ await api.vmPower(hostName!, uuid!, 'H_CLOSE')
         {
             key: 'pci',
             label: 'PCI设备',
-            children: <Card title="PCI设备直通" extra={<Button type="primary" icon={<PlusOutlined/>}
+            children: <Card title="PCI设备直通" extra={<Space>
+                <Segmented
+                    value={pciViewMode}
+                    onChange={(val) => setPciViewMode(val as 'card' | 'table')}
+                    options={[
+                        { value: 'card', icon: <AppstoreOutlined /> },
+                        { value: 'table', icon: <UnorderedListOutlined /> },
+                    ]}
+                    size="small"
+                />
+                <Button type="primary" icon={<PlusOutlined/>}
                                                             disabled={operationLocked || (config.pci_num > 0 && vm && vm.config && vm.config.pci_all && Object.keys(vm.config.pci_all).length >= config.pci_num)}
-                                                            onClick={handleOpenPciModal}>添加PCI设备</Button>}
+                                                            onClick={handleOpenPciModal}>添加PCI设备</Button>
+            </Space>}
                             variant="borderless">
                 {vm && vm.config && vm.config.pci_all && Object.keys(vm.config.pci_all).length > 0 ? (
-                    <div className="space-y-3">
+                    pciViewMode === 'card' ? (
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                         {Object.entries(vm.config.pci_all).map(([gpuKey, gpuConfig]: [string, any]) => (
-                            <div key={gpuKey} className="bg-gray-50/20 dark:bg-gray-800/50 rounded-lg p-3 border border-gray-200 dark:border-gray-700">
-                                <div className="flex items-center justify-between mb-2">
-                                    <span className="font-medium">{gpuConfig.gpu_hint || gpuKey}</span>
+                            <div key={gpuKey} className="glass-card hover:shadow-xl transition-all duration-300 hover:-translate-y-1 hover:border-orange-400 dark:hover:border-orange-500">
+                                <div className="flex items-center justify-between mb-3">
+                                    <span className="px-2 py-0.5 text-xs font-medium text-orange-700 dark:text-orange-300 bg-orange-100 dark:bg-orange-900/40 rounded">
+                                        PCI设备
+                                    </span>
                                     <Space>
                                         <Tag color={gpuConfig.gpu_mdev === 'PV' ? 'blue' : gpuConfig.gpu_mdev === 'DDA' ? 'orange' : 'green'}>{gpuConfig.gpu_mdev || '直通'}</Tag>
                                         <Button danger size="small" disabled={operationLocked} onClick={() => handleDeleteGpu(gpuKey)}>删除</Button>
                                     </Space>
                                 </div>
-                                <div className="grid grid-cols-1 md:grid-cols-2 gap-3 text-sm">
-                                    <div className="flex items-center gap-2">
-                                        <span className="">设备ID:</span>
-                                        <span className="font-mono">{gpuConfig.gpu_uuid || '-'}</span>
-                                    </div>
-                                    <div className="flex items-center gap-2">
-                                        <span className="">类型:</span>
-                                        <span className="font-mono">{gpuConfig.gpu_mdev || '-'}</span>
-                                    </div>
+                                <div className="rounded-lg p-3 mb-2">
+                                    <p className="text-xs mb-1">设备名称</p>
+                                    <code className="text-sm font-mono break-all">{gpuConfig.gpu_hint || gpuKey}</code>
+                                </div>
+                                <div className="flex items-center justify-between text-xs">
+                                    <span>设备ID</span>
+                                    <code className="px-2 py-0.5 font-medium font-mono dark:bg-gray-700/50 rounded">{gpuConfig.gpu_uuid || '-'}</code>
                                 </div>
                             </div>
                         ))}
                     </div>
+                    ) : (
+                    <Table
+                        dataSource={Object.entries(vm.config.pci_all).map(([gpuKey, gpuConfig]: [string, any]) => ({ gpuKey, ...gpuConfig }))}
+                        rowKey="gpuKey"
+                        pagination={false}
+                        size="small"
+                        columns={[
+                            {
+                                title: '设备名称',
+                                key: 'name',
+                                render: (_: any, record: any) => <span className="font-medium">{record.gpu_hint || record.gpuKey}</span>,
+                            },
+                            {
+                                title: '设备ID',
+                                dataIndex: 'gpu_uuid',
+                                key: 'gpu_uuid',
+                                render: (text: string) => <code className="font-mono text-xs">{text || '-'}</code>,
+                            },
+                            {
+                                title: '类型',
+                                dataIndex: 'gpu_mdev',
+                                key: 'gpu_mdev',
+                                render: (text: string) => <Tag color={text === 'PV' ? 'blue' : text === 'DDA' ? 'orange' : 'green'}>{text || '直通'}</Tag>,
+                            },
+                            {
+                                title: '操作',
+                                key: 'action',
+                                render: (_: any, record: any) => (
+                                    <Button danger size="small" disabled={operationLocked} onClick={() => handleDeleteGpu(record.gpuKey)}>删除</Button>
+                                ),
+                            },
+                        ]}
+                    />
+                    )
                 ) : (
                     <div className="text-center  py-8">暂无PCI直通设备</div>
                 )}
@@ -2951,8 +3203,20 @@ await api.vmPower(hostName!, uuid!, 'H_CLOSE')
         {
             key: 'usb',
             label: 'USB设备',
-            children: <Card title="USB设备管理" extra={<Button type="primary" icon={<PlusOutlined/>} disabled={operationLocked || (config.usb_num > 0 && usbList.length >= config.usb_num)} onClick={handleOpenUsbModal}>添加USB设备</Button>} variant="borderless">
+            children: <Card title="USB设备管理" extra={<Space>
+                <Segmented
+                    value={usbViewMode}
+                    onChange={(val) => setUsbViewMode(val as 'card' | 'table')}
+                    options={[
+                        { value: 'card', icon: <AppstoreOutlined /> },
+                        { value: 'table', icon: <UnorderedListOutlined /> },
+                    ]}
+                    size="small"
+                />
+                <Button type="primary" icon={<PlusOutlined/>} disabled={operationLocked || (config.usb_num > 0 && usbList.length >= config.usb_num)} onClick={handleOpenUsbModal}>添加USB设备</Button>
+            </Space>} variant="borderless">
                 {usbList && usbList.length > 0 ? (
+                    usbViewMode === 'card' ? (
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                         {usbList.map((usb, index) => (
                             <div key={usb.key || `usb-${index}`}
@@ -2979,6 +3243,41 @@ await api.vmPower(hostName!, uuid!, 'H_CLOSE')
                             </div>
                         ))}
                     </div>
+                    ) : (
+                    <Table
+                        dataSource={usbList.map((usb, index) => ({ ...usb, _index: index }))}
+                        rowKey={(record) => record.key || `usb-${record._index}`}
+                        pagination={false}
+                        size="small"
+                        columns={[
+                            {
+                                title: 'VID',
+                                dataIndex: 'vid_uuid',
+                                key: 'vid_uuid',
+                                render: (text: string) => <code className="font-mono text-xs">{text || '-'}</code>,
+                            },
+                            {
+                                title: 'PID',
+                                dataIndex: 'pid_uuid',
+                                key: 'pid_uuid',
+                                render: (text: string) => <code className="font-mono text-xs">{text || '-'}</code>,
+                            },
+                            {
+                                title: '备注',
+                                dataIndex: 'usb_hint',
+                                key: 'usb_hint',
+                                render: (text: string) => <span>{text || '-'}</span>,
+                            },
+                            {
+                                title: '操作',
+                                key: 'action',
+                                render: (_: any, record: any) => (
+                                    <Button danger size="small" icon={<DeleteOutlined/>} disabled={operationLocked} onClick={() => handleDeleteUSB(record.key)} loading={usbActionLoading}>删除</Button>
+                                ),
+                            },
+                        ]}
+                    />
+                    )
                 ) : (
                     <div className="text-center  py-8">暂无USB直通设备</div>
                 )}
@@ -2987,11 +3286,23 @@ await api.vmPower(hostName!, uuid!, 'H_CLOSE')
         {
             key: 'backup',
             label: '备份管理',
-            children: <Card title="备份管理" extra={<Button type="primary" icon={<PlusOutlined/>}
+            children: <Card title="备份管理" extra={<Space>
+                <Segmented
+                    value={backupViewMode}
+                    onChange={(val) => setBackupViewMode(val as 'card' | 'table')}
+                    options={[
+                        { value: 'card', icon: <AppstoreOutlined /> },
+                        { value: 'table', icon: <UnorderedListOutlined /> },
+                    ]}
+                    size="small"
+                />
+                <Button type="primary" icon={<PlusOutlined/>}
                                                             disabled={operationLocked || !hasPermission(userPermissions, VM_PERMISSION.VM_BACKUP) || (config.bak_num > 0 && backups.length >= config.bak_num)}
-                                                            onClick={() => setBackupModalVisible(true)}>创建备份</Button>}
+                                                            onClick={() => setBackupModalVisible(true)}>创建备份</Button>
+            </Space>}
                             variant="borderless">
                 {backups && backups.length > 0 ? (
+                    backupViewMode === 'card' ? (
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                         {backups.map((backup, index) => {
                             const backupDate = backup.backup_time ? new Date(backup.backup_time * 1000).toLocaleString('zh-CN') : (backup.created_time || '未知时间')
@@ -3040,6 +3351,55 @@ await api.vmPower(hostName!, uuid!, 'H_CLOSE')
                             )
                         })}
                     </div>
+                    ) : (
+                    <Table
+                        dataSource={backups.map((backup, index) => ({ ...backup, _index: index }))}
+                        rowKey={(record) => record.backup_name || `backup-${record._index}`}
+                        pagination={false}
+                        size="small"
+                        columns={[
+                            {
+                                title: '备份名称',
+                                dataIndex: 'backup_name',
+                                key: 'backup_name',
+                                render: (text: string) => <code className="font-mono text-xs break-all">{text || '-'}</code>,
+                            },
+                            {
+                                title: '备份时间',
+                                key: 'backup_time',
+                                render: (_: any, record: any) => {
+                                    const t = record.backup_time ? new Date(record.backup_time * 1000).toLocaleString('zh-CN') : (record.created_time || '-')
+                                    return <span className="text-xs">{t}</span>
+                                },
+                            },
+                            {
+                                title: '备注',
+                                dataIndex: 'backup_hint',
+                                key: 'backup_hint',
+                                render: (text: string) => <span>{text || '-'}</span>,
+                            },
+                            {
+                                title: '操作',
+                                key: 'action',
+                                render: (_: any, record: any) => (
+                                    <Space size="small">
+                                        <Button size="small"
+                                                disabled={operationLocked || !hasPermission(userPermissions, VM_PERMISSION.VM_BACKUP)}
+                                                onClick={() => {
+                                                    setCurrentRestoreBackup(record.backup_name!);
+                                                    setRestoreConfirmChecked1(false);
+                                                    setRestoreConfirmChecked2(false);
+                                                    setRestoreBackupModalVisible(true)
+                                                }}>恢复</Button>
+                                        <Button danger size="small"
+                                                disabled={operationLocked || !hasPermission(userPermissions, VM_PERMISSION.VM_BACKUP)}
+                                                onClick={() => handleDeleteBackup(record.backup_name!)}>删除</Button>
+                                    </Space>
+                                ),
+                            },
+                        ]}
+                    />
+                    )
                 ) : (
                     <div className="text-center  py-8">暂无备份</div>
                 )}
@@ -3050,6 +3410,15 @@ await api.vmPower(hostName!, uuid!, 'H_CLOSE')
             label: '启动顺序',
             children: <Card title="启动顺序管理" extra={
                 <Space>
+                    <Segmented
+                        value={efiViewMode}
+                        onChange={(val) => setEfiViewMode(val as 'card' | 'table')}
+                        options={[
+                            { value: 'card', icon: <AppstoreOutlined /> },
+                            { value: 'table', icon: <UnorderedListOutlined /> },
+                        ]}
+                        size="small"
+                    />
                     {!efiEditing ? (
                         <>
                             <Button icon={<ReloadOutlined/>} onClick={loadEFIList} loading={efiLoading}>刷新</Button>
@@ -3069,6 +3438,7 @@ await api.vmPower(hostName!, uuid!, 'H_CLOSE')
                 {efiLoading ? (
                     <div className="text-center py-8"><Spin tip="加载启动项..."/></div>
                 ) : (efiEditing ? efiEditList : efiList).length > 0 ? (
+                    efiViewMode === 'card' ? (
                     <div className="space-y-2">
                         {(efiEditing ? efiEditList : efiList).map((item, index) => (
                             <div key={`efi-${index}`}
@@ -3096,6 +3466,46 @@ await api.vmPower(hostName!, uuid!, 'H_CLOSE')
                             </div>
                         ))}
                     </div>
+                    ) : (
+                    <Table
+                        dataSource={(efiEditing ? efiEditList : efiList).map((item, index) => ({ ...item, _index: index }))}
+                        rowKey={(record) => `efi-${record._index}`}
+                        pagination={false}
+                        size="small"
+                        columns={[
+                            {
+                                title: '顺序',
+                                key: 'order',
+                                width: 60,
+                                render: (_: any, __: any, index: number) => <span className="font-bold text-blue-500">#{index + 1}</span>,
+                            },
+                            {
+                                title: '启动项名称',
+                                key: 'name',
+                                render: (_: any, record: any) => <span className="font-medium">{record.efi_name || (record.efi_type ? 'CD/DVD' : '硬盘')}</span>,
+                            },
+                            {
+                                title: '类型',
+                                key: 'type',
+                                render: (_: any, record: any) => (
+                                    <Tag color={record.efi_type ? 'orange' : 'blue'}>
+                                        {record.efi_type ? '光盘/网络启动' : '硬盘启动'}
+                                    </Tag>
+                                ),
+                            },
+                            ...(efiEditing ? [{
+                                title: '操作',
+                                key: 'action',
+                                render: (_: any, record: any) => (
+                                    <Space size="small">
+                                        <Button size="small" disabled={record._index === 0} onClick={() => handleEfiMoveUp(record._index)}>上移</Button>
+                                        <Button size="small" disabled={record._index === efiEditList.length - 1} onClick={() => handleEfiMoveDown(record._index)}>下移</Button>
+                                    </Space>
+                                ),
+                            }] : []),
+                        ]}
+                    />
+                    )
                 ) : (
                     <div className="text-center py-8" style={{color: 'var(--text-secondary)'}}>
                         暂无启动项数据，请点击刷新获取
@@ -3108,6 +3518,15 @@ await api.vmPower(hostName!, uuid!, 'H_CLOSE')
             label: '用户权限',
             children: <Card title="用户管理" extra={
                 <Space>
+                    <Segmented
+                        value={ownerViewMode}
+                        onChange={(val) => setOwnerViewMode(val as 'card' | 'table')}
+                        options={[
+                            { value: 'card', icon: <AppstoreOutlined /> },
+                            { value: 'table', icon: <UnorderedListOutlined /> },
+                        ]}
+                        size="small"
+                    />
                     <Button type="primary" icon={<UsergroupAddOutlined/>}
                             disabled={!isOwnerOrAdmin}
                             onClick={() => setOwnerModalVisible(true)}>添加用户</Button>
@@ -3120,6 +3539,7 @@ await api.vmPower(hostName!, uuid!, 'H_CLOSE')
             }
                             variant="borderless">
                 {owners && owners.length > 0 ? (
+                    ownerViewMode === 'card' ? (
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                         {owners.map((owner, index) => {
                             const isFirstOwner = index === 0
@@ -3174,6 +3594,70 @@ await api.vmPower(hostName!, uuid!, 'H_CLOSE')
                             )
                         })}
                     </div>
+                    ) : (
+                    <Table
+                        dataSource={owners.map((owner, index) => ({ ...owner, _index: index }))}
+                        rowKey={(record) => record.username || `owner-${record._index}`}
+                        pagination={false}
+                        size="small"
+                        columns={[
+                            {
+                                title: '用户名',
+                                dataIndex: 'username',
+                                key: 'username',
+                                render: (text: string, record: any) => (
+                                    <div className="flex items-center gap-2">
+                                        <span className="iconify text-blue-600" data-icon="mdi:account" style={{fontSize: '18px'}}></span>
+                                        <span className="font-medium">{text}</span>
+                                        {record._index === 0 && <Tag color="purple">主所有者</Tag>}
+                                    </div>
+                                ),
+                            },
+                            {
+                                title: '角色',
+                                key: 'role',
+                                render: (_: any, record: any) => (
+                                    <Tag color={record._index === 0 ? 'purple' : 'default'}>
+                                        {record._index === 0 ? '所有者' : '使用者'}
+                                    </Tag>
+                                ),
+                            },
+                            {
+                                title: '权限',
+                                key: 'permission',
+                                render: (_: any, record: any) => {
+                                    if (record._index === 0) return <span className="text-xs">全部权限</span>
+                                    const mask = typeof record.permission === 'number' ? record.permission : VM_PERMISSION.FULL_MASK
+                                    return <span className="text-xs">{mask === VM_PERMISSION.FULL_MASK ? '全部' : `${Object.entries(PERMISSION_FIELD_MASK).filter(([, bit]) => (mask & bit) !== 0).length}/16`}</span>
+                                },
+                            },
+                            ...(isOwnerOrAdmin ? [{
+                                title: '操作',
+                                key: 'action',
+                                render: (_: any, record: any) => {
+                                    if (record._index === 0) return null
+                                    const ownerMask = typeof record.permission === 'number' ? record.permission : VM_PERMISSION.FULL_MASK
+                                    return (
+                                        <Space size="small">
+                                            <Button size="small" icon={<EditOutlined/>}
+                                                    onClick={() => {
+                                                        setEditPermOwner(record.username);
+                                                        setEditPermMask(ownerMask);
+                                                        setEditPermModalVisible(true);
+                                                    }}>编辑权限</Button>
+                                            <Button type="primary" size="small" icon={<KeyOutlined/>}
+                                                    onClick={() => {
+                                                        setTransferOwnerUsername(record.username);
+                                                        setTransferOwnershipModalVisible(true);
+                                                    }}>移交所有权</Button>
+                                            <Button danger size="small" onClick={() => handleDeleteOwner(record.username)}>移除</Button>
+                                        </Space>
+                                    )
+                                },
+                            }] : []),
+                        ]}
+                    />
+                    )
                 ) : (
                     <div className="text-center  py-8">暂无使用者</div>
                 )}
@@ -3313,13 +3797,16 @@ await api.vmPower(hostName!, uuid!, 'H_CLOSE')
                     <Form.Item name="vm_uuid" hidden><Input/></Form.Item>
                     <Row gutter={16}>
                         <Col span={12}>
-                            <Form.Item label="操作系统" name="os_name" initialValue={config.os_name}>
-                                <Select>{hostConfig?.system_maps && (Array.isArray(hostConfig.system_maps) ? hostConfig.system_maps : Object.entries(hostConfig.system_maps as any).map(([name, val]: [string, any]) => Array.isArray(val) ? { sys_name: name, sys_file: val[0] } : (val && typeof val === 'object' ? { sys_name: name, ...val } : { sys_name: name, sys_file: val }))).filter((it: any) => it && it.sys_flag !== false).map((it: any) => (
+                            <Form.Item label="操作系统" name="os_name" initialValue={config.os_name || ''}>
+                                <Select>
+                                    <Select.Option key="__no_change__" value="">不变更系统</Select.Option>
+                                    {hostConfig?.system_maps && (Array.isArray(hostConfig.system_maps) ? hostConfig.system_maps : Object.entries(hostConfig.system_maps as any).map(([name, val]: [string, any]) => Array.isArray(val) ? { sys_name: name, sys_file: val[0] } : (val && typeof val === 'object' ? { sys_name: name, ...val } : { sys_name: name, sys_file: val }))).filter((it: any) => it && it.sys_flag !== false).map((it: any) => (
                                     it && it.sys_file ? <Select.Option key={it.sys_name || it.sys_file} value={it.sys_file}>{it.sys_name || it.sys_file}</Select.Option> : null
-                                ))}</Select>
+                                ))}
+                                </Select>
                             </Form.Item>
                         </Col>
-                        <Col span={12}><Form.Item label="VNC端口" name="vc_port"
+                        <Col span={12}><Form.Item label="VNC 端口" name="vc_port"
                                                   initialValue={config.vc_port}><InputNumber min={6000} max={6999}
                                                                                              disabled style={{width: '100%'}}/></Form.Item></Col>
                     </Row>
@@ -3456,21 +3943,47 @@ await api.vmPower(hostName!, uuid!, 'H_CLOSE')
                 )}
             </Modal>
 
-            <Modal title="修改系统密码" open={passwordModalVisible} onCancel={() => setPasswordModalVisible(false)}
-                   onOk={() => form.submit()}>
+            <Modal title="修改密码/端口" open={passwordModalVisible} onCancel={() => { setPasswordModalVisible(false); form.resetFields(); setVncPortConfirmChecked(false) }}
+                   onOk={() => form.submit()} okButtonProps={{disabled: passwordActionType === 'vnc_port' && !vncPortConfirmChecked}}>
                 <Form form={form} onFinish={handleChangePassword} layout="vertical">
-                    <Form.Item label="新密码" name="new_password"
-                               rules={[{required: true, message: '请输入新密码'}]}><Input.Password
-                        autoComplete="new-password"/></Form.Item>
-                    <Form.Item label="确认密码" name="confirm_password" dependencies={['new_password']} rules={[{
-                        required: true,
-                        message: '请确认密码'
-                    }, ({getFieldValue}) => ({
-                        validator(_, value) {
-                            if (!value || getFieldValue('new_password') === value) return Promise.resolve();
-                            return Promise.reject(new Error('两次输入的密码不一致'))
-                        }
-                    })]}><Input.Password/></Form.Item>
+                    <Form.Item label="操作类型">
+                        <Select value={passwordActionType} onChange={(val) => { setPasswordActionType(val); form.resetFields(['new_password', 'confirm_password']); if (val === 'vnc_port') setRandomVncPort(Math.floor(Math.random() * 1000) + 6000) }}>
+                            <Select.Option value="os_password">修改系统密码</Select.Option>
+                            <Select.Option value="vnc_password">修改VNC 密码</Select.Option>
+                            <Select.Option value="vnc_port">修改VNC 端口</Select.Option>
+                        </Select>
+                    </Form.Item>
+                    {passwordActionType !== 'vnc_port' && (<>
+                        <Form.Item label="新密码" name="new_password"
+                                   rules={[{required: true, message: '请输入新密码'}]}><Input.Password
+                            autoComplete="new-password"/></Form.Item>
+                        <Form.Item label="确认密码" name="confirm_password" dependencies={['new_password']} rules={[{
+                            required: true,
+                            message: '请确认密码'
+                        }, ({getFieldValue}) => ({
+                            validator(_, value) {
+                                if (!value || getFieldValue('new_password') === value) return Promise.resolve();
+                                return Promise.reject(new Error('两次输入的密码不一致'))
+                            }
+                        })]}><Input.Password/></Form.Item>
+                    </>)}
+                    {passwordActionType === 'vnc_port' && (<>
+                        <Form.Item label="新VNC端口">
+                            <Space>
+                                <InputNumber value={randomVncPort} disabled style={{width: 120}}/>
+                                <Button onClick={() => setRandomVncPort(Math.floor(Math.random() * 1000) + 6000)}>随机生成</Button>
+                                <Alert message="仅限随机分配可用的端口" type="info" showIcon />
+                            </Space>
+                        </Form.Item>
+
+                        <Alert message="修改VNC端口需要强制关闭并重启服务器" type="warning" showIcon className="mb-3"/>
+                        <div className="p-3 border border-gray-200 rounded flex items-center justify-center">
+                            <Space><input type="checkbox" id="vncPortConfirmCheck" checked={vncPortConfirmChecked}
+                                          onChange={(e) => setVncPortConfirmChecked(e.target.checked)}
+                                          className="w-4 h-4 text-blue-600"/><label htmlFor="vncPortConfirmCheck"
+                                                                                    className="cursor-pointer select-none text-sm">我已同意强制关闭服务器</label></Space>
+                        </div>
+                    </>)}
                 </Form>
             </Modal>
 
@@ -3532,9 +4045,9 @@ await api.vmPower(hostName!, uuid!, 'H_CLOSE')
                 </Form>
             </Modal>
 
-            <Modal title="添加PCI直通设备" open={gpuModalVisible} onCancel={() => { setGpuModalVisible(false); setSelectedPciKey(''); }}
+            <Modal title="添加PCI直通设备" open={gpuModalVisible} onCancel={() => { setGpuModalVisible(false); setSelectedPciKey(''); setAddPciConfirmChecked(false); }}
                    onOk={() => handleAddGpu({ pci_key: selectedPciKey })} confirmLoading={gpuActionLoading}
-                   okButtonProps={{ disabled: !selectedPciKey }}>
+                   okButtonProps={{ disabled: !selectedPciKey || !addPciConfirmChecked }}>
                 {pciListLoading ? (
                     <div className="text-center py-8"><Spin tip="正在获取可用PCI设备列表..."/></div>
                 ) : Object.keys(pciDeviceList).length > 0 ? (
@@ -3562,18 +4075,32 @@ await api.vmPower(hostName!, uuid!, 'H_CLOSE')
                     <div className="text-center py-8 text-gray-400">当前主机无可用PCI直通设备</div>
                 )}
                 <Alert message="注意：PCI直通操作需要虚拟机处于关机状态。" type="warning" showIcon className="mt-4"/>
+                <div className="p-3 rounded flex items-center mt-4" style={{ background: "var(--bg-secondary, rgba(250,204,21,0.08))", border: "1px solid var(--border-color, rgba(250,204,21,0.3))" }}>
+                    <Space><input type="checkbox" id="addPciConfirmCheck" checked={addPciConfirmChecked}
+                                  onChange={(e) => setAddPciConfirmChecked(e.target.checked)}
+                                  className="w-4 h-4 text-blue-600"/><label htmlFor="addPciConfirmCheck"
+                                                                            className="cursor-pointer select-none text-sm ">我已同意强制关机此虚拟机</label></Space>
+                </div>
             </Modal>
 
             {/* PCI关机确认对话框 */}
             <Modal title="需要关闭虚拟机" open={pciShutdownConfirmVisible}
-                   onCancel={() => { setPciShutdownConfirmVisible(false); setPendingPciAction(null); }}
+                   onCancel={() => { setPciShutdownConfirmVisible(false); setPendingPciAction(null); setPciShutdownConfirmChecked(false); }}
                    onOk={handlePciShutdownConfirm}
-                   okText="确认关机并继续" okType="danger">
+                   okText="确认关机并继续" okType="danger"
+                   okButtonProps={{disabled: !pciShutdownConfirmChecked}}>
                 <Alert message="PCI直通操作需要先关闭虚拟机，确认后将自动关闭虚拟机并执行操作。" type="warning" showIcon />
+                <div className="p-3 rounded flex items-center mt-4" style={{ background: "var(--bg-secondary, rgba(250,204,21,0.08))", border: "1px solid var(--border-color, rgba(250,204,21,0.3))" }}>
+                    <Space><input type="checkbox" id="pciShutdownCheck" checked={pciShutdownConfirmChecked}
+                                  onChange={(e) => setPciShutdownConfirmChecked(e.target.checked)}
+                                  className="w-4 h-4 text-blue-600"/><label htmlFor="pciShutdownCheck"
+                                                                            className="cursor-pointer select-none text-sm ">我已同意强制关机此虚拟机</label></Space>
+                </div>
             </Modal>
 
-            <Modal title="添加数据盘" open={hddModalVisible} onCancel={() => setHddModalVisible(false)}
-                   onOk={() => hddForm.submit()} confirmLoading={hddActionLoading}>
+            <Modal title="添加数据盘" open={hddModalVisible} onCancel={() => { setHddModalVisible(false); setAddHddConfirmChecked(false); }}
+                   onOk={() => hddForm.submit()} confirmLoading={hddActionLoading}
+                   okButtonProps={{disabled: !addHddConfirmChecked}}>
                 <Form form={hddForm} onFinish={handleAddHDD} layout="vertical">
                     <Form.Item label="磁盘名称" name="hdd_name" rules={[{required: true, message: '请输入磁盘名称'}, {
                         pattern: /^[a-zA-Z0-9_]+$/,
@@ -3587,6 +4114,12 @@ await api.vmPower(hostName!, uuid!, 'H_CLOSE')
                         value={0}>HDD</Select.Option><Select.Option value={1}>SSD</Select.Option></Select></Form.Item>
                 </Form>
                 <Alert message="注意：添加数据盘需要重启虚拟机才能生效。" type="warning" showIcon className="mt-4"/>
+                <div className="p-3 rounded flex items-center mt-4" style={{ background: "var(--bg-secondary, rgba(250,204,21,0.08))", border: "1px solid var(--border-color, rgba(250,204,21,0.3))" }}>
+                    <Space><input type="checkbox" id="addHddCheck" checked={addHddConfirmChecked}
+                                  onChange={(e) => setAddHddConfirmChecked(e.target.checked)}
+                                  className="w-4 h-4 text-blue-600"/><label htmlFor="addHddCheck"
+                                                                            className="cursor-pointer select-none text-sm ">我已同意强制关机此虚拟机</label></Space>
+                </div>
             </Modal>
 
             <Modal title="挂载数据盘" open={mountHddModalVisible} onCancel={() => setMountHddModalVisible(false)}
@@ -3594,7 +4127,7 @@ await api.vmPower(hostName!, uuid!, 'H_CLOSE')
                    confirmLoading={hddActionLoading}>
                 <p>确定要挂载数据盘 "<strong>{currentMountHdd?.hdd_path}</strong>" 吗？</p>
                 <p className=" text-sm mt-2 mb-4">挂载后需要在系统内进行配置才能使用。</p>
-                <div className="p-3 bg-yellow-50 border border-yellow-200 rounded flex items-center">
+                <div className="p-3 rounded flex items-center" style={{ background: "var(--bg-secondary, rgba(250,204,21,0.08))", border: "1px solid var(--border-color, rgba(250,204,21,0.3))" }}>
                     <Space><input type="checkbox" id="mountHddCheck" checked={mountHddConfirmChecked}
                                   onChange={(e) => setMountHddConfirmChecked(e.target.checked)}
                                   className="w-4 h-4 text-blue-600"/><label htmlFor="mountHddCheck"
@@ -3607,7 +4140,7 @@ await api.vmPower(hostName!, uuid!, 'H_CLOSE')
                    okButtonProps={{disabled: !unmountHddConfirmChecked}} confirmLoading={hddActionLoading}>
                 <p>确定要卸载数据盘 "<strong>{currentUnmountHdd?.hdd_path}</strong>" 吗？</p>
                 <p className="text-red-500 text-sm mt-2 mb-4">请确保在系统内已卸载该磁盘，否则可能导致数据丢失。</p>
-                <div className="p-3 bg-yellow-50 border border-yellow-200 rounded flex items-center">
+                <div className="p-3 rounded flex items-center" style={{ background: "var(--bg-secondary, rgba(250,204,21,0.08))", border: "1px solid var(--border-color, rgba(250,204,21,0.3))" }}>
                     <Space><input type="checkbox" id="unmountHddCheck" checked={unmountHddConfirmChecked}
                                   onChange={(e) => setUnmountHddConfirmChecked(e.target.checked)}
                                   className="w-4 h-4 text-blue-600"/><label htmlFor="unmountHddCheck"
@@ -3631,7 +4164,7 @@ await api.vmPower(hostName!, uuid!, 'H_CLOSE')
                     <Form.Item label="备注" name="iso_hint" help="可选，用于说明此ISO的用途"><Input
                         placeholder="例如: 系统安装盘"/></Form.Item>
                 </Form>
-                <div className="p-3 bg-yellow-50 border border-yellow-200 rounded flex items-center mt-4">
+                <div className="p-3 rounded flex items-center mt-4" style={{ background: "var(--bg-secondary, rgba(250,204,21,0.08))", border: "1px solid var(--border-color, rgba(250,204,21,0.3))" }}>
                     <Space><input type="checkbox" id="isoMountCheck" checked={isoMountConfirmChecked}
                                   onChange={(e) => setIsoMountConfirmChecked(e.target.checked)}
                                   className="w-4 h-4 text-purple-600"/><label htmlFor="isoMountCheck"
@@ -3644,7 +4177,7 @@ await api.vmPower(hostName!, uuid!, 'H_CLOSE')
                    okType="danger" okButtonProps={{disabled: !unmountIsoConfirmChecked}}
                    confirmLoading={isoActionLoading}>
                 <p>确定要卸载ISO镜像 "<strong>{currentUnmountIso}</strong>" 吗？</p>
-                <div className="p-3 bg-yellow-50 border border-yellow-200 rounded flex items-center mt-4">
+                <div className="p-3 rounded flex items-center mt-4" style={{ background: "var(--bg-secondary, rgba(250,204,21,0.08))", border: "1px solid var(--border-color, rgba(250,204,21,0.3))" }}>
                     <Space><input type="checkbox" id="unmountIsoCheck" checked={unmountIsoConfirmChecked}
                                   onChange={(e) => setUnmountIsoConfirmChecked(e.target.checked)}
                                   className="w-4 h-4 text-orange-600"/><label htmlFor="unmountIsoCheck"
@@ -3682,7 +4215,7 @@ await api.vmPower(hostName!, uuid!, 'H_CLOSE')
                 </Form>
                 <Alert message="备份可能需要数十分钟，取决于虚拟机硬盘大小，请耐心等待！" type="info" showIcon
                        className="mb-4 mt-2"/>
-                <div className="p-3 bg-yellow-50 border border-yellow-200 rounded flex items-center">
+                <div className="p-3 rounded flex items-center" style={{ background: "var(--bg-secondary, rgba(250,204,21,0.08))", border: "1px solid var(--border-color, rgba(250,204,21,0.3))" }}>
                     <Space><input type="checkbox" id="backupCreateCheck" checked={backupCreateConfirmChecked}
                                   onChange={(e) => setBackupCreateConfirmChecked(e.target.checked)}
                                   className="w-4 h-4 text-purple-600"/><label htmlFor="backupCreateCheck"
@@ -3700,7 +4233,7 @@ await api.vmPower(hostName!, uuid!, 'H_CLOSE')
                         className="font-mono text-blue-700">{currentRestoreBackup}</span></p>
                 </div>
                 <div className="space-y-3 mb-6">
-                    <div className="p-3 bg-yellow-50 border border-yellow-200 rounded flex items-center">
+                    <div className="p-3 rounded flex items-center" style={{ background: "var(--bg-secondary, rgba(250,204,21,0.08))", border: "1px solid var(--border-color, rgba(250,204,21,0.3))" }}>
                         <Space><input type="checkbox" id="restoreCheck1" checked={restoreConfirmChecked1}
                                       onChange={(e) => setRestoreConfirmChecked1(e.target.checked)}
                                       className="w-4 h-4 text-blue-600"/><label htmlFor="restoreCheck1"
@@ -3797,7 +4330,7 @@ await api.vmPower(hostName!, uuid!, 'H_CLOSE')
                     <div style={{fontSize: 12, color: '#666', marginTop: 4}}>数据盘将从当前虚拟机移交到目标虚拟机</div>
                 </div>
                 <Alert message="目标机器不会自动挂载转移硬盘" type="info" showIcon style={{marginBottom: 16}}/>
-                <div className="p-3 bg-yellow-50 dark:bg-yellow-900/30 border border-yellow-200 dark:border-yellow-700 rounded">
+                <div className="p-3 rounded" style={{ background: 'var(--bg-secondary, rgba(250,204,21,0.08))', border: '1px solid var(--border-color, rgba(250,204,21,0.3))' }}>
                     <Space><input type="checkbox" id="transferConfirm" checked={transferHddConfirmChecked}
                                   onChange={(e) => setTransferHddConfirmChecked(e.target.checked)}/><label
                         htmlFor="transferConfirm"
@@ -3805,9 +4338,9 @@ await api.vmPower(hostName!, uuid!, 'H_CLOSE')
                 </div>
             </Modal>
 
-            <Modal title="添加USB设备" open={usbModalVisible} onCancel={() => { setUsbModalVisible(false); setSelectedUsbKey(''); }}
+            <Modal title="添加USB设备" open={usbModalVisible} onCancel={() => { setUsbModalVisible(false); setSelectedUsbKey(''); setUsbShutdownConfirmChecked(false); }}
                    onOk={handleAddUSB} confirmLoading={usbActionLoading}
-                   okButtonProps={{ disabled: !selectedUsbKey }}>
+                   okButtonProps={{ disabled: !selectedUsbKey || !usbShutdownConfirmChecked }}>
                 {usbListLoading ? (
                     <div className="text-center py-8"><Spin tip="正在获取可用USB设备列表..."/></div>
                 ) : Object.keys(usbDeviceList).length > 0 ? (
@@ -3831,6 +4364,12 @@ await api.vmPower(hostName!, uuid!, 'H_CLOSE')
                 ) : (
                     <div className="text-center py-8 text-gray-400">当前主机无可用USB设备</div>
                 )}
+                <div className="p-3 rounded flex items-center mt-4" style={{ background: "var(--bg-secondary, rgba(250,204,21,0.08))", border: "1px solid var(--border-color, rgba(250,204,21,0.3))" }}>
+                    <Space><input type="checkbox" id="usbShutdownCheck" checked={usbShutdownConfirmChecked}
+                                  onChange={(e) => setUsbShutdownConfirmChecked(e.target.checked)}
+                                  className="w-4 h-4 text-blue-600"/><label htmlFor="usbShutdownCheck"
+                                                                            className="cursor-pointer select-none text-sm ">我已同意强制关机此虚拟机</label></Space>
+                </div>
             </Modal>
         </div>
     )

@@ -1,9 +1,9 @@
 import { useEffect, useState } from 'react'
 import { Table, Button, Space, Tag, Modal, Form, Input, InputNumber, message, Select, Card, Row, Col, Checkbox } from 'antd'
-import { PlusOutlined, DeleteOutlined, EditOutlined, ReloadOutlined, GlobalOutlined, LockOutlined, UnlockOutlined, CloudServerOutlined } from '@ant-design/icons'
+import { PlusOutlined, DeleteOutlined, EditOutlined, ReloadOutlined, GlobalOutlined, LockOutlined, UnlockOutlined } from '@ant-design/icons'
 import api from '@/utils/apis.ts'
-import type { ColumnsType } from 'antd/es/table'
 import { ProxyConfig } from '@/types'
+import { useUserStore } from '@/utils/data.ts'
 import PageHeader from '@/components/PageHeader'
 
 /**
@@ -13,6 +13,7 @@ interface WebProxy extends ProxyConfig {
   hostName: string
   vmUuid: string
   vmName?: string
+  ownerName?: string
 }
 
 /**
@@ -32,10 +33,11 @@ interface VM {
 }
 
 /**
- * Web反向代理管理页面（管理员）
- * 可以管理所有虚拟机的反向代理配置
+ * Web反向代理管理页面
+ * userMode=true时为用户模式，通过接口直接获取当前用户的代理列表，支持增删操作
+ * userMode=false时为管理员模式，显示所有代理并可编辑
  */
-function HttpProxys() {
+function HttpProxys({ userMode = false }: { userMode?: boolean }) {
   // 状态管理
   const [proxies, setProxies] = useState<WebProxy[]>([])
   const [filteredProxies, setFilteredProxies] = useState<WebProxy[]>([])
@@ -50,23 +52,31 @@ function HttpProxys() {
   const [searchText, setSearchText] = useState('')
   const [hostFilter, setHostFilter] = useState('')
   const [protocolFilter, setProtocolFilter] = useState('')
+  const [vmFilter, setVmFilter] = useState('')
+  const [ownerFilter, setOwnerFilter] = useState('')
   
   const [form] = Form.useForm()
+  const { user } = useUserStore()
 
   /**
-   * 加载主机列表
+   * 加载主机列表（用于添加代理时选择）
    */
   const loadHosts = async () => {
     try {
       const response = await api.getHosts()
       if (response.code === 200) {
-        // 确保hosts始终是数组
         const hostData = response.data
-        setHosts(Array.isArray(hostData) ? hostData : [])
+        if (hostData && typeof hostData === 'object' && !Array.isArray(hostData)) {
+          // hostData 是 { hostName: hostInfo } 格式
+          const hostList = Object.keys(hostData).map(name => ({ server_name: name, server_type: '' }))
+          setHosts(hostList)
+        } else {
+          setHosts(Array.isArray(hostData) ? hostData : [])
+        }
       }
     } catch (error) {
       console.error('加载主机列表失败:', error)
-      setHosts([]) // 出错时设置为空数组
+      setHosts([])
     }
   }
 
@@ -77,8 +87,21 @@ function HttpProxys() {
     try {
       const response = await api.getVMs(hostName)
       if (response.code === 200) {
-        setVms(prev => ({ ...prev, [hostName]: response.data || [] }))
-        return response.data || []
+        const vmData = response.data
+        let vmList: VM[] = []
+        if (Array.isArray(vmData)) {
+          vmList = vmData.map((vm: any) => ({
+            vm_uuid: vm.config?.vm_uuid || vm.uuid || vm.vm_uuid,
+            vm_name: vm.config?.vm_name || vm.vm_name || vm.uuid || ''
+          }))
+        } else if (vmData && typeof vmData === 'object') {
+          vmList = Object.values(vmData).map((vm: any) => ({
+            vm_uuid: vm.config?.vm_uuid || vm.uuid || vm.vm_uuid,
+            vm_name: vm.config?.vm_name || vm.vm_name || vm.uuid || ''
+          }))
+        }
+        setVms(prev => ({ ...prev, [hostName]: vmList }))
+        return vmList
       }
     } catch (error) {
       console.error('加载虚拟机列表失败:', error)
@@ -87,56 +110,42 @@ function HttpProxys() {
   }
 
   /**
-   * 加载代理列表（从所有虚拟机配置中获取）
+   * 加载代理列表
+   * 用户模式：直接调用 /api/client/proxys/list 获取当前用户的所有代理
+   * 管理员模式：调用 /api/admin/proxys/list 获取所有代理
    */
   const loadProxys = async () => {
     setLoading(true)
     try {
-      // 1. 获取所有主机
-      const hostsRes = await api.getHosts()
-      if (hostsRes.code !== 200 || !hostsRes.data) {
-        throw new Error('获取主机列表失败')
-      }
-      const hostsList = Object.keys(hostsRes.data)
-
-      const allProxies: WebProxy[] = []
-
-      // 2. 遍历主机获取VMs
-      for (const hostName of hostsList) {
-        try {
-          const vmsRes = await api.getVMs(hostName)
-          if (vmsRes.code === 200 && vmsRes.data) {
-            const vms = Array.isArray(vmsRes.data) ? vmsRes.data : Object.values(vmsRes.data)
-            
-            // 3. 遍历VMs获取Proxies
-            await Promise.all(vms.map(async (vm: any) => {
-              const vmUuid = vm.config?.vm_uuid || vm.uuid
-              const vmName = vm.config?.vm_name || vm.vm_name || vmUuid
-              try {
-                const proxyRes = await api.getProxyConfigs(hostName, vmUuid)
-                if (proxyRes.code === 200 && proxyRes.data) {
-                  proxyRes.data.forEach((p: ProxyConfig) => {
-                    allProxies.push({
-                      ...p,
-                      hostName,
-                      vmUuid,
-                      vmName
-                    })
-                  })
-                }
-              } catch (e) {
-                // 忽略单个虚拟机的错误
-                console.error(`获取虚拟机 ${vmUuid} 的代理配置失败:`, e)
-              }
-            }))
-          }
-        } catch (e) {
-          console.error(`获取主机 ${hostName} 数据失败`, e)
-        }
+      let response: any
+      if (userMode) {
+        // 用户模式：直接获取当前用户的代理列表
+        response = await api.getWebProxys()
+      } else {
+        // 管理员模式：获取所有代理列表
+        response = await api.getAdminWebProxys()
       }
 
-      setProxies(allProxies)
-      setFilteredProxies(allProxies)
+      if (response.code === 200 && response.data) {
+        const list = response.data.list || response.data || []
+        const allProxies: WebProxy[] = list.map((item: any) => ({
+          proxy_index: item.proxy_index ?? 0,
+          domain: item.domain || '',
+          backend_ip: item.backend_ip || '',
+          backend_port: item.backend_port || 80,
+          ssl_enabled: item.ssl_enabled || false,
+          description: item.description || '',
+          enabled: item.enabled !== false,
+          hostName: item.host_name || '',
+          vmUuid: item.vm_uuid || '',
+          vmName: item.vm_name || item.vm_uuid || '',
+          ownerName: item.owner_name || ''
+        }))
+        setProxies(allProxies)
+        setFilteredProxies(allProxies)
+      } else {
+        message.error(response.msg || '获取数据失败')
+      }
     } catch (error) {
       console.error('获取反向代理失败', error)
       message.error('获取数据失败')
@@ -156,18 +165,29 @@ function HttpProxys() {
   useEffect(() => {
     let filtered = [...proxies]
     
-    // 搜索筛选
+    // 搜索筛选（域名、虚拟机名、端口模糊匹配）
     if (searchText) {
       const search = searchText.toLowerCase()
       filtered = filtered.filter(proxy => 
         proxy.domain.toLowerCase().includes(search) ||
-        (proxy.vmName && proxy.vmName.toLowerCase().includes(search))
+        (proxy.vmName && proxy.vmName.toLowerCase().includes(search)) ||
+        String(proxy.backend_port || '').includes(search)
       )
     }
     
     // 主机筛选
     if (hostFilter) {
       filtered = filtered.filter(proxy => proxy.hostName === hostFilter)
+    }
+    
+    // 虚拟机筛选
+    if (vmFilter) {
+      filtered = filtered.filter(proxy => proxy.vmUuid === vmFilter || proxy.vmName === vmFilter)
+    }
+    
+    // 所有者筛选（仅管理员模式）
+    if (ownerFilter) {
+      filtered = filtered.filter(proxy => proxy.ownerName === ownerFilter)
     }
     
     // 协议筛选
@@ -180,17 +200,7 @@ function HttpProxys() {
     }
     
     setFilteredProxies(filtered)
-  }, [searchText, hostFilter, protocolFilter, proxies])
-
-  /**
-   * 计算统计数据
-   */
-  const statistics = {
-    total: proxies.length,
-    http: proxies.filter(p => !p.ssl_enabled).length,
-    https: proxies.filter(p => p.ssl_enabled).length,
-    hosts: new Set(proxies.map(p => p.hostName)).size
-  }
+  }, [searchText, hostFilter, vmFilter, ownerFilter, protocolFilter, proxies])
 
   /**
    * 显示添加模态框
@@ -295,7 +305,7 @@ function HttpProxys() {
   const handleDelete = async (proxy: WebProxy) => {
     Modal.confirm({
       title: '确认删除',
-      content: '确定要删除这个反向代理配置吗？',
+      content: `确定要删除域名为 "${proxy.domain}" 的反向代理配置吗？`,
       okText: '删除',
       okType: 'danger',
       cancelText: '取消',
@@ -323,7 +333,7 @@ function HttpProxys() {
   /**
    * 表格列配置
    */
-  const columns: ColumnsType<WebProxy> = [
+  const columns: any[] = [
     {
       title: '域名',
       dataIndex: 'domain',
@@ -354,8 +364,8 @@ function HttpProxys() {
     {
       title: '后端地址',
       key: 'backend',
-      render: (_, record: WebProxy) => (
-        <code className="text-sm ">
+      render: (_: any, record: WebProxy) => (
+        <code className="text-sm">
           {record.backend_ip || 'auto'}:{record.backend_port}
         </code>
       )
@@ -363,7 +373,7 @@ function HttpProxys() {
     {
       title: '协议',
       key: 'protocol',
-      render: (_, record: WebProxy) => (
+      render: (_: any, record: WebProxy) => (
         <Tag
           icon={record.ssl_enabled ? <LockOutlined /> : <UnlockOutlined />}
           color={record.ssl_enabled ? 'success' : 'default'}
@@ -382,6 +392,13 @@ function HttpProxys() {
         </Tag>
       )
     },
+    // 管理员模式显示所有者列
+    ...(!userMode ? [{
+      title: '所有者',
+      dataIndex: 'ownerName',
+      key: 'ownerName',
+      render: (name: string) => <span style={{ color: 'var(--text-secondary)' }}>{name || '-'}</span>
+    }] : []),
     {
       title: '描述',
       dataIndex: 'description',
@@ -391,16 +408,18 @@ function HttpProxys() {
     {
       title: '操作',
       key: 'action',
-      render: (_, record: WebProxy) => (
+      render: (_: any, record: WebProxy) => (
         <Space size="small">
-          <Button
-            type="link"
-            size="small"
-            icon={<EditOutlined />}
-            onClick={() => showEditModal(record)}
-          >
-            编辑
-          </Button>
+          {!userMode && (
+            <Button
+              type="link"
+              size="small"
+              icon={<EditOutlined />}
+              onClick={() => showEditModal(record)}
+            >
+              编辑
+            </Button>
+          )}
           <Button
             type="link"
             size="small"
@@ -421,183 +440,76 @@ function HttpProxys() {
       <PageHeader
         icon={<GlobalOutlined />}
         title="反向代理管理"
-        subtitle="管理所有虚拟机的Web反向代理配置"
+        subtitle={userMode ? '管理您的Web反向代理配置' : '管理所有虚拟机的Web反向代理配置'}
         actions={
-          <Button
-            type="primary"
-            icon={<PlusOutlined />}
-            onClick={showAddModal}
-            size="large"
-            className="gradient-button"
-          >
-            添加反向代理
-          </Button>
+          <Space size="middle" style={{ flexWrap: 'wrap' }}>
+            <Input
+              placeholder="搜索域名、虚拟机、端口..."
+              style={{ width: 200 }}
+              value={searchText}
+              onChange={(e) => setSearchText(e.target.value)}
+              allowClear
+            />
+            <Select
+              placeholder="所有主机"
+              style={{ width: 130 }}
+              value={hostFilter || undefined}
+              onChange={(v) => setHostFilter(v || '')}
+              allowClear
+            >
+              {[...new Set(proxies.map(p => p.hostName).filter(Boolean))].map(host => (
+                <Select.Option key={host} value={host}>
+                  {host}
+                </Select.Option>
+              ))}
+            </Select>
+            <Select
+              placeholder="所有虚拟机"
+              style={{ width: 140 }}
+              value={vmFilter || undefined}
+              onChange={(v) => setVmFilter(v || '')}
+              allowClear
+            >
+              {[...new Set(proxies.map(p => p.vmName || p.vmUuid).filter(Boolean))].map(vm => (
+                <Select.Option key={vm} value={vm}>{vm}</Select.Option>
+              ))}
+            </Select>
+            {!userMode && (
+              <Select
+                placeholder="所有者"
+                style={{ width: 120 }}
+                value={ownerFilter || undefined}
+                onChange={(v) => setOwnerFilter(v || '')}
+                allowClear
+              >
+                {[...new Set(proxies.map(p => p.ownerName).filter(Boolean))].map(owner => (
+                  <Select.Option key={owner} value={owner!}>{owner}</Select.Option>
+                ))}
+              </Select>
+            )}
+            <Select
+              placeholder="协议"
+              style={{ width: 100 }}
+              value={protocolFilter || undefined}
+              onChange={(v) => setProtocolFilter(v || '')}
+              allowClear
+            >
+              <Select.Option value="http">HTTP</Select.Option>
+              <Select.Option value="https">HTTPS</Select.Option>
+            </Select>
+            <Button icon={<ReloadOutlined />} onClick={loadProxys}>刷新</Button>
+            <Button
+              type="primary"
+              icon={<PlusOutlined />}
+              onClick={showAddModal}
+            >
+              添加反向代理
+            </Button>
+          </Space>
         }
       />
 
-      {/* 统计卡片 - 重新设计 */}
-      <Row gutter={[16, 16]} className="mb-6">
-        <Col xs={24} sm={12} md={6}>
-          <Card 
-            className="glass-card hover:shadow-xl transition-all duration-300 hover:-translate-y-1"
-            style={{
-              background: 'linear-gradient(135deg, rgba(59, 130, 246, 0.1) 0%, rgba(37, 99, 235, 0.05) 100%)',
-              border: '1px solid rgba(59, 130, 246, 0.2)',
-              borderRadius: '16px'
-            }}
-          >
-            <div className="flex items-center justify-between mb-3">
-              <div className="w-12 h-12 rounded-xl flex items-center justify-center" style={{
-                background: 'linear-gradient(135deg, #3b82f6 0%, #2563eb 100%)'
-              }}>
-                <GlobalOutlined className="text-white text-xl" />
-              </div>
-              <div className="text-right">
-<div className="text-xs mb-1" style={{ color: 'var(--text-secondary)' }}>总代理数</div>
-                <div className="text-3xl font-bold" style={{
-                  background: 'linear-gradient(135deg, #3b82f6 0%, #2563eb 100%)',
-                  WebkitBackgroundClip: 'text',
-                  WebkitTextFillColor: 'transparent'
-                }}>
-                  {statistics.total}
-                </div>
-              </div>
-            </div>
-          </Card>
-        </Col>
-        <Col xs={24} sm={12} md={6}>
-          <Card 
-            className="glass-card hover:shadow-xl transition-all duration-300 hover:-translate-y-1"
-            style={{
-              background: 'linear-gradient(135deg, rgba(107, 114, 128, 0.1) 0%, rgba(75, 85, 99, 0.05) 100%)',
-              border: '1px solid rgba(107, 114, 128, 0.2)',
-              borderRadius: '16px'
-            }}
-          >
-            <div className="flex items-center justify-between mb-3">
-              <div className="w-12 h-12 rounded-xl flex items-center justify-center" style={{
-                background: 'linear-gradient(135deg, #6b7280 0%, #4b5563 100%)'
-              }}>
-                <UnlockOutlined className="text-white text-xl" />
-              </div>
-              <div className="text-right">
-<div className="text-xs mb-1" style={{ color: 'var(--text-secondary)' }}>HTTP代理</div>
-                <div className="text-3xl font-bold" style={{
-                  background: 'linear-gradient(135deg, #6b7280 0%, #4b5563 100%)',
-                  WebkitBackgroundClip: 'text',
-                  WebkitTextFillColor: 'transparent'
-                }}>
-                  {statistics.http}
-                </div>
-              </div>
-            </div>
-          </Card>
-        </Col>
-        <Col xs={24} sm={12} md={6}>
-          <Card 
-            className="glass-card hover:shadow-xl transition-all duration-300 hover:-translate-y-1"
-            style={{
-              background: 'linear-gradient(135deg, rgba(16, 185, 129, 0.1) 0%, rgba(5, 150, 105, 0.05) 100%)',
-              border: '1px solid rgba(16, 185, 129, 0.2)',
-              borderRadius: '16px'
-            }}
-          >
-            <div className="flex items-center justify-between mb-3">
-              <div className="w-12 h-12 rounded-xl flex items-center justify-center" style={{
-                background: 'linear-gradient(135deg, #10b981 0%, #059669 100%)'
-              }}>
-                <LockOutlined className="text-white text-xl" />
-              </div>
-              <div className="text-right">
-<div className="text-xs mb-1" style={{ color: 'var(--text-secondary)' }}>HTTPS代理</div>
-                <div className="text-3xl font-bold" style={{
-                  background: 'linear-gradient(135deg, #10b981 0%, #059669 100%)',
-                  WebkitBackgroundClip: 'text',
-                  WebkitTextFillColor: 'transparent'
-                }}>
-                  {statistics.https}
-                </div>
-              </div>
-            </div>
-          </Card>
-        </Col>
-        <Col xs={24} sm={12} md={6}>
-          <Card 
-            className="glass-card hover:shadow-xl transition-all duration-300 hover:-translate-y-1"
-            style={{
-              background: 'linear-gradient(135deg, rgba(139, 92, 246, 0.1) 0%, rgba(124, 58, 237, 0.05) 100%)',
-              border: '1px solid rgba(139, 92, 246, 0.2)',
-              borderRadius: '16px'
-            }}
-          >
-            <div className="flex items-center justify-between mb-3">
-              <div className="w-12 h-12 rounded-xl flex items-center justify-center" style={{
-                background: 'linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%)'
-              }}>
-                <CloudServerOutlined className="text-white text-xl" />
-              </div>
-              <div className="text-right">
-<div className="text-xs mb-1" style={{ color: 'var(--text-secondary)' }}>主机数</div>
-                <div className="text-3xl font-bold" style={{
-                  background: 'linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%)',
-                  WebkitBackgroundClip: 'text',
-                  WebkitTextFillColor: 'transparent'
-                }}>
-                  {statistics.hosts}
-                </div>
-              </div>
-            </div>
-          </Card>
-        </Col>
-      </Row>
-
-      {/* 筛选和搜索 - 优化设计 */}
-      <Card 
-        className="glass-card mb-6"
-        style={{ borderRadius: '16px' }}
-      >
-        <Space size="middle" style={{ width: '100%', flexWrap: 'wrap' }}>
-          <Input
-            placeholder="🔍 搜索域名、虚拟机名称..."
-            style={{ width: 300, borderRadius: '8px' }}
-            value={searchText}
-            onChange={(e) => setSearchText(e.target.value)}
-            allowClear
-          />
-          <Select
-            placeholder="所有主机"
-            style={{ width: 150, borderRadius: '8px' }}
-            value={hostFilter || undefined}
-            onChange={setHostFilter}
-            allowClear
-          >
-            {Array.isArray(hosts) && hosts.map(host => (
-              <Select.Option key={host.server_name} value={host.server_name}>
-                {host.server_name}
-              </Select.Option>
-            ))}
-          </Select>
-          <Select
-            placeholder="所有协议"
-            style={{ width: 120, borderRadius: '8px' }}
-            value={protocolFilter || undefined}
-            onChange={setProtocolFilter}
-            allowClear
-          >
-            <Select.Option value="http">HTTP</Select.Option>
-            <Select.Option value="https">HTTPS</Select.Option>
-          </Select>
-          <Button
-            icon={<ReloadOutlined />}
-            onClick={loadProxys}
-            style={{ borderRadius: '8px' }}
-          >
-            刷新
-          </Button>
-        </Space>
-      </Card>
-
-      {/* 代理列表表格 - 优化设计 */}
+      {/* 代理列表表格 */}
       <Card 
         className="glass-card"
         style={{ borderRadius: '16px' }}
@@ -660,7 +572,7 @@ function HttpProxys() {
               onChange={handleHostChange}
               disabled={isEdit}
             >
-              {Array.isArray(hosts) && hosts.map(host => (
+              {hosts.map(host => (
                 <Select.Option key={host.server_name} value={host.server_name}>
                   {host.server_name}
                 </Select.Option>

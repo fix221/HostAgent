@@ -1729,6 +1729,11 @@ quota_bandwidth_up = 9999, quota_bandwidth_down = 9999, quota_traffic = 9999
             settings.setdefault("turnstile_enabled", "0")
             settings.setdefault("turnstile_site_key", "")
             settings.setdefault("turnstile_secret_key", "")
+            settings.setdefault("sync_enabled", "0")
+            settings.setdefault("sync_mode", "pull")
+            settings.setdefault("sync_interval", "10")
+            settings.setdefault("sync_url", "")
+            settings.setdefault("sync_token", "")
             
             return settings
         finally:

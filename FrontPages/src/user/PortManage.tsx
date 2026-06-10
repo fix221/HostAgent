@@ -4,6 +4,7 @@ import { ReloadOutlined, PlusOutlined, DeleteOutlined, AppstoreOutlined, Unorder
 import { ArrowsRightLeftIcon } from '@heroicons/react/24/outline';
 import PageHeader from '@/components/PageHeader';
 import api from '@/utils/apis.ts';
+import { useUserStore } from '@/utils/data.ts';
 import { NATRule } from '@/types';
 
 interface UserNATRule extends NATRule {
@@ -13,12 +14,20 @@ interface UserNATRule extends NATRule {
   wan_ip: string; // 外网IP
 }
 
-const PortManage: React.FC = () => {
+const PortManage: React.FC<{ userMode?: boolean }> = ({ userMode = true }) => {
+  const { user } = useUserStore();
   const [loading, setLoading] = useState(false);
   const [rules, setRules] = useState<UserNATRule[]>([]);
+  const [filteredRules, setFilteredRules] = useState<UserNATRule[]>([]);
   const [modalVisible, setModalVisible] = useState(false);
   const [form] = Form.useForm();
   const [viewMode, setViewMode] = useState<'table' | 'card'>('table');
+  
+  // 搜索和筛选
+  const [searchPort, setSearchPort] = useState('');
+  const [hostFilter, setHostFilter] = useState('');
+  const [vmFilter, setVmFilter] = useState('');
+  const [ownerFilter, setOwnerFilter] = useState('');
   
   // 主机和虚拟机列表，用于添加规则时的选择
   const [hosts, setHosts] = useState<string[]>([]);
@@ -29,6 +38,27 @@ const PortManage: React.FC = () => {
     fetchNATRules();
     loadHosts();
   }, []);
+
+  // 筛选逻辑
+  useEffect(() => {
+    let filtered = [...rules];
+    if (searchPort) {
+      filtered = filtered.filter(r =>
+        String(r.wan_port || '').includes(searchPort) ||
+        String(r.lan_port || '').includes(searchPort)
+      );
+    }
+    if (hostFilter) {
+      filtered = filtered.filter(r => r.hostName === hostFilter);
+    }
+    if (vmFilter) {
+      filtered = filtered.filter(r => r.vmUuid === vmFilter);
+    }
+    if (ownerFilter) {
+      filtered = filtered.filter(r => (r as any).primaryOwner === ownerFilter);
+    }
+    setFilteredRules(filtered);
+  }, [rules, searchPort, hostFilter, vmFilter, ownerFilter]);
 
   const loadHosts = async () => {
     try {
@@ -72,6 +102,7 @@ const PortManage: React.FC = () => {
       }
       const hostsData = hostsRes.data as any;
       const hostNames = Object.keys(hostsData);
+      const currentUsername = user?.username || '';
 
       const allRules: UserNATRule[] = [];
 
@@ -90,6 +121,13 @@ const PortManage: React.FC = () => {
              // 3. 遍历VMs获取NAT规则
              await Promise.all(vms.map(async (vm: any) => {
                  const vmUuid = vm.config?.vm_uuid || vm.uuid;
+                 const ownAll = vm.config?.own_all || {};
+                 const ownerNames = Object.keys(ownAll);
+                 const primaryOwner = ownerNames.length > 0 ? ownerNames[0] : '';
+
+                 // 用户模式下只显示当前用户为主所有者的虚拟机
+                 if (userMode && primaryOwner && primaryOwner !== currentUsername) return;
+                 
                  try {
                     const natRes = await api.getNATRules(hostName, vmUuid);
                     if (natRes.code === 200 && natRes.data) {
@@ -99,8 +137,9 @@ const PortManage: React.FC = () => {
                                  hostName,
                                  vmUuid,
                                  rule_index: index,
-                                 wan_ip: wanIp
-                             });
+                                 wan_ip: wanIp,
+                                 primaryOwner
+                             } as any);
                          });
                      }
                  } catch (e) {
@@ -231,13 +270,13 @@ const PortManage: React.FC = () => {
   ];
 
   // 卡片视图渲染
-  const renderCardView = () => {
-    if (rules.length === 0) {
+  const renderCardView = (data: UserNATRule[]) => {
+    if (data.length === 0) {
       return <div className="text-center py-8" style={{ color: 'var(--text-secondary)' }}>暂无端口转发规则</div>;
     }
     return (
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-        {rules.map((rule, index) => (
+        {data.map((rule, index) => (
           <div key={`${rule.hostName}-${rule.vmUuid}-${rule.rule_index}-${index}`}
                className="glass-card hover:shadow-xl transition-all duration-300 hover:-translate-y-1 hover:border-blue-400 dark:hover:border-blue-500 p-4">
             <div className="flex items-center justify-between mb-3">
@@ -287,9 +326,49 @@ const PortManage: React.FC = () => {
       <PageHeader
         icon={<ArrowsRightLeftIcon style={{ width: '24px', height: '24px' }} />}
         title="端口转发管理"
-        subtitle="管理您的NAT端口转发规则"
+        subtitle={userMode ? '管理您的NAT端口转发规则' : '管理所有NAT端口转发规则'}
         actions={
-          <Space>
+          <Space size="middle" wrap>
+            <Input
+              placeholder="搜索端口..."
+              style={{ width: 140 }}
+              value={searchPort}
+              onChange={(e) => setSearchPort(e.target.value)}
+              allowClear
+            />
+            <Select
+              placeholder="所有主机"
+              style={{ width: 130 }}
+              value={hostFilter || undefined}
+              onChange={(v) => { setHostFilter(v || ''); setVmFilter(''); }}
+              allowClear
+            >
+              {hosts.map(h => <Select.Option key={h} value={h}>{h}</Select.Option>)}
+            </Select>
+            <Select
+              placeholder="所有虚拟机"
+              style={{ width: 150 }}
+              value={vmFilter || undefined}
+              onChange={(v) => setVmFilter(v || '')}
+              allowClear
+            >
+              {[...new Set(rules.map(r => r.vmUuid))].map(vm => (
+                <Select.Option key={vm} value={vm}>{vm}</Select.Option>
+              ))}
+            </Select>
+            {!userMode && (
+              <Select
+                placeholder="所有者"
+                style={{ width: 120 }}
+                value={ownerFilter || undefined}
+                onChange={(v) => setOwnerFilter(v || '')}
+                allowClear
+              >
+                {[...new Set(rules.map(r => (r as any).primaryOwner).filter(Boolean))].map(owner => (
+                  <Select.Option key={owner} value={owner}>{owner}</Select.Option>
+                ))}
+              </Select>
+            )}
             <Segmented
               value={viewMode}
               onChange={(val) => setViewMode(val as 'table' | 'card')}
@@ -311,7 +390,7 @@ const PortManage: React.FC = () => {
       <Card className="glass-card">
         {viewMode === 'table' ? (
           <Table
-            dataSource={rules}
+            dataSource={filteredRules}
             columns={columns}
             rowKey={(record) => `${record.hostName}-${record.vmUuid}-${record.rule_index}`}
             loading={loading}
@@ -320,7 +399,7 @@ const PortManage: React.FC = () => {
         ) : (
           loading ? (
             <div className="text-center py-8">加载中...</div>
-          ) : renderCardView()
+          ) : renderCardView(filteredRules)
         )}
       </Card>
 

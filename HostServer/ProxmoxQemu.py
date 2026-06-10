@@ -836,9 +836,18 @@ class HostServer(BasicServer):
             if status['status'] == 'running':
                 logger.info(f"[{self.hs_config.server_name}] 停止虚拟机以进行配置更新...")
                 self.VMPowers(vm_conf.vm_uuid, VMPowers.H_CLOSE)
+                # 等待虚拟机真正停止（最多等待30秒）
+                for _wait in range(30):
+                    _status = vm.status.current.get()
+                    if _status.get('status') == 'stopped':
+                        logger.info(f"[{self.hs_config.server_name}] 虚拟机已停止，耗时{_wait+1}秒")
+                        break
+                    time.sleep(1)
+                else:
+                    logger.warning(f"[{self.hs_config.server_name}] 等待虚拟机停止超时(30秒)，继续执行")
             
             # 重装系统 =========================================================
-            if vm_conf.os_name != vm_last.os_name and vm_last.os_name != "":
+            if vm_conf.os_name and vm_conf.os_name != vm_last.os_name and vm_last.os_name != "":
                 logger.info(f"[{self.hs_config.server_name}] 检测到系统镜像变更，重新安装系统...")
                 logger.info(f"  - 旧镜像: {vm_last.os_name}")
                 logger.info(f"  - 新镜像: {vm_conf.os_name}")
@@ -846,6 +855,9 @@ class HostServer(BasicServer):
                 if not install_result.success:
                     logger.error(f"[{self.hs_config.server_name}] 系统重装失败: {install_result.message}")
                     return install_result
+            elif not vm_conf.os_name:
+                # 用户选择"不变更系统"，保持原系统名称
+                vm_conf.os_name = vm_last.os_name
             
             # 更新配置 =========================================================
             config_updates = {}
@@ -915,6 +927,24 @@ class HostServer(BasicServer):
             else:
                 logger.info(f"[{self.hs_config.server_name}] 路由器IP绑定更新成功")
             
+            # 配置VNC直通端口（更新时同步写入，兼容旧虚拟机）=====================
+            try:
+                vnc_port = int(vm_conf.vc_port) if hasattr(vm_conf, 'vc_port') and vm_conf.vc_port else (5900 + int(vmid))
+                vnc_id = vnc_port - 5900
+                vnc_arg = f"-vnc 0.0.0.0:{vnc_id}"
+                current_config = vm.config.get()
+                current_args = current_config.get('args', '')
+                if vnc_arg not in current_args:
+                    import re
+                    new_args = re.sub(r'-vnc\s+\S+', '', current_args).strip()
+                    new_args = f"{new_args} {vnc_arg}".strip()
+                    vm.config.put(args=new_args)
+                    logger.info(f"[{self.hs_config.server_name}] 已为VM {vmid} 补写VNC配置: {vnc_arg} (端口:{vnc_port})")
+                # 同步vc_port到vm_conf
+                vm_conf.vc_port = str(vnc_port)
+            except Exception as vnc_err:
+                logger.warning(f"[{self.hs_config.server_name}] VNC配置写入失败: {vnc_err}")
+
             # 启动机器 =========================================================
             logger.info(f"[{self.hs_config.server_name}] 启动虚拟机...")
             start_result = self.VMPowers(vm_conf.vm_uuid, VMPowers.S_START)

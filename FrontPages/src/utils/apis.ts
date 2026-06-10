@@ -283,8 +283,9 @@ export const getVMConsole = (hsName: string, vmUuid: string): Promise<ApiRespons
 
 /**
  * 修改虚拟机密码
+ * type: os_password-修改系统密码, vnc_password-修改VNC密码, vnc_port-修改VNC端口
  */
-export const changeVMPassword = (hsName: string, vmUuid: string, data: { password?: string; vnc_password?: string }): Promise<ApiResponse> => {
+export const changeVMPassword = (hsName: string, vmUuid: string, data: { type?: string; password?: string; vnc_password?: string; vnc_port?: number }): Promise<ApiResponse> => {
   return http.post(`/api/client/password/${hsName}/${vmUuid}`, data);
 };
 
@@ -523,10 +524,17 @@ export const deleteProxyConfig = (hsName: string, vmUuid: string, proxyIndex: nu
 // ============================================================================
 
 /**
- * 获取所有Web反向代理列表
+ * 获取当前用户的Web反向代理列表
  */
 export const getWebProxys = (): Promise<ApiResponse<{ list: any[] }>> => {
   return http.get('/api/client/proxys/list');
+};
+
+/**
+ * 管理员获取所有Web反向代理列表
+ */
+export const getAdminWebProxys = (): Promise<ApiResponse<{ list: any[] }>> => {
+  return http.get('/api/admin/proxys/list');
 };
 
 /**
@@ -796,6 +804,7 @@ export default {
   
   // Web反向代理管理
   getWebProxys,
+  getAdminWebProxys,
   createWebProxy,
   updateWebProxy,
   deleteWebProxy,

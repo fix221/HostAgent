@@ -332,6 +332,9 @@ def check_vm_permission(action: str, user_data: Dict[str, Any]) -> tuple[bool, s
         return False, "没有删除虚拟机的权限"
     elif action == 'modify' and not user_data.get('can_modify_vm'):
         return False, "没有修改虚拟机的权限"
+    elif action == 'power':
+        # 电源操作由细分权限 pwr_edits 控制，此处仅做用户活跃状态检查（已在上方完成）
+        pass
     
     return True, ""
 
