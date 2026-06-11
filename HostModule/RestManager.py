@@ -47,6 +47,9 @@ class RestManager:
         # 格式: {temp_token: {'hs_name': str, 'vm_uuid': str, 'expire': int}}
         self._temp_tokens: dict = {}
         self._temp_tokens_lock = threading.Lock()
+        # 虚拟机截图缓存（30秒有效期）
+        # 格式: {"hs_name/vm_uuid": {'data': base64_str, 'time': timestamp}}
+        self._screenshot_cache: dict = {}
 
         # 注册异步任务处理器
         self._register_task_handlers()
@@ -3782,7 +3785,7 @@ window.location.replace({repr(target_url)});
     # :return: 包含BASE64格式截图的API响应
     # ####################################################################################
     def vm_screenshot(self, hs_name, vm_uuid):
-        """获取虚拟机截图"""
+        """获取虚拟机截图（30秒本地缓存）"""
         # 检查主机访问权限
         has_host_perm, user_data_or_response = self._check_host_permission(hs_name)
         if not has_host_perm:
@@ -3800,13 +3803,27 @@ window.location.replace({repr(target_url)});
             return self.api_response(404, '主机不存在')
         
         try:
-            # 调用VMScreen方法获取BASE64格式的截图
+            import time
+            cache_key = f"{hs_name}/{vm_uuid}"
+            now = time.time()
+            
+            # 检查缓存：30秒内直接返回缓存的截图
+            cached = self._screenshot_cache.get(cache_key)
+            if cached and (now - cached['time']) < 30:
+                return self.api_response(200, '获取截图成功', {'screenshot': cached['data']})
+            
+            # 缓存过期或不存在，重新获取截图
             screenshot_base64 = server.VMScreen(vm_uuid)
             
             if screenshot_base64:
+                # 更新缓存
+                self._screenshot_cache[cache_key] = {'data': screenshot_base64, 'time': now}
                 logger.info(f"[虚拟机截图] 成功获取 {hs_name}/{vm_uuid} 的截图")
                 return self.api_response(200, '获取截图成功', {'screenshot': screenshot_base64})
             else:
+                # 获取失败时，如果有旧缓存则返回旧缓存
+                if cached:
+                    return self.api_response(200, '获取截图成功', {'screenshot': cached['data']})
                 logger.warning(f"[虚拟机截图] 无法获取 {hs_name}/{vm_uuid} 的截图")
                 return self.api_response(400, '无法获取虚拟机截图，可能虚拟机未运行或不支持截图功能')
         except Exception as e:

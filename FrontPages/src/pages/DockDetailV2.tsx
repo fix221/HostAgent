@@ -229,8 +229,9 @@ export default function DockDetailV2() {
   // ── Effects ─────────────────────────────────────────────────────────
   useEffect(() => {
     loadHostInfo(); loadVMDetail(); loadNATRules(); loadBackups(); loadMonitorData(); loadProxyRules(); loadOwners()
-    const interval = setInterval(() => { loadVMDetail(true); loadScreenshot(); loadMonitorData() }, 10000)
-    return () => clearInterval(interval)
+    const interval = setInterval(() => { loadVMDetail(true); loadMonitorData() }, 10000)
+    const screenshotInterval = setInterval(() => { loadScreenshot() }, 30000)
+    return () => { clearInterval(interval); clearInterval(screenshotInterval) }
   }, [hostName, uuid])
 
   useEffect(() => {

@@ -1059,9 +1059,12 @@ const [operationTimeoutId, setOperationTimeoutId] = useState<ReturnType<typeof s
         const interval = setInterval(() => {
             loadVMDetail(true);
             loadMonitorData()
-            loadVMScreenshot()
         }, 10000)
-        return () => clearInterval(interval)
+        // 截图独立30秒轮询
+        const screenshotInterval = setInterval(() => {
+            loadVMScreenshot()
+        }, 30000)
+        return () => { clearInterval(interval); clearInterval(screenshotInterval) }
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [hostName, uuid])
 
