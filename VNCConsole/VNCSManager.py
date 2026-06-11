@@ -1,6 +1,7 @@
 import os
 import time
 import sys
+import shutil
 import subprocess
 import urllib.parse
 from pathlib import Path
@@ -17,41 +18,78 @@ class WebsocketUI:
         self.web_port = web_port
         
         # 获取正确的项目根目录（支持打包后的环境）
+        # 三种打包方式的区别：
+        #   PyInstaller: sys.frozen=True, 有sys._MEIPASS(临时目录), sys.executable=真实exe路径
+        #   Nuitka onefile: sys.frozen=True, 有__compiled__, sys.executable指向临时目录, 用sys.argv[0]获取真实路径
+        #   cx_Freeze: sys.frozen=True, sys.executable=真实exe路径, 资源在exe同级目录
+        #   开发环境: 无sys.frozen
+        
+        is_nuitka = '__compiled__' in globals() or ('__compiled__' in dir(sys.modules.get('__main__', object())))
+        
         if getattr(sys, 'frozen', False):
-            # 打包后的环境：使用可执行文件所在目录
             if hasattr(sys, '_MEIPASS'):
-                # PyInstaller 打包
-                project_root = Path(sys._MEIPASS)
+                # PyInstaller 打包：真实exe路径通过sys.executable获取
+                project_root = Path(sys.executable).parent
+            elif is_nuitka:
+                # Nuitka onefile 打包：sys.executable可能指向临时目录，用sys.argv[0]获取真实路径
+                project_root = Path(sys.argv[0]).resolve().parent
             else:
-                # cx_Freeze 打包
+                # cx_Freeze 打包：sys.executable就是真实exe路径
                 project_root = Path(sys.executable).parent
         else:
             # 开发环境：使用脚本所在目录的父目录
             project_root = Path(__file__).parent.parent.absolute()
         
-        # 配置文件路径（始终在可执行文件目录下）
-        if getattr(sys, 'frozen', False):
-            # 打包后：配置文件在可执行文件目录下
-            exe_dir = Path(sys.executable).parent
-            self.vnc_save = os.path.join(exe_dir, "DataSaving", f"{cfg_name}.cfg")
-        else:
-            # 开发环境
-            self.vnc_save = os.path.join(project_root, "DataSaving", f"{cfg_name}.cfg")
+        # 配置文件路径
+        self.vnc_save = os.path.join(project_root, "DataSaving", f"{cfg_name}.cfg")
         
-        # Web 资源路径
-        self.web_path = os.path.join(project_root, "VNCConsole", "Sources")
+        # Web 资源路径：需要释放到持久化目录 Websockify/Sources（websockify是独立进程，无法访问临时目录）
+        persistent_web = os.path.join(project_root, "Websockify", "Sources")
+        
+        if getattr(sys, 'frozen', False) and hasattr(sys, '_MEIPASS'):
+            # PyInstaller 打包：web资源在_MEIPASS临时目录中，需要复制到持久化位置
+            meipass_web = os.path.join(sys._MEIPASS, "VNCConsole", "Sources")
+            if os.path.exists(meipass_web):
+                try:
+                    if os.path.exists(persistent_web):
+                        shutil.rmtree(persistent_web)
+                    shutil.copytree(meipass_web, persistent_web)
+                    logger.success(f"[PyInstaller] 已释放 Web 资源到: {persistent_web}")
+                except Exception as e:
+                    logger.error(f"释放 Web 资源失败: {e}")
+            self.web_path = persistent_web
+        elif getattr(sys, 'frozen', False) and is_nuitka:
+            # Nuitka onefile 打包：数据文件在临时解压目录中，需要复制到持久化位置
+            # Nuitka 的 __file__ 指向临时目录，数据文件相对于该目录
+            nuitka_temp = Path(__file__).parent.parent
+            nuitka_web = os.path.join(nuitka_temp, "VNCConsole", "Sources")
+            if os.path.exists(nuitka_web) and str(nuitka_temp) != str(project_root):
+                # 临时目录与真实目录不同，需要释放
+                try:
+                    if os.path.exists(persistent_web):
+                        shutil.rmtree(persistent_web)
+                    shutil.copytree(nuitka_web, persistent_web)
+                    logger.success(f"[Nuitka] 已释放 Web 资源到: {persistent_web}")
+                except Exception as e:
+                    logger.error(f"释放 Web 资源失败: {e}")
+            self.web_path = persistent_web
+        else:
+            # cx_Freeze 或开发环境：资源在exe/项目同级目录，直接使用
+            local_web = os.path.join(project_root, "VNCConsole", "Sources")
+            if os.path.exists(local_web):
+                self.web_path = local_web
+            else:
+                # fallback: 尝试 Websockify/Sources
+                self.web_path = persistent_web
         
         # 检测环境：如果不是 Python 解释器，使用可执行文件
         if 'python' in os.path.basename(sys.executable).lower():
             script_name = "websocketproxy.py"
-            self.bin_path = os.path.join(project_root, "Websockify", script_name)
         else:
             script_name = "websocketproxy"
             if os.name == 'nt':
                 script_name += '.exe'
-            # 打包环境下，websocketproxy 独立可执行文件应在 exe 同级目录的 Websockify 下
-            exe_dir = Path(sys.executable).parent
-            self.bin_path = os.path.join(exe_dir, "Websockify", script_name)
+        self.bin_path = os.path.join(project_root, "Websockify", script_name)
         self.process = None
         self.storage: Dict[str, str] = {}
         self.cfg_load()
@@ -83,28 +121,7 @@ class WebsocketUI:
         
         if not os.path.exists(self.web_path):
             logger.error(f"Web 资源路径不存在: {self.web_path}")
-            
-            # 尝试查找可能的路径
-            if getattr(sys, 'frozen', False):
-                exe_dir = Path(sys.executable).parent
-                possible_paths = [
-                    exe_dir / "VNCConsole" / "Sources",
-                    exe_dir / "lib" / "VNCConsole" / "Sources",
-                    exe_dir.parent / "VNCConsole" / "Sources",
-                ]
-                logger.info("尝试查找可能的路径:")
-                for path in possible_paths:
-                    exists = os.path.exists(path)
-                    logger.info(f"  {path} - {'存在' if exists else '不存在'}")
-                    if exists:
-                        self.web_path = str(path)
-                        logger.success(f"找到 Web 资源路径: {self.web_path}")
-                        break
-                else:
-                    logger.error("无法找到 Web 资源路径，websockify 可能无法正常工作")
-                    return False
-            else:
-                return False
+            return False
 
         # 构建命令：如果是 .py 文件则用 Python 执行，否则直接执行
         if self.bin_path.endswith('.py'):
