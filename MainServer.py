@@ -2187,18 +2187,68 @@ def api_sync_push(hs_name):
                 continue
             
             if vm_uuid in server.vm_saving:
-                # 已存在：更新配置（保留本地的own_all等敏感信息）
+                # 已存在：智能合并配置（远端为空不覆盖本地，本地为空则从远端补充）
                 local_vm = server.vm_saving[vm_uuid]
-                local_own_all = local_vm.own_all
-                local_nat_all = local_vm.nat_all
-                local_web_all = local_vm.web_all
+                # 更新基本配置（远端非空才覆盖）
                 for key in ['cpu_num', 'mem_num', 'hdd_num', 'gpu_mem',
                             'os_name', 'speed_u', 'speed_d', 'nat_num', 'web_num']:
                     if key in config_data:
-                        setattr(local_vm, key, config_data[key])
-                local_vm.own_all = local_own_all
-                local_vm.nat_all = local_nat_all
-                local_vm.web_all = local_web_all
+                        remote_val = config_data[key]
+                        # 远端字段为空/零值时，不覆盖本地已有值
+                        if not remote_val and remote_val != 0:
+                            continue
+                        setattr(local_vm, key, remote_val)
+                # 合并所有者信息：远端有而本地没有的用户补充进来
+                remote_own = config_data.get('own_all', {})
+                if remote_own and isinstance(remote_own, dict):
+                    from MainObject.Config.UserMask import UserMask
+                    for username, mask_data in remote_own.items():
+                        if username not in local_vm.own_all:
+                            if isinstance(mask_data, dict):
+                                local_vm.own_all[username] = UserMask(**mask_data)
+                            elif isinstance(mask_data, int):
+                                local_vm.own_all[username] = UserMask(mask_data)
+                            else:
+                                local_vm.own_all[username] = UserMask.full()
+                # 合并网卡信息：远端有而本地没有的网卡补充进来
+                remote_nic = config_data.get('nic_all', {})
+                if remote_nic and isinstance(remote_nic, dict):
+                    from MainObject.Config.NCConfig import NCConfig
+                    for nic_name, nic_data in remote_nic.items():
+                        if nic_name not in local_vm.nic_all:
+                            if isinstance(nic_data, dict):
+                                local_vm.nic_all[nic_name] = NCConfig(**nic_data)
+                            else:
+                                local_vm.nic_all[nic_name] = nic_data
+                        else:
+                            # 本地已有该网卡，补充本地为空的IP字段
+                            local_nic = local_vm.nic_all[nic_name]
+                            if isinstance(nic_data, dict):
+                                for ip_key in ['ip4_addr', 'ip6_addr', 'mac_addr']:
+                                    remote_ip_val = nic_data.get(ip_key, '')
+                                    local_ip_val = getattr(local_nic, ip_key, '')
+                                    if remote_ip_val and not local_ip_val:
+                                        setattr(local_nic, ip_key, remote_ip_val)
+                # 合并端口转发：远端有而本地为空时补充
+                remote_nat = config_data.get('nat_all', [])
+                if remote_nat and not local_vm.nat_all:
+                    from MainObject.Config.PortData import PortData
+                    local_vm.nat_all = []
+                    for nat in remote_nat:
+                        if isinstance(nat, dict):
+                            nat_obj = PortData()
+                            nat_obj.__load__(**nat)
+                            local_vm.nat_all.append(nat_obj)
+                # 合并反向代理：远端有而本地为空时补充
+                remote_web = config_data.get('web_all', [])
+                if remote_web and not local_vm.web_all:
+                    from MainObject.Config.WebProxy import WebProxy
+                    local_vm.web_all = []
+                    for web in remote_web:
+                        if isinstance(web, dict):
+                            web_obj = WebProxy()
+                            web_obj.__load__(**web)
+                            local_vm.web_all.append(web_obj)
                 updated_count += 1
             else:
                 # 不存在：新建虚拟机配置
