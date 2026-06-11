@@ -6,7 +6,6 @@ import subprocess
 import urllib.parse
 from pathlib import Path
 from typing import Dict, Optional
-from multiprocessing import Process
 from loguru import logger
 
 
@@ -112,7 +111,7 @@ class WebsocketUI:
                 f.write(f"{token}: {target}\n")
 
     # 启动 websockify 服务 #######################################################
-    def web_open(self):
+    def web_open(self) -> Optional[subprocess.Popen]:
         # 调试信息：打印所有关键路径
         logger.info(f"Web 资源路径: {self.web_path}")
         logger.info(f"Websockify 可执行文件: {self.bin_path}")
@@ -121,7 +120,7 @@ class WebsocketUI:
         
         if not os.path.exists(self.web_path):
             logger.error(f"Web 资源路径不存在: {self.web_path}")
-            return False
+            return None
 
         # 构建命令：如果是 .py 文件则用 Python 执行，否则直接执行
         if self.bin_path.endswith('.py'):
@@ -138,12 +137,12 @@ class WebsocketUI:
         logger.info(f"执行命令: {' '.join(cmd)}")
         try:
             creationflags = subprocess.CREATE_NO_WINDOW if (os.name == 'nt' and getattr(sys, 'frozen', False)) else 0
-            subprocess.Popen(cmd, creationflags=creationflags, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
-            logger.success(f"websockify 已启动，支持 {len(self.storage)} 个连接")
-            return True
+            proc = subprocess.Popen(cmd, creationflags=creationflags, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+            logger.success(f"websockify 已启动 (PID: {proc.pid})，支持 {len(self.storage)} 个连接")
+            return proc
         except Exception as e:
             logger.error(f"启动失败: {e}")
-            return False
+            return None
 
     # 停止 websockify 服务 #######################################################
     def web_stop(self):
@@ -207,54 +206,53 @@ class WebsocketUI:
 
 
 class VNCSManager:
-    """多进程管理器，用于在独立进程中运行 websockify 服务"""
+    """websockify 进程管理器，直接管理 websockify 子进程"""
 
     def __init__(self, in_exec: WebsocketUI):
         self.exec = in_exec
-        self.proc: Optional[Process] = None
+        self.proc: Optional[subprocess.Popen] = None
 
     def start(self):
-        """在新进程中启动 websockify 服务"""
-        if self.proc is not None and self.proc.is_alive():
+        """启动 websockify 服务"""
+        if self.is_running():
             logger.info("websockify 服务已在运行中")
             return
 
-        # 创建新进程来运行 websockify
-        self.proc = Process(target=self.exec.web_open)
-        self.proc.daemon = True  # 设置为守护进程，主进程退出时自动关闭
-        self.proc.start()
-        logger.success(f"websockify 服务已在新进程中启动 (PID: {self.proc.pid})")
+        # 直接启动 websockify 子进程
+        self.proc = self.exec.web_open()
+        if self.proc:
+            logger.success(f"websockify 服务已启动 (PID: {self.proc.pid})")
+        else:
+            logger.error("websockify 服务启动失败")
 
     def close(self):
         """关闭 websockify 服务进程"""
         if self.proc is None:
             logger.info("没有运行中的 websockify 服务")
-            # 即使进程对象为空，也尝试调用 web_stop 清理可能残留的进程
-            self.exec.web_stop()
             return
 
-        if self.proc.is_alive():
+        if self.proc.poll() is None:
+            # 进程仍在运行
             logger.info(f"正在关闭 websockify 服务进程 (PID: {self.proc.pid})...")
             self.proc.terminate()  # 发送终止信号
-            self.proc.join(timeout=5)  # 等待最多5秒
-
-            # 如果进程仍未结束，强制杀死
-            if self.proc.is_alive():
+            try:
+                self.proc.wait(timeout=5)  # 等待最多5秒
+            except subprocess.TimeoutExpired:
                 logger.warning("进程未响应，强制关闭...")
                 self.proc.kill()
-                self.proc.join()
+                self.proc.wait()
 
             logger.success("websockify 服务进程已关闭")
         else:
             logger.info("websockify 服务进程已停止")
 
-        # 确保调用 web_stop 清理所有 websocketproxy 进程
-        self.exec.web_stop()
         self.proc = None
 
     def is_running(self) -> bool:
         """检查服务是否正在运行"""
-        return self.proc is not None and self.proc.is_alive()
+        if self.proc is None:
+            return False
+        return self.proc.poll() is None
 
 
 # 使用示例

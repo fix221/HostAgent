@@ -817,5 +817,14 @@ if __name__ == '__main__':
     # 这可以防止 "no such option: --multiprocessing-fork" 错误
     import multiprocessing
     multiprocessing.freeze_support()
-    
+
+    # PyInstaller 打包后在 Linux 上强制使用 fork 模式
+    # 默认的 spawn/forkserver 模式会导致子进程重新执行整个程序，
+    # 无法正确继承 socket 文件描述符，从而导致新 VNC 连接中断旧连接
+    if sys.platform != 'win32':
+        try:
+            multiprocessing.set_start_method('fork')
+        except RuntimeError:
+            pass  # 已经设置过，忽略
+
     websockify_init()
