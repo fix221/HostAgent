@@ -137,7 +137,21 @@ class WebsocketUI:
         logger.info(f"执行命令: {' '.join(cmd)}")
         try:
             creationflags = subprocess.CREATE_NO_WINDOW if (os.name == 'nt' and getattr(sys, 'frozen', False)) else 0
-            proc = subprocess.Popen(cmd, creationflags=creationflags, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+            # 将websockify输出重定向到日志文件，便于排查问题
+            log_dir = os.path.dirname(self.vnc_save)
+            os.makedirs(log_dir, exist_ok=True)
+            # 从配置文件名(如 vnc-x99pve.cfg)提取主机名作为日志文件名
+            cfg_basename = os.path.splitext(os.path.basename(self.vnc_save))[0]
+            log_file = os.path.join(log_dir, f"{cfg_basename}.log")
+            log_fd = open(log_file, "a")
+            proc = subprocess.Popen(cmd, creationflags=creationflags, stdout=log_fd, stderr=log_fd)
+            # 等待短暂时间确认进程确实存活
+            time.sleep(0.5)
+            if proc.poll() is not None:
+                logger.error(f"websockify 启动后立即退出 (退出码: {proc.returncode})，请检查日志: {log_file}")
+                log_fd.close()
+                return None
+            log_fd.close()
             logger.success(f"websockify 已启动 (PID: {proc.pid})，支持 {len(self.storage)} 个连接")
             return proc
         except Exception as e:
@@ -217,6 +231,9 @@ class VNCSManager:
         if self.is_running():
             logger.info("websockify 服务已在运行中")
             return
+
+        # 启动前先清理系统中可能残留的 websocketproxy 进程（上次主程序退出后未正常关闭的）
+        self.exec.web_stop()
 
         # 直接启动 websockify 子进程
         self.proc = self.exec.web_open()
