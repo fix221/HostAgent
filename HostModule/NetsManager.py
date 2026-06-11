@@ -275,11 +275,15 @@ class NetsManager:
         # 查找匹配的条目
         entry_id = None
         for item in port_list['Data'].get('data', []):
-            if (lan_port and lan_addr and
-                item.get('lan_port') == lan_port and
-                item.get('lan_addr') == lan_addr) or \
-                    (lan_port and not lan_addr and item.get('lan_port') == lan_port) or \
-                    (lan_addr and not lan_port and item.get('lan_addr') == lan_addr):
+            item_lan_port = str(item.get('lan_port', ''))
+            item_lan_addr = str(item.get('lan_addr', ''))
+            match_lan_port = str(lan_port) if lan_port else ''
+            match_lan_addr = str(lan_addr) if lan_addr else ''
+            if (match_lan_port and match_lan_addr and
+                item_lan_port == match_lan_port and
+                item_lan_addr == match_lan_addr) or \
+                    (match_lan_port and not match_lan_addr and item_lan_port == match_lan_port) or \
+                    (match_lan_addr and not match_lan_port and item_lan_addr == match_lan_addr):
                 entry_id = item.get('id')
                 logger.info(
                     f"找到匹配的端口映射条目: ID={entry_id}, WAN端口={item.get('wan_port')}, LAN地址={item.get('lan_addr')}:{item.get('lan_port')}")

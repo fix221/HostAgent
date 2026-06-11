@@ -654,45 +654,45 @@ class BasicServer:
         except Exception as e:
             logger.error(f"[{self.hs_config.server_name}] 端口映射初始化失败: {e}")
             return ZMessage(success=False, action="PortsMap", message=str(e))
-        # 提取端口列表 ==============================================================
-        port_result = nc_server.get_port()
-        wan_list = []
-        # 检查端口是否被占用 ========================================================
-        if port_result and isinstance(port_result, dict):
-            now_list = port_result.get('Data', {})
-            if isinstance(now_list, dict):
-                now_list = now_list.get('data', [])
-                if isinstance(now_list, list):
-                    wan_list = [int(i.get("wan_port", 0)) \
-                                for i in now_list if isinstance(i, dict)]
-        # 检查端口范围是否正确 ======================================================
-        if self.hs_config.ports_start == "" or self.hs_config.ports_close == "":
-            return ZMessage(
-                success=False, action="PortsMap", message="主机端口范围配置错误")
-        num_port = int(self.hs_config.ports_close) - int(self.hs_config.ports_start)
-        if num_port <= 0 or num_port <= len(wan_list):
-            return ZMessage(
-                success=False, action="PortsMap", message="主机端口可用数量不够")
-        # 检查端口是否被占用 ========================================================
-        if map_info.wan_port in wan_list:
-            return ZMessage(
-                success=False, action="PortsMap", message="端口已被占用")
-        # 自动分配未使用的端口 ======================================================
-        if map_info.wan_port == 0 or map_info.wan_port == "":
-            # 随机分配一个端口
-            map_info.wan_port = randint(
-                self.hs_config.ports_start, self.hs_config.ports_close)
-            # 如果被占用，继续随机分配
-            while map_info.wan_port in wan_list:
+        # 删除端口映射 ==============================================================
+        if not flag:
+            result = nc_server.del_port(map_info.lan_port, map_info.lan_addr)
+        # 添加端口映射 ==============================================================
+        else:
+            # 提取端口列表 ==========================================================
+            port_result = nc_server.get_port()
+            wan_list = []
+            # 检查端口是否被占用 ====================================================
+            if port_result and isinstance(port_result, dict):
+                now_list = port_result.get('Data', {})
+                if isinstance(now_list, dict):
+                    now_list = now_list.get('data', [])
+                    if isinstance(now_list, list):
+                        wan_list = [int(i.get("wan_port", 0)) \
+                                    for i in now_list if isinstance(i, dict)]
+            # 检查端口范围是否正确 ==================================================
+            if self.hs_config.ports_start == "" or self.hs_config.ports_close == "":
+                return ZMessage(
+                    success=False, action="PortsMap", message="主机端口范围配置错误")
+            num_port = int(self.hs_config.ports_close) - int(self.hs_config.ports_start)
+            if num_port <= 0 or num_port <= len(wan_list):
+                return ZMessage(
+                    success=False, action="PortsMap", message="主机端口可用数量不够")
+            # 检查端口是否被占用 ====================================================
+            if map_info.wan_port in wan_list:
+                return ZMessage(
+                    success=False, action="PortsMap", message="端口已被占用")
+            # 自动分配未使用的端口 ==================================================
+            if map_info.wan_port == 0 or map_info.wan_port == "":
+                # 随机分配一个端口
                 map_info.wan_port = randint(
                     self.hs_config.ports_start, self.hs_config.ports_close)
-        # 添加端口映射 ==============================================================
-        if flag:
+                # 如果被占用，继续随机分配
+                while map_info.wan_port in wan_list:
+                    map_info.wan_port = randint(
+                        self.hs_config.ports_start, self.hs_config.ports_close)
             result = nc_server.add_port(map_info.wan_port, map_info.lan_port,
                                         map_info.lan_addr, map_info.nat_tips)
-        # 删除端口映射 ==============================================================
-        else:
-            result = nc_server.del_port(map_info.lan_port, map_info.lan_addr)
         # 返回结果 ==================================================================
         action_text = "添加" if flag else "删除"
         status_text = "成功" if result else "失败"

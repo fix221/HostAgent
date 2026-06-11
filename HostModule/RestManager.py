@@ -140,6 +140,21 @@ class RestManager:
         if not server:
             raise Exception(f'主机不存在: {hs_name}')
 
+        # 删除虚拟机前，先清理iKuai中的NAT端口映射 ================================
+        vm_config = server.vm_saving.get(vm_uuid)
+        if vm_config and hasattr(vm_config, 'nat_all') and vm_config.nat_all:
+            logger.info(f"[删除虚拟机] 清理虚拟机 {vm_uuid} 的 {len(vm_config.nat_all)} 条NAT端口映射")
+            for port_data in vm_config.nat_all:
+                try:
+                    if hasattr(port_data, 'lan_addr') and hasattr(port_data, 'lan_port') and hasattr(port_data, 'wan_port'):
+                        del_result = server.PortsMap(map_info=port_data, flag=False)
+                        if del_result and not del_result.success:
+                            logger.warning(f"[删除虚拟机] NAT端口删除失败: {port_data.wan_port} -> {port_data.lan_addr}:{port_data.lan_port}, {del_result.message}")
+                        else:
+                            logger.info(f"[删除虚拟机] NAT端口已删除: {port_data.wan_port} -> {port_data.lan_addr}:{port_data.lan_port}")
+                except Exception as e:
+                    logger.error(f"[删除虚拟机] 清理NAT端口异常: {e}")
+
         result = server.VMDelete(vm_uuid)
 
         # 兜底处理：底层主机上虚拟机未找到时，仍然清理数据库/配置记录
