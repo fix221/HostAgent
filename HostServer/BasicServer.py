@@ -831,8 +831,20 @@ class BasicServer:
     # 远程桌面VNC连接初始化 =========================================================
     def VMLoader_VNC(self) -> bool:
         try:
+            # 如果已有运行中的websockify服务，直接复用，无需重启
+            # TokenFile插件每次lookup都会重新读取配置文件，token增删不需要重启进程
+            if self.vm_remote and self.vm_remote.is_running():
+                return True
+
             cfg_name = "vnc-" + self.hs_config.server_name
             cfg_full = "DataSaving/" + cfg_name + ".cfg"
+
+            # 如果有旧的实例但进程已死，先清理
+            if self.vm_remote:
+                logger.info("检测到旧的websockify实例已停止，正在清理并重启...")
+                self.vm_remote.close()
+                self.vm_remote = None
+
             if os.path.exists(cfg_full):
                 os.remove(cfg_full)
             tp_remote = WebsocketUI(self.hs_config.remote_port, cfg_name)

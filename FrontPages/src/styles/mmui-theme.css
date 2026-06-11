@@ -177,6 +177,9 @@
   /* 填充 */
   --mmui-fill-secondary: rgba(0, 0, 0, 0.04);
 
+  /* 柔和背景（信息区块） */
+  --mmui-bg-soft: #f9fafb;
+
   /* 移动端抽屉 */
   --mmui-mobile-drawer-bg: #ffffff;
 
@@ -252,6 +255,9 @@
 
   /* 填充 */
   --mmui-fill-secondary: rgba(255, 255, 255, 0.08);
+
+  /* 柔和背景（信息区块） */
+  --mmui-bg-soft: rgba(255, 255, 255, 0.06);
 
   /* 移动端抽屉 */
   --mmui-mobile-drawer-bg: #141414;

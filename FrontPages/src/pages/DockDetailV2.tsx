@@ -1729,9 +1729,9 @@ export default function DockDetailV2() {
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 }}>
                   <span style={{ color: 'var(--mmui-text-muted)', fontSize: 13 }}>连接地址</span>
                   <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
-                    <code style={{ fontSize: 13, color: 'var(--mmui-text)' }}>{(hostConfig?.public_addr?.[0] || vm?.ipv4_address || '未知')}:3389</code>
+                    <code style={{ fontSize: 13, color: 'var(--mmui-text)' }}>{(hostConfig?.public_addr?.[0] || vm?.ipv4_address || '未知')}:{natRules.find(r => Number(r.lan_port) === 3389)?.wan_port || 3389}</code>
                     <CopyOutlined style={{ cursor: 'pointer', color: 'var(--mmui-text-muted)' }}
-                      onClick={() => handleCopy(`${hostConfig?.public_addr?.[0] || vm?.ipv4_address || ''}:3389`, 'RDP地址')} />
+                      onClick={() => handleCopy(`${hostConfig?.public_addr?.[0] || vm?.ipv4_address || ''}:${natRules.find(r => Number(r.lan_port) === 3389)?.wan_port || 3389}`, 'RDP地址')} />
                   </div>
                 </div>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 }}>
@@ -1753,8 +1753,9 @@ export default function DockDetailV2() {
                 <button className="mmui-page-btn mmui-page-btn--primary" style={{ width: '100%', minHeight: 32, borderRadius: 6 }}
                   onClick={() => {
                     const addr = hostConfig?.public_addr?.[0] || vm?.ipv4_address || ''
+                    const rdpPort = natRules.find(r => Number(r.lan_port) === 3389)?.wan_port || 3389
                     const user = config.rdp_info?.ms_rdp?.user || 'Administrator'
-                    const rdpContent = `full address:s:${addr}:3389\r\nusername:s:${user}\r\nprompt for credentials:i:1\r\nadministrative session:i:1`
+                    const rdpContent = `full address:s:${addr}:${rdpPort}\r\nusername:s:${user}\r\nprompt for credentials:i:1\r\nadministrative session:i:1`
                     const blob = new Blob([rdpContent], { type: 'application/x-rdp' })
                     const url = URL.createObjectURL(blob)
                     const a = document.createElement('a')
@@ -1787,9 +1788,9 @@ export default function DockDetailV2() {
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 }}>
                   <span style={{ color: 'var(--mmui-text-muted)', fontSize: 13 }}>连接地址</span>
                   <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
-                    <code style={{ fontSize: 13, color: 'var(--mmui-text)' }}>{hostConfig?.public_addr?.[0] || vm?.ipv4_address || '未知'}:22</code>
+                    <code style={{ fontSize: 13, color: 'var(--mmui-text)' }}>{hostConfig?.public_addr?.[0] || vm?.ipv4_address || '未知'}:{natRules.find(r => Number(r.lan_port) === 22)?.wan_port || 22}</code>
                     <CopyOutlined style={{ cursor: 'pointer', color: 'var(--mmui-text-muted)' }}
-                      onClick={() => handleCopy(`${hostConfig?.public_addr?.[0] || vm?.ipv4_address || ''}:22`, 'SSH地址')} />
+                      onClick={() => handleCopy(`${hostConfig?.public_addr?.[0] || vm?.ipv4_address || ''}:${natRules.find(r => Number(r.lan_port) === 22)?.wan_port || 22}`, 'SSH地址')} />
                   </div>
                 </div>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 }}>
@@ -1811,7 +1812,8 @@ export default function DockDetailV2() {
                 <button className="mmui-page-btn mmui-page-btn--primary" style={{ width: '100%', minHeight: 32, borderRadius: 6 }}
                   onClick={() => {
                     const addr = hostConfig?.public_addr?.[0] || vm?.ipv4_address || ''
-                    navigator.clipboard.writeText(`ssh root@${addr}`)
+                    const sshPort = natRules.find(r => Number(r.lan_port) === 22)?.wan_port || 22
+                    navigator.clipboard.writeText(sshPort === 22 ? `ssh root@${addr}` : `ssh -p ${sshPort} root@${addr}`)
                     message.success('SSH命令已复制')
                   }}>
                   复制 SSH 命令
