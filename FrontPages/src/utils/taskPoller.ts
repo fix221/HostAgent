@@ -64,7 +64,7 @@ export interface PollOptions {
 export async function getTaskStatus(taskId: string): Promise<AsyncTask | null> {
   try {
     const res = await http.get<AsyncTask>(`/api/system/async_task/${taskId}`, { silent: true });
-    return res.code === 200 ? res.data : null;
+    return res.code === 200 ? res.data ?? null : null;
   } catch {
     return null;
   }
@@ -88,13 +88,13 @@ export async function getTaskList(params?: {
   if (params?.page_size) query.set('page_size', String(params.page_size));
 
   const res = await http.get<TaskListResponse>(`/api/system/async_task/list?${query.toString()}`);
-  return res.data;
+  return res.data!;
 }
 
 /** 获取任务统计 */
 export async function getTaskStats(): Promise<TaskStats> {
   const res = await http.get<TaskStats>('/api/system/async_task/stats');
-  return res.data;
+  return res.data ?? { pending: 0, running: 0, completed: 0, failed: 0, stopped: 0 };
 }
 
 /** 强行结束任务 */

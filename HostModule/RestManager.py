@@ -3719,13 +3719,50 @@ class RestManager:
     # :return: 重定向到虚拟机管理控制台
     # ####################################################################################
     def temp_token_login(self):
-        """使用临时凭据登录，重定向到虚拟机管理控制台"""
-        import time
-        from flask import redirect
+        """使用临时凭据登录，重定向到虚拟机管理控制台
 
-        temp_token = request.args.get('token', '')
+        支持三种传参方式（安全性依次递增）：
+        1. GET ?token=xxx       — 兼容旧版；token 出现在 URL / 服务端日志中
+        2. POST body JSON       — token 在请求体中，不写入服务端访问日志
+        3. GET 不带 token       — 返回 hash 参数中间页；token 由 JS 从
+                                  location.hash (#t=xxx) 读取后再 POST 自身，
+                                  服务端日志中永远看不到 token
+        """
+        import time
+
+        # 优先从 POST body 读取 token
+        temp_token = ''
+        if request.method == 'POST':
+            data = request.get_json(silent=True) or {}
+            temp_token = data.get('token', '')
         if not temp_token:
-            return self.api_response(400, '缺少临时凭据')
+            temp_token = request.args.get('token', '')
+        # 无 token：返回 hash 中间页，由浏览器 JS 从 #t= 提取后 POST
+        if not temp_token:
+            landing = """<!DOCTYPE html><html><head><meta charset="utf-8">
+<title>正在跳转...</title></head><body><script>
+(function(){
+  var h = location.hash.replace(/^#/, '');
+  var p = {};
+  h.split('&').forEach(function(kv){ var a=kv.split('='); if(a[0]) p[a[0]]=decodeURIComponent(a[1]||''); });
+  var token = p['t'];
+  if (!token) { document.body.innerText = '缺少临时凭据'; return; }
+  var f = document.createElement('form');
+  f.method = 'POST'; f.action = '/api/client/templogin';
+  var i = document.createElement('input');
+  i.type='hidden'; i.name='_json'; i.value=JSON.stringify({token:token});
+  f.appendChild(i); document.body.appendChild(f);
+  // 用 fetch POST JSON 再跳转，避免 form 编码差异
+  fetch('/api/client/templogin', {method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({token:token})})
+    .then(function(r){ return r.text(); })
+    .then(function(html){ document.open(); document.write(html); document.close(); })
+    .catch(function(e){ document.body.innerText = '登录失败: '+e; });
+})();
+</script></body></html>"""
+            from flask import make_response as _mr
+            r = _mr(landing, 200)
+            r.headers['Content-Type'] = 'text/html; charset=utf-8'
+            return r
 
         # 查找临时token（有效期内可重复使用）
         with self._temp_tokens_lock:

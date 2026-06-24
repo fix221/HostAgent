@@ -29,7 +29,6 @@ import {
     PlusOutlined,
     EditOutlined,
     DeleteOutlined,
-    CloseCircleOutlined,
 } from '@ant-design/icons'
 import { addCustomAnimeTheme, updateCustomAnimeTheme, deleteCustomAnimeTheme, AnimeTheme, isSolidTheme } from '@/config/animeThemes.config'
 import {useUserStore} from '@/utils/data.ts'

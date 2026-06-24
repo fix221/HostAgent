@@ -454,6 +454,13 @@ class HostServer(BasicServer):
 
             # 关闭虚拟机 =======================================================
             self.VMPowers(vm_name, VMPowers.H_CLOSE)
+            # 等待虚拟机关机（最多10秒）
+            import time
+            deadline = time.time() + 10
+            while time.time() < deadline:
+                if self.GetPower(vm_name) == '已关机':
+                    break
+                time.sleep(1)
 
             # 解绑IP ===========================================================
             self.IPBinder(vm_conf, False)

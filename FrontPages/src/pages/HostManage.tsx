@@ -26,7 +26,6 @@ import {
     StopOutlined,
     ScanOutlined,
     CloudSyncOutlined,
-    InfoCircleOutlined,
     CloudServerOutlined,
     GlobalOutlined,
     SettingOutlined,

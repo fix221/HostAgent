@@ -4,7 +4,7 @@ import {
   AppstoreOutlined, DatabaseOutlined,
   HddOutlined, CameraOutlined, GlobalOutlined, SwapOutlined,
   ArrowLeftOutlined, MenuFoldOutlined,
-  MenuUnfoldOutlined, ThunderboltOutlined, ApiOutlined,
+  MenuUnfoldOutlined, ApiOutlined,
   UsbOutlined, UserOutlined, OrderedListOutlined, CloudServerOutlined
 } from '@ant-design/icons';
 

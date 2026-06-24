@@ -13,7 +13,7 @@ interface MmuiHeaderProps {
 
 /** MMUI 风格顶部栏组件 */
 export default function MmuiHeader({
-  theme, sidebarCollapsed, onToggleMobileMenu, title, extra
+  theme, sidebarCollapsed, onToggleMobileMenu, extra
 }: MmuiHeaderProps) {
   const [scrollProgress, setScrollProgress] = useState(0);
   const headerRef = useRef<HTMLDivElement>(null);

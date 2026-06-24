@@ -7,11 +7,9 @@ import {
   stopTask,
   retryTask,
   TASK_TYPE_LABELS,
-  TASK_STATUS_LABELS,
   type AsyncTask,
   type TaskListResponse,
   type TaskStats,
-  type TaskStatus,
 } from '@/utils/taskPoller'
 import { http } from '@/utils/axio'
 

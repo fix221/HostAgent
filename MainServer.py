@@ -1465,7 +1465,7 @@ def api_get_temp_token(hs_name, vm_uuid):
 
 
 # 临时凭据登录跳转 ##################################################################
-@app.route('/api/client/templogin', methods=['GET'])
+@app.route('/api/client/templogin', methods=['GET', 'POST'])
 def api_temp_token_login():
     """使用临时凭据登录并跳转到虚拟机管理控制台"""
     return rest_manager.temp_token_login()

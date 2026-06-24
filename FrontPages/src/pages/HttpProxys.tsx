@@ -2,9 +2,20 @@ import { useEffect, useState } from 'react'
 import { Table, Button, Space, Tag, Modal, Form, Input, InputNumber, message, Select, Card, Row, Col, Checkbox } from 'antd'
 import { PlusOutlined, DeleteOutlined, EditOutlined, ReloadOutlined, GlobalOutlined, LockOutlined, UnlockOutlined } from '@ant-design/icons'
 import api from '@/utils/apis.ts'
-import { ProxyConfig } from '@/types'
-import { useUserStore } from '@/utils/data.ts'
 import PageHeader from '@/components/PageHeader'
+
+/**
+ * 反向代理基础配置接口
+ */
+interface ProxyConfig {
+  proxy_index: number
+  domain: string
+  backend_ip: string
+  backend_port: number
+  ssl_enabled: boolean
+  description: string
+  enabled: boolean
+}
 
 /**
  * Web代理数据接口（扩展自ProxyConfig）
@@ -56,7 +67,6 @@ function HttpProxys({ userMode = false }: { userMode?: boolean }) {
   const [ownerFilter, setOwnerFilter] = useState('')
   
   const [form] = Form.useForm()
-  const { user } = useUserStore()
 
   /**
    * 加载主机列表（用于添加代理时选择）
