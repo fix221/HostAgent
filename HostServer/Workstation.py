@@ -526,8 +526,20 @@ class HostServer(BasicServer):
                 if hs_result.success:
                     # 启动持续监控（5分钟内每5秒检查一次状态）
                     self.soft_pwr(vm_name, VMPowers.S_RESET, VMPowers.ON_STOP)
+            elif power == VMPowers.A_PAUSE:
+                # 暂停操作：发送暂停命令后启动监控线程
+                hs_result = self.vmrest_api.powers_set(vm_name, power)
+                if hs_result.success:
+                    # 启动持续监控（等待状态变为SUSPEND）
+                    self._monitor_power_operation(vm_name, VMPowers.A_PAUSE, VMPowers.ON_SAVE, VMPowers.SUSPEND)
+            elif power == VMPowers.A_WAKED:
+                # 恢复操作：发送恢复命令后启动监控线程
+                hs_result = self.vmrest_api.powers_set(vm_name, power)
+                if hs_result.success:
+                    # 启动持续监控（等待状态变为STARTED）
+                    self._monitor_power_operation(vm_name, VMPowers.A_WAKED, VMPowers.ON_WAKE, VMPowers.STARTED)
             else:
-                # 其他电源操作 =================================================
+                # 其他电源操作（强制关机等）=====================================
                 hs_result = self.vmrest_api.powers_set(vm_name, power)
 
             # 如果操作失败，回退状态
@@ -562,6 +574,86 @@ class HostServer(BasicServer):
                 self.data_set()
             
             return ZMessage(success=False, action="VMPowers", message=str(e))
+
+    # 电源操作监控 ===========================================================
+    def _monitor_power_operation(self, vm_name: str, ac_flag: VMPowers, on_flag: VMPowers, expected_flag: VMPowers) -> None:
+        """
+        持续监控电源操作（暂停/恢复/强制关机等），直到状态改变或超时
+
+        :param vm_name: 虚拟机名称
+        :param ac_flag: 电源操作类型（A_PAUSE、A_WAKED等）
+        :param on_flag: 中间状态（ON_SAVE、ON_WAKE等）
+        :param expected_flag: 期望的最终状态（SUSPEND、STARTED等）
+        """
+        import time
+        import threading
+
+        def monitor_task():
+            try:
+                logger.info(f"[Workstation] 开始监控虚拟机 {vm_name} 的电源操作")
+
+                # 最大监控时间：5分钟（300秒）
+                max_duration = 300
+                # 检查间隔：5秒
+                check_interval = 5
+                # 已经过的时间
+                elapsed_time = 0
+
+                while elapsed_time < max_duration:
+                    # 等待一段时间再检查
+                    time.sleep(check_interval)
+                    elapsed_time += check_interval
+
+                    # 检查虚拟机是否还存在
+                    if vm_name not in self.vm_saving:
+                        logger.warning(f"[Workstation] 虚拟机 {vm_name} 已不存在，停止监控")
+                        return
+
+                    # 获取当前状态
+                    current_status = self.vm_saving[vm_name].vm_flag
+
+                    # 如果状态已经不是中间状态，说明操作已完成或被其他操作改变
+                    if current_status != on_flag:
+                        logger.info(f"[Workstation] 虚拟机 {vm_name} 状态已改变为 {current_status}，停止监控")
+                        return
+
+                    # 从API获取实际状态
+                    actual_status = self.GetPower(vm_name)
+
+                    # 将API返回的中文状态映射为VMPowers枚举
+                    status_map = {
+                        '运行中': VMPowers.STARTED,
+                        '已关机': VMPowers.STOPPED,
+                        '已停止': VMPowers.STOPPED,
+                        '已暂停': VMPowers.SUSPEND,
+                        '未知': VMPowers.UNKNOWN,
+                        '': VMPowers.UNKNOWN
+                    }
+
+                    new_power_status = status_map.get(actual_status, VMPowers.UNKNOWN)
+
+                    # 判断操作是否成功
+                    operation_success = (new_power_status == expected_flag)
+
+                    # 如果操作成功，更新状态并退出监控
+                    if operation_success:
+                        self.vm_saving[vm_name].vm_flag = new_power_status
+                        self.data_set()
+                        logger.info(f"[Workstation] 虚拟机 {vm_name} 电源操作完成，状态更新为 {new_power_status}")
+                        return
+
+                    # 超时检查
+                    if elapsed_time >= max_duration:
+                        logger.warning(f"[Workstation] 虚拟机 {vm_name} 电源操作监控超时，强制刷新状态")
+                        self.vm_loads(vm_name)
+                        return
+
+            except Exception as e:
+                logger.error(f"[Workstation] 监控虚拟机 {vm_name} 电源操作时出错: {e}")
+
+        # 启动监控线程
+        monitor_thread = threading.Thread(target=monitor_task, daemon=True)
+        monitor_thread.start()
 
     # 备份虚拟机 ===============================================================
     def VMBackup(self, vm_name: str, vm_tips: str) -> ZMessage:

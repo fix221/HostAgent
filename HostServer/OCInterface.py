@@ -1008,6 +1008,8 @@ class HostServer(BasicServer):
                 if container.status == "running":
                     container.pause()
                     logger.info(f"Container {vm_name} paused")
+                    # 启动监控线程，等待状态变为 SUSPEND
+                    self._monitor_power_operation(vm_name, VMPowers.A_PAUSE, VMPowers.ON_SAVE, VMPowers.SUSPEND)
                 elif container.status == "paused":
                     logger.info(f"Container {vm_name} is already paused")
                 else:
@@ -1020,6 +1022,8 @@ class HostServer(BasicServer):
                 if container.status == "paused":
                     container.unpause()
                     logger.info(f"Container {vm_name} resumed from pause")
+                    # 启动监控线程，等待状态变为 STARTED
+                    self._monitor_power_operation(vm_name, VMPowers.A_WAKED, VMPowers.ON_WAKE, VMPowers.STARTED)
                 elif container.status == "running":
                     logger.info(f"Container {vm_name} is already running")
                 else:

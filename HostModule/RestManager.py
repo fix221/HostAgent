@@ -740,7 +740,7 @@ class RestManager:
             'id': 0,
             'username': virtual_user,
             'is_admin': False,
-            'is_token_login': False,
+            'is_token_login': True,  # 虚拟用户临时登录，视为Token登录（跳过is_active检查）
             'temp_login': True,
             'temp_hs_name': hs_name,
             'temp_vm_uuid': vm_uuid,
@@ -775,7 +775,7 @@ class RestManager:
                     'id': 0,
                     'username': session.get('username', ''),
                     'is_admin': False,
-                    'is_token_login': False,
+                    'is_token_login': True,  # 虚拟用户临时登录，视为Token登录（跳过is_active检查）
                     'temp_login': True,
                     'temp_hs_name': session.get('temp_hs_name', ''),
                     'temp_vm_uuid': session.get('temp_vm_uuid', ''),
@@ -2407,7 +2407,7 @@ class RestManager:
             'uuid': vm_uuid,
             'config': config_data,
             'user_permissions': user_perm,
-            'is_admin': bool(is_admin or is_token_login),
+            'is_admin': bool(is_admin),  # 仅真实管理员才算is_admin，token登录的虚拟用户不算
             'current_user': current_username
         })
 
@@ -3603,6 +3603,66 @@ class RestManager:
 
         return self.api_response(400, result.message if result else '操作失败')
 
+    # 虚拟机重装系统 ########################################################################
+    def vm_reinstall(self, hs_name, vm_uuid):
+        """虚拟机重装系统"""
+        # 检查主机访问权限
+        has_host_perm, user_data_or_response = self._check_host_permission(hs_name)
+        if not has_host_perm:
+            return user_data_or_response
+
+        user_data = user_data_or_response
+
+        # 检查虚拟机操作权限
+        has_vm_perm, user_data_or_response = self._check_vm_permission('setup', hs_name)
+        if not has_vm_perm:
+            return user_data_or_response
+
+        user_data = user_data_or_response
+
+        # 检查虚拟机所有权
+        has_ownership, error_response = self._check_vm_ownership(hs_name, vm_uuid, user_data)
+        if not has_ownership:
+            return error_response
+
+        # 检查细分权限：系统编辑权限
+        has_fine_perm, error_response = self._check_fine_permission(hs_name, vm_uuid, user_data, 'sys_edits')
+        if not has_fine_perm:
+            return error_response
+
+        server = self.hs_manage.get_host(hs_name)
+        if not server:
+            return self.api_response(404, '主机不存在')
+
+        # 禁用的主机禁止重装系统
+        enable_host = getattr(server.hs_config, 'enable_host', True) if server.hs_config else True
+        if not enable_host:
+            return self.api_response(403, '该主机已禁用，无法执行重装系统操作')
+
+        # 获取虚拟机配置
+        vm_config = server.vm_saving.get(vm_uuid)
+        if not vm_config:
+            return self.api_response(404, '虚拟机不存在')
+
+        # 调用VMSetups重装系统
+        result = server.VMSetups(vm_config)
+
+        if result and result.success:
+            # 记录操作日志
+            user_data = self._get_current_user()
+            username = user_data.get('username', '') if user_data else ''
+            self.hs_manage.saving.add_operation_log(
+                hs_name=hs_name,
+                operation='重装系统',
+                target='虚拟机',
+                details=f'虚拟机名称: {vm_uuid}',
+                level='INFO',
+                username=username
+            )
+            return self.api_response(200, result.message if result.message else '系统重装成功')
+
+        return self.api_response(400, result.message if result else '重装系统失败')
+
     # 获取虚拟机VNC控制台URL ########################################################################
     # :param hs_name: 主机名称
     # :param vm_uuid: 虚拟机UUID
@@ -3787,7 +3847,7 @@ class RestManager:
         session['user_id'] = 0
         session['username'] = virtual_user
         session['is_admin'] = False
-        session['is_token_login'] = False
+        session['is_token_login'] = True  # 虚拟用户临时登录，视为Token登录（跳过is_active检查）
         session['assigned_hosts'] = []
         session['temp_login'] = True       # 标记为临时登录
         session['temp_hs_name'] = hs_name  # 允许访问的主机
@@ -3801,7 +3861,7 @@ class RestManager:
             'id': 0,
             'username': virtual_user,
             'is_admin': False,
-            'is_token_login': False,
+            'is_token_login': True,  # 虚拟用户临时登录，视为Token登录
             'temp_login': True,
             'temp_hs_name': hs_name,
             'temp_vm_uuid': vm_uuid,

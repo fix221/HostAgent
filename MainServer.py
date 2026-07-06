@@ -1449,6 +1449,14 @@ def api_vm_power(hs_name, vm_uuid):
     return rest_manager.vm_power(hs_name, vm_uuid)
 
 
+# 重装系统 ########################################################################
+@app.route('/api/client/reinstall/<hs_name>/<vm_uuid>', methods=['POST'])
+@require_auth
+def api_vm_reinstall(hs_name, vm_uuid):
+    """虚拟机重装系统"""
+    return rest_manager.vm_reinstall(hs_name, vm_uuid)
+
+
 # VNC控制台 ########################################################################
 @app.route('/api/client/remote/<hs_name>/<vm_uuid>', methods=['GET'])
 @require_auth

@@ -704,6 +704,13 @@ class HostServer(BasicServer):
                 self.soft_pwr(vm_name, VMPowers.S_CLOSE, VMPowers.ON_STOP)
             elif power == VMPowers.A_PAUSE:
                 hs_result = self.esxi_api.suspend(vm_name)
+                if hs_result.success:
+                    self._monitor_power_operation(vm_name, VMPowers.A_PAUSE, VMPowers.ON_SAVE, VMPowers.SUSPEND)
+            elif power == VMPowers.A_WAKED:
+                # ESXi恢复操作需要通过power_on实现
+                hs_result = self.esxi_api.power_on(vm_name)
+                if hs_result.success:
+                    self._monitor_power_operation(vm_name, VMPowers.A_WAKED, VMPowers.ON_WAKE, VMPowers.STARTED)
             elif power == VMPowers.S_RESET:
                 # 软重启：使用reset但启动监控线程
                 hs_result = self.esxi_api.reset(vm_name)

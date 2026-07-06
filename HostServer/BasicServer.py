@@ -196,6 +196,139 @@ class BasicServer:
         monitor_thread = threading.Thread(target=monitor_task, daemon=True)
         monitor_thread.start()
 
+    # 通用操作监控 =======================================================
+    def _monitor_operation(self, vm_name: str, on_flag: VMPowers, 
+                           check_func=None, expected_result=True,
+                           max_duration: int = 300, description: str = "操作") -> None:
+        """
+        通用操作监控方法，持续监控虚拟机操作状态，直到完成或超时
+        此方法为通用方法，所有需要监控的操作都可调用
+
+        :param vm_name: 虚拟机名称
+        :param on_flag: 中间状态（ON_SAVE、ON_WAKE、ON_STOP、CONFIG等）
+        :param check_func: 检查函数，返回当前操作是否完成（默认检查状态是否改变）
+        :param expected_result: 期望的检查结果
+        :param max_duration: 最大监控时间（秒），默认5分钟
+        :param description: 操作描述，用于日志
+        """
+        import time
+        import threading
+
+        def monitor_task():
+            try:
+                logger.info(f"[{self.hs_config.server_name}] 开始监控虚拟机 {vm_name} 的{description}")
+
+                # 检查间隔：5秒
+                check_interval = 5
+                # 已经过的时间
+                elapsed_time = 0
+                # 连续检查到相同异常状态的次数
+                stuck_count = 0
+                max_stuck_count = 3  # 连续3次检测到异常状态就强制刷新
+
+                while elapsed_time < max_duration:
+                    # 等待一段时间再检查
+                    time.sleep(check_interval)
+                    elapsed_time += check_interval
+
+                    # 检查虚拟机是否还存在
+                    if vm_name not in self.vm_saving:
+                        logger.warning(f"[{self.hs_config.server_name}] 虚拟机 {vm_name} 已不存在，停止监控")
+                        return
+
+                    # 获取当前状态
+                    current_status = self.vm_saving[vm_name].vm_flag
+
+                    # 如果状态已经不是中间状态，说明操作已完成或被其他操作改变
+                    if current_status != on_flag:
+                        logger.info(f"[{self.hs_config.server_name}] 虚拟机 {vm_name} {description}完成，状态改变为 {current_status}")
+                        return
+
+                    # 使用自定义检查函数或默认的电源状态检查
+                    if check_func:
+                        try:
+                            result = check_func()
+                            if result == expected_result:
+                                # 操作完成，更新状态
+                                logger.info(f"[{self.hs_config.server_name}] 虚拟机 {vm_name} {description}完成")
+                                self.data_set()
+                                return
+                        except Exception as check_err:
+                            logger.warning(f"[{self.hs_config.server_name}] 检查虚拟机 {vm_name} 状态时出错: {check_err}")
+                    
+                    # 默认电源状态检查（适用于电源操作）
+                    else:
+                        actual_status = self.GetPower(vm_name)
+                        status_map = {
+                            '运行中': VMPowers.STARTED,
+                            '已关机': VMPowers.STOPPED,
+                            '已停止': VMPowers.STOPPED,
+                            '已暂停': VMPowers.SUSPEND,
+                            '未知': VMPowers.UNKNOWN,
+                            '': VMPowers.UNKNOWN
+                        }
+                        new_status = status_map.get(actual_status, VMPowers.UNKNOWN)
+                        
+                        # 如果状态变为非中间状态且非未知，说明操作完成或状态改变
+                        if new_status not in [VMPowers.UNKNOWN, on_flag]:
+                            self.vm_saving[vm_name].vm_flag = new_status
+                            self.data_set()
+                            logger.info(f"[{self.hs_config.server_name}] 虚拟机 {vm_name} 状态更新为 {new_status}")
+                            return
+
+                    # 检测卡住状态：每60秒强制刷新一次虚拟机状态
+                    if elapsed_time % 60 == 0 and elapsed_time > 0:
+                        logger.info(f"[{self.hs_config.server_name}] 虚拟机 {vm_name} {description}进行中（已等待{elapsed_time}秒），刷新状态...")
+                        try:
+                            self.vm_loads(vm_name)
+                            # 刷新后再次检查状态
+                            refreshed_status = self.vm_saving[vm_name].vm_flag if vm_name in self.vm_saving else None
+                            if refreshed_status != on_flag:
+                                logger.info(f"[{self.hs_config.server_name}] 刷新后虚拟机 {vm_name} 状态已改变为 {refreshed_status}")
+                                return
+                        except Exception as refresh_err:
+                            logger.warning(f"[{self.hs_config.server_name}] 刷新虚拟机 {vm_name} 状态失败: {refresh_err}")
+
+                # 超时处理
+                logger.warning(f"[{self.hs_config.server_name}] 虚拟机 {vm_name} {description}监控超时（{max_duration}秒），强制重置状态")
+                # 强制刷新状态
+                try:
+                    self.vm_loads(vm_name)
+                except Exception as e:
+                    # 如果刷新失败，强制将状态设置为未知，让前端可以重新操作
+                    logger.error(f"[{self.hs_config.server_name}] 刷新失败，强制重置虚拟机 {vm_name} 状态为未知")
+                    if vm_name in self.vm_saving:
+                        self.vm_saving[vm_name].vm_flag = VMPowers.UNKNOWN
+                        self.data_set()
+
+            except Exception as e:
+                logger.error(f"[{self.hs_config.server_name}] 监控虚拟机 {vm_name} {description}时出错: {str(e)}")
+                traceback.print_exc()
+                # 异常情况下也尝试重置状态
+                try:
+                    if vm_name in self.vm_saving:
+                        self.vm_loads(vm_name)
+                except:
+                    if vm_name in self.vm_saving:
+                        self.vm_saving[vm_name].vm_flag = VMPowers.UNKNOWN
+                        self.data_set()
+
+        # 启动监控线程
+        monitor_thread = threading.Thread(target=monitor_task, daemon=True)
+        monitor_thread.start()
+
+    # 电源操作监控（兼容旧代码）============================================
+    def _monitor_power_operation(self, vm_name: str, ac_flag: VMPowers, on_flag: VMPowers, expected_flag: VMPowers) -> None:
+        """兼容旧代码的电源操作监控方法"""
+        # 根据预期状态设置描述
+        desc_map = {
+            VMPowers.SUSPEND: "暂停操作",
+            VMPowers.STARTED: "恢复/启动操作",
+            VMPowers.STOPPED: "关机操作",
+        }
+        description = desc_map.get(expected_flag, "电源操作")
+        self._monitor_operation(vm_name, on_flag, description=description)
+
     # 清理日志 ######################################################################
     def cron_log(self, on_days: int = 7) -> int:
         if self.save_data and self.hs_config.server_name:

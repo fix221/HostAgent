@@ -54,7 +54,8 @@ import {
     KeyOutlined,
     DownOutlined,
     AppstoreOutlined,
-    UnorderedListOutlined
+    UnorderedListOutlined,
+    LoadingOutlined
 } from '@ant-design/icons'
 import ReactECharts from 'echarts-for-react'
 import api from '@/utils/apis.ts'
@@ -1056,17 +1057,39 @@ const [operationTimeoutId, setOperationTimeoutId] = useState<ReturnType<typeof s
         loadVMDetail();
         loadMonitorData()
         checkRunningTasks()
-        const interval = setInterval(() => {
+        
+        // 智能轮询：根据状态调整轮询频率
+        const getPollingInterval = () => {
+            const status = currentStatus.ac_status;
+            // 中间状态（停止中、启动中、暂停中、唤醒中、已暂停）加快轮询
+            const intermediateStates = ['ON_STOP', 'ON_OPEN', 'ON_SAVE', 'ON_WAKE', 'SUSPEND'];
+            if (intermediateStates.includes(status) || operationLocked) {
+                return 2000; // 2秒轮询
+            }
+            return 10000; // 稳定状态10秒轮询
+        };
+        
+        let currentInterval = setInterval(() => {
             loadVMDetail(true);
             loadMonitorData()
-        }, 10000)
+        }, getPollingInterval())
+        
+        // 动态更新轮询间隔
+        const adjustInterval = setInterval(() => {
+            clearInterval(currentInterval);
+            currentInterval = setInterval(() => {
+                loadVMDetail(true);
+                loadMonitorData()
+            }, getPollingInterval());
+        }, 5000); // 每5秒检查一次是否需要调整轮询频率
+        
         // 截图独立30秒轮询
         const screenshotInterval = setInterval(() => {
             loadVMScreenshot()
         }, 30000)
-        return () => { clearInterval(interval); clearInterval(screenshotInterval) }
+        return () => { clearInterval(currentInterval); clearInterval(screenshotInterval); clearInterval(adjustInterval) }
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [hostName, uuid])
+    }, [hostName, uuid, currentStatus.ac_status, operationLocked])
 
     // 当虚拟机状态变为运行中时，获取截图
     useEffect(() => {
@@ -1313,7 +1336,7 @@ const [operationTimeoutId, setOperationTimeoutId] = useState<ReturnType<typeof s
         message.loading({ content: `${actionLabel}执行中...`, key: 'pwd_action', duration: 0 })
 
         // 构建请求数据
-        let requestData: any = { type: passwordActionType }
+        const requestData: any = { type: passwordActionType }
         if (passwordActionType === 'os_password') {
             requestData.password = _values.new_password
         } else if (passwordActionType === 'vnc_password') {
@@ -2121,6 +2144,19 @@ await api.vmPower(hostName!, uuid!, 'H_CLOSE')
 
     // 计算最终显示的状态，优先使用临时状态
     const displayStatus = tempStatus || currentStatus.ac_status
+    
+    // 判断当前状态是否允许操作
+    const isIntermediateState = () => {
+        const status = displayStatus || currentStatus.ac_status;
+        // 中间状态：停止中、启动中、暂停中、唤醒中
+        return ['ON_STOP', 'ON_OPEN', 'ON_SAVE', 'ON_WAKE'].includes(status);
+    };
+    
+    // 判断是否为暂停状态（只允许恢复）
+    const isSuspendedState = () => {
+        const status = displayStatus || currentStatus.ac_status;
+        return status === 'SUSPEND';
+    };
 
     if (loading || !vm) return <div className="p-20 flex justify-center"><Spin size="large">
         <div style={{marginTop: 8}}>加载虚拟机详情...</div>
@@ -2353,45 +2389,55 @@ await api.vmPower(hostName!, uuid!, 'H_CLOSE')
                                     })()}
                                 </div>
                                 <div className="grid grid-cols-4 gap-2">
-                                    <Tooltip title="启动"><Button size="small" icon={<PlayCircleOutlined/>}
+                                    <Tooltip title={isSuspendedState() ? "虚拟机已暂停，请先恢复" : "启动"}><Button size="small" icon={<PlayCircleOutlined/>}
                                                                   onClick={() => handlePowerAction('start')}
-                                                                  disabled={currentStatus.ac_status === 'STARTED' || !hasPermission(userPermissions, VM_PERMISSION.PWR_EDITS)}
+                                                                  disabled={currentStatus.ac_status === 'STARTED' || isIntermediateState() || 
+                                                                            !hasPermission(userPermissions, VM_PERMISSION.PWR_EDITS)}
                                                                   block><span
                                         className="hidden md:inline">启动</span></Button></Tooltip>
-                                    <Tooltip title="关机"><Button size="small" icon={<PoweroffOutlined/>}
+                                    <Tooltip title={isIntermediateState() ? "虚拟机操作中，请稍候" : "关机"}><Button size="small" icon={<PoweroffOutlined/>}
                                                                   onClick={() => handlePowerAction('stop')}
-                                                                  disabled={currentStatus.ac_status !== 'STARTED' || !hasPermission(userPermissions, VM_PERMISSION.PWR_EDITS)}
-                                                                  block><span
+                                                                  disabled={currentStatus.ac_status !== 'STARTED' || isIntermediateState() || 
+                                                                            !hasPermission(userPermissions, VM_PERMISSION.PWR_EDITS)}
+                                                                  danger block><span
                                         className="hidden md:inline">关机</span></Button></Tooltip>
-                                    <Tooltip title="重启"><Button size="small" icon={<ReloadOutlined/>}
+                                    <Tooltip title={isIntermediateState() ? "虚拟机操作中，请稍候" : "重启"}><Button size="small" icon={<ReloadOutlined/>}
                                                                   onClick={() => handlePowerAction('reset')}
-                                                                  disabled={!hasPermission(userPermissions, VM_PERMISSION.PWR_EDITS)}
+                                                                  disabled={currentStatus.ac_status !== 'STARTED' || isIntermediateState() || 
+                                                                            !hasPermission(userPermissions, VM_PERMISSION.PWR_EDITS)}
                                                                   block><span
                                         className="hidden md:inline">重启</span></Button></Tooltip>
-                                    <Tooltip title="暂停"><Button size="small" icon={<PauseCircleOutlined/>}
+                                    <Tooltip title={isIntermediateState() ? "虚拟机操作中，请稍候" : "暂停"}><Button size="small" icon={<PauseCircleOutlined/>}
                                                                   onClick={() => handlePowerAction('pause')}
-                                                                  disabled={currentStatus.ac_status !== 'STARTED' || !hasPermission(userPermissions, VM_PERMISSION.PWR_EDITS)}
+                                                                  disabled={currentStatus.ac_status !== 'STARTED' || isIntermediateState() || 
+                                                                            !hasPermission(userPermissions, VM_PERMISSION.PWR_EDITS)}
                                                                   block><span
                                         className="hidden md:inline">暂停</span></Button></Tooltip>
 
-                                    <Tooltip title="恢复"><Button size="small" icon={<PlayCircleOutlined/>}
+                                    <Tooltip title={isIntermediateState() && !isSuspendedState() ? "虚拟机操作中，请稍候" : "恢复"}><Button size="small" icon={<PlayCircleOutlined/>}
                                                                   onClick={() => handlePowerAction('resume')}
-                                                                  disabled={currentStatus.ac_status !== 'SUSPEND' || !hasPermission(userPermissions, VM_PERMISSION.PWR_EDITS)}
+                                                                  disabled={currentStatus.ac_status !== 'SUSPEND' || (isIntermediateState() && !isSuspendedState()) || 
+                                                                            !hasPermission(userPermissions, VM_PERMISSION.PWR_EDITS)}
                                                                   block><span
                                         className="hidden md:inline">恢复</span></Button></Tooltip>
-                                    <Tooltip title="强制关机"><Button size="small" danger icon={<PoweroffOutlined/>}
+                                    <Tooltip title={isIntermediateState() ? "虚拟机操作中，请稍候" : "强制关机"}><Button size="small" danger icon={<PoweroffOutlined/>}
                                                                       onClick={() => handlePowerAction('hard_stop')}
-                                                                      disabled={!hasPermission(userPermissions, VM_PERMISSION.PWR_EDITS)}
+                                                                      disabled={(currentStatus.ac_status !== 'STARTED' && currentStatus.ac_status !== 'SUSPEND') || 
+                                                                                isIntermediateState() || 
+                                                                                !hasPermission(userPermissions, VM_PERMISSION.PWR_EDITS)}
                                                                       block><span
                                         className="hidden md:inline">强关</span></Button></Tooltip>
-                                    <Tooltip title="强制重启"><Button size="small" danger icon={<ReloadOutlined/>}
+                                    <Tooltip title={isIntermediateState() ? "虚拟机操作中，请稍候" : "强制重启"}><Button size="small" danger icon={<ReloadOutlined/>}
                                                                       onClick={() => handlePowerAction('hard_reset')}
-                                                                      disabled={!hasPermission(userPermissions, VM_PERMISSION.PWR_EDITS)}
+                                                                      disabled={(currentStatus.ac_status !== 'STARTED' && currentStatus.ac_status !== 'SUSPEND') || 
+                                                                                isIntermediateState() || 
+                                                                                !hasPermission(userPermissions, VM_PERMISSION.PWR_EDITS)}
                                                                       block><span
                                         className="hidden md:inline">重置</span></Button></Tooltip>
-                                    <Tooltip title="编辑配置"><Button size="small" icon={<EditOutlined/>}
+                                    <Tooltip title={isIntermediateState() || isSuspendedState() ? "虚拟机操作中或已暂停" : "编辑配置"}><Button size="small" icon={<EditOutlined/>}
                                                                       onClick={() => setEditModalVisible(true)}
-                                                                      disabled={operationLocked || !hasPermission(userPermissions, VM_PERMISSION.VM_MODIFY) || !user?.can_modify_vm}
+                                                                      disabled={operationLocked || isIntermediateState() || isSuspendedState() || 
+                                                                                !hasPermission(userPermissions, VM_PERMISSION.VM_MODIFY) || !user?.can_modify_vm}
                                                                       block><span
                                         className="hidden md:inline">编辑</span></Button></Tooltip>
 
@@ -3672,25 +3718,64 @@ await api.vmPower(hostName!, uuid!, 'H_CLOSE')
 
     const powerMenuProps: MenuProps = {
         items: [
-            {key: 'start', label: '启动', icon: <PlayCircleOutlined/>, disabled: currentStatus.ac_status === 'STARTED' || !hasPermission(userPermissions, VM_PERMISSION.PWR_EDITS)},
+            // 启动 - 只在停止状态可用
+            {key: 'start', label: '启动', icon: <PlayCircleOutlined/>, 
+                disabled: currentStatus.ac_status === 'STARTED' || currentStatus.ac_status === 'SUSPEND' || 
+                         isIntermediateState() || !hasPermission(userPermissions, VM_PERMISSION.PWR_EDITS)},
+            // 关机 - 只在运行状态可用
             {
                 key: 'stop',
                 label: '关机',
                 icon: <PoweroffOutlined/>,
-                disabled: currentStatus.ac_status !== 'STARTED' || !hasPermission(userPermissions, VM_PERMISSION.PWR_EDITS),
+                disabled: currentStatus.ac_status !== 'STARTED' || isIntermediateState() || 
+                         !hasPermission(userPermissions, VM_PERMISSION.PWR_EDITS),
                 danger: true
             },
-            {key: 'reset', label: '重启', icon: <ReloadOutlined/>, disabled: currentStatus.ac_status !== 'STARTED' || !hasPermission(userPermissions, VM_PERMISSION.PWR_EDITS)},
-            {key: 'hard_stop', label: '强制关机', icon: <PoweroffOutlined/>, danger: true, disabled: !hasPermission(userPermissions, VM_PERMISSION.PWR_EDITS)},
-            {key: 'hard_reset', label: '强制重启', icon: <ReloadOutlined/>, danger: true, disabled: !hasPermission(userPermissions, VM_PERMISSION.PWR_EDITS)},
-        ],
+            // 重启 - 只在运行状态可用
+            {key: 'reset', label: '重启', icon: <ReloadOutlined/>, 
+                disabled: currentStatus.ac_status !== 'STARTED' || isIntermediateState() || 
+                         !hasPermission(userPermissions, VM_PERMISSION.PWR_EDITS)},
+            // 暂停 - 只在运行状态可用
+            {key: 'pause', label: '暂停', icon: <PauseCircleOutlined/>, 
+                disabled: currentStatus.ac_status !== 'STARTED' || isIntermediateState() || 
+                         !hasPermission(userPermissions, VM_PERMISSION.PWR_EDITS)},
+            // 恢复 - 只在暂停状态可用
+            {key: 'resume', label: '恢复', icon: <PlayCircleOutlined/>, 
+                disabled: currentStatus.ac_status !== 'SUSPEND' || isIntermediateState() || 
+                         !hasPermission(userPermissions, VM_PERMISSION.PWR_EDITS)},
+            // 强制关机 - 运行时和暂停状态可用
+            {key: 'hard_stop', label: '强制关机', icon: <PoweroffOutlined/>, danger: true, 
+                disabled: (currentStatus.ac_status !== 'STARTED' && currentStatus.ac_status !== 'SUSPEND') || 
+                         isIntermediateState() || !hasPermission(userPermissions, VM_PERMISSION.PWR_EDITS)},
+            // 强制重启 - 运行时和暂停状态可用
+            {key: 'hard_reset', label: '强制重启', icon: <ReloadOutlined/>, danger: true, 
+                disabled: (currentStatus.ac_status !== 'STARTED' && currentStatus.ac_status !== 'SUSPEND') || 
+                         isIntermediateState() || !hasPermission(userPermissions, VM_PERMISSION.PWR_EDITS)},
+        ].filter(item => {
+            // 暂停状态只显示"恢复"操作
+            if (isSuspendedState()) {
+                return item.key === 'resume';
+            }
+            return true;
+        }),
         onClick: (e) => handlePowerAction(e.key)
     }
 
-    // 默认电源操作按钮
-    const defaultPowerAction = currentStatus.ac_status === 'STARTED'
-        ? {key: 'stop', label: '关机', icon: <PoweroffOutlined/>}
-        : {key: 'start', label: '启动', icon: <PlayCircleOutlined/>}
+    // 默认电源操作按钮（根据状态变化）
+    const defaultPowerAction = (() => {
+        const status = currentStatus.ac_status;
+        if (status === 'STARTED') return {key: 'stop', label: '关机', icon: <PoweroffOutlined/>};
+        if (status === 'STOPPED') return {key: 'start', label: '启动', icon: <PlayCircleOutlined/>};
+        if (status === 'SUSPEND') return {key: 'resume', label: '恢复', icon: <PlayCircleOutlined/>};
+        // 中间状态显示当前状态
+        const statusMap: Record<string, {key: string, label: string, icon: any}> = {
+            'ON_STOP': {key: 'stop', label: '停止中', icon: <LoadingOutlined/>},
+            'ON_OPEN': {key: 'start', label: '启动中', icon: <LoadingOutlined/>},
+            'ON_SAVE': {key: 'pause', label: '暂停中', icon: <LoadingOutlined/>},
+            'ON_WAKE': {key: 'resume', label: '唤醒中', icon: <LoadingOutlined/>},
+        };
+        return statusMap[status] || {key: 'start', label: '启动', icon: <PlayCircleOutlined/>};
+    })()
 
     return (
         <div className="h-auto">
@@ -3746,19 +3831,28 @@ await api.vmPower(hostName!, uuid!, 'H_CLOSE')
                         </div>
                         <Space>
                             <Button type="primary" style={{background: 'linear-gradient(135deg, #6366f1, #8b5cf6)', border: 'none'}} onClick={() => navigate(`/hosts/${hostName}/vms/${uuid}/v2`)}>新版面板</Button>
-            <Button type="primary" className="bg-blue-600" onClick={() => setRemoteModalVisible(true)} disabled={!hostEnabled || operationLocked || !hasPermission(userPermissions, VM_PERMISSION.VNC_EDITS)}>远程桌面</Button>
-                            <Button onClick={() => setPasswordModalVisible(true)} disabled={!hostEnabled || operationLocked || !hasPermission(userPermissions, VM_PERMISSION.PWD_EDITS)}>设置密码</Button>
+            <Button type="primary" className="bg-blue-600" onClick={() => setRemoteModalVisible(true)} 
+                disabled={!hostEnabled || operationLocked || isIntermediateState() || isSuspendedState() || 
+                         !hasPermission(userPermissions, VM_PERMISSION.VNC_EDITS)}>远程桌面</Button>
+                            <Button onClick={() => setPasswordModalVisible(true)} 
+                disabled={!hostEnabled || operationLocked || isIntermediateState() || 
+                         !hasPermission(userPermissions, VM_PERMISSION.PWD_EDITS)}>设置密码</Button>
                             <Dropdown menu={powerMenuProps}>
                                 <Button icon={defaultPowerAction.icon}
                                         onClick={() => handlePowerAction(defaultPowerAction.key)}
-                                        disabled={!hostEnabled || operationLocked || !hasPermission(userPermissions, VM_PERMISSION.PWR_EDITS)}>
+                                        disabled={!hostEnabled || operationLocked || 
+                                                  (isIntermediateState() && !isSuspendedState()) || 
+                                                  !hasPermission(userPermissions, VM_PERMISSION.PWR_EDITS)}>
                                     {defaultPowerAction.label} <DownOutlined/>
                                 </Button>
                             </Dropdown>
 
-                            <Button onClick={() => setReinstallModalVisible(true)} disabled={!hostEnabled || operationLocked || !hasPermission(userPermissions, VM_PERMISSION.SYS_EDITS)}>重装系统</Button>
+                            <Button onClick={() => setReinstallModalVisible(true)} 
+                disabled={!hostEnabled || operationLocked || isIntermediateState() || isSuspendedState() || 
+                         !hasPermission(userPermissions, VM_PERMISSION.SYS_EDITS)}>重装系统</Button>
                             <Button icon={<ReloadOutlined/>} onClick={() => loadVMDetail(false)}/>
-                            <Dropdown menu={actionMenu}><Button icon={<MoreOutlined/>} disabled={!hostEnabled || operationLocked}/></Dropdown>
+                            <Dropdown menu={actionMenu}><Button icon={<MoreOutlined/>} 
+                disabled={!hostEnabled || operationLocked || isIntermediateState()}/></Dropdown>
                         </Space>
                     </div>
                 </div>

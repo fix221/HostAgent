@@ -573,6 +573,11 @@ class HostServer(BasicServer):
                     self.soft_pwr(vm_name, VMPowers.S_CLOSE, VMPowers.ON_STOP)
                 elif ok and power == VMPowers.S_RESET:
                     self.soft_pwr(vm_name, VMPowers.S_RESET, VMPowers.ON_STOP)
+                # 添加暂停和恢复操作的监控
+                elif ok and power == VMPowers.A_PAUSE:
+                    self._monitor_power_operation(vm_name, VMPowers.A_PAUSE, VMPowers.ON_SAVE, VMPowers.SUSPEND)
+                elif ok and power == VMPowers.A_WAKED:
+                    self._monitor_power_operation(vm_name, VMPowers.A_WAKED, VMPowers.ON_WAKE, VMPowers.STARTED)
             else:
                 hs_result = ZMessage(
                     success=False, action="VMPowers",

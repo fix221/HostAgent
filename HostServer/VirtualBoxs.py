@@ -554,12 +554,16 @@ class HostServer(BasicServer):
                 hs_result = ZMessage(
                     success=ok, action="VMPowers",
                     message="暂停成功" if ok else f"暂停失败: {err}")
+                if ok:
+                    self._monitor_power_operation(vm_name, VMPowers.A_PAUSE, VMPowers.ON_SAVE, VMPowers.SUSPEND)
             elif power == VMPowers.A_WAKED:
                 ok, out, err = self._vboxmanage(
                     "controlvm", vm_name, "resume")
                 hs_result = ZMessage(
                     success=ok, action="VMPowers",
                     message="恢复成功" if ok else f"恢复失败: {err}")
+                if ok:
+                    self._monitor_power_operation(vm_name, VMPowers.A_WAKED, VMPowers.ON_WAKE, VMPowers.STARTED)
             else:
                 hs_result = ZMessage(
                     success=False, action="VMPowers",

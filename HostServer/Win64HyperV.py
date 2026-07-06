@@ -679,9 +679,13 @@ class HostServer(BasicServer):
             # 暂停虚拟机 =======================================================
             elif power == VMPowers.A_PAUSE:
                 hs_result = self.hyperv_api.suspend(vm_name)
+                if hs_result.success:
+                    self._monitor_power_operation(vm_name, VMPowers.A_PAUSE, VMPowers.ON_SAVE, VMPowers.SUSPEND)
             # 恢复虚拟机 =======================================================
             elif power == VMPowers.A_WAKED:
                 hs_result = self.hyperv_api.resume(vm_name)
+                if hs_result.success:
+                    self._monitor_power_operation(vm_name, VMPowers.A_WAKED, VMPowers.ON_WAKE, VMPowers.STARTED)
             # 重启虚拟机 =======================================================
             elif power == VMPowers.H_RESET:
                 hs_result = self.hyperv_api.reset(vm_name)

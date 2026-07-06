@@ -564,6 +564,11 @@ class HostServer(BasicServer):
                     success=False, action="VMPowers",
                     message=f"电源操作失败: {self._msg(data)}")
             logger.info(f"虚拟机 {vm_name} 电源 {action} 成功")
+            # 对于暂停和恢复操作，启动监控线程
+            if power == VMPowers.A_PAUSE:
+                self._monitor_power_operation(vm_name, VMPowers.A_PAUSE, VMPowers.ON_SAVE, VMPowers.SUSPEND)
+            elif power == VMPowers.A_WAKED:
+                self._monitor_power_operation(vm_name, VMPowers.A_WAKED, VMPowers.ON_WAKE, VMPowers.STARTED)
             r = ZMessage(success=True, action="VMPowers")
             self.logs_set(r)
             return r

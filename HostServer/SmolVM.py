@@ -767,8 +767,12 @@ class HostServer(BasicServer):
 
             elif power == VMPowers.A_PAUSE:
                 fc.patch_vm_state("Paused")
+                # 启动监控线程，等待状态变为 SUSPEND
+                self._monitor_power_operation(vm_name, VMPowers.A_PAUSE, VMPowers.ON_SAVE, VMPowers.SUSPEND)
             elif power == VMPowers.A_WAKED:
                 fc.patch_vm_state("Resumed")
+                # 启动监控线程，等待状态变为 STARTED
+                self._monitor_power_operation(vm_name, VMPowers.A_WAKED, VMPowers.ON_WAKE, VMPowers.STARTED)
 
             hs_result = ZMessage(
                 success=True, action="VMPowers",

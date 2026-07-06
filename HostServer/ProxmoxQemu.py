@@ -1087,6 +1087,8 @@ class HostServer(BasicServer):
                 if status['status'] == 'running':
                     vm.status.suspend.post()
                     logger.info(f"虚拟机 {vm_name} 已暂停")
+                    # 启动监控线程，等待状态变为 SUSPEND
+                    self._monitor_power_operation(vm_name, VMPowers.A_PAUSE, VMPowers.ON_SAVE, VMPowers.SUSPEND)
                 else:
                     logger.warning(f"虚拟机 {vm_name} 未运行，无法暂停")
 
@@ -1094,6 +1096,8 @@ class HostServer(BasicServer):
                 if status['status'] == 'paused':
                     vm.status.resume.post()
                     logger.info(f"虚拟机 {vm_name} 已恢复")
+                    # 启动监控线程，等待状态变为 STARTED
+                    self._monitor_power_operation(vm_name, VMPowers.A_WAKED, VMPowers.ON_WAKE, VMPowers.STARTED)
                 else:
                     logger.warning(f"虚拟机 {vm_name} 未暂停，无法恢复")
 

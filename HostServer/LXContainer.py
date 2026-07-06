@@ -957,6 +957,8 @@ class HostServer(BasicServer):
                 if container.status == "Running":
                     container.freeze(wait=True)
                     logger.info(f"Container {vm_name} frozen (paused)")
+                    # 启动监控线程，等待状态变为 SUSPEND
+                    self._monitor_power_operation(vm_name, VMPowers.A_PAUSE, VMPowers.ON_SAVE, VMPowers.SUSPEND)
                 elif container.status == "Frozen":
                     logger.info(f"Container {vm_name} is already frozen")
                 else:
@@ -969,6 +971,8 @@ class HostServer(BasicServer):
                 if container.status == "Frozen":
                     container.unfreeze(wait=True)
                     logger.info(f"Container {vm_name} unfrozen (resumed)")
+                    # 启动监控线程，等待状态变为 STARTED
+                    self._monitor_power_operation(vm_name, VMPowers.A_WAKED, VMPowers.ON_WAKE, VMPowers.STARTED)
                 elif container.status == "Running":
                     logger.info(f"Container {vm_name} is already running")
                 else:

@@ -157,6 +157,9 @@ class DataManager:
                 # 执行数据迁移：将旧格式的vm_status转换为新格式
                 self._migrate_vm_status_data(conn)
                 
+                # 检查并补全 vm_tasker 缺失列（task_data等）
+                self._migrate_vm_tasker_columns(conn)
+                
                 # 创建默认管理员用户（如果不存在）
                 self._create_default_admin()
                 
@@ -289,6 +292,41 @@ class DataManager:
             logger.error(f"[HostDatabase] vm_status数据迁移失败: {e}")
             import traceback
             traceback.print_exc()
+            conn.rollback()
+
+
+    def _migrate_vm_tasker_columns(self, conn: sqlite3.Connection):
+        """检查并补全 vm_tasker 表缺失的列（兼容旧数据库）"""
+        try:
+            cursor = conn.execute("PRAGMA table_info(vm_tasker)")
+            columns = {row[1] for row in cursor.fetchall()}
+
+            required_columns = {
+                'task_data':    'TEXT DEFAULT ''',
+                'task_id':      'TEXT DEFAULT ''',
+                'vm_uuid':      'TEXT DEFAULT ''',
+                'task_type':    'TEXT DEFAULT ''',
+                'status':       'TEXT DEFAULT 'pending'',
+                'params':       'TEXT DEFAULT '{}'',
+                'result':       'TEXT DEFAULT '{}'',
+                'error_message':'TEXT DEFAULT ''',
+                'username':     'TEXT DEFAULT ''',
+                'started_at':   'TIMESTAMP DEFAULT NULL',
+                'finished_at':  'TIMESTAMP DEFAULT NULL',
+            }
+
+            for col_name, col_type in required_columns.items():
+                if col_name not in columns:
+                    try:
+                        conn.execute(f"ALTER TABLE vm_tasker ADD COLUMN {col_name} {col_type}")
+                        logger.info(f"[HostDatabase] 添加字段: vm_tasker.{col_name}")
+                    except sqlite3.OperationalError as e:
+                        if "duplicate column name" not in str(e).lower():
+                            logger.warning(f"[HostDatabase] 添加字段 vm_tasker.{col_name} 失败: {e}")
+
+            conn.commit()
+        except Exception as e:
+            logger.error(f"[HostDatabase] vm_tasker列迁移失败: {e}")
             conn.rollback()
 
     def _create_default_admin(self):
