@@ -302,15 +302,15 @@ class DataManager:
             columns = {row[1] for row in cursor.fetchall()}
 
             required_columns = {
-                'task_data':    'TEXT DEFAULT ''',
-                'task_id':      'TEXT DEFAULT ''',
-                'vm_uuid':      'TEXT DEFAULT ''',
-                'task_type':    'TEXT DEFAULT ''',
-                'status':       'TEXT DEFAULT 'pending'',
-                'params':       'TEXT DEFAULT '{}'',
-                'result':       'TEXT DEFAULT '{}'',
-                'error_message':'TEXT DEFAULT ''',
-                'username':     'TEXT DEFAULT ''',
+                'task_data':    "TEXT DEFAULT ''",
+                'task_id':      "TEXT DEFAULT ''",
+                'vm_uuid':      "TEXT DEFAULT ''",
+                'task_type':    "TEXT DEFAULT ''",
+                'status':       "TEXT DEFAULT 'pending'",
+                'params':       "TEXT DEFAULT '{}'",
+                'result':       "TEXT DEFAULT '{}'",
+                'error_message':"TEXT DEFAULT ''",
+                'username':     "TEXT DEFAULT ''",
                 'started_at':   'TIMESTAMP DEFAULT NULL',
                 'finished_at':  'TIMESTAMP DEFAULT NULL',
             }
