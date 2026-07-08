@@ -1097,8 +1097,8 @@ class BasicServer:
                     nic_conf.mac_addr,
                     vm_conf.vm_uuid,
                     flag=flag,
-                    dns1=self.hs_config.ipaddr_ddns[0],
-                    dns2=self.hs_config.ipaddr_ddns[1]
+                    dns1=self.hs_config.ipaddr_ddns[0] if len(self.hs_config.ipaddr_ddns) > 0 else None,
+                    dns2=self.hs_config.ipaddr_ddns[1] if len(self.hs_config.ipaddr_ddns) > 1 else "223.5.5.5"
                 )
                 if nc_result.success:
                     logger.success(f"[API] 静态IP绑定成功: {nic_conf.ip4_addr}")

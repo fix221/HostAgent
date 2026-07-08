@@ -319,7 +319,7 @@ class NetsManager:
         }
 
         result = self.posts("arp", "add", param)
-        success = result is not None and result.get("success", False)
+        success = result is not None and result.get("ErrMsg") == "Success"
         if success:
             logger.info(f"✅ ARP绑定添加成功: {lan_addr} -> {mac_addr}")
         else:
