@@ -311,8 +311,8 @@ class DataManager:
                 'result':       "TEXT DEFAULT '{}'",
                 'error_message':"TEXT DEFAULT ''",
                 'username':     "TEXT DEFAULT ''",
-                'started_at':   'TIMESTAMP DEFAULT NULL',
-                'finished_at':  'TIMESTAMP DEFAULT NULL',
+                'started_at':   "TIMESTAMP DEFAULT NULL",
+                'finished_at':  "TIMESTAMP DEFAULT NULL",
             }
 
             for col_name, col_type in required_columns.items():
